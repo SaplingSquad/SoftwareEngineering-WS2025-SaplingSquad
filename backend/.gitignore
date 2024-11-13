@@ -1,3 +1,4 @@
+# Generated
 logs
 target
 /.bsp
@@ -7,3 +8,7 @@ target
 /.project
 /.settings
 /RUNNING_PID
+# Added
+/out
+/.bloop
+/.metals
