@@ -69,7 +69,7 @@
     - Wie können wir ihr zu subtiler Anerkennung verhelfen?
 
 ## Skeptischer Spender
-<img style="float: right; width: 30%" alt="Bild von Anna" src=./rsc/people/anna.jpg></img>
+<img style="float: right; width: 30%" alt="Bild von Anna" src=./rsc/people/anna.png></img>
 
 - Name: Anna Meier
 - Alter: 54
