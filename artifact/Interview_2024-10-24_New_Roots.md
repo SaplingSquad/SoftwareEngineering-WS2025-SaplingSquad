@@ -1,0 +1,477 @@
+# 24.10.2024: Fragerunde
+
+## Fragen & Antworten
+
+- Inwieweit läuft New Roots schon digital (Prozesse/Daten)
+    - Nutzen [`EasyVerein`](https://easyverein.com/)
+    - Manuelles Eintragen z.B. von eingehenden Spenden oder Ausstellen von Spendenquittungen
+    - Wenig Automatisierung
+        - Wäre angenehm, wenn diese Prozesse (voll-)automatisch passieren würde
+- Soll die Lösung nur für New Roots sein oder auch allgemein für alle Vereine
+    - Wenn möglich für alle Vereine
+    - So allgemein wie möglich
+    - Anwendungsfälle sind immer sehr ähnlich
+        - Spenden gehen ein auf Konto
+        - Spenden/Geld sollen durch spender verfolgbar sein
+- Könnt ihr die Erfolge quantifizieren (wie helfen die Spenden)?
+    - Wäre sehr schön, das zu tun
+- Wer spielt alles mit, was passiert, wer ist noch beteiligt, was passiert im Verein, worum geht es in den Teilprojekten?
+    - Verein mit 3 Vorständen und ordentlichen (normalen) Mitgliedern
+    - Events organisieren
+    - Spenden aquirieren
+    - Alle arbeiten (aktuell) 100% ehrenamtlich
+    - Aktuell durchschnittlich 6800€ pro Monat an Spenden
+        - Maximal 15% der eingehenden Gelder an Rücklagen erlaubt
+    - Social Media:
+        - Instagram als Informationskanal:
+            - Was passiert vor Ort?
+            - Was passiert mit den Geldern?
+            - Beach-Cleanings
+            - Schul-Bau und Unterricht
+            - Women-Empowering
+            - Mangroven pflanzen
+            - Nicht primär zum Spendensammeln; eher durch Vertrauen in Mitglieder und Vorstand
+    - Mitglieder in Deutschland kümmern sich um Kundenkommunikation
+    - CBO (Community-Based-Organization) in Kenia
+        - Nach Kenianischem Gesetz, wird benötigt
+        - Auch nach deutschem Recht gemeinnützig, um Gelder dort hin schicken zu dürfen
+        - Von Kenianern geleitet
+        - Gleiche Struktur wie in Deutschland
+        - Angestellte
+            - Lehrer:innen
+            - Security
+            - Köch:innen
+            - Psychologin für nachhaltige psychologische Unterstützung
+        - Finanziert durch Spendengelder aus Deutschland
+    - Umweltschutz
+        - Aufforstung von sterbendem Mangrovenwald (5x besser als andere Pflanzen in CO2-Aufnahme). Einziger Kostenpunkt: Wasser
+        - Haptsächlich(?) Frauen züchten Sätzlinge
+        - Geben Essenspakete an Helfende aus
+    - Frauen
+        - Oft alleinerziehende Mütter mit (vielen) Kindern
+        - Väter unbekannt
+        - Kinder nicht immer aus freiem Willen entstanden
+        - Krankheiten (HIV, ...)
+            - Angst vor Stigmatisierung
+            - HIV-Therapie wird von kenianischer Regierung kostenlos zur Verfügung gestellt, werden aber aus Angst nicht wahrgenommen
+        - Women Empowering Program
+            - Frauen Skills beibringen
+                - EDV
+                - Nähen
+                - Haare machen (flechten)
+            - Erlaubt in Zukunft selbstständig zu Arbeiten
+    - Festgemauerte, abschließbare, gemauerte Toiletten
+        - nachhaltig: Erde & Dünger
+        - ausschließlich abschließbar zum Schutz
+    - Feld gemietet
+        - 24000m²
+        - Selbst bewirtschaftet
+    - Wollen autark sein (selbst versorgend)
+    - Entscheidungsstrukturen
+        - Kennedy organisatorisch vor Ort
+        - Zusammenarbeit mit Sozialarbeiterin
+        - Ständiger Bericht notwendig (strenge Kontrolle)
+- Woher weiß man, was vor Ort hilft?
+    - Grober Rahmen wird vorgegeben aus Deutschland
+        - Schulen bauen, ...
+    - Einwohner Ort entscheiden, was genau zu tun ist und wie vorzugehen ist
+    - Wissende Personen aus der Community notwendig
+        - Priorisieren die Probleme
+    - Wollen nicht, dass Deutsche unbedingt mitspielen wollen, um ihr Gewissen reinzuwaschen
+- Geographische Aufteilung: Wie sieht es vor Ort aus? Ist es ein Areal?
+    - Jedes Kinderprojekt benötigt Security und eine abgeschlossene Community
+    - Mauer (kein Zaun!) um Grundstück (ca. Größe von Fußballfeld) mit Security
+    - Wollten ursprünglich nut ein Waisenhaus bauen
+    - Empfehlung der UN: Von Waisenhäusern fernhalten (da diese oft in schlechtem Zustand sind)
+        - 80000 Kindern aus Waisenhäusern sollten in Pflegefamilien unterkommen
+        - Stattdessen: Waisenhäuser besser kontrollieren mit Sozialbetreuerin in engem Kontakt mit Behörden
+    - Erstmal Klein: Boarding School (wie Internat)
+        - Aktuell noch keine Schlafräume
+        - Hinter zwei Klassenzimmern Toiletten mit Duschräumen
+    - Küche
+    - Es geht in erster Linie um dieses Grundstück und die dort lebende Community (auch bis zu 40km außenrum)
+        - Kinder können sich dort bewerben
+        - Schulgebühren werden auch für andere Schulen übernommen
+    - Community-Feedings: Alle 2 Wochen dürfen alle kommen und werden verpflegt
+    - 150€ einen Tag 300 Personen versorgen mit Mais, Bohnen, ...
+- Wie viel kostet ein Gebäude in etwa?
+    - Bauqualität unterschiedlich
+    - New Roots bauen Gebäude stabil (mit Fundament)
+    - 2 Klassenräume (2 * 36 m²) mit 4 Toiletten, 4 Duschräumen und Sickergrube: 32000 €
+    - Küche (einfacher gebaut; Stein auf Stein; 8 m²): 4000 €
+    - Personalkosten für sieben Angestellte pro Monat: 1800 €
+        - Verantwortung für Spendengelder: Gehalt soll sich an kenianischen Standard halten
+        - Krankenversicherung wird übernommen (noch zusätzliche Kosten)
+- Transparenz: Was sind die exklusiven Einblicke als Mitglied? Was ist der Unterschied zu "normalen" Informationen?
+    - Eigene Newsletter
+    - Zugehörigkeitsgefühl
+    - Member heißt nicht Vereinstätigkeit zu übernehmen
+        - Teil des Vereins ohne Verantwortung
+    - Beitrag beliebig
+    - Keine Kündigungsfrist
+    - Eigene Events für Member
+        - Was passiert hinter den Kulissen?
+        - Option, ordentliches Mitglied zu werden
+        - Noch nicht groß genug für Veranstaltungen
+    - Patenschaften kommen gut an
+        - persönliche Ebene
+        - Brieffreundschaft/Austausch
+        - Geschenke können an Patenkinder gesendet werden durch Verein
+    - Interne Kommunikation: Detailierte Beschreibungen, wo wird Geld benötigt
+    - Für exterene Kommunikation nichts schönreden, aber Fokus auf positive Aspekte
+        - "Happy Place": Community vor Ort soll sich wohlfühlen
+    - Kommunikation auf Instagram am liebsten nicht machen
+        - Notwendig für Reichweite
+        - Angefragt für Basketball-Turnier als sozialen Aspekt um Projekt erklären
+            - Nicht passend, da Details teilweise sehr brutal, gehören aber dazu
+        - Wege zu wählen, wie man kommuniziert, ist teilweise sehr schwer
+- Von 6800€, wie ist die Spendenaufteilung (welcher Teil ist einmalig, welcher teil monatlich, ...)?
+    - Januar, Februar, März
+        - Fast garnichts
+        - Nur Daueraufträge / Monatliche Zahlungen der Member
+        - Auch bei anderen Vereinen ähnlich
+    - November, Dezember
+        - Üblicherweise höhere Spenden (wegen Weihnachten)
+        - Letztes Jahr nur im Dezember 25.000€ Spenden
+    - Aufteilung unterschiedlich
+    - Spendenhöhen unterschiedlich (Durchschnitt vielleicht bei ca. 30 €)
+- Wer spendet?
+    - Firmen (eher Einmalzahlungen)
+    - Privatpersonen (eher monatlich)
+    - Schüler:innen
+        - z.B. Kuchenverkauf
+    - diverse Spendenquelle
+- Veröffentlicht ihr eure Jahresberichte (und wo)?
+    - Nicht verpflichtet
+    - Sollte am besten automatisiert werden; aktuell manuell
+    - Sind bis jetzt noch nicht dazu gekommen, die Jahresberichte auf die Website zu stellen, da zu wenige Zeit vorhanden
+    - Wollen die Jahresberichte aus Transparenzgründen veröffentlichen
+    - Im Moment nur im Newsletter (aber nicht die offiziellen Berichte)
+    - Wir können Transparenzberichte auch erhalten
+    - Vereine sind verpflichtet, die Jahresberichte/Bücher auf Anfrage jederzeit offenzulegen
+        - Überprüfung durch einzelne allerdings eher schwer
+        - Besser einfache Übersicht, was mit einer spezifischen Spende passiert
+            - z.B. Zusammenfassung nach Spende oder per Newsletter
+            - Sollte einfach zugänglich sein
+        - Großes Interesse daran zu wissen, wohin spezifische Spenden fließen.
+    - Insgesamt ca. 180000 € Spenden der innerhalb der letzten 3 Jahre
+- Sind zweckgebundene Spenden möglich?
+    - Ja
+    - Z.B. 250€ für Schulkosten für ein Jahr
+- Wäre es auch sinnvoll etwas zu haben, was leichter verständlich ist als ein Jahresbericht, um neue potenzielle Spendende zu überzeugen (verschiedene Detailtiefen: Einzelverfolgung, Überblick, Jahresübersicht)?
+    - Ja
+    - Spenden ist ein hochemotionales Thema
+    - Jahresbericht ist maximal unemotional
+        - Nur abstrakte Zahlen
+    - Transparenz: Nicht nur, wo geht mein spezifischer Euro hin, sondern auch, wo das Geld im Allgemeinen hingeht
+    - Geld auflisten
+        - Sonst wären einige Spendenziele nur schwer ersichtlich
+    - Notwendige Verwaltungsgebühren in Deutschland
+        - 38 € pro Monat
+        - Bank, Website, Versicherungen
+        - Keine Büroräume, vollständig ehrenamtlich (keine Gehälter)
+            - Kein Zertifikat für diese Aussagen vorhanden
+            - Vertrauen und Transparenz muss geschaffen werden
+        - Alle 11 ordentlichen Mitglieder zahlen 10 € im Monat, um diese Gebühren zu decken
+        - Das sollte auch nach außen kommuniziert werden, dass die Spendengelder nicht dafür verwendet werden
+    - Ist es relevant, den impact eines einzelnes Euros zu messen
+        - Ist es möglich?
+        - Schafft es Vertrauen?
+        - Primäres Ziel: Vertrauen und Transparenz vermitteln!
+- Vertrauen und Transparenz ist erst der zweite Schritt; Erster Schritt ist Idee zum Spenden. Wie kommt man auf diese Idee? Wer kommt auf diese Idee? Ist die Spenderstruktur relevant? Wo soll das Gefühl zum Spenden entstehen? Was ist die Idee für den Schritt vorher (Herzen öffnen)?
+    - Ist Jahreszeitabhängig
+    - Probieren über Erfahrungen aus Online-Marketing
+        - Bedarf suggerieren, wo eigentlich kein Bedarf ist
+        - Keine Tricks
+        - Keine Gelder für Marketing; alles organisch
+    - Rückblick:
+        - Grundstück war erstmal nur Wiese
+        - Mauer wurde gerade fertiggestellt
+        - Message mit Vorhaben zu transportieren ist sehr schwierig
+            - Man muss auf die Vorstellungskraft der Spendenden setzen
+        - Jetzt: Turning-Point
+            - Es kann schon etwas vorgezeigt werden (Infrastruktur existiert bereits)
+            - Spendende sind keine Early-Adopters mehr, sondern können auf funktionierendes Projekt ausfpringen
+    - Geographisch/Themenabhängig
+        - Krebskranke Kinder in Deuschland bekommen z.B. sehr viele Gelder (ohne viel Werbung)
+        - Krebskranke Kinder in Kenia bekommen eher weniger/schwieriger Spenden
+        - Geographische Nähe erleichter Spenden
+            - Es muss nicht erst die Lage vor Ort erklärt werden
+    - Betterplace
+        - Afrikanische Vereine bekommen oft wenige Spende
+    - Selling-Point von New Roots
+        - **Authentizität und Integrität**
+        - Vertrauen
+        - Persönlich vor Ort
+        - Hohe Authentizität
+        - Schwierig, das an potenzielle Spendende zu übermitteln
+            - Andere (z.B. globalere) Themen oft vor Vereinen wie New Roots
+- Wie genau könnt ihr eure Ausgaben aufschlüsseln? Welcher Anteil ist schon digital kontinuierlich vorhanden?
+    - Aktuell nur manuelles Eintragen/Aufbereiten in Excel-Tabellen, ...
+    - Sämtliche Ausgaben können eingesehen werden
+        - Alles einzeln im Detail / mit Namen aufgeschlüsselt
+- Ist es möglich, das gespendete Geld auch in Kenia noch zu tracken?
+    - Kommunikation über WhatsApp
+        - Individuell können Ausgaben exakt aufgeschlüsselt werden
+        - Skaliert nur schwierig bzw. gar nicht
+    - Man kann auch spezifische Projekte spenden
+    - Auch kenianischer Verein ist nachweispflichtig
+        - Audits vor Ort
+        - Buchungen nur mit Quittungen
+        - Alle Ausgaben müssen per Quittung belegt werden
+- Existiert dort Internet?
+    - Besser als hier
+    - Kein einziger Ort in Kenia ohne Mobilfunkempfang
+    - WLAN nicht unbedingt vorhanden
+- Haben alle Personen vor Ort ein Handy (auch Kinder)? Wie werden Personen vor Ort erreicht?
+    - Jeder hat ein Handy (möglicherweise kein Smartphone)
+    - Mobilfunkverträge sehr günstig
+    - Handys haben noch zusätzlichen Zweck als Kommunikation
+        - Zur Bezahlung
+            - Quasi instant
+            - Nahezu alles wird über Handy gezahlt
+            - Fast keine Barzahlung
+        - Größerer Wert als nur Kommunikation
+        - Essentieller Wert
+    - Infrastruktur ist weiter als Vermutet
+    - Laptops / PCs eher weniger verbreitet
+- Softwarelösung, die kooperativ zwischen Standorten einsetzbar ist und mit den verschiedenen Rechtssystemem umgehen kann?
+    - Hardware in Form von Handys vorhanden, Laptops eher nicht
+    - Aktuell Relay-Spende
+        - Personen spenden an New Roots
+        - New Roots leitet weiter an kenianischen Verein
+    - Es existieren viele ähnliche Vereine mit gleicher Struktur
+        - Ausländische Vereine (außerhalb EU) müssen von deutschem Finanzamt genehmigt werden bevor gespendet werden darf
+    - Transparenz noch extremer:
+        - Man muss zwei Verwaltungen/Vereinen vertrauen
+        - Besonders wichtig, fundiert nachweisen zu können, was damit passiert
+        - Währung im Spendenumfeld ist mehr als nur Geld
+            - Von wem?
+            - Wohin?
+            - Zweck?
+        - Personen können Spendeneingang verifizieren, Tiere oder Umweltprojekte nicht
+- Werden die Gelder sofort geschickt, oder erst aggregiert?
+    - Werden erst aggregiert
+- Sind Spendenquittungen nicht manchmal auch schlecht, wenn die Projekte nicht benötigt werden?
+    - Spenden müssen dann zurückgehalten werden
+- Gibt es Siegel für (gefühlte) Transparenz?
+    - Siegel müssen gekauft werden
+    - 3 verschiedene Siegel von unabhängigen Vereinen, die die beantragenden Vereine prüfen
+        - maximal 30 % der Eninahmen dürfen für Verwaltung ausgegeben werden
+    - Muss jedes Jahr neu beantragt werden
+    - Kosten hängen von Spendeneinnahmen ab
+        - z.B. bei 100000 € kosten von 1500 € für Siegel
+    - Erstmal nur lustiges PNG auf Website
+    - Ankennung der Gemeinnützigkeit ist auch schon ein (emotionales) Siegel
+        - Gemeinnützigkeit bedeutet noch zusätzliche Anforderungen
+- Welcher Anteil der Spenden ist zweckgebunden?
+    - Wenige: Eine einzige (und die erste Spende seit der Gemeinnützigkeit)
+        - 28500 € projektbezogen für die Mauer und einen Teil des ersten Hauses
+    - Spenden während Ukrainekrieg nicht vorhanden
+    - Die meisten sind frei
+    - Man könnte den Personen auch eine Auswahl geben, an aktuellen Projekten, für die sie Spenden können
+        - Freie Verwendung soll auch eine Möglichkeit sein
+        - Es werden auch schon explizit Gelder z.B. für die Beach-Cleanings gezahlt
+- Was passiert, wenn Personen für einen spezifischen Zweck spenden, obwohl andere Spenden wichtiger wären?
+    - Kommt aktuell nicht wirklich vor, da die meisten Spenden nicht zweckgebunden sind
+    - Zweckbezogene Spenden müssen zum bestimmten Zweck verwendet werden
+    - Satzung schränkt Verwendungszwecke zusätzlich ein (Vereinszweck)
+    - 'Freiwillige' Bindung ist flexibler
+    - Beispiel Betterplace: Projektbezogene Spenden möglich
+        - Auswahl, welches Projekt bespendet werden soll
+        - Keine Übererfüllung möglich
+        - Nur gefühlte Transparenz; Weiterverfolgung nicht möglich
+- Habt ihr euch schonmal über existierende Software informiert?
+    - Nein
+    - Google Workspace for Nonprofits (kostenlos)
+    - EasyVerein (69 € / Jahr)
+        - alles manuell
+    - Open-Source-Software-Klausur ist möglich
+    - Spendenquittungen erst ab 300 € benötigt; bis dahin reicht die Überweisungsbescheinigung
+        - Darf man trotzdem anfordern
+        - Automatisierte Generierung erleichtert die Vorgehensweisen
+        - Von Spendenplatformen (PayPal, Betterplace, GoFundMe) aktuell nicht unterstützt
+- Welche rechtlichen Kriterien muss die Spendenquittung erfüllen?
+    - Vereinsnummer
+    - Adresse des Spenders
+    - ?
+    - ?
+    - Optische Darstellung egal
+    - Keine Unterschrift notwendig
+    - Kein besonderer (analoger) Aufwand.
+- Spenden aus dem Ausland?
+    - Es wird auch international aan New Roots gespendet
+        - z.B. 4 Partnerschaften aus Italien
+    - Spenden dürfen angenommen werden
+    - Spendenquittungen dürfen nicht ins Ausland ausgestellt werden (haben dort keine Gültigkeit)
+- Was wollt ihr mit dem Projekt erreichen? Verwaltungsaufwand reduzieren oder Marketing?
+    - Entstehung der Idee
+        - "Was passiert mit dem Geld, das wir euch spenden?"
+        - Nicht immer erklären, was mit dem Geld passiert
+        - Wie kann man Spenden transparenter machen, ohne alles immer manuell zu erklären
+        - "Wie viel von meinen 100 € kommen an?"
+            - Manuelles gesprochenes Wort
+            - Errechneter Anteil
+        - Platform generieren
+            - Kein Geld für Marketing
+            - Nur Mund-zu-Mund-Propaganda
+    - Revolutionierung der Spendenwelt
+    - Fehlendes Vertrauen
+        - Misshandling der Mittel
+            - Boni für Vorstände
+    - Wo kommt Hungersnot global her?
+        - Fehlende Umverteilung
+        - Geld ist nicht optimal verteilt
+    - Transparente Lösung für Umverteilung
+        - Durchschnittliches Gehalt 30-80€ pro Monat.
+    - Spendenplatformen verbessern
+        - Viele Logos
+            - Manche davon bekannt und damit einfaches Spendenziel
+            - Unbekannte Logos werden meistens nicht beachtet
+                - Seriösität unsicher
+                - Keine Zeit für Auseinandersetzung
+        - Platform sollte vertrauen haben: Jeder Verein hier, ist gut/sinnvoll
+        - Pool-Spende:
+            - Spenden in globalen Topf
+            - Verteilung an Vereine, die sonst wenig bekommen
+            - Aufstellung, was an welchen Verein geht
+            - Präferenzen angeben, was bevorzugt werden soll
+        - "Ich will jedes Jahr 1 % meines Einkommens spenden, habe aber keine Lust micht mit den genauen Empfängern auseinanderzusetzen. Das sind meine Präferenzen; Spende einfach irgendwo dahin."
+- Was passiert nachdem wir ein MVP entwickelt haben? Geht es weiter? Könnt ihr das Produkt betreuen?
+    - Produkt gehört an sich uns
+    - Es gibt Pläne
+    - "Wenn Sie diesen Kurs bestehen wollen, müssen Sie es machen und wir schauen uns auch die Idee an."
+    - Anliegen MaibornWolff: Corporate Citizen sein
+    - IP wird übertragen
+    - Prof. Reif wird uns total motivieren; wir werden staunen
+    - Thema (Idee) liegt aktuell auf dem Schreibtisch der bayerischen Sozialministerin
+        - Am besten ein Tool in den Händen des Staates, die eine zentrale Platform an Vereine geben können
+- Arbeiten wir an 4 seperaten Tools oder verteilen wir Aufgaben, um mehr Impact zu schaffen?
+    - Es schließt sich nicht aus, Schnittstellen bereitzustellen
+    - Erstmal egal
+    - Wir sollen Ideen finden, diesen Teil der Welt zu innovieren
+    - Nicht eine Innovation von 20 Leuten, sondern Ideensammlung
+    - Eher 4 kleinere innovativere/interessantere Projekte
+    - Genaues Produkt erstmal egal; Jetzt noch nicht loslegen
+    - Viele Facetten der Problemstellung
+    - Wir müssen 3 verschiedene Ideen pitchen; Ideenfindung erst später
+    - Wir sollen eine Lösung für alle Gemmeinnützige Vereine bzw. alle (potenzielle) Spendende Personen erstellen
+- Was für operative (Standard)probleme gibt es?
+    - Vollautomatisches Administrationstool wäre cool
+        - Protokollerstellung
+        - Dokumentation
+        - Tätigkeitsberichte
+        - Viele Sachen schreiben
+        - Jeder der möchte muss einen Tätigkeitsbericht bekommen
+        - Wenig automatisierung: Einnahmen/Ausgaben manuell eintragen
+    - Werbung ohne Geld
+- Geht es nur um Geldspenden?
+    - Es gehen auch Dienstleistungsspenden, Sachspenden, ...
+        - Dafür können auch Spendenquittungen erstellt werden
+        - Wo kommt die Sachspende an
+    - z.B. Plakate drucken
+    - Volunteering ist unentgeldlich
+    - Dienstleistungsspenden/Volunteering sind direkt nachvollziehbar
+    - Vielleicht nicht relevant für diesen use case, da Personen die Dienstleistungen spenden wollen sowieso schon engagiert genug sind.
+- Internationale Spenden: Dürften auch kenianische Unternehmen spenden? Ist das gewollt? Welche Auswirkungen auf Marketing, ... hat dies?
+    - Spenden von Personen vor Ort (viele Italiener)
+    - Spenden von vor Ort (im Ausland) lebenden Personen direkt auf das kenianische Konto
+    - Keine großindustriellen Spenden
+        - Kümmern sich eher um sich selbst
+        - Community in sich hilft sich eher als reiche Kenianer es tun
+- Kooperation: Volkswirtschaftliches Argument gegen New Roots: Viele Wohlhabenden in Industrienation sammeln erst Geld ein, spenden dann später und wollen entscheiden, wofür ihr Geld eingesetzt wird (individualisierte Spendenverteilung); Zentrale Planung dieser Spenden könnte immense Vorteile bringen, wird bei Kleinakteuren aber aufgegeben; Bereitstellung des Wohltätigkeitsprojekts an andere Akteure.
+    - Kooperation ist relvant
+    - Partnerschaften sind Teil der UN sustainability goals
+    - In Deutschland eher weniger benötigte Tätigkeiten
+    - Viele Partner in Kenia
+        - KWS (Kenian Wildlife service)
+        - Mangroven-Organisation
+        - Local Ocean Conservation
+- Gibt es ein Interesse der Spendenden, sich gegenseitig kennenzulernen?
+    - Idee der Member-Events von New Roots
+    - Ansonsten wurden bis jetzt keine Wünsche geäußert
+    - Breites Spektrum der Spendenden
+    - Viele Spendenden an New Roots haben direkten Bezug zu einem ordentlichen Mitglied des Vereins
+        - Aktuell noch nicht das Problem, wie man mehr über das Projekt erfährt; In Zukunft (oder bei größeren Vereinen) evtl. schon
+        - Spendenplatformen (z.B. Betterplace) veranstalten Webinare, wie man besser werben kann
+    - Schwieriger Grat zwischen Veranstaltung, die dem Zweck dient, und die nur Lifestyle ist
+        - White Saviourism
+            - Lieber Geld hier investieren?
+            - Machtposition gegenüber Communities
+            - Erfordert sensibles Denken der Maßnahmen
+            - Community vor Ort hat keine Probleme mit den Mitgliedern von New Roots
+- Angenommen, das Spendenvolumen verzehnfacht sich. Was passiert dann?
+    - Eigentliches Vorhaben (ein Waisenhaus bauen) ist schon gewachsen
+        - Nur möglich, wegen mehr Spenden
+    - Traum: New Roots in weitere Länder zu tragen
+        - Nicht nur das aktuelle Grundstück in Kenia
+    - Andere Communities bzw. die Personen aus der Umgebung unterstützen
+    - Auch bei größerem Spendenaufkommen, gibt es noch genug Projekte
+    - Mit den aktuellen Spenden werden 600-700 Personen pro Monat erreicht
+    - Expansion auf grüßere Zielgruppen möglich
+    - Institutionen wachsen mit ihren Aufgaben
+    - Was passiert, wenn alle Spendenziele erreicht sind?
+        - Hier auch weiteres Vertrauen schaffen
+- Welche Hoffnungen verbindet MaibornWolff mit dem Projekt?
+    - Mehrere Facetten
+        - Kooperation
+        - Tolles Projekt für Studierende
+        - Persönlicher Mehrwert (Herzensthema)
+        - Jährliche Spendenaktionen bei MaibornWolff
+            - MaibornWolff stellt 200 € pro Mitarbeiter zur Verfügung
+            - Projekte werden vorgestellt
+                - Fußballvereine
+                - Unicef
+                - Frauenhäuser
+                - ...
+            - Mitarbeiter dürfen ihre Spendengelder an Projekte verteilen
+        - Erweiterung des Portfolios in soziale Projekte
+- Hat MaibornWolff schonmal überlegt, Lösungen für Projekte/Probleme anzubieten?
+    - z.B. dieses Projekt
+    - Forschung und Entwicklung
+        - auch mit anderen Firmen/Gruppen/Organisationen
+- Sollen wir alles selbst implementieren? Dürfen wir auch vorhandene Projekte verwenden
+    - *"Das Genie schöpft aus sich und von anderen."* ~ ~~Prof. Reif~~ Goethe
+- Was ist die Definition of Done?
+    - Wird später entschieden, Philosophie: "Think big" (später evtl. einstampfen)
+    - MVP Mitte Januar
+- Gibt es einen Rahmen? Deutschland, Europa, Welt?
+    - Think Big
+    - Ideen finden
+    - Innovativ sein
+    - Prioritäten setzen (in 2 Wochen wird entschieden was umgesetzt wird)
+- Sind im allgemeinen alle gemeinnützige Organisationen bereit, alles preiszugeben?
+    - Fortschritt sehen &rarr; mehr Spenden
+    - Wenig kommunikation ist schlecht
+        - Fehlende Kommunikation
+        - Fehlendes digitales Know-How
+    - Teil der Bewegung werden
+    - Impact muss klar werden
+    - Grupppengefühl: "Da Spenden schon viele hin"
+    - Spenden darf Spaß machen
+        - Man darf sich auch selbst gut fühlen
+        - Spenden-Battle ("Ich spende mehr als mein Nachbar")
+        - Gamification
+    - Daten müssen auf Anfrage offengelegt werden
+    - Nachweispflicht (zumindest an Finanzamt)
+    - Im Allgemeinen werden Informationen nicht zurückgehalten
+    - Transparenz je nach zu erreichenden Spendendenkreis und Vereinsgröße notwendig
+- Habt ihr Partnerorganisationen? Sind diese seriös?
+    - Es fließen keine Gelder
+    - Nur um Aktivitäten durchzuführen
+    - Die Personen, die Fragen stellen, haben hierzu keine Bedenken
+        - Andere potentielle Spendenden eventuell schon
+    - New Roots achtet auf Seriösität der Partner
+        - Persönliche Bekanntschaften
+    - Transparenz bis zum letzten Ende auch hier wichtig
+- Wie findet das Teambuilding statt?
+    - Schon passiert
+
+## Fakten
+
+- 65% (N=30000) spenden überhaupt nicht
+    - Vertrauen, Transparenz, ...
+    - Großer Teil will eigentlich spenden, aber tut dies aufgrund von Transparenz, Überforderung, ... nicht
+    - Diese Gruppe (z.B. durch Transparenz) erreuchen
+- Die Community von New Roots ist eher unmodern
+    - "In the bushes"
