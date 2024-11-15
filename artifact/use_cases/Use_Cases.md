@@ -1,3 +1,5 @@
+# Use Cases
+
 ## Blickwinkel Spender
 
 ### Finde passende Vereine
@@ -24,10 +26,12 @@
     4. Vereinsname anklicken, um detaillierte Beschreibung des Vereins zu lesen
     5. Vereinslink aufrufen
 - **Erweiterungen:**
-    - \*a) Jederzeit bei Verbindungsabbruch:
+    - \*x) Jederzeit bei Verbindungsabbruch:
         - Persistente Aktionen nicht mehr möglich, Benachrichtigung durch Webseite bei Fehlschlag
         - Lokale Interaktionen nicht zuverlässig möglich, Benachrichtigung durch Webseite soweit möglich
     - 1a) Fragen überspringen
+    - 2a) Projekt über Suchfeld suchen
+    - 2-3b) Verein über Suchfeld suchen
     - 4a) Projekt hat nicht gefallen
         1. Projektansicht schliessen
         2. Zurück zu 2.
@@ -35,10 +39,6 @@
         1. Vereinsansicht schliessen
         2. Projektansicht schliessen
         3. Zurück zu 2.
-    - 2a) Projekt über Suchfeld suchen
-    - 3a) Bestimmtes Projekt suchen
-        1. Projektbezeichnung ins Suchfeld eintragen
-        2. Projekt anklicken, um detaillierte Beschreibung des Projekts zu lesen
 - **Spezielle Anforderungen:** /
 - **Technologie:**
     - Zu 2:
@@ -72,7 +72,7 @@
     4. Person verlässt individuelle Sicht
     - Person wiederholt die Schritte 1-4, bis sie keine weiteren Informationen mehr erkunden möchte
 - **Erweiterungen:**
-    - \*a) Jederzeit bei Verbindungsabbruch:
+    - \*x) Jederzeit bei Verbindungsabbruch:
         - Lokale Interaktionen nicht zuverlässig möglich, Verbindung muss für weitere Verwendung wiederhergestellt werden
 - **Spezielle Anforderungen:** /
 - **Technologie:**
@@ -108,12 +108,12 @@
     5. Verein zu Lesezeichen hinzufügen
     6. Lesezeichenliste aufrufen und gespeicherte Vereine/Projekte begutachten
 - **Erweiterungen:**
-    - \*a) Jederzeit bei Verbindungsabbruch:
+    - \*x) Jederzeit bei Verbindungsabbruch:
         - Persistente Aktionen nicht mehr möglich, Benachrichtigung durch Webseite bei Fehlschlag
         - Lokale Interaktionen nicht zuverlässig möglich, Benachrichtigung durch Webseite soweit möglich
     - 3a) Schritt überspringen (d.h. nur einen Verein speichern)
     - 4-5a) Schritte überspringen (d.h. nur ein Projekt speichern)
-    - 1-5a) Schritte überspringen (d.h. Lesezeichenliste direkt aufrufen)
+    - 1-5b) Schritte überspringen (d.h. Lesezeichenliste direkt aufrufen)
     - 6a) Schritt überspringen (d.h. nach dem Speichern von Vereinen/Projekten Lesezeichenliste nicht aufrufen)
 - **Spezielle Anforderungen:** /
 - **Technologie:**
@@ -147,7 +147,7 @@
     3. Verein verifizieren
     4. Verein bearbeiten
 - **Erweiterungen:**
-    - \*a) Jederzeit bei Verbindungsabbruch:
+    - \*x) Jederzeit bei Verbindungsabbruch:
         - Zum Speichern der Registrierung/Änderungen muss eine Verbindung wiederhergestellt werden
     - 1-3a) Schritte überspringen (d.h. Verein nur bearbeiten)
 - **Spezielle Anforderungen:**
@@ -179,7 +179,7 @@
     2. Projekt erstellen
     3. Projektinformationen eingeben
 - **Erweiterungen:**
-    - \*a) Jederzeit bei Verbindungsabbruch:
+    - \*x) Jederzeit bei Verbindungsabbruch:
         - Zum Speichern der Eintragung/Änderungen muss eine Verbindung wiederhergestellt werden
     - 2a) Schritt überspringen (d.h. Projekt nur bearbeiten)
 - **Spezielle Anforderungen:**
@@ -190,3 +190,4 @@
 - **Sonstiges:**
     - Kompatibilität mit verschiedenen Browsern
     - Barrierefreiheit
+
