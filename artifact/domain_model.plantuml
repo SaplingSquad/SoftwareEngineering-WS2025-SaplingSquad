@@ -1,0 +1,57 @@
+@startuml DomainModel
+
+	!theme crt-amber
+	skinparam ArrowFontColor #FFB000
+	hide circle
+	hide empty methods
+	hide empty attributes
+
+	!pragma layout elk
+
+	skinparam nodesep 200
+	skinparam ranksep 200
+	skinparam minClassWidth 100
+
+	class Standort
+	Standort : lat
+	Standort : long
+	Karte --> Standort
+
+	class Projekt
+	Projekt : name
+	Projekt : beschreibung
+	Projekt "*" --> "*" Standort : standort
+
+	class Verein
+	Verein : name
+	Verein : beschreibung
+	Verein "*" --> "*" Standort : standort
+
+	Verein "1" *-- "*" Projekt
+
+	class Region
+	Region : name
+	Region : beschreibung
+	Region "*" --> "*" Standort : standort
+
+	class Karte
+
+	Karte "1" --> "*" Verein : zeigt an
+	Karte "1" --> "*" Projekt : zeigt an
+	Karte "1" *-- "*" Region
+
+	class Frage
+	Frage : text
+
+	Frage "*" --> "1" Karte : filtert
+	
+	class Nutzer
+
+	Nutzer "*" --> "*" Karte : sieht an
+	Nutzer "*" --> "*" Verein : sieht an und\nbookmarked
+	Nutzer "*" --> "*" Projekt : sieht an und\nbookmarked
+	Nutzer "*" --> "*" Region : sieht an und\nbookmarked
+	Nutzer "*" --> "*" Frage : beantwortet
+
+@enduml
+
