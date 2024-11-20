@@ -35,7 +35,7 @@ Test. Nennung nur beim ersten mal zwecks Wartbarkeit.
     - 4 Schliessen aller Typen Informationsfenster
 - Informationen auf Karte entdecken - wiederholter Durchlauf: 1, 2, 3, 4, 1, 2, 3, 4
 - Informationen auf Karte entdecken - Verbindungsabbruch: 1, 2x, ?
-    - 2x) Verbindung extern unterbinden, Anzeige von Meldung prüfen
+    - 2x) Verbindung extern unterbinden, Reaktion prüfen
 
 ## Vereine/Projekte speichern
 
