@@ -3,13 +3,9 @@ package saplingsquad.api.routing
 import io.ktor.http.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import saplingsquad.DatabaseConnection
 import saplingsquad.api.service.FragenkatalogService
-import saplingsquad.persistence.tables.FragenkatalogRepository
 
-fun Route.fragenkatalogRoutes() {
-    val database = DatabaseConnection.connection(application)
-    val service = FragenkatalogService(FragenkatalogRepository(database))
+fun Route.fragenkatalogRoutes(service: FragenkatalogService) {
 
     get("/") {
         val alleFragen = service.readAll()

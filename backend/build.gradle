@@ -14,6 +14,7 @@ def logback_version = project.property("logback_version")
 def postgres_version = project.property("postgres_version")
 def kotlin_version = project.property("kotlin_version")
 def komapper_version = project.property("komapper_version")
+def openapi_validator_version = project.property("openapi_validator_version")
 
 def isDevelopment = project.ext.has("development")
 applicationDefaultJvmArgs = ["-Dio.ktor.development=$isDevelopment"]
@@ -33,6 +34,8 @@ dependencies {
     implementation "ch.qos.logback:logback-classic:$logback_version"
     implementation "io.ktor:ktor-server-config-yaml-jvm"
     implementation "io.ktor:ktor-server-call-logging"
+    implementation "io.ktor:ktor-server-openapi"
+    implementation "io.ktor:ktor-server-double-receive"
     platform("org.komapper:komapper-platform:$komapper_version").with {
         implementation(it)
         ksp(it)
@@ -41,6 +44,28 @@ dependencies {
     implementation "org.komapper:komapper-dialect-h2-r2dbc:$komapper_version"
     implementation "org.komapper:komapper-dialect-postgresql-r2dbc:$komapper_version"
     ksp "org.komapper:komapper-processor:$komapper_version"
+    implementation "com.atlassian.oai:swagger-request-validator-core:$openapi_validator_version"
+
     testImplementation "io.ktor:ktor-server-test-host-jvm"
+    testImplementation "io.ktor:ktor-client-content-negotiation"
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+}
+
+def generatedResources = layout.buildDirectory.dir("generated/copy-openapi-spec/main/resources/")
+
+tasks.register("copy-openapi-spec", Copy) {
+    from("../api")
+    into(generatedResources.get().dir("api"))
+}
+
+
+tasks.named("processResources") {
+    dependsOn "copy-openapi-spec"
+}
+sourceSets {
+    configureEach {
+        resources {
+            srcDir(generatedResources)
+        }
+    }
 }

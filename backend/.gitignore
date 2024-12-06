@@ -34,3 +34,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Generated OpenAPI index.html
+/docs/.swagger-codegen/
+/docs/.swagger-codegen-ignore
+/docs/index.html

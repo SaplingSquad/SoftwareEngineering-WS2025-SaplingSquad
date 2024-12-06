@@ -19,6 +19,8 @@ fun Application.configureHTTP() {
         allowMethod(HttpMethod.Patch)
         allowHeader(HttpHeaders.Authorization)
         allowHeader("MyCustomHeader")
-        anyHost() // @TODO: Don't do this in production if possible. Try to limit it.
+        if (this@configureHTTP.developmentMode) {
+            anyHost()
+        }
     }
 }
