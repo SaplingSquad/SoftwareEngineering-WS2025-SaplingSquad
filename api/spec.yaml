@@ -1,0 +1,31 @@
+openapi: 3.1.0
+info:
+  title: Title
+  summary: API for Sapling Squad Website
+  description: API spec for the website of the Sapling Squad application
+  version: '0'
+
+paths:
+  /fragenkatalog:
+    get:
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Frage'
+
+components:
+  schemas:
+    Frage:
+      type: object
+      properties:
+        id:
+          type: integer
+        frage:
+          type: string
+        tagId:
+          type: integer
