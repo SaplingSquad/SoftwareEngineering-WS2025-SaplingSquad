@@ -8,49 +8,21 @@ import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.r2dbc.spi.ConnectionFactoryOptions
+import org.komapper.r2dbc.R2dbcDatabase
 import java.sql.Connection
-import java.sql.DriverManager
 
-fun Application.configureDatabases() {
-    val dbConnection: Connection = connectToPostgres(embedded = true)
-    val cityService = CityService(dbConnection)
-    
-    routing {
-    
-        // Create city
-        post("/cities") {
-            val city = call.receive<City>()
-            val id = cityService.create(city)
-            call.respond(HttpStatusCode.Created, id)
+object DatabaseConnection {
+    private var dbConnection: R2dbcDatabase? = null
+
+    fun connection(application: Application, embedded: Boolean = false): R2dbcDatabase {
+        if (dbConnection == null) {
+            dbConnection = application.connectToPostgres(embedded)
         }
-    
-        // Read city
-        get("/cities/{id}") {
-            val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
-            try {
-                val city = cityService.read(id)
-                call.respond(HttpStatusCode.OK, city)
-            } catch (e: Exception) {
-                call.respond(HttpStatusCode.NotFound)
-            }
-        }
-    
-        // Update city
-        put("/cities/{id}") {
-            val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
-            val user = call.receive<City>()
-            cityService.update(id, user)
-            call.respond(HttpStatusCode.OK)
-        }
-    
-        // Delete city
-        delete("/cities/{id}") {
-            val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
-            cityService.delete(id)
-            call.respond(HttpStatusCode.OK)
-        }
+        return dbConnection!!
     }
 }
+
 /**
  * Makes a connection to a Postgres database.
  *
@@ -72,17 +44,23 @@ fun Application.configureDatabases() {
  * @return [Connection] that represent connection to the database. Please, don't forget to close this connection when
  * your application shuts down by calling [Connection.close]
  * */
-fun Application.connectToPostgres(embedded: Boolean): Connection {
+fun Application.connectToPostgres(embedded: Boolean): R2dbcDatabase {
     Class.forName("org.postgresql.Driver")
     if (embedded) {
         log.info("Using embedded H2 database for testing; replace this flag to use postgres")
-        return DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", "root", "")
+        return R2dbcDatabase(url = "r2dbc:h2:mem:test;DB_CLOSE_DELAY=-1")
     } else {
         val url = environment.config.property("postgres.url").getString()
         log.info("Connecting to postgres database at $url")
         val user = environment.config.property("postgres.user").getString()
         val password = environment.config.property("postgres.password").getString()
 
-        return DriverManager.getConnection(url, user, password)
+        val options = ConnectionFactoryOptions.builder()
+            .from(ConnectionFactoryOptions.parse(url))
+            .option(ConnectionFactoryOptions.USER, user)
+            .option(ConnectionFactoryOptions.PASSWORD, password)
+            .build()
+
+        return R2dbcDatabase(options)
     }
 }

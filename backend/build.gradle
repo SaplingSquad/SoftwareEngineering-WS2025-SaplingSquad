@@ -1,8 +1,8 @@
-
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '2.1.0'
     id 'org.jetbrains.kotlin.plugin.serialization' version '2.1.0'
     id 'io.ktor.plugin' version '3.0.1'
+    id 'com.google.devtools.ksp' version '2.1.0-1.0.29'
 }
 
 group "saplingsquad"
@@ -13,6 +13,7 @@ def h2_version = project.property("h2_version")
 def logback_version = project.property("logback_version")
 def postgres_version = project.property("postgres_version")
 def kotlin_version = project.property("kotlin_version")
+def komapper_version = project.property("komapper_version")
 
 def isDevelopment = project.ext.has("development")
 applicationDefaultJvmArgs = ["-Dio.ktor.development=$isDevelopment"]
@@ -31,6 +32,15 @@ dependencies {
     implementation "io.ktor:ktor-server-netty-jvm"
     implementation "ch.qos.logback:logback-classic:$logback_version"
     implementation "io.ktor:ktor-server-config-yaml-jvm"
+    implementation "io.ktor:ktor-server-call-logging"
+    platform("org.komapper:komapper-platform:$komapper_version").with {
+        implementation(it)
+        ksp(it)
+    }
+    implementation "org.komapper:komapper-starter-r2dbc:$komapper_version"
+    implementation "org.komapper:komapper-dialect-h2-r2dbc:$komapper_version"
+    implementation "org.komapper:komapper-dialect-postgresql-r2dbc:$komapper_version"
+    ksp "org.komapper:komapper-processor:$komapper_version"
     testImplementation "io.ktor:ktor-server-test-host-jvm"
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
 }
