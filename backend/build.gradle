@@ -40,7 +40,6 @@ dependencies {
         ksp(it)
     }
     implementation "org.komapper:komapper-spring-boot-starter-r2dbc:$komapper_version"
-    implementation "org.komapper:komapper-dialect-h2-r2dbc:$komapper_version"
     implementation "org.komapper:komapper-dialect-postgresql-r2dbc:$komapper_version"
     ksp "org.komapper:komapper-processor:$komapper_version"
 
@@ -63,7 +62,11 @@ dependencies {
 
     // Test dependencies
     testImplementation "org.springframework.boot:spring-boot-starter-test"
-    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+    testImplementation "org.jetbrains.kotlin:kotlin-test-junit5:$kotlin_version"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinxCoroutinesVersion"
+    testImplementation "org.komapper:komapper-dialect-h2-r2dbc:$komapper_version"
+    testImplementation "org.komapper:komapper-spring-boot-starter-r2dbc:$komapper_version"
+    testImplementation "org.komapper:komapper-spring-boot-autoconfigure-r2dbc:$komapper_version"
 }
 
 def generatedOpenApi = layout.buildDirectory.dir("generated/openapi-codegen/")
@@ -126,4 +129,8 @@ sourceSets {
 }
 springBoot {
     mainClass.set("saplingsquad.ApplicationKt")
+}
+
+test {
+    useJUnitPlatform()
 }
