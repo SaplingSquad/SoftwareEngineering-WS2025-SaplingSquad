@@ -2,12 +2,19 @@ spring.application.name: backend
 server.port: ${port:9000}
 
 spring:
+  web:
+    resources:
+      static-locations: "classpath:/META-INF/resources/, classpath:/resources/, classpath:/static/, classpath:/public/,classpath:/static-files"
   r2dbc:
     url: "r2dbc:postgresql://localhost/postgres"
     username: sapling-squad
     password: sapling-squad
-
 appconfig:
   openapi:
-    spec: "api/spec.yaml"
+    spec: "static/api/spec.yaml"
   allow-wildcard-cors: true
+
+springdoc:
+  swagger-ui:
+    url: "api/spec.yaml"
+  enable-default-api-docs: false

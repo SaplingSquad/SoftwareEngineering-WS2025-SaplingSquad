@@ -67,6 +67,18 @@ dependencies {
 }
 
 def generatedOpenApi = layout.buildDirectory.dir("generated/openapi-codegen/")
+def generatedApplicationClass = "src/main/kotlin/saplingsquad/home/Application.kt"
+def openApiSpecResourceFolder = layout.buildDirectory.dir("generated/openapi/src/main/resources")
+def apiSource = "$rootDir/../api"
+
+tasks.register("copySpecToResources", Copy) {
+    duplicatesStrategy = DuplicatesStrategy.WARN
+    from apiSource
+    into(openApiSpecResourceFolder.get().dir("/static/api"))
+}
+tasks.named("processResources") {
+    dependsOn "copySpecToResources"
+}
 
 tasks.named("openApiGenerate") {
     // Run ksp before OpenAPI generator, (i.e. don't run kspKotlin on generated code)
@@ -74,17 +86,18 @@ tasks.named("openApiGenerate") {
 }
 tasks.register("deleteGeneratedApplication", Delete) {
     dependsOn "openApiGenerate"
-    def path = generatedOpenApi.get().dir("src/main/kotlin/saplingsquad/home/Application.kt")
-    println(path)
+    def path = generatedOpenApi.get().file(generatedApplicationClass)
     delete(path)
 }
+
 tasks.named("compileKotlin") {
     dependsOn "openApiGenerate", "deleteGeneratedApplication"
 }
 
+
 openApiGenerate {
     //https://openapi-generator.tech/docs/generators/kotlin-spring
-    inputSpec.set("$rootDir/../api/spec.yaml")
+    inputSpec.set("$apiSource/spec.yaml")
     generatorName.set("kotlin-spring")
     library.set("spring-boot")
     outputDir.set(generatedOpenApi.map { it.toString() })
@@ -103,10 +116,11 @@ openApiGenerate {
 }
 sourceSets {
     configureEach {
-        main {
-            kotlin {
-                srcDir(generatedOpenApi.map { it.dir("src/main/kotlin") })
-            }
+        kotlin {
+            srcDir(generatedOpenApi.map { it.dir("src/main/kotlin") })
+        }
+        resources {
+            srcDir(openApiSpecResourceFolder.get())
         }
     }
 }
