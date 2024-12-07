@@ -1,6 +1,7 @@
 package saplingsquad.api.service
 
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import saplingsquad.api.FragenkatalogApiDelegate
