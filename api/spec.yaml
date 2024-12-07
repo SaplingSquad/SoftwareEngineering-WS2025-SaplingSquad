@@ -1,3 +1,4 @@
+openapi: 3.0.3
 info:
   title: Sprout API
   description:
@@ -6,8 +7,6 @@ info:
     name: GNU Affero General Public License v3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
   version: 1.0.0
-servers:
-  - url: http://localhost:8080/
 tags:
   - name: user
     description: Operations for user management.
@@ -35,23 +34,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                  description: The username for the new user.
-                  example: exampleuser
-                password:
-                  type: string
-                  description: The password for the new user.
-                  example: supersecret
-                icon:
-                  type: string
-                  format: binary
-                  description: An icon image for the user's profile.
-              required:
-                - username
-                - password
+              $ref: '#/components/schemas/User'
       responses:
         '200':
           description: User created successfully.
@@ -187,3 +170,44 @@ paths:
           description: Invalid user token supplied.
         '404':
           description: No user for this token found.
+  /fragenkatalog:
+    get:
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Frage'
+
+components:
+  schemas:
+    Frage:
+      type: object
+      properties:
+        id:
+          type: integer
+        frage:
+          type: string
+        tagId:
+          type: integer
+    User:
+       type: object
+       properties:
+         username:
+           type: string
+           description: The username for the new user.
+           example: exampleuser
+         password:
+           type: string
+           description: The password for the new user.
+           example: supersecret
+         icon:
+           type: string
+           format: binary
+           description: An icon image for the user's profile.
+       required:
+         - username
+         - password
