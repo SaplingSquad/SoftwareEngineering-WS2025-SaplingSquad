@@ -1,30 +1,189 @@
-openapi: 3.0.0
 info:
-  title: Title
-  description: API spec for the website of the Sapling Squad application
-  version: '0.0.0'
-
+  title: Sprout API
+  description:
+    Sprout is an application to match potential donators with fitting charitable associations. It provides an option for thos associations to present themselves as well as their projects with reduced effort and provides those informations in an interaktive way to the users.
+  license:
+    name: GNU Affero General Public License v3.0
+    url: https://www.gnu.org/licenses/agpl-3.0.en.html
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/
+tags:
+  - name: user
+    description: Operations for user management.
+    externalDocs:
+      description: Find out more
+      url: http://swagger.io
+  - name: questions
+    description: Operations about the initial questions.
+  - name: map
+    description: Operations concerning the map.
+  - name: bookmarks
+    description: Operations to manage bookmarks for a logged in user.
+  - name: association
+    description: Operations to manage associations and their projects.
 paths:
-  /fragenkatalog:
-    get:
+  /user:
+    post:
+      tags:
+        - user
+      summary: Create user
+      description: This can only be done by the user.
+      operationId: createUser
+      requestBody:
+        description: Created user object
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: The username for the new user.
+                  example: exampleuser
+                password:
+                  type: string
+                  description: The password for the new user.
+                  example: supersecret
+                icon:
+                  type: string
+                  format: binary
+                  description: An icon image for the user's profile.
+              required:
+                - username
+                - password
       responses:
-        200:
-          description: Success
+        '200':
+          description: User created successfully.
+        '400':
+          description: Invalid request data.
+  /user/login:
+    post:
+      tags:
+        - user
+      summary: Logs user into the system.
+      description: Login for a registered user account.
+      operationId: loginUser
+      parameters:
+        - name: username
+          in: query
+          description: The user name for login.
+          example: exampleuser
+          required: true
+          schema:
+            type: string
+        - name: password
+          in: query
+          description: The password for login in clear text.
+          example: supersecret
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          headers:
+            X-Rate-Limit:
+              description: calls per hour allowed by the user
+              schema:
+                type: integer
+                format: int32
+            X-Expires-After:
+              description: date in UTC when token expires
+              schema:
+                type: string
+                format: date-time
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Frage'
+                type: string
+                description: The user token for further authentication.
+                example: kjh98lkj
+        '400':
+          description: Invalid username/password supplied
+  /user/logout:
+    get:
+      tags:
+        - user
+      summary: Logs out current logged in user session
+      description: ''
+      operationId: logoutUser
+      parameters: []
+      responses:
+        default:
+          description: successful operation
+  /user/{userToken}:
+    get:
+      tags:
+        - user
+      summary: Get user by user token.
+      description: ''
+      operationId: getUserByToken
+      parameters:
+        - name: userToken
+          in: path
+          description: The token to fetch name and icon url for.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                    description: The name of the user.
+                    example: exampleuser
+                  icon:
+                    type: string
+                    format: binary
+                    description: An icon image for the user's profile.
 
-components:
-  schemas:
-    Frage:
-      type: object
-      properties:
-        id:
-          type: integer
-        frage:
-          type: string
-        tagId:
-          type: integer
+        '400':
+          description: Invalid token supplied.
+        '404':
+          description: No user for this token found.
+    put:
+      tags:
+        - user
+      summary: Update user
+      description: This can only be done by the logged in user.
+      operationId: updateUser
+      parameters:
+        - name: userToken
+          in: path
+          description: Token for the change of account.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update an existent user.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: successful operation
+    delete:
+      tags:
+        - user
+      summary: Delete user.
+      description: This can only be done by the logged in user.
+      operationId: deleteUser
+      parameters:
+        - name: userToken
+          in: path
+          description: The token from the user ro be deleted.
+          required: true
+          schema:
+            type: string
+      responses:
+        '400':
+          description: Invalid user token supplied.
+        '404':
+          description: No user for this token found.
