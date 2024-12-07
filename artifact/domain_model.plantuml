@@ -12,46 +12,37 @@
 	skinparam ranksep 200
 	skinparam minClassWidth 100
 
-	class Standort
-	Standort : lat
-	Standort : long
-	Karte --> Standort
+	class Nutzer
+
+	class Karte
+	Karte "1" --> "1" Nutzer: ist für
+
+	class Pin
+	Pin : lat
+	Pin : long
+	Pin "*" --> "1" Karte : ist auf
 
 	class Projekt
 	Projekt : name
 	Projekt : beschreibung
-	Projekt "*" --> "*" Standort : standort
+	Projekt "1" --> "1" Pin : angezeigt als
 
 	class Verein
 	Verein : name
 	Verein : beschreibung
-	Verein "*" --> "*" Standort : standort
-
-	Verein "1" *-- "*" Projekt
+	Verein "1" --> "1" Pin : angezeigt als
+	Verein "1" --> "*" Projekt : hat
 
 	class Region
 	Region : name
 	Region : beschreibung
-	Region "*" --> "*" Standort : standort
-
-	class Karte
-
-	Karte "1" --> "*" Verein : zeigt an
-	Karte "1" --> "*" Projekt : zeigt an
-	Karte "1" *-- "*" Region
+	Region "1" --> "1" Pin : angezeigt als
 
 	class Frage
-	Frage : text
+	Frage "*" --> "1" Filter : setzt
 
-	Frage "*" --> "1" Karte : filtert
-	
-	class Nutzer
-
-	Nutzer "*" --> "*" Karte : sieht an
-	Nutzer "*" --> "*" Verein : sieht an und\nbookmarked
-	Nutzer "*" --> "*" Projekt : sieht an und\nbookmarked
-	Nutzer "*" --> "*" Region : sieht an und\nbookmarked
-	Nutzer "*" --> "*" Frage : beantwortet
+	class Filter
+	Filter "1" --> "*" Projekt : filtert
+	Filter "1" --> "*" Verein : filtert
 
 @enduml
-
