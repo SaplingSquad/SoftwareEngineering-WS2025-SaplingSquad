@@ -13,3 +13,20 @@ The script is executed inside a pod of the cluster (image based on [`alpine/k8s`
 The service-account has access to the existing `sprout`-namespace (though may not create any namespaces).
 `PULL_SECRETS` contains a comma separated list of image pull secrets to access the GitHub container registry.
 The `REPO_FULLNAME`-variable is set to point to the name of the repository.
+
+### Environment-variables
+
+The following variables are set in the deployment:
+
+#### Frontend
+
+- `PORT`: Port the frontend is expected to listen on
+
+#### Backend
+
+- `PORT`: Port the backend is expected to listen on
+- `DB_DATABASE`: Database the backend can use
+- `DB_USER`: User for the database
+- `DB_PASSWORD`: Password for the database
+- `DB_PORT`: Port of the database
+- `DB_HOST`: address of the database
