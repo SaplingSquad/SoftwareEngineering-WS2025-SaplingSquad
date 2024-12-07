@@ -1,15 +1,13 @@
-ktor:
-  application:
-    modules:
-      - saplingsquad.ApplicationKt.main
-  deployment:
-    port: 8080
-  development: true
+spring.application.name: backend
+server.port: ${port:9000}
 
-postgres:
-  url: "r2dbc:postgresql://localhost/postgres"
-  user: sapling-squad
-  password: sapling-squad
+spring:
+  r2dbc:
+    url: "r2dbc:postgresql://localhost/postgres"
+    username: sapling-squad
+    password: sapling-squad
 
-openapi:
-  spec: "api/spec.yaml"
+appconfig:
+  openapi:
+    spec: "api/spec.yaml"
+  allow-wildcard-cors: true

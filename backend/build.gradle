@@ -1,71 +1,115 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '2.1.0'
     id 'org.jetbrains.kotlin.plugin.serialization' version '2.1.0'
-    id 'io.ktor.plugin' version '3.0.1'
+    id 'org.jetbrains.kotlin.plugin.spring' version '2.1.0'
     id 'com.google.devtools.ksp' version '2.1.0-1.0.29'
+
+    id 'org.springframework.boot' version '3.4.0'
+    id 'io.spring.dependency-management' version '1.1.6'
+
+    id "org.openapi.generator" version "7.10.0"
 }
 
 group "saplingsquad"
 version "0.0.1"
-mainClassName = "io.ktor.server.netty.EngineMain"
 
 def h2_version = project.property("h2_version")
 def logback_version = project.property("logback_version")
 def postgres_version = project.property("postgres_version")
 def kotlin_version = project.property("kotlin_version")
 def komapper_version = project.property("komapper_version")
-def openapi_validator_version = project.property("openapi_validator_version")
-
-def isDevelopment = project.ext.has("development")
-applicationDefaultJvmArgs = ["-Dio.ktor.development=$isDevelopment"]
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation "io.ktor:ktor-server-cors-jvm"
-    implementation "io.ktor:ktor-server-core-jvm"
-    implementation "io.ktor:ktor-server-content-negotiation-jvm"
-    implementation "io.ktor:ktor-serialization-kotlinx-json-jvm"
     implementation "org.postgresql:postgresql:$postgres_version"
     implementation "com.h2database:h2:$h2_version"
-    implementation "io.ktor:ktor-server-netty-jvm"
     implementation "ch.qos.logback:logback-classic:$logback_version"
-    implementation "io.ktor:ktor-server-config-yaml-jvm"
-    implementation "io.ktor:ktor-server-call-logging"
-    implementation "io.ktor:ktor-server-openapi"
-    implementation "io.ktor:ktor-server-double-receive"
+
+    implementation "org.springframework.boot:spring-boot-devtools"
+    implementation "org.springframework.boot:spring-boot-starter-webflux"
+    implementation "org.springframework.boot:spring-boot-starter-validation"
+    implementation "org.springframework.boot:spring-boot-configuration-processor"
+
+    implementation "com.fasterxml.jackson.module:jackson-module-kotlin"
+
     platform("org.komapper:komapper-platform:$komapper_version").with {
         implementation(it)
         ksp(it)
     }
-    implementation "org.komapper:komapper-starter-r2dbc:$komapper_version"
+    implementation "org.komapper:komapper-spring-boot-starter-r2dbc:$komapper_version"
     implementation "org.komapper:komapper-dialect-h2-r2dbc:$komapper_version"
     implementation "org.komapper:komapper-dialect-postgresql-r2dbc:$komapper_version"
     ksp "org.komapper:komapper-processor:$komapper_version"
-    implementation "com.atlassian.oai:swagger-request-validator-core:$openapi_validator_version"
 
-    testImplementation "io.ktor:ktor-server-test-host-jvm"
-    testImplementation "io.ktor:ktor-client-content-negotiation"
+
+    //Dependencies of OpenAPI Codegen
+    implementation("com.google.code.findbugs:jsr305:3.0.2")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("jakarta.validation:jakarta.validation-api")
+    implementation("jakarta.annotation:jakarta.annotation-api:2.1.0")
+    def kotlinxCoroutinesVersion = "1.9.0"
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:$kotlinxCoroutinesVersion")
+    implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.6.0")
+
+    // Test dependencies
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
 }
 
-def generatedResources = layout.buildDirectory.dir("generated/copy-openapi-spec/main/resources/")
+def generatedOpenApi = layout.buildDirectory.dir("generated/openapi-codegen/")
 
-tasks.register("copy-openapi-spec", Copy) {
-    from("../api")
-    into(generatedResources.get().dir("api"))
+tasks.named("openApiGenerate") {
+    // Run ksp before OpenAPI generator, (i.e. don't run kspKotlin on generated code)
+    dependsOn "kspKotlin"
+}
+tasks.register("deleteGeneratedApplication", Delete) {
+    dependsOn "openApiGenerate"
+    def path = generatedOpenApi.get().dir("src/main/kotlin/saplingsquad/home/Application.kt")
+    println(path)
+    delete(path)
+}
+tasks.named("compileKotlin") {
+    dependsOn "openApiGenerate", "deleteGeneratedApplication"
 }
 
+openApiGenerate {
+    //https://openapi-generator.tech/docs/generators/kotlin-spring
+    inputSpec.set("$rootDir/../api/spec.yaml")
+    generatorName.set("kotlin-spring")
+    library.set("spring-boot")
+    outputDir.set(generatedOpenApi.map { it.toString() })
+    packageName.set("saplingsquad")
+    configOptions.put("basePackage", "saplingsquad.home")
+    configOptions.put("configPackage", "saplingsquad.config")
+    apiPackage.set("saplingsquad.api")
+    modelPackage.set("saplingsquad.api.models")
+    templateDir.set("$rootDir/templates")
 
-tasks.named("processResources") {
-    dependsOn "copy-openapi-spec"
+    configOptions.put("delegatePattern", "true")
+    configOptions.put("reactive", "true")
+    configOptions.put("skipDefaultInterface", "true")
+    configOptions.put("useSpringBoot3", "true")
+
 }
 sourceSets {
     configureEach {
-        resources {
-            srcDir(generatedResources)
+        main {
+            kotlin {
+                srcDir(generatedOpenApi.map { it.dir("src/main/kotlin") })
+            }
         }
     }
+}
+springBoot {
+    mainClass.set("saplingsquad.ApplicationKt")
 }
