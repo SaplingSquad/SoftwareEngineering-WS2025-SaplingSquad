@@ -77,7 +77,7 @@ def apiSource = "$rootDir/../api"
 tasks.register("copySpecToResources", Copy) {
     duplicatesStrategy = DuplicatesStrategy.WARN
     from apiSource
-    into(openApiSpecResourceFolder.get().dir("/static/api"))
+    into(openApiSpecResourceFolder.get().dir("static/api"))
 }
 tasks.named("processResources") {
     dependsOn "copySpecToResources"
