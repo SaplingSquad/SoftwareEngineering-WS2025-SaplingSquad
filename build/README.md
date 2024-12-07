@@ -21,6 +21,7 @@ The following variables are set in the deployment:
 #### Frontend
 
 - `PORT`: Port the frontend is expected to listen on
+- `ORIGIN`: The origin domain
 
 #### Backend
 
@@ -30,3 +31,5 @@ The following variables are set in the deployment:
 - `DB_PASSWORD`: Password for the database
 - `DB_PORT`: Port of the database
 - `DB_HOST`: address of the database
+- `ORIGIN`: The origin domain
+- `BASE_PATH`: The base path to serve at

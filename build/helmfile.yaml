@@ -33,6 +33,8 @@ releases:
       DB_PORT: 5432
       DB_HOST: sprout-db
       PORT: 8080
+      ORIGIN: {{ requiredEnv "DEPLOY_HOST" | quote }}
+      BASE_PATH: /api
     containerPort: 8080
     ingress:
       host: {{ requiredEnv "DEPLOY_HOST" | quote }}
@@ -73,6 +75,7 @@ releases:
     {{- end }}
     vars:
       PORT: 3000
+      ORIGIN: {{ requiredEnv "DEPLOY_HOST" | quote }}
     containerPort: 3000
     ingress:
       host: {{ requiredEnv "DEPLOY_HOST" | quote }}
