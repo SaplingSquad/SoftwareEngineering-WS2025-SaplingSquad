@@ -76,6 +76,7 @@ releases:
     vars:
       PORT: 3000
       ORIGIN: {{ requiredEnv "DEPLOY_HOST" | quote }}
+      REVERSE_PROXY_ENABLED: true
     containerPort: 3000
     ingress:
       host: {{ requiredEnv "DEPLOY_HOST" | quote }}
