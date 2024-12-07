@@ -1,0 +1,82 @@
+helmDefaults:
+  createNamespace: {{ default false (eq (env "CREATE_NAMESPACE") "true") }}
+
+repositories:
+- name: onechart
+  url: https://chart.onechart.dev
+- name: bitnami
+  url: https://charts.bitnami.com/bitnami
+
+releases:
+- name: backend
+  namespace: sprout
+  chart: onechart/onechart
+  values:
+  - image:
+      repository: ghcr.io/{{ requiredEnv "REPO_FULLNAME" | lower }}/backend
+    # HACK: Instead of updating the version, recreate the container and pull latest
+      tag: latest
+      pullPolicy: Always
+    podLabels:
+      date: {{ now | unixEpoch | quote }}
+    # ---
+    {{- if (env "PULL_SECRETS") }}
+    imagePullSecrets:
+    {{- range ( split "," (env "PULL_SECRETS") ) }}
+      - {{ . }}
+    {{- end }}
+    {{- end }}
+    secretName: sprout-backend-secret
+    vars:
+      DB_DATABASE: sprout
+      DB_USER: sprout
+      DB_PORT: 5432
+      DB_HOST: sprout-db
+      PORT: 8080
+    containerPort: 8080
+    ingress:
+      host: {{ requiredEnv "DEPLOY_HOST" | quote }}
+      path: /api
+  needs:
+  - secrets
+- name: database
+  namespace: sprout
+  chart: bitnami/postgresql
+  values:
+  - fullnameOverride: sprout-db
+    auth:
+      enablePostgresUser: false
+      username: sprout
+      existingSecret: sprout-database-secret
+      database: sprout
+    containerPorts:
+      postgresql: 5432
+  needs:
+  - secrets
+- name: frontend
+  namespace: sprout
+  chart: onechart/onechart
+  values:
+  - image:
+      repository: ghcr.io/{{ requiredEnv "REPO_FULLNAME" | lower }}/frontend
+    # HACK: Instead of updating the version, recreate the container and pull latest
+      tag: latest
+      pullPolicy: Always
+    podLabels:
+      date: {{ now | unixEpoch | quote }}
+    # ---
+    {{- if (env "PULL_SECRETS") }}
+    imagePullSecrets:
+    {{- range ( split "," (env "PULL_SECRETS") ) }}
+      - {{ . }}
+    {{- end }}
+    {{- end }}
+    vars:
+      PORT: 3000
+    containerPort: 3000
+    ingress:
+      host: {{ requiredEnv "DEPLOY_HOST" | quote }}
+      path: /
+- name: secrets
+  namespace: sprout
+  chart: ./secrets
