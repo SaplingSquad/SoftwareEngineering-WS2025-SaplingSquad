@@ -35,15 +35,15 @@ paths:
               $ref: '#/components/schemas/User'
       responses:
         '200':
-          $ref: '#/responses/200'
+          $ref: '#/components/responses/200'
         '400':
-          $ref: '#/responses/400'
+          $ref: '#/components/responses/400'
         '401':
-          $ref: '#/responses/401'
+          $ref: '#/components/responses/401'
         '404':
-          $ref: '#/responses/404'
+          $ref: '#/components/responses/404'
         '5XX':
-          $ref: '#/responses/5XX'
+          $ref: '#/components/responses/5XX'
   /user/login:
     post:
       tags:
@@ -88,11 +88,11 @@ paths:
         '400':
           description: Invalid username/password supplied.
         '401':
-          $ref: '#/responses/401'
+          $ref: '#/components/responses/401'
         '404':
-          $ref: '#/responses/404'
+          $ref: '#/components/responses/404'
         '5XX':
-          $ref: '#/responses/5XX'
+          $ref: '#/components/responses/5XX'
   /user/authentication:
     get:
       tags:
@@ -121,11 +121,11 @@ paths:
         '400':
           description: Invalid token supplied.
         '401':
-          $ref: '#/responses/401'
+          $ref: '#/components/responses/401'
         '404':
           description: No user for this token found.
         '5XX':
-          $ref: '#/responses/5XX'
+          $ref: '#/components/responses/5XX'
     put:
       tags:
         - user
@@ -142,15 +142,15 @@ paths:
               $ref: '#/components/schemas/User'
       responses:
         '200':
-          $ref: '#/responses/200'
+          $ref: '#/components/responses/200'
         '400':
-          $ref: '#/responses/400'
+          $ref: '#/components/responses/400'
         '401':
-          $ref: '#/responses/401'
+          $ref: '#/components/responses/401'
         '404':
-          $ref: '#/responses/404'
+          $ref: '#/components/responses/404'
         '5XX':
-          $ref: '#/responses/5XX'
+          $ref: '#/components/responses/5XX'
     delete:
       tags:
         - user
@@ -161,15 +161,15 @@ paths:
         - $ref: '#/components/parameters/userToken'
       responses:
         '200':
-          $ref: '#/responses/200'
+          $ref: '#/components/responses/200'
         '400':
           description: Invalid user token supplied.
         '401':
-          $ref: '#/responses/401'
+          $ref: '#/components/responses/401'
         '404':
           description: No user for this token found.
         '5XX':
-          $ref: '#/responses/5XX'
+          $ref: '#/components/responses/5XX'
   /questions:
     get:
       tags:
@@ -187,13 +187,13 @@ paths:
                 items:
                   $ref: '#/components/schemas/Question'
         '400':
-          $ref: '#/responses/400'
+          $ref: '#/components/responses/400'
         '401':
-          $ref: '#/responses/401'
+          $ref: '#/components/responses/401'
         '404':
-          $ref: '#/responses/404'
+          $ref: '#/components/responses/404'
         '5XX':
-          $ref: '#/responses/5XX'
+          $ref: '#/components/responses/5XX'
     post:
       tags:
         - questions
@@ -209,15 +209,15 @@ paths:
             $ref: '#/components/schemas/Answers'
       responses:
         '200':
-          $ref: '#/responses/200'
+          $ref: '#/components/responses/200'
         '400':
-          $ref: '#/responses/400'
+          $ref: '#/components/responses/400'
         '401':
-          $ref: '#/responses/401'
+          $ref: '#/components/responses/401'
         '404':
-          $ref: '#/responses/404'
+          $ref: '#/components/responses/404'
         '5XX':
-          $ref: '#/responses/5XX'
+          $ref: '#/components/responses/5XX'
   /questions/filter:
     get:
       tags:
@@ -238,13 +238,13 @@ paths:
                   type: integer
                   description: The tagId for a tag to be used for the filter.
         '400':
-          $ref: '#/responses/400'
+          $ref: '#/components/responses/400'
         '401':
-          $ref: '#/responses/401'
+          $ref: '#/components/responses/401'
         '404':
-          $ref: '#/responses/404'
+          $ref: '#/components/responses/404'
         '5XX':
-          $ref: '#/responses/5XX'
+          $ref: '#/components/responses/5XX'
   /map/association/locations:
     get:
       tags:
@@ -269,13 +269,13 @@ paths:
                     location:
                       $ref: '#/components/schemas/Location'
         '400':
-          $ref: '#/responses/400'
+          $ref: '#/components/responses/400'
         '401':
-          $ref: '#/responses/401'
+          $ref: '#/components/responses/401'
         '404':
-          $ref: '#/responses/404'
+          $ref: '#/components/responses/404'
         '5XX':
-          $ref: '#/responses/5XX'
+          $ref: '#/components/responses/5XX'
   /map/association/informations/byId:
     get:
       tags:
@@ -298,13 +298,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/AssociationInformations'
         '400':
-          $ref: '#/responses/400'
+          $ref: '#/components/responses/400'
         '401':
-          $ref: '#/responses/401'
+          $ref: '#/components/responses/401'
         '404':
-          $ref: '#/responses/404'
+          $ref: '#/components/responses/404'
         '5XX':
-          $ref: '#/responses/5XX'
+          $ref: '#/components/responses/5XX'
   /map/association/informations:
     get:
       tags:
@@ -324,13 +324,13 @@ paths:
                     schema:
                       $ref: '#/components/schemas/AssociationInformations'
         '400':
-          $ref: '#/responses/400'
+          $ref: '#/components/responses/400'
         '401':
-          $ref: '#/responses/401'
+          $ref: '#/components/responses/401'
         '404':
-          $ref: '#/responses/404'
+          $ref: '#/components/responses/404'
         '5XX':
-          $ref: '#/responses/5XX'
+          $ref: '#/components/responses/5XX'
   /map/projects/locations:
     get:
       tags:
@@ -355,13 +355,13 @@ paths:
                     location:
                       $ref: '#/components/schemas/Location'
         '400':
-          $ref: '#/responses/400'
+          $ref: '#/components/responses/400'
         '401':
-          $ref: '#/responses/401'
+          $ref: '#/components/responses/401'
         '404':
-          $ref: '#/responses/404'
+          $ref: '#/components/responses/404'
         '5XX':
-          $ref: '#/responses/5XX'
+          $ref: '#/components/responses/5XX'
   /map/project/informations/byId:
     get:
       tags:
@@ -384,13 +384,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProjectInformations'
         '400':
-          $ref: '#/responses/400'
+          $ref: '#/components/responses/400'
         '401':
-          $ref: '#/responses/401'
+          $ref: '#/components/responses/401'
         '404':
-          $ref: '#/responses/404'
+          $ref: '#/components/responses/404'
         '5XX':
-          $ref: '#/responses/5XX'
+          $ref: '#/components/responses/5XX'
   /map/project/informations:
     get:
       tags:
@@ -411,13 +411,13 @@ paths:
                     schema:
                       $ref: '#/components/schemas/AssociationInformations'
         '400':
-          $ref: '#/responses/400'
+          $ref: '#/components/responses/400'
         '401':
-          $ref: '#/responses/401'
+          $ref: '#/components/responses/401'
         '404':
-          $ref: '#/responses/404'
+          $ref: '#/components/responses/404'
         '5XX':
-          $ref: '#/responses/5XX'
+          $ref: '#/components/responses/5XX'
   /map/region/locations:
     get:
       tags:
@@ -446,13 +446,13 @@ paths:
                       location:
                         $ref: '#/components/schemas/Location'
         '400':
-          $ref: '#/responses/400'
+          $ref: '#/components/responses/400'
         '401':
-          $ref: '#/responses/401'
+          $ref: '#/components/responses/401'
         '404':
-          $ref: '#/responses/404'
+          $ref: '#/components/responses/404'
         '5XX':
-          $ref: '#/responses/5XX'
+          $ref: '#/components/responses/5XX'
   /map/region/informations/byId:
     get:
       tags:
@@ -475,13 +475,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/RegionInformations'
         '400':
-          $ref: '#/responses/400'
+          $ref: '#/components/responses/400'
         '401':
-          $ref: '#/responses/401'
+          $ref: '#/components/responses/401'
         '404':
-          $ref: '#/responses/404'
+          $ref: '#/components/responses/404'
         '5XX':
-          $ref: '#/responses/5XX'
+          $ref: '#/components/responses/5XX'
   /bookmarks/projects:
     post:
       tags:
@@ -499,15 +499,15 @@ paths:
             type: integer
       responses:
         '200':
-          $ref: '#/responses/200'
+          $ref: '#/components/responses/200'
         '400':
-          $ref: '#/responses/400'
+          $ref: '#/components/responses/400'
         '401':
-          $ref: '#/responses/401'
+          $ref: '#/components/responses/401'
         '404':
-          $ref: '#/responses/404'
+          $ref: '#/components/responses/404'
         '5XX':
-          $ref: '#/responses/5XX'
+          $ref: '#/components/responses/5XX'
     delete:
       tags:
         - bookmarks
@@ -524,15 +524,15 @@ paths:
             type: integer
       responses:
         '200':
-          $ref: '#/responses/200'
+          $ref: '#/components/responses/200'
         '400':
-          $ref: '#/responses/400'
+          $ref: '#/components/responses/400'
         '401':
-          $ref: '#/responses/401'
+          $ref: '#/components/responses/401'
         '404':
-          $ref: '#/responses/404'
+          $ref: '#/components/responses/404'
         '5XX':
-          $ref: '#/responses/5XX'
+          $ref: '#/components/responses/5XX'
   /bookmarks/associations:
     post:
       tags:
@@ -550,15 +550,15 @@ paths:
             type: integer
       responses:
         '200':
-          $ref: '#/responses/200'
+          $ref: '#/components/responses/200'
         '400':
-          $ref: '#/responses/400'
+          $ref: '#/components/responses/400'
         '401':
-          $ref: '#/responses/401'
+          $ref: '#/components/responses/401'
         '404':
-          $ref: '#/responses/404'
+          $ref: '#/components/responses/404'
         '5XX':
-          $ref: '#/responses/5XX'
+          $ref: '#/components/responses/5XX'
     delete:
       tags:
         - bookmarks
@@ -575,15 +575,15 @@ paths:
             type: integer
       responses:
         '200':
-          $ref: '#/responses/200'
+          $ref: '#/components/responses/200'
         '400':
-          $ref: '#/responses/400'
+          $ref: '#/components/responses/400'
         '401':
-          $ref: '#/responses/401'
+          $ref: '#/components/responses/401'
         '404':
-          $ref: '#/responses/404'
+          $ref: '#/components/responses/404'
         '5XX':
-          $ref: '#/responses/5XX'
+          $ref: '#/components/responses/5XX'
   /associations:
     post:
       tags:
@@ -599,15 +599,15 @@ paths:
               $ref: '#/components/schemas/Association'
       responses:
         '200':
-          $ref: '#/responses/200'
+          $ref: '#/components/responses/200'
         '400':
-          $ref: '#/responses/400'
+          $ref: '#/components/responses/400'
         '401':
-          $ref: '#/responses/401'
+          $ref: '#/components/responses/401'
         '404':
-          $ref: '#/responses/404'
+          $ref: '#/components/responses/404'
         '5XX':
-          $ref: '#/responses/5XX'
+          $ref: '#/components/responses/5XX'
     put:
       tags:
         - association
@@ -623,15 +623,15 @@ paths:
             $ref: '#/components/schemas/AssociationInformations'
       responses:
         '200':
-          $ref: '#/responses/200'
+          $ref: '#/components/responses/200'
         '400':
-          $ref: '#/responses/400'
+          $ref: '#/components/responses/400'
         '401':
-          $ref: '#/responses/401'
+          $ref: '#/components/responses/401'
         '404':
-          $ref: '#/responses/404'
+          $ref: '#/components/responses/404'
         '5XX':
-          $ref: '#/responses/5XX'
+          $ref: '#/components/responses/5XX'
     delete:
       tags:
         - association
@@ -648,15 +648,15 @@ paths:
             type: integer
       responses:
         '200':
-          $ref: '#/responses/200'
+          $ref: '#/components/responses/200'
         '400':
-          $ref: '#/responses/400'
+          $ref: '#/components/responses/400'
         '401':
-          $ref: '#/responses/401'
+          $ref: '#/components/responses/401'
         '404':
-          $ref: '#/responses/404'
+          $ref: '#/components/responses/404'
         '5XX':
-          $ref: '#/responses/5XX'
+          $ref: '#/components/responses/5XX'
   /associations/projects:
     post:
       tags:
@@ -688,15 +688,15 @@ paths:
             $ref: '#/components/schemas/ProjectInformations'
       responses:
         '200':
-          $ref: '#/responses/200'
+          $ref: '#/components/responses/200'
         '400':
-          $ref: '#/responses/400'
+          $ref: '#/components/responses/400'
         '401':
-          $ref: '#/responses/401'
+          $ref: '#/components/responses/401'
         '404':
-          $ref: '#/responses/404'
+          $ref: '#/components/responses/404'
         '5XX':
-          $ref: '#/responses/5XX'
+          $ref: '#/components/responses/5XX'
     delete:
       tags:
         - association
@@ -713,15 +713,15 @@ paths:
             type: integer
       responses:
         '200':
-          $ref: '#/responses/200'
+          $ref: '#/components/responses/200'
         '400':
-          $ref: '#/responses/400'
+          $ref: '#/components/responses/400'
         '401':
-          $ref: '#/responses/401'
+          $ref: '#/components/responses/401'
         '404':
-          $ref: '#/responses/404'
+          $ref: '#/components/responses/404'
         '5XX':
-          $ref: '#/responses/5XX'
+          $ref: '#/components/responses/5XX'
 
 components:
   schemas:
