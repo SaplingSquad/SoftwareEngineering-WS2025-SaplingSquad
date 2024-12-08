@@ -18,6 +18,14 @@ fun <T> flowOfList(block: suspend () -> List<T>): Flow<T> {
 }
 
 /**
+ * @see flowOfList
+ */
+@JvmName("flowOfListExt") //Same JVM signature otherwise
+fun <T> (suspend () -> List<T>).flowOfList(): Flow<T> {
+    return flowOfList(this)
+}
+
+/**
  * Converts a Flow to a Status Code 200 Response Entity with the flow as its body.
  */
 fun <T> Flow<T>.asHttpOkResponse(): ResponseEntity<Flow<T>> {

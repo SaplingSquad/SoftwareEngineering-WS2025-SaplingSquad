@@ -20,15 +20,15 @@ class FragenkatalogApiService(private val repository: FragenkatalogRepository) :
      * API Endpoint to get a list of all questions.
      */
     override fun fragenkatalogGet(): ResponseEntity<Flow<Frage>> =
-        flowOfList {
-            repository.readAll()
-        }.map {
-            Frage(
-                id = it.id,
-                frage = it.frage,
-                tagId = it.tag
-            )
-        }.asHttpOkResponse()
+        repository::readAll
+            .flowOfList()
+            .map {
+                Frage(
+                    id = it.id,
+                    frage = it.frage,
+                    tagId = it.tag
+                )
+            }.asHttpOkResponse()
 }
 
 
