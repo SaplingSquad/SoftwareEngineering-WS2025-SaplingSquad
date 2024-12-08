@@ -101,12 +101,7 @@ paths:
       description: ''
       operationId: getUserByToken
       parameters:
-        - name: userToken
-          in: query
-          description: The token to fetch name and icon url for.
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/userToken'
       responses:
         '200':
           description: successful operation
@@ -138,12 +133,7 @@ paths:
       description: This can only be done by the logged in user.
       operationId: updateUser
       parameters:
-        - name: userToken
-          in: query
-          description: Token for the change of account.
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/userToken'
       requestBody:
         description: Update an existent user.
         content:
@@ -168,12 +158,7 @@ paths:
       description: This can only be done by the logged in user.
       operationId: deleteUser
       parameters:
-        - name: userToken
-          in: query
-          description: The token from the user to be deleted.
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/userToken'
       responses:
         '200':
           $ref: '#/responses/200'
@@ -216,12 +201,7 @@ paths:
       description: ''
       operationId: postAnswers
       parameters:
-        - name: userToken
-          in: query
-          description: Token of the logged in account, which answered the questions.
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/userToken'
         - name: answers
           in: query
           description: Answers to the questions.
@@ -246,12 +226,7 @@ paths:
       description: ''
       operationId: getFilters
       parameters:
-        - name: userToken
-          in: query
-          description: Token of the logged in account, which answered the questions.
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/userToken'
       responses:
         '200':
           description: List of the filters to be activated.
@@ -515,12 +490,7 @@ paths:
       description: This can only be done by the user.
       operationId: bookmarkProject
       parameters:
-        - name: userToken
-          in: query
-          description: The token from the user.
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/userToken'
         - name: projectId
           in: query
           description: The Id of the project to bookmark.
@@ -545,12 +515,7 @@ paths:
       description: This can only be done by the user.
       operationId: deleteProjectBookmark
       parameters:
-        - name: userToken
-          in: query
-          description: The token from the user.
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/userToken'
         - name: projectId
           in: query
           description: The Id of the project to delete.
@@ -576,12 +541,7 @@ paths:
       description: This can only be done by the user.
       operationId: bookmarkAssocisation
       parameters:
-        - name: userToken
-          in: query
-          description: The token from the user.
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/userToken'
         - name: assocId
           in: query
           description: The Id of the association to bookmark.
@@ -606,12 +566,7 @@ paths:
       description: This can only be done by the user.
       operationId: deleteAssociationBookmark
       parameters:
-        - name: userToken
-          in: query
-          description: The token from the user.
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/userToken'
         - name: assocId
           in: query
           description: The Id of the association to delete.
@@ -660,12 +615,7 @@ paths:
       description: This can only be done by a logged in user.
       operationId: updateAssociation
       parameters:
-        - name: userToken
-          in: query
-          description: Token of the logged in account.
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/userToken'
         - name: associationInformations
           in: query
           description: Update an existing association.
@@ -689,12 +639,7 @@ paths:
       description: This can only be done by a logged in user.
       operationId: deleteAssociation
       parameters:
-        - name: userToken
-          in: query
-          description: The token from the user to be deleted.
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/userToken'
         - name: assocId
           in: query
           description: The assocId from the association to be deleted.
@@ -735,12 +680,7 @@ paths:
       description: This can only be done by a logged in user.
       operationId: updateProject
       parameters:
-        - name: userToken
-          in: query
-          description: Token of the logged in account.
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/userToken'
         - name: projectInformations
           in: query
           description: Update an existing project.
@@ -764,12 +704,7 @@ paths:
       description: This can only be done by a logged in user.
       operationId: deleteProject
       parameters:
-        - name: userToken
-          in: query
-          description: The token from the logged in user.
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/userToken'
         - name: projectId
           in: query
           description: The projectId from the project to be deleted.
@@ -1031,3 +966,11 @@ components:
       description: Requested resource was not found.
     '5XX':
       description: Unexpected server error.
+  parameters:
+    userToken:
+      name: userToken
+      in: query
+      description: Session token of the logged in account.
+      required: true
+      schema:
+        type: string
