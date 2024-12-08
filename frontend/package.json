@@ -52,6 +52,7 @@
     "vitest": "^0.34.6"
   },
   "dependencies": {
-    "express": "4.20.0"
+    "express": "4.20.0",
+    "maplibre-gl": "^4.7.1"
   }
 }
