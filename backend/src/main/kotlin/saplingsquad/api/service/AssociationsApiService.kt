@@ -9,7 +9,7 @@ import saplingsquad.api.models.Project
 import saplingsquad.api.models.ProjectInformations
 
 @Service
-class AssociationApiService() : AssociationsApiDelegate  {
+class AssociationsApiService() : AssociationsApiDelegate  {
     override suspend fun createAssociation(association: Association?): ResponseEntity<Unit> {
         TODO("Not yet implemented")
     }

@@ -35,9 +35,15 @@ paths:
               $ref: '#/components/schemas/User'
       responses:
         '200':
-          description: User created successfully.
+          $ref: '#/responses/200'
         '400':
-          description: Invalid request data.
+          $ref: '#/responses/400'
+        '401':
+          $ref: '#/responses/401'
+        '404':
+          $ref: '#/responses/404'
+        '5XX':
+          $ref: '#/responses/5XX'
   /user/login:
     post:
       tags:
@@ -80,7 +86,13 @@ paths:
                 type: string
                 description: The temporary user token for session authentication.
         '400':
-          description: Invalid username/password supplied
+          description: Invalid username/password supplied.
+        '401':
+          $ref: '#/responses/401'
+        '404':
+          $ref: '#/responses/404'
+        '5XX':
+          $ref: '#/responses/5XX'
   /user/authentication:
     get:
       tags:
@@ -113,8 +125,12 @@ paths:
                     description: An icon image for the user's profile.
         '400':
           description: Invalid token supplied.
+        '401':
+          $ref: '#/responses/401'
         '404':
           description: No user for this token found.
+        '5XX':
+          $ref: '#/responses/5XX'
     put:
       tags:
         - user
@@ -135,8 +151,16 @@ paths:
             schema:
               $ref: '#/components/schemas/User'
       responses:
-        default:
-          description: successful operation
+        '200':
+          $ref: '#/responses/200'
+        '400':
+          $ref: '#/responses/400'
+        '401':
+          $ref: '#/responses/401'
+        '404':
+          $ref: '#/responses/404'
+        '5XX':
+          $ref: '#/responses/5XX'
     delete:
       tags:
         - user
@@ -151,11 +175,16 @@ paths:
           schema:
             type: string
       responses:
+        '200':
+          $ref: '#/responses/200'
         '400':
           description: Invalid user token supplied.
+        '401':
+          $ref: '#/responses/401'
         '404':
           description: No user for this token found.
-
+        '5XX':
+          $ref: '#/responses/5XX'
   /questions:
     get:
       tags:
@@ -164,7 +193,7 @@ paths:
       description: ''
       operationId: getQuestions
       responses:
-        200:
+        '200':
           description: Success
           content:
             application/json:
@@ -172,6 +201,14 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Question'
+        '400':
+          $ref: '#/responses/400'
+        '401':
+          $ref: '#/responses/401'
+        '404':
+          $ref: '#/responses/404'
+        '5XX':
+          $ref: '#/responses/5XX'
     post:
       tags:
         - questions
@@ -191,8 +228,16 @@ paths:
           schema:
             $ref: '#/components/schemas/Answers'
       responses:
-        200:
-          description: Success
+        '200':
+          $ref: '#/responses/200'
+        '400':
+          $ref: '#/responses/400'
+        '401':
+          $ref: '#/responses/401'
+        '404':
+          $ref: '#/responses/404'
+        '5XX':
+          $ref: '#/responses/5XX'
   /questions/filter:
     get:
       tags:
@@ -208,7 +253,7 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: List of the filters to be activated.
           content:
             application/json:
@@ -217,6 +262,14 @@ paths:
                 items:
                   type: integer
                   description: The tagId for a tag to be used for the filter.
+        '400':
+          $ref: '#/responses/400'
+        '401':
+          $ref: '#/responses/401'
+        '404':
+          $ref: '#/responses/404'
+        '5XX':
+          $ref: '#/responses/5XX'
   /map/association/locations:
     get:
       tags:
@@ -240,6 +293,14 @@ paths:
                       description: Id of the association for the application.
                     location:
                       $ref: '#/components/schemas/Location'
+        '400':
+          $ref: '#/responses/400'
+        '401':
+          $ref: '#/responses/401'
+        '404':
+          $ref: '#/responses/404'
+        '5XX':
+          $ref: '#/responses/5XX'
   /map/association/informations/byId:
     get:
       tags:
@@ -261,6 +322,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AssociationInformations'
+        '400':
+          $ref: '#/responses/400'
+        '401':
+          $ref: '#/responses/401'
+        '404':
+          $ref: '#/responses/404'
+        '5XX':
+          $ref: '#/responses/5XX'
   /map/association/informations:
     get:
       tags:
@@ -279,6 +348,14 @@ paths:
                   properties:
                     schema:
                       $ref: '#/components/schemas/AssociationInformations'
+        '400':
+          $ref: '#/responses/400'
+        '401':
+          $ref: '#/responses/401'
+        '404':
+          $ref: '#/responses/404'
+        '5XX':
+          $ref: '#/responses/5XX'
   /map/projects/locations:
     get:
       tags:
@@ -302,6 +379,14 @@ paths:
                       description: Id of the project for the application.
                     location:
                       $ref: '#/components/schemas/Location'
+        '400':
+          $ref: '#/responses/400'
+        '401':
+          $ref: '#/responses/401'
+        '404':
+          $ref: '#/responses/404'
+        '5XX':
+          $ref: '#/responses/5XX'
   /map/project/informations/byId:
     get:
       tags:
@@ -323,6 +408,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProjectInformations'
+        '400':
+          $ref: '#/responses/400'
+        '401':
+          $ref: '#/responses/401'
+        '404':
+          $ref: '#/responses/404'
+        '5XX':
+          $ref: '#/responses/5XX'
   /map/project/informations:
     get:
       tags:
@@ -342,6 +435,14 @@ paths:
                   properties:
                     schema:
                       $ref: '#/components/schemas/AssociationInformations'
+        '400':
+          $ref: '#/responses/400'
+        '401':
+          $ref: '#/responses/401'
+        '404':
+          $ref: '#/responses/404'
+        '5XX':
+          $ref: '#/responses/5XX'
   /map/region/locations:
     get:
       tags:
@@ -369,6 +470,14 @@ paths:
                         description: Name of the region.
                       location:
                         $ref: '#/components/schemas/Location'
+        '400':
+          $ref: '#/responses/400'
+        '401':
+          $ref: '#/responses/401'
+        '404':
+          $ref: '#/responses/404'
+        '5XX':
+          $ref: '#/responses/5XX'
   /map/region/informations/byId:
     get:
       tags:
@@ -390,6 +499,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RegionInformations'
+        '400':
+          $ref: '#/responses/400'
+        '401':
+          $ref: '#/responses/401'
+        '404':
+          $ref: '#/responses/404'
+        '5XX':
+          $ref: '#/responses/5XX'
   /bookmarks/projects:
     post:
       tags:
@@ -412,7 +529,15 @@ paths:
             type: integer
       responses:
         '200':
-          description: Successfully saved the bookmark.
+          $ref: '#/responses/200'
+        '400':
+          $ref: '#/responses/400'
+        '401':
+          $ref: '#/responses/401'
+        '404':
+          $ref: '#/responses/404'
+        '5XX':
+          $ref: '#/responses/5XX'
     delete:
       tags:
         - bookmarks
@@ -434,7 +559,15 @@ paths:
             type: integer
       responses:
         '200':
-          description: Successfully deleted the bookmark.
+          $ref: '#/responses/200'
+        '400':
+          $ref: '#/responses/400'
+        '401':
+          $ref: '#/responses/401'
+        '404':
+          $ref: '#/responses/404'
+        '5XX':
+          $ref: '#/responses/5XX'
   /bookmarks/associations:
     post:
       tags:
@@ -457,7 +590,15 @@ paths:
             type: integer
       responses:
         '200':
-          description: Successfully saved the bookmark.
+          $ref: '#/responses/200'
+        '400':
+          $ref: '#/responses/400'
+        '401':
+          $ref: '#/responses/401'
+        '404':
+          $ref: '#/responses/404'
+        '5XX':
+          $ref: '#/responses/5XX'
     delete:
       tags:
         - bookmarks
@@ -479,7 +620,15 @@ paths:
             type: integer
       responses:
         '200':
-          description: Successfully deleted the bookmark.
+          $ref: '#/responses/200'
+        '400':
+          $ref: '#/responses/400'
+        '401':
+          $ref: '#/responses/401'
+        '404':
+          $ref: '#/responses/404'
+        '5XX':
+          $ref: '#/responses/5XX'
   /associations:
     post:
       tags:
@@ -494,8 +643,16 @@ paths:
             schema:
               $ref: '#/components/schemas/Association'
       responses:
-        default:
-          description: successful operation
+        '200':
+          $ref: '#/responses/200'
+        '400':
+          $ref: '#/responses/400'
+        '401':
+          $ref: '#/responses/401'
+        '404':
+          $ref: '#/responses/404'
+        '5XX':
+          $ref: '#/responses/5XX'
     put:
       tags:
         - association
@@ -515,8 +672,16 @@ paths:
           schema:
             $ref: '#/components/schemas/AssociationInformations'
       responses:
-        default:
-          description: successful operation
+        '200':
+          $ref: '#/responses/200'
+        '400':
+          $ref: '#/responses/400'
+        '401':
+          $ref: '#/responses/401'
+        '404':
+          $ref: '#/responses/404'
+        '5XX':
+          $ref: '#/responses/5XX'
     delete:
       tags:
         - association
@@ -537,10 +702,16 @@ paths:
           schema:
             type: integer
       responses:
+        '200':
+          $ref: '#/responses/200'
         '400':
-          description: Invalid user token/ association id supplied.
+          $ref: '#/responses/400'
+        '401':
+          $ref: '#/responses/401'
         '404':
-          description: No user for this token found.
+          $ref: '#/responses/404'
+        '5XX':
+          $ref: '#/responses/5XX'
   /associations/projects:
     post:
       tags:
@@ -576,8 +747,16 @@ paths:
           schema:
             $ref: '#/components/schemas/ProjectInformations'
       responses:
-        default:
-          description: successful operation
+        '200':
+          $ref: '#/responses/200'
+        '400':
+          $ref: '#/responses/400'
+        '401':
+          $ref: '#/responses/401'
+        '404':
+          $ref: '#/responses/404'
+        '5XX':
+          $ref: '#/responses/5XX'
     delete:
       tags:
         - association
@@ -598,10 +777,16 @@ paths:
           schema:
             type: integer
       responses:
+        '200':
+          $ref: '#/responses/200'
         '400':
-          description: Invalid user token/ association id supplied.
+          $ref: '#/responses/400'
+        '401':
+          $ref: '#/responses/401'
         '404':
-          description: No user for this token found.
+          $ref: '#/responses/404'
+        '5XX':
+          $ref: '#/responses/5XX'
 
 components:
   schemas:
@@ -835,3 +1020,14 @@ components:
         - name
         - description
         - webpageUrl
+  responses:
+    '200':
+      description: successful operation.
+    '400':
+      description: Bad request. Provided request is malformed.
+    '401':
+      description: ID/ Token is missing or invalid.
+    '404':
+      description: Requested resource was not found.
+    '5XX':
+      description: Unexpected server error.
