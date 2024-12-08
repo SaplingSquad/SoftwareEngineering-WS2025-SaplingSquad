@@ -26,8 +26,8 @@ class QuestionsApiService(private val repository: QuestionsRepository) : Questio
             .map {
                 Question(
                     questionId = it.id,
-                    questionText = it.frage,
-                    questionImageUrl = null,
+                    questionText = it.question,
+                    questionImageUrl = it.imageUrl,
                     tagId = it.tag
                 )
             }.asHttpOkResponse()
