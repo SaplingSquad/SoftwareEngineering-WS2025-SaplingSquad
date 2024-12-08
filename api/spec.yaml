@@ -10,9 +10,6 @@ info:
 tags:
   - name: user
     description: Operations for user management.
-    externalDocs:
-      description: Find out more
-      url: http://swagger.io
   - name: questions
     description: Operations about the initial questions.
   - name: map
@@ -159,6 +156,181 @@ paths:
           description: Invalid user token supplied.
         '404':
           description: No user for this token found.
+
+  /map/association/locations:
+    get:
+      tags:
+        - map
+      summary: Get list of associations locations.
+      description: ''
+      operationId: getAssociationsLocations
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    assocId:
+                      type: integer
+                      example: 1
+                      description: Id of the association for the application.
+                    location:
+                      $ref: '#/components/schemas/Location'
+  /map/association/informations/byId:
+    get:
+      tags:
+        - map
+      summary: Get association by Id.
+      description: ''
+      operationId: getAssociation
+      parameters:
+        - name: assocId
+          in: query
+          description: The Id of the association to fetch informations for.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssociationInformations'
+  /map/association/informations:
+    get:
+      tags:
+        - map
+      summary: Get list of associations informations.
+      description: ''
+      operationId: getAssociations
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    schema:
+                      $ref: '#/components/schemas/AssociationInformations'
+  /map/projects/locations:
+    get:
+      tags:
+        - map
+      summary: Get list of all ongoing projects locations.
+      description: ''
+      operationId: getProjectsLocations
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    project:
+                      type: integer
+                      example: 1
+                      description: Id of the project for the application.
+                    location:
+                      $ref: '#/components/schemas/Location'
+  /map/project/informations/byId:
+    get:
+      tags:
+        - map
+      summary: Get project by projectId.
+      description: ''
+      operationId: getProject
+      parameters:
+        - name: projectId
+          in: query
+          description: The Id of the project to fetch informations for.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectInformations'
+  /map/project/informations:
+    get:
+      tags:
+        - map
+      summary: Get list of project informations.
+      description: ''
+      operationId: getProjects
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    schema:
+                      $ref: '#/components/schemas/AssociationInformations'
+  /map/region/locations:
+    get:
+      tags:
+        - map
+      summary: Get list of regions on the map.
+      description: ''
+      operationId: getRegions
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                      regionId:
+                        type: integer
+                        example: 1
+                        description: The Id of the region.
+                      name:
+                        type: string
+                        example: Tropical Zone
+                        description: Name of the region.
+                      location:
+                        $ref: '#/components/schemas/Location'
+  /map/region/informations/byId:
+    get:
+      tags:
+        - map
+      summary: Get region by Id.
+      description: ''
+      operationId: getRegion
+      parameters:
+        - name: regionId
+          in: query
+          description: The Id of the region to fetch informations for.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegionInformations'
+
   /fragenkatalog:
     get:
       responses:
@@ -191,6 +363,119 @@ components:
        required:
          - username
          - password
+    Location:
+      type: object
+      properties:
+        lat:
+          type: double
+          example: 110.574
+          description: Latitude of the location.
+        long:
+          type: double
+          example: 111.320
+          description: Longitude of the loaction.
+    AssociationInformations:
+      type: object
+      properties:
+        assocId:
+          type: integer
+          example: 1
+          description: The Id of the association.
+        name:
+          type: string
+          example: New Roots
+          description: Name of the association corresponding to the assocId.
+        description:
+          type: string
+          example: New Roots is ...
+          description: Stored short description of the association, originally
+                       provided by them.
+        imageUrls:
+          type: array
+          items:
+            type: string
+            example: path/to/image/url.pic
+            description: List of images provided by the association.
+        webpageUrl:
+          type: string
+          example: path/to/new/roots.de
+          description: Url of the associations website.
+        donatePageUrl:
+          type: string
+          example: path/to/new/roots/donation/link.de
+          description: Direct link to the donation side of the association.
+      required:
+        - assocId
+        - name
+        - description
+        - webpageUrl
+    ProjectInformations:
+      type: object
+      properties:
+        projectId:
+          type: integer
+          example: 1
+          description: The Id of the project.
+        name:
+          type: string
+          example: Great Green Wall
+          description: Name of the project corresponding to the projectId.
+        description:
+          type: string
+          example: The Great Green Wall is ...
+          description: Stored short description of the project, originally
+                       provided by the responsible association.
+        imageUrls:
+          type: array
+          items:
+            type: string
+            example: path/to/image/url.pic
+            description: List of images provided by the association.
+        webpageUrl:
+          type: string
+          example: path/to/great/green/wall.com
+          description: Url of the projects website.
+        donatePageUrl:
+          type: string
+          example: path/to/great/green/wall/donation/link.com
+          description: Direct link to the donation side for the project.
+      required:
+        - projectId
+        - name
+        - description
+        - webpageUrl
+    RegionInformations:
+      type: object
+      properties:
+        regionId:
+          type: integer
+          example: 1
+          description: The Id of the region.
+        name:
+          type: string
+          example: Tropical Zone
+          description: Name of the region.
+        description:
+          type: string
+          example: The tropical zone is ...
+          description: Stored short description of the region.
+                       Retrieved externally.
+        imageUrls:
+          type: array
+          items:
+            type: string
+            example: path/to/image/url.pic
+            description: List of images for the region
+        webpageUrl:
+          type: string
+          example: path/to/wiki/tropical/zone.com
+          description: Url with informations to the region.
+      required:
+        - regionId
+        - name
+        - description
+        - webpageUrl
+
     Frage:
       type: object
       properties:
