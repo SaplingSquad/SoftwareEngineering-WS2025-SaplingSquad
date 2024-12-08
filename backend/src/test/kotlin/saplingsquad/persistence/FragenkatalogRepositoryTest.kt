@@ -13,8 +13,12 @@ import saplingsquad.persistence.tables.frageEntity
 import saplingsquad.persistence.testconfig.PersistenceTestConfiguration
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
+/**
+ * Test correct behavior of [FragenkatalogRepository]
+ */
 @ExtendWith(SpringExtension::class)
 @PersistenceTestConfiguration
 class FragenkatalogRepositoryTest {
@@ -25,13 +29,18 @@ class FragenkatalogRepositoryTest {
         private val FRAGE3 = FrageEntity(id = 3, frage = "Frage 3?", tag = 2)
     }
 
+    /** The temporary database used for testing*/
     @Autowired
     lateinit var db: R2dbcDatabase
 
+    /** SUT */
     @Autowired
     lateinit var repository: FragenkatalogRepository
 
 
+    /**
+     * Insert some test data
+     */
     @BeforeTest
     fun beforeTest() = runTest {
         db.runQuery(
@@ -46,10 +55,16 @@ class FragenkatalogRepositoryTest {
         )
     }
 
+    /**
+     * Ensure that all the test data is returned
+     */
     @Test
     fun testReadAll() = runTest {
         val result = repository.readAll()
         assertEquals(3, result.size)
+        assertContains(result, FRAGE1)
+        assertContains(result, FRAGE2)
+        assertContains(result, FRAGE3)
     }
 
 

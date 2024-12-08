@@ -6,9 +6,15 @@ import org.springframework.web.reactive.config.EnableWebFlux
 import org.springframework.web.reactive.config.ResourceHandlerRegistry
 import org.springframework.web.reactive.config.WebFluxConfigurer
 
+/**
+ * Spring configuration for various settings of Spring webflux
+ */
 @EnableWebFlux
 @Configuration
-class WebFluxConfig(val config: AppConfig) : WebFluxConfigurer {
+class WebFluxConfig(
+    /** This Configuration depends on some custom configuration properties*/
+    val config: AppConfig
+) : WebFluxConfigurer {
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
         super.addResourceHandlers(registry)
 

@@ -8,12 +8,18 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.test.context.ContextConfiguration
 
+/**
+ * Configuration to configure necessary Beans for a H2 R2dbc Database connection
+ * Mostly uses the auto configuration of komapper ([KomapperR2dbcAutoConfiguration]) and fills in the rest by hand
+ */
 @Configuration
 @ContextConfiguration(classes = [KomapperR2dbcAutoConfiguration::class])
 class R2dbcH2Configuration {
+    /** Use H2 Dialect */
     @Bean
     fun komapperDialect() = H2R2dbcDialect()
 
+    /** Use H2 named in-memory database */
     @Bean
     fun connectionFactory(): ConnectionFactory = H2ConnectionFactory.inMemory("test")
 }
