@@ -21,6 +21,7 @@ tags:
     description: Operations to manage bookmarks for a logged in user.
   - name: association
     description: Operations to manage associations and their projects.
+
 paths:
   /user:
     post:
@@ -80,31 +81,19 @@ paths:
             application/json:
               schema:
                 type: string
-                description: The user token for further authentication.
-                example: kjh98lkj
+                description: The temporary user token for session authentication.
         '400':
           description: Invalid username/password supplied
-  /user/logout:
+  /user/authentication:
     get:
       tags:
         - user
-      summary: Logs out current logged in user session
-      description: ''
-      operationId: logoutUser
-      parameters: []
-      responses:
-        default:
-          description: successful operation
-  /user/{userToken}:
-    get:
-      tags:
-        - user
-      summary: Get user by user token.
+      summary: Autheticate user by user token.
       description: ''
       operationId: getUserByToken
       parameters:
         - name: userToken
-          in: path
+          in: query
           description: The token to fetch name and icon url for.
           required: true
           schema:
@@ -161,7 +150,7 @@ paths:
       parameters:
         - name: userToken
           in: path
-          description: The token from the user ro be deleted.
+          description: The token from the user to be deleted.
           required: true
           schema:
             type: string
@@ -184,15 +173,6 @@ paths:
 
 components:
   schemas:
-    Frage:
-      type: object
-      properties:
-        id:
-          type: integer
-        frage:
-          type: string
-        tagId:
-          type: integer
     User:
        type: object
        properties:
@@ -211,3 +191,12 @@ components:
        required:
          - username
          - password
+    Frage:
+      type: object
+      properties:
+        id:
+          type: integer
+        frage:
+          type: string
+        tagId:
+          type: integer
