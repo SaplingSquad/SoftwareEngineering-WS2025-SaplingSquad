@@ -8,7 +8,7 @@ import org.komapper.core.dsl.query.andThen
 import org.komapper.r2dbc.R2dbcDatabase
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import saplingsquad.persistence.tables.FrageEntity
+import saplingsquad.persistence.tables.QuestionEntity
 import saplingsquad.persistence.tables.frageEntity
 import saplingsquad.persistence.testconfig.PersistenceTestConfiguration
 import kotlin.test.BeforeTest
@@ -21,12 +21,12 @@ import kotlin.test.assertEquals
  */
 @ExtendWith(SpringExtension::class)
 @PersistenceTestConfiguration
-class FragenkatalogRepositoryTest {
+class QuestionsRepositoryTest {
 
     companion object {
-        private val FRAGE1 = FrageEntity(id = 1, frage = "Frage 1?", tag = 1)
-        private val FRAGE2 = FrageEntity(id = 2, frage = "Frage 2?", tag = 1)
-        private val FRAGE3 = FrageEntity(id = 3, frage = "Frage 3?", tag = 2)
+        private val FRAGE1 = QuestionEntity(id = 1, frage = "Frage 1?", tag = 1)
+        private val FRAGE2 = QuestionEntity(id = 2, frage = "Frage 2?", tag = 1)
+        private val FRAGE3 = QuestionEntity(id = 3, frage = "Frage 3?", tag = 2)
     }
 
     /** The temporary database used for testing*/
@@ -35,7 +35,7 @@ class FragenkatalogRepositoryTest {
 
     /** SUT */
     @Autowired
-    lateinit var repository: FragenkatalogRepository
+    lateinit var repository: QuestionsRepository
 
 
     /**

@@ -111,7 +111,6 @@ paths:
                     type: string
                     format: binary
                     description: An icon image for the user's profile.
-
         '400':
           description: Invalid token supplied.
         '404':
@@ -157,6 +156,67 @@ paths:
         '404':
           description: No user for this token found.
 
+  /questions:
+    get:
+      tags:
+        - questions
+      summary: Get list of questions.
+      description: ''
+      operationId: getQuestions
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Question'
+    post:
+      tags:
+        - questions
+      summary: Send answers to the questions.
+      description: ''
+      operationId: postAnswers
+      parameters:
+        - name: userToken
+          in: query
+          description: Token of the logged in account, which answered the questions.
+          required: true
+          schema:
+            type: string
+        - name: answers
+          in: query
+          description: Answers to the questions.
+          schema:
+            $ref: '#/components/schemas/Answers'
+      responses:
+        200:
+          description: Success
+  /questions/filter:
+    get:
+      tags:
+        - questions
+      summary: Get filter settings for the active account.
+      description: ''
+      operationId: getFilters
+      parameters:
+        - name: userToken
+          in: query
+          description: Token of the logged in account, which answered the questions.
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: List of the filters to be activated.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  description: The tagId for a tag to be used for the filter.
   /map/association/locations:
     get:
       tags:
@@ -543,18 +603,6 @@ paths:
         '404':
           description: No user for this token found.
 
-  /fragenkatalog:
-    get:
-      responses:
-        200:
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Frage'
-
 components:
   schemas:
     User:
@@ -575,6 +623,38 @@ components:
        required:
          - username
          - password
+    Question:
+      type: object
+      properties:
+        questionId:
+          type: integer
+          example: 1
+          description: Unique Id of the question.
+        questionText:
+          type: string
+          example: Do you want to fokus on environment protection?
+          description: A premade question for the user.
+        questionImageUrl:
+          type: string
+          example: url/to/question/image.pic
+          description: A picture supplementing the questionText.
+        tagId:
+          type: integer
+          example: 1
+          description: The Id for a tag to be used for the filter.
+    Answers:
+      type: array
+      items:
+        type: object
+        properties:
+          questionId:
+            type: integer
+            example: 1
+            description: Unique Id of the question.
+          answer:
+            type: string
+            enum: [pos, neu, neg]
+            description: The given answer, one of positive, neutral, negative.
     Location:
       type: object
       properties:
@@ -755,13 +835,3 @@ components:
         - name
         - description
         - webpageUrl
-
-    Frage:
-      type: object
-      properties:
-        id:
-          type: integer
-        frage:
-          type: string
-        tagId:
-          type: integer

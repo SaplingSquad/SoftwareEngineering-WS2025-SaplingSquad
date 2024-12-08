@@ -10,7 +10,7 @@ import org.komapper.annotation.KomapperTable
  */
 @KomapperEntity
 @KomapperTable("frage")
-data class FrageEntity(
+data class QuestionEntity(
     /** Unique ID of the Row */
     @KomapperId
     val id: Int,
