@@ -28,7 +28,7 @@ paths:
       description: This can only be done by the user.
       operationId: createUser
       requestBody:
-        description: Created user object
+        description: Created user object.
         content:
           application/json:
             schema:
@@ -124,7 +124,7 @@ paths:
       operationId: updateUser
       parameters:
         - name: userToken
-          in: path
+          in: query
           description: Token for the change of account.
           required: true
           schema:
@@ -146,7 +146,7 @@ paths:
       operationId: deleteUser
       parameters:
         - name: userToken
-          in: path
+          in: query
           description: The token from the user to be deleted.
           required: true
           schema:
@@ -420,6 +420,128 @@ paths:
       responses:
         '200':
           description: Successfully deleted the bookmark.
+  /associations:
+    post:
+      tags:
+        - association
+      summary: Create association.
+      description: This can only be done by a logged in user.
+      operationId: createAssociation
+      requestBody:
+        description: Create an association.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Association'
+      responses:
+        default:
+          description: successful operation
+    put:
+      tags:
+        - association
+      summary: Update association.
+      description: This can only be done by a logged in user.
+      operationId: updateAssociation
+      parameters:
+        - name: userToken
+          in: query
+          description: Token of the logged in account.
+          required: true
+          schema:
+            type: string
+        - name: associationInformations
+          in: query
+          description: Update an existing association.
+          schema:
+            $ref: '#/components/schemas/AssociationInformations'
+      responses:
+        default:
+          description: successful operation
+    delete:
+      tags:
+        - association
+      summary: Delete association.
+      description: This can only be done by a logged in user.
+      operationId: deleteAssociation
+      parameters:
+        - name: userToken
+          in: query
+          description: The token from the user to be deleted.
+          required: true
+          schema:
+            type: string
+        - name: assocId
+          in: query
+          description: The assocId from the association to be deleted.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '400':
+          description: Invalid user token/ association id supplied.
+        '404':
+          description: No user for this token found.
+  /associations/projects:
+    post:
+      tags:
+        - association
+      summary: Create a project for an association.
+      description: This can only be done by a logged in user.
+      operationId: createProject
+      requestBody:
+        description: Create a project.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Project'
+      responses:
+        default:
+          description: successful operation
+    put:
+      tags:
+        - association
+      summary: Update project
+      description: This can only be done by a logged in user.
+      operationId: updateProject
+      parameters:
+        - name: userToken
+          in: query
+          description: Token of the logged in account.
+          required: true
+          schema:
+            type: string
+        - name: projectInformations
+          in: query
+          description: Update an existing project.
+          schema:
+            $ref: '#/components/schemas/ProjectInformations'
+      responses:
+        default:
+          description: successful operation
+    delete:
+      tags:
+        - association
+      summary: Delete association.
+      description: This can only be done by a logged in user.
+      operationId: deleteProject
+      parameters:
+        - name: userToken
+          in: query
+          description: The token from the logged in user.
+          required: true
+          schema:
+            type: string
+        - name: projectId
+          in: query
+          description: The projectId from the project to be deleted.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '400':
+          description: Invalid user token/ association id supplied.
+        '404':
+          description: No user for this token found.
 
   /fragenkatalog:
     get:
@@ -562,6 +684,74 @@ components:
           description: Url with informations to the region.
       required:
         - regionId
+        - name
+        - description
+        - webpageUrl
+    Association:
+      type: object
+      properties:
+        userToken:
+          type: string
+          description: Token for the change of account.
+        name:
+          type: string
+          example: New Roots
+          description: Name of the association corresponding to the assocId.
+        description:
+          type: string
+          example: New Roots is ...
+          description: Stored short description of the association, originally
+                       provided by them.
+        imageUrls:
+          type: array
+          items:
+            type: string
+            example: path/to/image/url.pic
+            description: List of images provided by the association.
+        webpageUrl:
+          type: string
+          example: path/to/new/roots.de
+          description: Url of the associations website.
+        donatePageUrl:
+          type: string
+          example: path/to/new/roots/donation/link.de
+          description: Direct link to the donation side of the association.
+      required:
+        - assocId
+        - name
+        - description
+        - webpageUrl
+    Project:
+      type: object
+      properties:
+        userToken:
+          type: string
+          description: Token for the change of account.
+        name:
+          type: string
+          example: Great Green Wall
+          description: Name of the project corresponding to the projectId.
+        description:
+          type: string
+          example: The Great Green Wall is ...
+          description: Stored short description of the project, originally
+                       provided by the responsible association.
+        imageUrls:
+          type: array
+          items:
+            type: string
+            example: path/to/image/url.pic
+            description: List of images provided by the association.
+        webpageUrl:
+          type: string
+          example: path/to/great/green/wall.com
+          description: Url of the projects website.
+        donatePageUrl:
+          type: string
+          example: path/to/great/green/wall/donation/link.com
+          description: Direct link to the donation side for the project.
+      required:
+        - projectId
         - name
         - description
         - webpageUrl
