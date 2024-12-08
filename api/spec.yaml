@@ -330,6 +330,96 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RegionInformations'
+  /bookmarks/projects:
+    post:
+      tags:
+        - bookmarks
+      summary: Save a bookmark for a project.
+      description: This can only be done by the user.
+      operationId: bookmarkProject
+      parameters:
+        - name: userToken
+          in: query
+          description: The token from the user.
+          required: true
+          schema:
+            type: string
+        - name: projectId
+          in: query
+          description: The Id of the project to bookmark.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully saved the bookmark.
+    delete:
+      tags:
+        - bookmarks
+      summary: Delete a bookmark for a project.
+      description: This can only be done by the user.
+      operationId: deleteProjectBookmark
+      parameters:
+        - name: userToken
+          in: query
+          description: The token from the user.
+          required: true
+          schema:
+            type: string
+        - name: projectId
+          in: query
+          description: The Id of the project to delete.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully deleted the bookmark.
+  /bookmarks/associations:
+    post:
+      tags:
+        - bookmarks
+      summary: Save a bookmark for an association.
+      description: This can only be done by the user.
+      operationId: bookmarkAssocisation
+      parameters:
+        - name: userToken
+          in: query
+          description: The token from the user.
+          required: true
+          schema:
+            type: string
+        - name: assocId
+          in: query
+          description: The Id of the association to bookmark.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully saved the bookmark.
+    delete:
+      tags:
+        - bookmarks
+      summary: Delete a bookmark for an association.
+      description: This can only be done by the user.
+      operationId: deleteAssociationBookmark
+      parameters:
+        - name: userToken
+          in: query
+          description: The token from the user.
+          required: true
+          schema:
+            type: string
+        - name: assocId
+          in: query
+          description: The Id of the association to delete.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully deleted the bookmark.
 
   /fragenkatalog:
     get:
