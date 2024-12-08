@@ -9,7 +9,7 @@ import org.komapper.r2dbc.R2dbcDatabase
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import saplingsquad.persistence.tables.QuestionEntity
-import saplingsquad.persistence.tables.frageEntity
+import saplingsquad.persistence.tables.questionEntity
 import saplingsquad.persistence.testconfig.PersistenceTestConfiguration
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -44,9 +44,9 @@ class QuestionsRepositoryTest {
     @BeforeTest
     fun beforeTest() = runTest {
         db.runQuery(
-            QueryDsl.create(Meta.frageEntity)
+            QueryDsl.create(Meta.questionEntity)
                 .andThen(
-                    QueryDsl.insert(Meta.frageEntity).multiple(
+                    QueryDsl.insert(Meta.questionEntity).multiple(
                         FRAGE1,
                         FRAGE2,
                         FRAGE3
