@@ -26,8 +26,8 @@ fun <T> (suspend () -> List<T>).flowOfList(): Flow<T> {
 }
 
 /**
- * Converts a Flow to a Status Code 200 Response Entity with the flow as its body.
+ * Converts an object to a Status Code 200 Response Entity with the object as its body.
  */
-fun <T> Flow<T>.asHttpOkResponse(): ResponseEntity<Flow<T>> {
+fun <T> T.asHttpOkResponse(): ResponseEntity<T> {
     return ResponseEntity.ok().body(this)
 }

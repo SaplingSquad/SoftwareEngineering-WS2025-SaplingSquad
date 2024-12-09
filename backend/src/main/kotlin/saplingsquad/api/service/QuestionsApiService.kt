@@ -8,6 +8,7 @@ import saplingsquad.api.QuestionsApiDelegate
 import saplingsquad.api.models.AnswersInner
 import saplingsquad.api.models.Question
 import saplingsquad.persistence.QuestionsRepository
+import saplingsquad.persistence.tables.QuestionEntity
 
 /**
  * Connection layer between the REST API and the Persistence layer
@@ -23,17 +24,16 @@ class QuestionsApiService(private val repository: QuestionsRepository) : Questio
     override fun getQuestions(): ResponseEntity<Flow<Question>> =
         repository::readAll
             .flowOfList()
-            .map {
-                Question(
-                    questionId = it.id,
-                    questionText = it.question,
-                    questionImageUrl = it.imageUrl,
-                    tagId = it.tag
-                )
-            }.asHttpOkResponse()
+            .map(QuestionEntity::tableEntityToApi)
+            .asHttpOkResponse()
 
+    /**
+     * API Endpoint to get a single question
+     */
     override suspend fun getQuestionById(questionId: Int): ResponseEntity<Question> {
-        TODO("Not yet implemented")
+        return repository.readById(questionId)
+            .tableEntityToApi()
+            .asHttpOkResponse()
     }
 
     override suspend fun postAnswers(userToken: String, answers: List<AnswersInner>?): ResponseEntity<Unit> {
@@ -44,3 +44,16 @@ class QuestionsApiService(private val repository: QuestionsRepository) : Questio
         TODO("Not yet implemented")
     }
 }
+
+/**
+ * Convert a question table row to an object for the API
+ */
+fun QuestionEntity.tableEntityToApi(): Question {
+    return Question(
+        questionId = this.id,
+        questionText = this.question,
+        questionImageUrl = this.imageUrl,
+        tagId = this.tag
+    )
+}
+
