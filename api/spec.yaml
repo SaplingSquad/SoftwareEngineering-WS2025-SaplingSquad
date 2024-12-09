@@ -1,0 +1,1008 @@
+openapi: 3.0.3
+info:
+  title: Sprout API
+  description:
+    Sprout is an application to match potential donators with fitting charitable associations. It provides an option for thos associations to present themselves as well as their projects with reduced effort and provides those informations in an interaktive way to the users.
+  license:
+    name: GNU Affero General Public License v3.0
+    url: https://www.gnu.org/licenses/agpl-3.0.en.html
+  version: 1.0.0
+tags:
+  - name: user
+    description: Operations for user management.
+  - name: questions
+    description: Operations about the initial questions.
+  - name: map
+    description: Operations concerning the map.
+  - name: bookmarks
+    description: Operations to manage bookmarks for a logged in user.
+  - name: association
+    description: Operations to manage associations and their projects.
+
+paths:
+  /user:
+    post:
+      tags:
+        - user
+      summary: Create user
+      description: This can only be done by the user.
+      operationId: createUser
+      requestBody:
+        description: Created user object.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+  /user/login:
+    post:
+      tags:
+        - user
+      summary: Logs user into the system.
+      description: Login for a registered user account.
+      operationId: loginUser
+      parameters:
+        - name: username
+          in: query
+          description: The user name for login.
+          example: exampleuser
+          required: true
+          schema:
+            type: string
+        - name: password
+          in: query
+          description: The password for login in clear text.
+          example: supersecret
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          headers:
+            X-Rate-Limit:
+              description: calls per hour allowed by the user
+              schema:
+                type: integer
+                format: int32
+            X-Expires-After:
+              description: date in UTC when token expires
+              schema:
+                type: string
+                format: date-time
+          content:
+            application/json:
+              schema:
+                type: string
+                description: The temporary user token for session authentication.
+        '400':
+          description: Invalid username/password supplied.
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+  /user/authentication:
+    get:
+      tags:
+        - user
+      summary: Autheticate user by user token.
+      description: ''
+      operationId: getUserByToken
+      parameters:
+        - $ref: '#/components/parameters/userToken'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                    description: The name of the user.
+                    example: exampleuser
+                  icon:
+                    type: string
+                    format: binary
+                    description: An icon image for the user's profile.
+        '400':
+          description: Invalid token supplied.
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: No user for this token found.
+        '5XX':
+          $ref: '#/components/responses/5XX'
+    put:
+      tags:
+        - user
+      summary: Update user
+      description: This can only be done by the logged in user.
+      operationId: updateUser
+      parameters:
+        - $ref: '#/components/parameters/userToken'
+      requestBody:
+        description: Update an existent user.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+    delete:
+      tags:
+        - user
+      summary: Delete user.
+      description: This can only be done by the logged in user.
+      operationId: deleteUser
+      parameters:
+        - $ref: '#/components/parameters/userToken'
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          description: Invalid user token supplied.
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: No user for this token found.
+        '5XX':
+          $ref: '#/components/responses/5XX'
+  /questions:
+    get:
+      tags:
+        - questions
+      summary: Get list of questions.
+      description: ''
+      operationId: getQuestions
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Question'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+    post:
+      tags:
+        - questions
+      summary: Send answers to the questions.
+      description: ''
+      operationId: postAnswers
+      parameters:
+        - $ref: '#/components/parameters/userToken'
+        - name: answers
+          in: query
+          description: Answers to the questions.
+          schema:
+            $ref: '#/components/schemas/Answers'
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+  /questions/{questionId}:
+    get:
+      tags:
+        - questions
+      summary: Get a question by ID.
+      description: ''
+      operationId: getQuestionById
+      parameters:
+        - name: questionId
+          in: path
+          description: ID of the question.
+          required: true
+          schema:
+            type: integer
+            example: 1
+            description: Unique Id of the question.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+  /questions/filter:
+    get:
+      tags:
+        - questions
+      summary: Get filter settings for the active account.
+      description: ''
+      operationId: getFilters
+      parameters:
+        - $ref: '#/components/parameters/userToken'
+      responses:
+        '200':
+          description: List of the filters to be activated.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  description: The tagId for a tag to be used for the filter.
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+  /map/association/locations:
+    get:
+      tags:
+        - map
+      summary: Get list of associations locations.
+      description: ''
+      operationId: getAssociationsLocations
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    assocId:
+                      type: integer
+                      example: 1
+                      description: Id of the association for the application.
+                    location:
+                      $ref: '#/components/schemas/Location'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+  /map/association/informations/byId:
+    get:
+      tags:
+        - map
+      summary: Get association by Id.
+      description: ''
+      operationId: getAssociation
+      parameters:
+        - name: assocId
+          in: query
+          description: The Id of the association to fetch informations for.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssociationInformations'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+  /map/association/informations:
+    get:
+      tags:
+        - map
+      summary: Get list of associations informations.
+      description: ''
+      operationId: getAssociations
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    schema:
+                      $ref: '#/components/schemas/AssociationInformations'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+  /map/projects/locations:
+    get:
+      tags:
+        - map
+      summary: Get list of all ongoing projects locations.
+      description: ''
+      operationId: getProjectsLocations
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    project:
+                      type: integer
+                      example: 1
+                      description: Id of the project for the application.
+                    location:
+                      $ref: '#/components/schemas/Location'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+  /map/project/informations/byId:
+    get:
+      tags:
+        - map
+      summary: Get project by projectId.
+      description: ''
+      operationId: getProject
+      parameters:
+        - name: projectId
+          in: query
+          description: The Id of the project to fetch informations for.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectInformations'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+  /map/project/informations:
+    get:
+      tags:
+        - map
+      summary: Get list of project informations.
+      description: ''
+      operationId: getProjects
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    schema:
+                      $ref: '#/components/schemas/AssociationInformations'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+  /map/region/locations:
+    get:
+      tags:
+        - map
+      summary: Get list of regions on the map.
+      description: ''
+      operationId: getRegions
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                      regionId:
+                        type: integer
+                        example: 1
+                        description: The Id of the region.
+                      name:
+                        type: string
+                        example: Tropical Zone
+                        description: Name of the region.
+                      location:
+                        $ref: '#/components/schemas/Location'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+  /map/region/informations/byId:
+    get:
+      tags:
+        - map
+      summary: Get region by Id.
+      description: ''
+      operationId: getRegion
+      parameters:
+        - name: regionId
+          in: query
+          description: The Id of the region to fetch informations for.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegionInformations'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+  /bookmarks/projects:
+    post:
+      tags:
+        - bookmarks
+      summary: Save a bookmark for a project.
+      description: This can only be done by the user.
+      operationId: bookmarkProject
+      parameters:
+        - $ref: '#/components/parameters/userToken'
+        - name: projectId
+          in: query
+          description: The Id of the project to bookmark.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+    delete:
+      tags:
+        - bookmarks
+      summary: Delete a bookmark for a project.
+      description: This can only be done by the user.
+      operationId: deleteProjectBookmark
+      parameters:
+        - $ref: '#/components/parameters/userToken'
+        - name: projectId
+          in: query
+          description: The Id of the project to delete.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+  /bookmarks/associations:
+    post:
+      tags:
+        - bookmarks
+      summary: Save a bookmark for an association.
+      description: This can only be done by the user.
+      operationId: bookmarkAssocisation
+      parameters:
+        - $ref: '#/components/parameters/userToken'
+        - name: assocId
+          in: query
+          description: The Id of the association to bookmark.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+    delete:
+      tags:
+        - bookmarks
+      summary: Delete a bookmark for an association.
+      description: This can only be done by the user.
+      operationId: deleteAssociationBookmark
+      parameters:
+        - $ref: '#/components/parameters/userToken'
+        - name: assocId
+          in: query
+          description: The Id of the association to delete.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+# TODO correct
+  /associations:
+    post:
+      tags:
+        - association
+      summary: Create association.
+      description: This can only be done by a logged in user.
+      operationId: createAssociation
+      requestBody:
+        description: Create an association.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Association'
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+    put:
+      tags:
+        - association
+      summary: Update association.
+      description: This can only be done by a logged in user.
+      operationId: updateAssociation
+      parameters:
+        - $ref: '#/components/parameters/userToken'
+        - name: associationInformations
+          in: query
+          description: Update an existing association.
+          schema:
+            $ref: '#/components/schemas/AssociationInformations'
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+    delete:
+      tags:
+        - association
+      summary: Delete association.
+      description: This can only be done by a logged in user.
+      operationId: deleteAssociation
+      parameters:
+        - $ref: '#/components/parameters/userToken'
+        - name: assocId
+          in: query
+          description: The assocId from the association to be deleted.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+  /associations/projects:
+    post:
+      tags:
+        - association
+      summary: Create a project for an association.
+      description: This can only be done by a logged in user.
+      operationId: createProject
+      requestBody:
+        description: Create a project.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Project'
+      responses:
+        default:
+          description: successful operation
+    put:
+      tags:
+        - association
+      summary: Update project
+      description: This can only be done by a logged in user.
+      operationId: updateProject
+      parameters:
+        - $ref: '#/components/parameters/userToken'
+        - name: projectInformations
+          in: query
+          description: Update an existing project.
+          schema:
+            $ref: '#/components/schemas/ProjectInformations'
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+    delete:
+      tags:
+        - association
+      summary: Delete association.
+      description: This can only be done by a logged in user.
+      operationId: deleteProject
+      parameters:
+        - $ref: '#/components/parameters/userToken'
+        - name: projectId
+          in: query
+          description: The projectId from the project to be deleted.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+
+components:
+  schemas:
+    User:
+       type: object
+       properties:
+         username:
+           type: string
+           description: The username for the new user.
+           example: exampleuser
+         password:
+           type: string
+           description: The password for the new user.
+           example: supersecret
+         icon:
+           type: string
+           format: binary
+           description: An icon image for the user's profile.
+       required:
+         - username
+         - password
+    Question:
+      type: object
+      properties:
+        questionId:
+          type: integer
+          example: 1
+          description: Unique Id of the question.
+        questionText:
+          type: string
+          example: Do you want to fokus on environment protection?
+          description: A premade question for the user.
+        questionImageUrl:
+          type: string
+          example: url/to/question/image.pic
+          description: A picture supplementing the questionText.
+        tagId:
+          type: integer
+          example: 1
+          description: The Id for a tag to be used for the filter.
+    Answers:
+      type: array
+      items:
+        type: object
+        properties:
+          questionId:
+            type: integer
+            example: 1
+            description: Unique Id of the question.
+          answer:
+            type: string
+            enum: [pos, neu, neg]
+            description: The given answer, one of positive, neutral, negative.
+    Location:
+      type: object
+      properties:
+        lat:
+          type: double
+          example: 110.574
+          description: Latitude of the location.
+        long:
+          type: double
+          example: 111.320
+          description: Longitude of the loaction.
+    AssociationInformations:
+      type: object
+      properties:
+        assocId:
+          type: integer
+          example: 1
+          description: The Id of the association.
+        name:
+          type: string
+          example: New Roots
+          description: Name of the association corresponding to the assocId.
+        description:
+          type: string
+          example: New Roots is ...
+          description: Stored short description of the association, originally
+                       provided by them.
+        imageUrls:
+          type: array
+          items:
+            type: string
+            example: path/to/image/url.pic
+            description: List of images provided by the association.
+        webpageUrl:
+          type: string
+          example: path/to/new/roots.de
+          description: Url of the associations website.
+        donatePageUrl:
+          type: string
+          example: path/to/new/roots/donation/link.de
+          description: Direct link to the donation side of the association.
+      required:
+        - assocId
+        - name
+        - description
+        - webpageUrl
+    ProjectInformations:
+      type: object
+      properties:
+        projectId:
+          type: integer
+          example: 1
+          description: The Id of the project.
+        name:
+          type: string
+          example: Great Green Wall
+          description: Name of the project corresponding to the projectId.
+        description:
+          type: string
+          example: The Great Green Wall is ...
+          description: Stored short description of the project, originally
+                       provided by the responsible association.
+        imageUrls:
+          type: array
+          items:
+            type: string
+            example: path/to/image/url.pic
+            description: List of images provided by the association.
+        webpageUrl:
+          type: string
+          example: path/to/great/green/wall.com
+          description: Url of the projects website.
+        donatePageUrl:
+          type: string
+          example: path/to/great/green/wall/donation/link.com
+          description: Direct link to the donation side for the project.
+      required:
+        - projectId
+        - name
+        - description
+        - webpageUrl
+    RegionInformations:
+      type: object
+      properties:
+        regionId:
+          type: integer
+          example: 1
+          description: The Id of the region.
+        name:
+          type: string
+          example: Tropical Zone
+          description: Name of the region.
+        description:
+          type: string
+          example: The tropical zone is ...
+          description: Stored short description of the region.
+                       Retrieved externally.
+        imageUrls:
+          type: array
+          items:
+            type: string
+            example: path/to/image/url.pic
+            description: List of images for the region
+        webpageUrl:
+          type: string
+          example: path/to/wiki/tropical/zone.com
+          description: Url with informations to the region.
+      required:
+        - regionId
+        - name
+        - description
+        - webpageUrl
+    Association:
+      type: object
+      properties:
+        userToken:
+          type: string
+          description: Token for the change of account.
+        name:
+          type: string
+          example: New Roots
+          description: Name of the association corresponding to the assocId.
+        description:
+          type: string
+          example: New Roots is ...
+          description: Stored short description of the association, originally
+                       provided by them.
+        imageUrls:
+          type: array
+          items:
+            type: string
+            example: path/to/image/url.pic
+            description: List of images provided by the association.
+        webpageUrl:
+          type: string
+          example: path/to/new/roots.de
+          description: Url of the associations website.
+        donatePageUrl:
+          type: string
+          example: path/to/new/roots/donation/link.de
+          description: Direct link to the donation side of the association.
+      required:
+        - assocId
+        - name
+        - description
+        - webpageUrl
+    Project:
+      type: object
+      properties:
+        userToken:
+          type: string
+          description: Token for the change of account.
+        name:
+          type: string
+          example: Great Green Wall
+          description: Name of the project corresponding to the projectId.
+        description:
+          type: string
+          example: The Great Green Wall is ...
+          description: Stored short description of the project, originally
+                       provided by the responsible association.
+        imageUrls:
+          type: array
+          items:
+            type: string
+            example: path/to/image/url.pic
+            description: List of images provided by the association.
+        webpageUrl:
+          type: string
+          example: path/to/great/green/wall.com
+          description: Url of the projects website.
+        donatePageUrl:
+          type: string
+          example: path/to/great/green/wall/donation/link.com
+          description: Direct link to the donation side for the project.
+      required:
+        - projectId
+        - name
+        - description
+        - webpageUrl
+  responses:
+    '200':
+      description: successful operation.
+    '400':
+      description: Bad request. Provided request is malformed.
+    '401':
+      description: ID/ Token is missing or invalid.
+    '404':
+      description: Requested resource was not found.
+    '5XX':
+      description: Unexpected server error.
+  parameters:
+    userToken:
+      name: userToken
+      in: query
+      description: Session token of the logged in account.
+      required: true
+      schema:
+        type: string

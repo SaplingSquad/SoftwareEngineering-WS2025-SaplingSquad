@@ -34,12 +34,8 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         
-      - name: Build with Gradle
+      - name: Build and Test with Gradle # gradle build also tests
         run: ./gradlew build
-        
-      - name: Test with Gradle
-        # check includes test
-        run: ./gradlew check
 
   # Only runs on push to main
   build-backend:
@@ -66,7 +62,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: "{{defaultContext}}:backend"
+          file: backend/Dockerfile
           push: true
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}

@@ -1,14 +1,20 @@
 package saplingsquad
 
-import io.ktor.server.application.*
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.runApplication
 
+
+/**
+ * Spring boot Root Application
+ * Spring Components/Beans are only searched in this package and its subpackages
+ * => This class should not be in any sibling package etc.
+ */
+@SpringBootApplication
+class Application
+
+/**
+ * Launch Spring boot
+ */
 fun main(args: Array<String>) {
-    io.ktor.server.netty.EngineMain.main(args)
-}
-
-fun Application.module() {
-    configureHTTP()
-    configureSerialization()
-    configureDatabases()
-    configureRouting()
+    runApplication<Application>(*args)
 }
