@@ -97,6 +97,11 @@ tasks.named("compileKotlin") {
     dependsOn "openApiGenerate", "deleteGeneratedApplication"
 }
 
+tasks {
+    bootJar {
+        archiveFileName = "backend.jar"
+    }
+}
 
 openApiGenerate {
     //https://openapi-generator.tech/docs/generators/kotlin-spring
