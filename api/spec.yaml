@@ -218,6 +218,37 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
+  /questions/{questionId}:
+    get:
+      tags:
+        - questions
+      summary: Get a question by ID.
+      description: ''
+      operationId: getQuestionById
+      parameters:
+        - name: questionId
+          in: path
+          description: ID of the question.
+          required: true
+          schema:
+            type: integer
+            example: 1
+            description: Unique Id of the question.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
   /questions/filter:
     get:
       tags:
@@ -584,6 +615,7 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
+# TODO correct
   /associations:
     post:
       tags:

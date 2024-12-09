@@ -32,6 +32,9 @@ class QuestionsApiService(private val repository: QuestionsRepository) : Questio
                 )
             }.asHttpOkResponse()
 
+    override suspend fun getQuestionById(questionId: Int): ResponseEntity<Question> {
+        TODO("Not yet implemented")
+    }
 
     override suspend fun postAnswers(userToken: String, answers: List<AnswersInner>?): ResponseEntity<Unit> {
         TODO("Not yet implemented")
