@@ -3,9 +3,9 @@ server.port: ${port:9000}
 
 spring:
   r2dbc:
-    url: "r2dbc:postgresql://localhost/postgres"
-    username: sapling-squad
-    password: sapling-squad
+    url: "r2dbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_DATABASE:postgres}"
+    username: ${DB_USER:sapling-squad}
+    password: ${DB_PASSWORD:sapling-squad}
 appconfig:
   openapi:
     spec: "static/api/spec.yaml"

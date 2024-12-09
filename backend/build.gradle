@@ -72,7 +72,7 @@ dependencies {
 def generatedOpenApi = layout.buildDirectory.dir("generated/openapi-codegen/")
 def generatedApplicationClass = "src/main/kotlin/saplingsquad/home/Application.kt"
 def openApiSpecResourceFolder = layout.buildDirectory.dir("generated/openapi/src/main/resources")
-def apiSource = "$rootDir/../api"
+def apiSource = System.getenv('API_ROOT') ?: "$rootDir/../api"
 
 tasks.register("copySpecToResources", Copy) {
     duplicatesStrategy = DuplicatesStrategy.WARN
