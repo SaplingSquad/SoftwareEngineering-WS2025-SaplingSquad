@@ -67,6 +67,7 @@ dependencies {
     testImplementation "org.komapper:komapper-dialect-h2-r2dbc:$komapper_version"
     testImplementation "org.komapper:komapper-spring-boot-starter-r2dbc:$komapper_version"
     testImplementation "org.komapper:komapper-spring-boot-autoconfigure-r2dbc:$komapper_version"
+    testImplementation "org.mockito.kotlin:mockito-kotlin:5.4.0"
 }
 
 def generatedOpenApi = layout.buildDirectory.dir("generated/openapi-codegen/")
