@@ -282,12 +282,11 @@ paths:
         - map
       summary: Get list of associations locations.
       description: ''
-      # TODO liste von (questionId, enum answer)
       operationId: getAssociationsLocations
       parameters:
       - in: query
         style: deepObject
-        name: questions
+        name: answers
         schema:
           type: object
           additionalProperties: true
@@ -371,7 +370,7 @@ paths:
       parameters:
       - in: query
         style: deepObject
-        name: questions
+        name: answers
         schema:
           type: object
           additionalProperties: true
@@ -456,7 +455,7 @@ paths:
       parameters:
       - in: query
         style: deepObject
-        name: questions
+        name: answers
         schema:
           type: object
           additionalProperties: true
