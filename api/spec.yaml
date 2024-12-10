@@ -284,22 +284,20 @@ paths:
       description: ''
       # TODO liste von (questionId, enum answer)
       operationId: getAssociationsLocations
+      parameters:
+      - in: query
+        style: deepObject
+        name: questions
+        schema:
+          type: object
+          additionalProperties: true
       responses:
         '200':
           description: successful operation
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    assocId:
-                      type: integer
-                      example: 1
-                      description: ID of the association for the application.
-                    location:
-                      $ref: '#/components/schemas/GeoJsonAssociations'
+                $ref: '#/components/schemas/GeoJsonAssociations'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -370,22 +368,20 @@ paths:
       summary: Get list of all ongoing projects locations.
       description: ''
       operationId: getProjectsLocations
+      parameters:
+      - in: query
+        style: deepObject
+        name: questions
+        schema:
+          type: object
+          additionalProperties: true
       responses:
         '200':
           description: successful operation
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    project:
-                      type: integer
-                      example: 1
-                      description: Id of the project for the application.
-                    location:
-                      $ref: '#/components/schemas/GeoJsonProjects'
+                $ref: '#/components/schemas/GeoJsonProjects'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -457,26 +453,20 @@ paths:
       summary: Get list of regions on the map.
       description: ''
       operationId: getRegions
+      parameters:
+      - in: query
+        style: deepObject
+        name: questions
+        schema:
+          type: object
+          additionalProperties: true
       responses:
         '200':
           description: successful operation
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                      regionId:
-                        type: integer
-                        example: 1
-                        description: The Id of the region.
-                      name:
-                        type: string
-                        example: Tropical Zone
-                        description: Name of the region.
-                      location:
-                        $ref: '#/components/schemas/GeoJsonRegions'
+                $ref: '#/components/schemas/GeoJsonRegions'
         '400':
           $ref: '#/components/responses/400'
         '401':
