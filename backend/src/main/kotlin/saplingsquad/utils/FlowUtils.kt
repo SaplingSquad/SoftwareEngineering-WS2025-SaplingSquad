@@ -1,9 +1,6 @@
-package saplingsquad.api.service
+package saplingsquad.utils
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.*
 import org.springframework.http.ResponseEntity
 
 /**
@@ -30,4 +27,22 @@ fun <T> (suspend () -> List<T>).flowOfList(): Flow<T> {
  */
 fun <T> T.asHttpOkResponse(): ResponseEntity<T> {
     return ResponseEntity.ok().body(this)
+}
+
+/**
+ * [Flow.singleOrNull] returns null if 0 or >1 elements.
+ * This only returns null if 0 elements, throws [IllegalStateException] if >1 elements.
+ *
+ * Working on flows avoids accidentally loading large datasets into memory when only one element is expected
+ */
+suspend fun <T> Flow<T>.atMostOne(): T? {
+    return this
+        .take(2)
+        .fold<T, T?>(null) { prev, v ->
+            if (prev != null) {
+                throw IllegalStateException("Expected at most one element")
+            } else {
+                v
+            }
+        }
 }

@@ -9,6 +9,8 @@ import saplingsquad.api.models.AnswersInner
 import saplingsquad.api.models.Question
 import saplingsquad.persistence.QuestionsRepository
 import saplingsquad.persistence.tables.QuestionEntity
+import saplingsquad.utils.asHttpOkResponse
+import saplingsquad.utils.flowOfList
 
 /**
  * Connection layer between the REST API and the Persistence layer
@@ -31,7 +33,8 @@ class QuestionsApiService(private val repository: QuestionsRepository) : Questio
      * API Endpoint to get a single question
      */
     override suspend fun getQuestionById(questionId: Int): ResponseEntity<Question> {
-        return repository.readById(questionId)
+        val entity = repository.readById(questionId) ?: return ResponseEntity.notFound().build()
+        return entity
             .tableEntityToApi()
             .asHttpOkResponse()
     }

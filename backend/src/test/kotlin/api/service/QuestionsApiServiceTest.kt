@@ -5,6 +5,8 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.not
 import org.mockito.kotlin.wheneverBlocking
 import org.springframework.http.HttpStatus
 import saplingsquad.api.models.Question
@@ -60,17 +62,20 @@ class QuestionsApiServiceTest {
     fun testGetQuestionById() = runTest {
         val input = QuestionEntity(id = 1, question = "Question 1", imageUrl = "image.png", tag = 1)
         wheneverBlocking { repository.readById(1) }.thenReturn(input)
+        wheneverBlocking { repository.readById(not(eq(1))) }.thenReturn(null)
 
         val expectedOutput =
             Question(questionId = 1, questionText = "Question 1", questionImageUrl = "image.png", tagId = 1)
 
         val service = QuestionsApiService(repository)
-        val response = service.getQuestionById(1)
 
-        assertEquals(response.statusCode, HttpStatus.OK)
-        assertEquals(expectedOutput, response.body)
+        val responseExisting = service.getQuestionById(1)
 
+        assertEquals(responseExisting.statusCode, HttpStatus.OK)
+        assertEquals(expectedOutput, responseExisting.body)
 
+        val responseNonexisting = service.getQuestionById(5)
+        assertEquals(responseNonexisting.statusCode, HttpStatus.NOT_FOUND)
     }
 
 }
