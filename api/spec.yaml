@@ -174,7 +174,7 @@ paths:
     get:
       tags:
         - questions
-      summary: Get list of questions.
+      summary: Get list of all questions.
       description: ''
       operationId: getQuestions
       responses:
@@ -282,6 +282,7 @@ paths:
         - map
       summary: Get list of associations locations.
       description: ''
+      # TODO liste von (questionId, enum answer)
       operationId: getAssociationsLocations
       responses:
         '200':
@@ -296,9 +297,9 @@ paths:
                     assocId:
                       type: integer
                       example: 1
-                      description: Id of the association for the application.
+                      description: ID of the association for the application.
                     location:
-                      $ref: '#/components/schemas/GeoJSON'
+                      $ref: '#/components/schemas/GeoJsonAssociations'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -384,7 +385,7 @@ paths:
                       example: 1
                       description: Id of the project for the application.
                     location:
-                      $ref: '#/components/schemas/GeoJSON'
+                      $ref: '#/components/schemas/GeoJsonProjects'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -475,7 +476,7 @@ paths:
                         example: Tropical Zone
                         description: Name of the region.
                       location:
-                        $ref: '#/components/schemas/GeoJSON'
+                        $ref: '#/components/schemas/GeoJsonRegions'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -807,24 +808,24 @@ components:
             type: string
             enum: [pos, neu, neg]
             description: The given answer, one of positive, neutral, negative.
-    GeoJSON:
+    GeoJsonAssociations:
       type: object
       externalDocs:
         description: GepJSONSource specification
         url: https://maplibre.org/maplibre-gl-js/docs/API/classes/GeoJSONSource/
       properties:
-        type:
+        type: # Not a Keyword
           type: string
           enum: # Define a constant
             - FeatureCollection
         features:
           type: array
           items:
-            $ref: '#/components/schemas/GeoFeature'
+            $ref: '#/components/schemas/GeoFeatureAssociation'
       required:
-          - type
-          - features
-    GeoFeature:
+        - type
+        - features
+    GeoFeatureAssociation:
       type: object
       properties:
         type: # Not a Keyword
@@ -832,8 +833,82 @@ components:
           enum:
             - Feature
         properties: # Not a keyword
-          # TODO
           type: object
+          properties:
+            assocId:
+              type: integer
+              example: 1
+              description: ID of the association for the application.
+        geometry:
+          $ref: '#/components/schemas/GeoGeometry'
+    GeoJsonProjects:
+      type: object
+      externalDocs:
+        description: GepJSONSource specification
+        url: https://maplibre.org/maplibre-gl-js/docs/API/classes/GeoJSONSource/
+      properties:
+        type: # Not a Keyword
+          type: string
+          enum: # Define a constant
+            - FeatureCollection
+        features:
+          type: array
+          items:
+            $ref: '#/components/schemas/GeoFeatureProject'
+      required:
+          - type
+          - features
+    GeoFeatureProject:
+      type: object
+      properties:
+        type: # Not a Keyword
+          type: string
+          enum:
+            - Feature
+        properties: # Not a keyword
+          type: object
+          properties:
+            projectId:
+              type: integer
+              example: 1
+              description: ID of a project for an association.
+        geometry:
+          $ref: '#/components/schemas/GeoGeometry'
+    GeoJsonRegions:
+      type: object
+      externalDocs:
+        description: GepJSONSource specification
+        url: https://maplibre.org/maplibre-gl-js/docs/API/classes/GeoJSONSource/
+      properties:
+        type: # Not a Keyword
+          type: string
+          enum: # Define a constant
+            - FeatureCollection
+        features:
+          type: array
+          items:
+            $ref: '#/components/schemas/GeoFeatureRegion'
+      required:
+          - type
+          - features
+    GeoFeatureRegion:
+      type: object
+      properties:
+        type: # Not a Keyword
+          type: string
+          enum:
+            - Feature
+        properties: # Not a keyword
+          type: object
+          properties:
+            regionId:
+              type: integer
+              example: 1
+              description: ID of a region on the map.
+            name:
+              type: string
+              example: Africa
+              description: Name of the region.
         geometry:
           $ref: '#/components/schemas/GeoGeometry'
     GeoGeometry:
