@@ -878,8 +878,8 @@ components:
           items:
             $ref: '#/components/schemas/GeoFeatureRegion'
       required:
-          - type
-          - features
+        - type
+        - features
     GeoFeatureRegion:
       type: object
       properties:
