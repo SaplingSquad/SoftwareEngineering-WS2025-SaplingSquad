@@ -6,7 +6,7 @@ info:
   license:
     name: GNU Affero General Public License v3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
-  version: 1.0.0
+  version: 1.1.0
 tags:
   - name: user
     description: Operations for user management.
@@ -298,7 +298,7 @@ paths:
                       example: 1
                       description: Id of the association for the application.
                     location:
-                      $ref: '#/components/schemas/Location'
+                      $ref: '#/components/schemas/GeoJSON'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -384,7 +384,7 @@ paths:
                       example: 1
                       description: Id of the project for the application.
                     location:
-                      $ref: '#/components/schemas/Location'
+                      $ref: '#/components/schemas/GeoJSON'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -475,7 +475,7 @@ paths:
                         example: Tropical Zone
                         description: Name of the region.
                       location:
-                        $ref: '#/components/schemas/Location'
+                        $ref: '#/components/schemas/GeoJSON'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -807,17 +807,51 @@ components:
             type: string
             enum: [pos, neu, neg]
             description: The given answer, one of positive, neutral, negative.
-    Location:
+    GeoJSON:
+      type: object
+      externalDocs:
+        description: GepJSONSource specification
+        url: https://maplibre.org/maplibre-gl-js/docs/API/classes/GeoJSONSource/
+      properties:
+        type:
+          type: string
+          enum: # Define a constant
+            - FeatureCollection
+        features:
+          type: array
+          items:
+            $ref: '#/components/schemas/GeoFeature'
+      required:
+          - type
+          - features
+    GeoFeature:
       type: object
       properties:
-        lat:
-          type: double
-          example: 110.574
-          description: Latitude of the location.
-        long:
-          type: double
-          example: 111.320
-          description: Longitude of the loaction.
+        type: # Not a Keyword
+          type: string
+          enum:
+            - Feature
+        properties: # Not a keyword
+          # TODO
+          type: object
+        geometry:
+          $ref: '#/components/schemas/GeoGeometry'
+    GeoGeometry:
+      type: object
+      properties:
+        type: # Not a keyword
+          type: string
+          enum:
+            - Point
+        coordinates:
+          type: array
+          items:
+            type: integer
+          description: Longitude and latitude coordinates
+          example: [-76.53063297271729, 39.18174077994108]
+      required:
+        - type
+        - coordinates
     AssociationInformations:
       type: object
       properties:
