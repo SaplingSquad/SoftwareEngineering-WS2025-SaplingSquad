@@ -845,8 +845,8 @@ components:
           items:
             $ref: '#/components/schemas/GeoFeatureProject'
       required:
-          - type
-          - features
+        - type
+        - features
     GeoFeatureProject:
       type: object
       properties:
