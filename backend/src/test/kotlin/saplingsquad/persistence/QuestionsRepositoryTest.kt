@@ -67,5 +67,18 @@ class QuestionsRepositoryTest {
         assertContains(result, FRAGE3)
     }
 
+    /**
+     * Ensure that the correct values are returned
+     */
+    @Test
+    fun testReadSingle() = runTest{
+        val result3 = repository.readById(2)
+        assertEquals(result3, FRAGE3)
+        val result2 = repository.readById(2)
+        assertEquals(result2, FRAGE2)
+        val result1 = repository.readById(1)
+        assertEquals(result1, FRAGE1)
+    }
+
 
 }
