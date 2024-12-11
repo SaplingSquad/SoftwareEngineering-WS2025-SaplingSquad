@@ -6,8 +6,11 @@ import {
   useSignal,
   useVisibleTask$,
 } from "@builder.io/qwik";
+import type { MapLayerEventType } from "maplibre-gl";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
+import type { MaybeArray } from "~/utils";
+import { maybeArray } from "~/utils";
 
 /**
  * Data sources of the map
@@ -46,6 +49,23 @@ export type Images = {
 };
 
 /**
+ * A single click-handler
+ */
+export type ClickHandler = QRL<
+  (
+    map: maplibregl.Map,
+    event: MapLayerEventType["click"] & object,
+  ) => void | Promise<void> | PromiseLike<void>
+>;
+
+/**
+ * A map of click-handlers per target
+ */
+export type ClickHandlers = {
+  [target: string]: MaybeArray<ClickHandler>;
+};
+
+/**
  * Creates a maplibre Map, adding all additional properties on load.
  * @param options Options to create the map with
  * @param sources data sources for the map
@@ -58,6 +78,7 @@ const createMap = (
   sources: Sources,
   layers: Layers,
   images: Images,
+  clickHandlers: ClickHandlers,
 ) => {
   const map = new maplibregl.Map(options);
   map.on("load", () => {
@@ -76,6 +97,11 @@ const createMap = (
     );
     layers.forEach((layer) => map.addLayer(layer));
   });
+  Object.entries(clickHandlers).forEach(([target, handlers]) =>
+    maybeArray(handlers).forEach((handler) =>
+      map.on("click", target, (e) => handler(map, e)),
+    ),
+  );
   return map;
 };
 
@@ -88,12 +114,8 @@ export const Map = component$(
     style = "https://tiles.versatiles.org/assets/styles/colorful.json",
     sources = {},
     layers$ = $([]),
-<<<<<<< Updated upstream
-    images = [],
-=======
     images = {},
     onClick = {},
->>>>>>> Stashed changes
   }: {
     /**
      * Classes to set
@@ -115,6 +137,10 @@ export const Map = component$(
      * Images to load into the map
      */
     images?: Images;
+    /**
+     * Handlers for click events on the map
+     */
+    onClick?: ClickHandlers;
   }) => {
     const map = useSignal<NoSerialize<maplibregl.Map>>();
     const containerRef = useSignal<HTMLElement>();
@@ -134,6 +160,7 @@ export const Map = component$(
           sources,
           await layers$.resolve(),
           images,
+          onClick,
         ),
       );
     });
