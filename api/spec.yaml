@@ -288,8 +288,7 @@ paths:
         style: deepObject
         name: answers
         schema:
-          type: object
-          additionalProperties: true
+          $ref: '#/components/schemas/AddProps'
       responses:
         '200':
           description: successful operation
@@ -372,8 +371,7 @@ paths:
         style: deepObject
         name: answers
         schema:
-          type: object
-          additionalProperties: true
+          $ref: '#/components/schemas/AddProps'
       responses:
         '200':
           description: successful operation
@@ -457,8 +455,7 @@ paths:
         style: deepObject
         name: answers
         schema:
-          type: object
-          additionalProperties: true
+          $ref: '#/components/schemas/AddProps'
       responses:
         '200':
           description: successful operation
@@ -1085,6 +1082,14 @@ components:
         - name
         - description
         - webpageUrl
+    AddProps:
+      type: object
+      additionalProperties:
+        type: string
+        enum: [pos, neu, neg]
+        description: The enum represents the possible answers to a question.
+          These questions are represented as *additionalProperties*, due to their
+          volatile behaviour.
   responses:
     '200':
       description: successful operation.

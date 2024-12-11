@@ -16,7 +16,7 @@ class MapApiService() : MapApiDelegate {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getOrganizationsLocations(answers: Map<String, Any>?): ResponseEntity<GeoJsonOrganizations> {
+    override suspend fun getOrganizationsLocations(answers: Map<String, String>?): ResponseEntity<GeoJsonOrganizations> {
         TODO("Not yet implemented")
     }
 
@@ -28,7 +28,7 @@ class MapApiService() : MapApiDelegate {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getProjectsLocations(answers: Map<String, Any>?): ResponseEntity<GeoJsonProjects> {
+    override suspend fun getProjectsLocations(answers: Map<String, String>?): ResponseEntity<GeoJsonProjects> {
         TODO("Not yet implemented")
     }
 
@@ -36,7 +36,7 @@ class MapApiService() : MapApiDelegate {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getRegions(answers: Map<String, Any>?): ResponseEntity<GeoJsonRegions> {
+    override suspend fun getRegions(answers: Map<String, String>?): ResponseEntity<GeoJsonRegions> {
         TODO("Not yet implemented")
     }
 }
