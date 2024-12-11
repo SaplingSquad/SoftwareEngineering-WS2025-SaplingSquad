@@ -10,9 +10,9 @@ appconfig:
   openapi:
     spec: "static/api/spec.yaml" # local path to spec.yaml
   allow-wildcard-cors: true
-  resources-url-path: "api/rsc/"
+  resources-url-path: "/api/rsc/"
 
 springdoc:
   swagger-ui:
-    url: "api/spec.yaml" # served path to spec.yaml
+    url: "/api/spec.yaml" # served path to spec.yaml
   enable-default-api-docs: false
