@@ -28,7 +28,7 @@ class QuestionsRepository(private val db: R2dbcDatabase) {
     suspend fun readById(id: Int): QuestionEntity? = db.runQuery {
         QueryDsl
             .from(Meta.questionEntity)
-            .where { Meta.questionEntity.id eq id }
+            .where { Meta.questionEntity.questionId eq id }
             .collect { flow ->
                 flow.atMostOne()
             }

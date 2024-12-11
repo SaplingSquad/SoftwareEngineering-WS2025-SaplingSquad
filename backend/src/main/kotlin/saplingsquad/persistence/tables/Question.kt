@@ -13,7 +13,7 @@ import org.komapper.annotation.KomapperTable
 data class QuestionEntity(
     /** Unique ID of the Row */
     @KomapperId
-    val id: Int,
+    val questionId: Int,
     /** The question string */
     val question: String,
 
@@ -21,5 +21,5 @@ data class QuestionEntity(
     val imageUrl: String?,
 
     /** Foreign key to the Tag associated with this Question (for filtering) */
-    val tag: Int
+    val tagId: Int
 )

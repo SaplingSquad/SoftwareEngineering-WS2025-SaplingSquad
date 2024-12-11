@@ -1,0 +1,15 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="1" author="0002">
+        <loadData tableName="filter_tag" file="classpath:db/static-data/0002/tags.csv"/>
+    </changeSet>
+    <changeSet id="2" author="0002">
+        <loadData tableName="question" file="classpath:db/static-data/0002/questions.csv">
+            <!--Explicitly setting to text-->
+            <column name="image_url" type="text"/>
+        </loadData>
+    </changeSet>
+</databaseChangeLog>

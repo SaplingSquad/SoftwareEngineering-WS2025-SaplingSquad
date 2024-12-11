@@ -28,9 +28,9 @@ import kotlin.test.assertEquals
 class QuestionsRepositoryTest {
 
     companion object {
-        private val FRAGE1 = QuestionEntity(id = 1, question = "Frage 1?", imageUrl = null, tag = 1)
-        private val FRAGE2 = QuestionEntity(id = 2, question = "Frage 2?", imageUrl = "test.png", tag = 1)
-        private val FRAGE3 = QuestionEntity(id = 3, question = "Frage 3?", imageUrl = null, tag = 2)
+        private val FRAGE1 = QuestionEntity(questionId = 1, question = "Frage 1?", imageUrl = null, tagId = 1)
+        private val FRAGE2 = QuestionEntity(questionId = 2, question = "Frage 2?", imageUrl = "test.png", tagId = 1)
+        private val FRAGE3 = QuestionEntity(questionId = 3, question = "Frage 3?", imageUrl = null, tagId = 2)
 
         /**
          * Insert some test data
