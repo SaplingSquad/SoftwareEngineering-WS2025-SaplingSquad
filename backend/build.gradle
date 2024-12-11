@@ -47,7 +47,6 @@ dependencies {
     }
     implementation "org.komapper:komapper-spring-boot-starter-r2dbc:$komapper_version"
     implementation "org.komapper:komapper-dialect-postgresql-r2dbc:$komapper_version"
-    implementation "org.komapper:komapper-dialect-postgresql-jdbc:$komapper_version"
     ksp "org.komapper:komapper-processor:$komapper_version"
 
 
