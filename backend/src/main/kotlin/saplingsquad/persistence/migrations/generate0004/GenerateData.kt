@@ -14,9 +14,9 @@ import kotlin.random.Random
 class GenerateData : CustomSqlChange {
 
     companion object {
-        private const val ORG_GENERATION_ATTEMPTS = 2000
-        private const val REGION_GENERATION_ATTEMPTS = 200
-        private const val PROJECT_GENERATION_ATTEMPTS = 5
+        private const val ORG_GENERATION_ATTEMPTS = 20000
+        private const val REGION_GENERATION_ATTEMPTS = 2000
+        private const val PROJECT_GENERATION_ATTEMPTS = 50
         private const val MAX_NUM_TAGS = 10
         private val AVAILABLE_TAGS = (1..17).toList()
     }
@@ -178,7 +178,7 @@ class GenerateData : CustomSqlChange {
         val randomX = Random.nextDouble(-180.0, 180.0)
         val randomY = Random.nextDouble(-180.0, 180.0)
         val noise = samplePerlinNoiseAt(randomX, randomY)
-        if (noise > 0.5) {
+        if (noise > 0.5) { // around 2.5 percent probability
             return Coordinates(randomX, randomY)
         }
         return null
