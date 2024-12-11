@@ -8,19 +8,19 @@ import saplingsquad.api.models.*
 
 @Service
 class MapApiService() : MapApiDelegate {
-    override suspend fun getAssociation(assocId: Int): ResponseEntity<AssociationInformations> {
+    override suspend fun getOrganization(orgaId: Int): ResponseEntity<OrganizationDescriptions> {
         TODO("Not yet implemented")
     }
 
-    override fun getAssociations(): ResponseEntity<Flow<GetAssociations200ResponseInner>> {
+    override fun getOrganizations(): ResponseEntity<Flow<GetOrganizations200ResponseInner>> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getAssociationsLocations(questions: Map<String, Any>?): ResponseEntity<GeoJsonAssociations> {
+    override suspend fun getOrganizationsLocations(answers: Map<String, String>?): ResponseEntity<GeoJsonOrganizations> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getProject(projectId: Int): ResponseEntity<ProjectInformations> {
+    override suspend fun getProject(projectId: Int): ResponseEntity<ProjectDescriptions> {
         TODO("Not yet implemented")
     }
 
@@ -28,15 +28,15 @@ class MapApiService() : MapApiDelegate {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getProjectsLocations(questions: Map<String, Any>?): ResponseEntity<GeoJsonProjects> {
+    override suspend fun getProjectsLocations(answers: Map<String, String>?): ResponseEntity<GeoJsonProjects> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getRegion(regionId: Int): ResponseEntity<RegionInformations> {
+    override suspend fun getRegion(regionId: Int): ResponseEntity<RegionDescriptions> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getRegions(questions: Map<String, Any>?): ResponseEntity<GeoJsonRegions> {
+    override suspend fun getRegions(answers: Map<String, String>?): ResponseEntity<GeoJsonRegions> {
         TODO("Not yet implemented")
     }
 }

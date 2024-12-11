@@ -2,33 +2,37 @@ openapi: 3.0.3
 info:
   title: Sprout API
   description:
-    Sprout is an application to match potential donators with fitting charitable associations. It provides an option for thos associations to present themselves as well as their projects with reduced effort and provides those informations in an interaktive way to the users.
+    Sprout is an application to match potential donors with fitting charitable
+    organizations. It provides an option for those organizations to present
+    themselves as well as their projects with reduced effort and provides those
+    descriptions in an interactive way to the users.
   license:
     name: GNU Affero General Public License v3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
-  version: 1.1.0
+  version: 1.1.3
 tags:
   - name: user
     description: Operations for user management.
   - name: questions
-    description: Operations about the initial questions.
+    description: Operations about the initial questions, their answers and the
+      filters they set.
   - name: map
-    description: Operations concerning the map.
+    description: Operations concerning the map, this includes markers.
   - name: bookmarks
     description: Operations to manage bookmarks for a logged in user.
-  - name: association
-    description: Operations to manage associations and their projects.
+  - name: organization
+    description: Operations to manage organizations and their projects.
 
 paths:
   /user:
     post:
       tags:
         - user
-      summary: Create user
-      description: This can only be done by the user.
+      summary: Create user. This can only be done by the user.
+      description: Register a new user with Sprout.
       operationId: createUser
       requestBody:
-        description: Created user object.
+        description: Create user object.
         content:
           application/json:
             schema:
@@ -68,7 +72,7 @@ paths:
             type: string
       responses:
         '200':
-          description: successful operation
+          description: Successful operation.
           headers:
             X-Rate-Limit:
               description: calls per hour allowed by the user
@@ -97,14 +101,15 @@ paths:
     get:
       tags:
         - user
-      summary: Autheticate user by user token.
-      description: ''
+      summary: Authenticate user by user token.
+      description: Send a userToken to get user name and icon of the
+        corresponding account.
       operationId: getUserByToken
       parameters:
         - $ref: '#/components/parameters/userToken'
       responses:
         '200':
-          description: successful operation
+          description: Successful operation.
           content:
             application/json:
               schema:
@@ -129,8 +134,8 @@ paths:
     put:
       tags:
         - user
-      summary: Update user
-      description: This can only be done by the logged in user.
+      summary: Update user. This can only be done by the logged in user.
+      description: Update information concerning the account of a logged in user.
       operationId: updateUser
       parameters:
         - $ref: '#/components/parameters/userToken'
@@ -154,8 +159,8 @@ paths:
     delete:
       tags:
         - user
-      summary: Delete user.
-      description: This can only be done by the logged in user.
+      summary: Delete user. This can only be done by the logged in user.
+      description: Delete an existing, logged in user.
       operationId: deleteUser
       parameters:
         - $ref: '#/components/parameters/userToken'
@@ -174,7 +179,7 @@ paths:
     get:
       tags:
         - questions
-      summary: Get list of all questions.
+      summary: Get a list of all questions.
       description: ''
       operationId: getQuestions
       responses:
@@ -233,7 +238,7 @@ paths:
           schema:
             type: integer
             example: 1
-            description: Unique Id of the question.
+            description: Unique ID of the question.
       responses:
         '200':
           description: Success
@@ -254,7 +259,8 @@ paths:
       tags:
         - questions
       summary: Get filter settings for the active account.
-      description: ''
+      description: Request the stored filters for the active account. This
+        includes manual set filters as well as calculated ones.
       operationId: getFilters
       parameters:
         - $ref: '#/components/parameters/userToken'
@@ -276,27 +282,27 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-  /map/association/locations:
+  /map/organization/locations:
     get:
       tags:
         - map
-      summary: Get list of associations locations.
-      description: ''
-      operationId: getAssociationsLocations
+      summary: Get list of the locations from all organizations.
+      description: This returns a List of GeoJSONSources to display the pins on
+        the map.
+      operationId: getOrganizationsLocations
       parameters:
       - in: query
         style: deepObject
         name: answers
         schema:
-          type: object
-          additionalProperties: true
+          $ref: '#/components/schemas/AddPropsAnswers'
       responses:
         '200':
-          description: successful operation
+          description: Successful operation.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GeoJsonAssociations'
+                $ref: '#/components/schemas/GeoJsonOrganizations'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -305,27 +311,22 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-  /map/association/informations/byId:
+  /map/organization/descriptions/{orgaId}:
     get:
       tags:
         - map
-      summary: Get association by Id.
+      summary: Get organization by Id.
       description: ''
-      operationId: getAssociation
+      operationId: getOrganization
       parameters:
-        - name: assocId
-          in: query
-          description: The Id of the association to fetch informations for.
-          required: true
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/orgaId'
       responses:
         '200':
-          description: successful operation
+          description: Successful operation.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AssociationInformations'
+                $ref: '#/components/schemas/OrganizationDescriptions'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -334,16 +335,16 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-  /map/association/informations:
+  /map/organization/descriptions:
     get:
       tags:
         - map
-      summary: Get list of associations informations.
+      summary: Get list of descriptions for all organizations.
       description: ''
-      operationId: getAssociations
+      operationId: getOrganizations
       responses:
         '200':
-          description: successful operation
+          description: Successful operation.
           content:
             application/json:
               schema:
@@ -351,7 +352,7 @@ paths:
                 items:
                   properties:
                     schema:
-                      $ref: '#/components/schemas/AssociationInformations'
+                      $ref: '#/components/schemas/OrganizationDescriptions'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -365,18 +366,18 @@ paths:
       tags:
         - map
       summary: Get list of all ongoing projects locations.
-      description: ''
+      description: This returns a List of GeoJSONSources to display the pins on
+        the map.
       operationId: getProjectsLocations
       parameters:
       - in: query
         style: deepObject
         name: answers
         schema:
-          type: object
-          additionalProperties: true
+          $ref: '#/components/schemas/AddPropsAnswers'
       responses:
         '200':
-          description: successful operation
+          description: Successful operation.
           content:
             application/json:
               schema:
@@ -389,27 +390,22 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-  /map/project/informations/byId:
+  /map/project/descriptions/{projectId}:
     get:
       tags:
         - map
-      summary: Get project by projectId.
+      summary: Get project by ID.
       description: ''
       operationId: getProject
       parameters:
-        - name: projectId
-          in: query
-          description: The Id of the project to fetch informations for.
-          required: true
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/projectId'
       responses:
         '200':
-          description: successful operation
+          description: Successful operation.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProjectInformations'
+                $ref: '#/components/schemas/ProjectDescriptions'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -418,16 +414,16 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-  /map/project/informations:
+  /map/project/descriptions:
     get:
       tags:
         - map
-      summary: Get list of project informations.
+      summary: Get list of project descriptions.
       description: ''
       operationId: getProjects
       responses:
         '200':
-          description: successful operation
+          description: Successful operation.
           content:
             application/json:
               schema:
@@ -436,7 +432,7 @@ paths:
                   type: object
                   properties:
                     schema:
-                      $ref: '#/components/schemas/AssociationInformations'
+                      $ref: '#/components/schemas/OrganizationDescriptions'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -450,18 +446,18 @@ paths:
       tags:
         - map
       summary: Get list of regions on the map.
-      description: ''
+      description: This returns a List of GeoJSONSources to display the pins on
+        the map.
       operationId: getRegions
       parameters:
       - in: query
         style: deepObject
         name: answers
         schema:
-          type: object
-          additionalProperties: true
+          $ref: '#/components/schemas/AddPropsAnswers'
       responses:
         '200':
-          description: successful operation
+          description: Successful operation.
           content:
             application/json:
               schema:
@@ -474,27 +470,27 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-  /map/region/informations/byId:
+  /map/region/descriptions/{regionId}:
     get:
       tags:
         - map
-      summary: Get region by Id.
+      summary: Get region by ID.
       description: ''
       operationId: getRegion
       parameters:
         - name: regionId
-          in: query
-          description: The Id of the region to fetch informations for.
+          in: path
+          description: The ID of the region to fetch descriptions for.
           required: true
           schema:
             type: integer
       responses:
         '200':
-          description: successful operation
+          description: Successful operation.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RegionInformations'
+                $ref: '#/components/schemas/RegionDescriptions'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -507,17 +503,12 @@ paths:
     post:
       tags:
         - bookmarks
-      summary: Save a bookmark for a project.
-      description: This can only be done by the user.
+      summary: Save a bookmark for a project. This can only be done by the user.
+      description: ''
       operationId: bookmarkProject
       parameters:
         - $ref: '#/components/parameters/userToken'
-        - name: projectId
-          in: query
-          description: The Id of the project to bookmark.
-          required: true
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/projectId'
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -537,12 +528,7 @@ paths:
       operationId: deleteProjectBookmark
       parameters:
         - $ref: '#/components/parameters/userToken'
-        - name: projectId
-          in: query
-          description: The Id of the project to delete.
-          required: true
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/projectId'
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -554,21 +540,16 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-  /bookmarks/associations:
+  /bookmarks/organizations:
     post:
       tags:
         - bookmarks
-      summary: Save a bookmark for an association.
-      description: This can only be done by the user.
-      operationId: bookmarkAssocisation
+      summary: Save a bookmark for an organization. This can only be done by the user.
+      description: ''
+      operationId: bookmarkOrganization
       parameters:
         - $ref: '#/components/parameters/userToken'
-        - name: assocId
-          in: query
-          description: The Id of the association to bookmark.
-          required: true
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/orgaId'
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -583,17 +564,12 @@ paths:
     delete:
       tags:
         - bookmarks
-      summary: Delete a bookmark for an association.
+      summary: Delete a bookmark for an organization.
       description: This can only be done by the user.
-      operationId: deleteAssociationBookmark
+      operationId: deleteOrganizationBookmark
       parameters:
         - $ref: '#/components/parameters/userToken'
-        - name: assocId
-          in: query
-          description: The Id of the association to delete.
-          required: true
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/orgaId'
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -606,19 +582,20 @@ paths:
         '5XX':
           $ref: '#/components/responses/5XX'
 # TODO correct
-  /associations:
+  /organizations:
     post:
       tags:
-        - association
-      summary: Create association.
-      description: This can only be done by a logged in user.
-      operationId: createAssociation
+        - organization
+      summary: Create an organization. This can only be done by a logged in user.
+      description: To be able to register a new organization to Sprout it is
+        necessary to be logged in.
+      operationId: createOrganization
       requestBody:
-        description: Create an association.
+        description: Create an organization.
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Association'
+              $ref: '#/components/schemas/Organization'
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -632,17 +609,17 @@ paths:
           $ref: '#/components/responses/5XX'
     put:
       tags:
-        - association
-      summary: Update association.
-      description: This can only be done by a logged in user.
-      operationId: updateAssociation
+        - organization
+      summary: Update organization. This can only be done by a logged in user.
+      description: Update informations to a given organization.
+      operationId: updateOrganization
       parameters:
         - $ref: '#/components/parameters/userToken'
-        - name: associationInformations
+        - name: organizationDescriptions
           in: query
-          description: Update an existing association.
+          description: Update an existing organization.
           schema:
-            $ref: '#/components/schemas/AssociationInformations'
+            $ref: '#/components/schemas/OrganizationDescriptions'
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -656,18 +633,13 @@ paths:
           $ref: '#/components/responses/5XX'
     delete:
       tags:
-        - association
-      summary: Delete association.
-      description: This can only be done by a logged in user.
-      operationId: deleteAssociation
+        - organization
+      summary: Delete organization. This can only be done by a logged in user.
+      description: Delete an existing organization.
+      operationId: deleteOrganization
       parameters:
         - $ref: '#/components/parameters/userToken'
-        - name: assocId
-          in: query
-          description: The assocId from the association to be deleted.
-          required: true
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/orgaId'
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -679,12 +651,12 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-  /associations/projects:
+  /organizations/projects:
     post:
       tags:
-        - association
-      summary: Create a project for an association.
-      description: This can only be done by a logged in user.
+        - organization
+      summary: Create a project for an organization. This can only be done by a logged in user.
+      description: A project always belongs to an organization.
       operationId: createProject
       requestBody:
         description: Create a project.
@@ -694,20 +666,20 @@ paths:
               $ref: '#/components/schemas/Project'
       responses:
         default:
-          description: successful operation
+          description: Successful operation.
     put:
       tags:
-        - association
-      summary: Update project
-      description: This can only be done by a logged in user.
+        - organization
+      summary: Update project. This can only be done by a logged in user.
+      description: Update an existing project from an organization.
       operationId: updateProject
       parameters:
         - $ref: '#/components/parameters/userToken'
-        - name: projectInformations
+        - name: projectDescriptions
           in: query
           description: Update an existing project.
           schema:
-            $ref: '#/components/schemas/ProjectInformations'
+            $ref: '#/components/schemas/ProjectDescriptions'
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -721,18 +693,13 @@ paths:
           $ref: '#/components/responses/5XX'
     delete:
       tags:
-        - association
-      summary: Delete association.
-      description: This can only be done by a logged in user.
+        - organization
+      summary: Delete a project. This can only be done by a logged in user.
+      description: Delete a given project.
       operationId: deleteProject
       parameters:
         - $ref: '#/components/parameters/userToken'
-        - name: projectId
-          in: query
-          description: The projectId from the project to be deleted.
-          required: true
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/projectId'
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -771,15 +738,15 @@ components:
         questionId:
           type: integer
           example: 1
-          description: Unique Id of the question.
+          description: Unique ID of the question.
         questionText:
           type: string
-          example: Do you want to fokus on environment protection?
-          description: A premade question for the user.
+          example: Do you want to focus on environment protection?
+          description: A pre made question for the user.
         questionImageUrl:
           type: string
           example: url/to/question/image.pic
-          description: A picture supplementing the questionText.
+          description: A picture supplementing the text of a question.
         tagId:
           type: integer
           example: 1
@@ -792,12 +759,12 @@ components:
           questionId:
             type: integer
             example: 1
-            description: Unique Id of the question.
+            description: Unique ID of the question.
           answer:
             type: string
             enum: [pos, neu, neg]
             description: The given answer, one of positive, neutral, negative.
-    GeoJsonAssociations:
+    GeoJsonOrganizations:
       type: object
       externalDocs:
         description: GepJSONSource specification
@@ -810,11 +777,11 @@ components:
         features:
           type: array
           items:
-            $ref: '#/components/schemas/GeoFeatureAssociation'
+            $ref: '#/components/schemas/GeoFeatureOrganization'
       required:
         - type
         - features
-    GeoFeatureAssociation:
+    GeoFeatureOrganization:
       type: object
       properties:
         type: # Not a Keyword
@@ -824,10 +791,10 @@ components:
         properties: # Not a keyword
           type: object
           properties:
-            assocId:
+            orgaId:
               type: integer
               example: 1
-              description: ID of the association for the application.
+              description: ID of the organization for the application.
         geometry:
           $ref: '#/components/schemas/GeoGeometry'
     GeoJsonProjects:
@@ -860,7 +827,7 @@ components:
             projectId:
               type: integer
               example: 1
-              description: ID of a project for an association.
+              description: ID of a project for an organization.
         geometry:
           $ref: '#/components/schemas/GeoGeometry'
     GeoJsonRegions:
@@ -911,72 +878,73 @@ components:
           type: array
           items:
             type: integer
-          description: Longitude and latitude coordinates
+          description: Longitude and latitude coordinates.
           example: [-76.53063297271729, 39.18174077994108]
       required:
         - type
         - coordinates
-    AssociationInformations:
+    OrganizationDescriptions:
       type: object
       properties:
-        assocId:
+        orgaId:
           type: integer
           example: 1
-          description: The Id of the association.
+          description: The ID of the organization.
         name:
           type: string
           example: New Roots
-          description: Name of the association corresponding to the assocId.
-        description:
+          description: Name of the organization corresponding to the Id of the
+            organization.
+        description: # Not a keyword
           type: string
           example: New Roots is ...
-          description: Stored short description of the association, originally
+          description: Stored short description of the organization, originally
                        provided by them.
         imageUrls:
           type: array
           items:
             type: string
             example: path/to/image/url.pic
-            description: List of images provided by the association.
+            description: List of images provided by the organization.
         webpageUrl:
           type: string
           example: path/to/new/roots.de
-          description: Url of the associations website.
+          description: URL of the organizations website.
         donatePageUrl:
           type: string
           example: path/to/new/roots/donation/link.de
-          description: Direct link to the donation side of the association.
+          description: Direct link to the donation side of the organization.
       required:
-        - assocId
+        - orgaId
         - name
         - description
         - webpageUrl
-    ProjectInformations:
+    ProjectDescriptions:
       type: object
       properties:
         projectId:
           type: integer
           example: 1
-          description: The Id of the project.
+          description: The ID of the project.
         name:
           type: string
           example: Great Green Wall
-          description: Name of the project corresponding to the projectId.
+          description: Name of the project corresponding to the provided ID.
         description:
           type: string
           example: The Great Green Wall is ...
           description: Stored short description of the project, originally
-                       provided by the responsible association.
+                       provided by the responsible organization.
         imageUrls:
           type: array
           items:
             type: string
             example: path/to/image/url.pic
-            description: List of images provided by the association.
+            description: List of images provided by the organization.
         webpageUrl:
           type: string
           example: path/to/great/green/wall.com
-          description: Url of the projects website.
+          description: URL of the projects website.
         donatePageUrl:
           type: string
           example: path/to/great/green/wall/donation/link.com
@@ -986,13 +954,13 @@ components:
         - name
         - description
         - webpageUrl
-    RegionInformations:
+    RegionDescriptions:
       type: object
       properties:
         regionId:
           type: integer
           example: 1
-          description: The Id of the region.
+          description: The ID of the region.
         name:
           type: string
           example: Tropical Zone
@@ -1011,13 +979,13 @@ components:
         webpageUrl:
           type: string
           example: path/to/wiki/tropical/zone.com
-          description: Url with informations to the region.
+          description: Url with descriptions to the region.
       required:
         - regionId
         - name
         - description
         - webpageUrl
-    Association:
+    Organization:
       type: object
       properties:
         userToken:
@@ -1026,28 +994,28 @@ components:
         name:
           type: string
           example: New Roots
-          description: Name of the association corresponding to the assocId.
+          description: Name of the organization corresponding to the given ID.
         description:
           type: string
           example: New Roots is ...
-          description: Stored short description of the association, originally
+          description: Stored short description of the organization, originally
                        provided by them.
         imageUrls:
           type: array
           items:
             type: string
             example: path/to/image/url.pic
-            description: List of images provided by the association.
+            description: List of images provided by the organization.
         webpageUrl:
           type: string
           example: path/to/new/roots.de
-          description: Url of the associations website.
+          description: URL of the organizations website.
         donatePageUrl:
           type: string
           example: path/to/new/roots/donation/link.de
-          description: Direct link to the donation side of the association.
+          description: Direct link to the donation side of the organization.
       required:
-        - assocId
+        - orgaId
         - name
         - description
         - webpageUrl
@@ -1060,22 +1028,22 @@ components:
         name:
           type: string
           example: Great Green Wall
-          description: Name of the project corresponding to the projectId.
+          description: Name of the project corresponding to the given ID.
         description:
           type: string
           example: The Great Green Wall is ...
           description: Stored short description of the project, originally
-                       provided by the responsible association.
+                       provided by the responsible organization.
         imageUrls:
           type: array
           items:
             type: string
             example: path/to/image/url.pic
-            description: List of images provided by the association.
+            description: List of images provided by the organization.
         webpageUrl:
           type: string
           example: path/to/great/green/wall.com
-          description: Url of the projects website.
+          description: URL of the projects website.
         donatePageUrl:
           type: string
           example: path/to/great/green/wall/donation/link.com
@@ -1085,9 +1053,17 @@ components:
         - name
         - description
         - webpageUrl
+    AddPropsAnswers:
+      type: object
+      additionalProperties:
+        type: string
+        enum: [pos, neu, neg]
+        description: The enum represents the possible answers to a question.
+          These questions are represented as *additionalProperties*, due to their
+          volatile behavior.
   responses:
     '200':
-      description: successful operation.
+      description: Successful operation.
     '400':
       description: Bad request. Provided request is malformed.
     '401':
@@ -1104,3 +1080,17 @@ components:
       required: true
       schema:
         type: string
+    orgaId:
+      name: orgaId
+      in: query
+      description: The unique ID from the organization.
+      required: true
+      schema:
+        type: integer
+    projectId:
+      name: projectId
+      in: query
+      description: The unique ID from the project.
+      required: true
+      schema:
+        type: integer
