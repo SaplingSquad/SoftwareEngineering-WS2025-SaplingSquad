@@ -17,8 +17,8 @@ class WebFluxConfig(
 ) : WebFluxConfigurer {
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
         super.addResourceHandlers(registry)
-
-        registry.addResourceHandler("/api/rsc/**").addResourceLocations("classpath:/static/")
+        val trimmed = config.resourcesUrlPath.trim('/')
+        registry.addResourceHandler("/${trimmed}/**").addResourceLocations("classpath:/static/")
     }
 
     override fun addCorsMappings(registry: CorsRegistry) {

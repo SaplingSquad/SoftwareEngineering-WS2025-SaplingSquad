@@ -14,6 +14,8 @@ data class AppConfig @ConstructorBinding constructor(
     val openapi: OpenAPI,
     /** Access-Allow-Origin: * (for dev purposes)*/
     val allowWildcardCors: Boolean = false,
+    /** resources location **/
+    val resourcesUrlPath: String,
 ) {
 
     /** Configuration concerning OpenAPI */
