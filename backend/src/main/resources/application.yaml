@@ -17,5 +17,7 @@ springdoc:
     url: "/api/spec.yaml" # served path to spec.yaml
     path: "/api"
   enable-default-api-docs: false
+  api-docs:
+    path: "/api/v3/api-docs" # (=> /api/v3/api-docs/swagger-config)
   webjars:
     prefix: "/api"
