@@ -879,7 +879,7 @@ components:
         coordinates:
           type: array
           items:
-            type: integer
+            type: number
           description: Longitude and latitude coordinates.
           example: [-76.53063297271729, 39.18174077994108]
       required:
