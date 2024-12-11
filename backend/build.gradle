@@ -23,6 +23,9 @@ repositories {
     mavenCentral()
 }
 
+configurations.create("mockitoAgent") {
+    transitive = false
+}
 dependencies {
     implementation "org.postgresql:postgresql:$postgres_version"
     implementation "com.h2database:h2:$h2_version"
@@ -67,6 +70,9 @@ dependencies {
     testImplementation "org.komapper:komapper-dialect-h2-r2dbc:$komapper_version"
     testImplementation "org.komapper:komapper-spring-boot-starter-r2dbc:$komapper_version"
     testImplementation "org.komapper:komapper-spring-boot-autoconfigure-r2dbc:$komapper_version"
+    testImplementation "org.mockito.kotlin:mockito-kotlin:5.4.0"
+    testImplementation "org.mockito:mockito-core"
+    mockitoAgent("org.mockito:mockito-core")
 }
 
 def generatedOpenApi = layout.buildDirectory.dir("generated/openapi-codegen/")
@@ -138,4 +144,5 @@ springBoot {
 
 test {
     useJUnitPlatform()
+    jvmArgs("-javaagent:${configurations.mockitoAgent.asPath}")
 }

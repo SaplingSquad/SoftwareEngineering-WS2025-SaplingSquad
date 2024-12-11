@@ -4,6 +4,7 @@ import org.komapper.core.dsl.Meta
 import org.komapper.core.dsl.QueryDsl
 import org.komapper.r2dbc.R2dbcDatabase
 import org.springframework.stereotype.Repository
+import saplingsquad.utils.atMostOne
 import saplingsquad.persistence.tables.QuestionEntity
 import saplingsquad.persistence.tables.questionEntity
 
@@ -21,4 +22,15 @@ class QuestionsRepository(private val db: R2dbcDatabase) {
         QueryDsl.from(Meta.questionEntity)
     }
 
+    /**
+     * Read a single Question from the DB
+     */
+    suspend fun readById(id: Int): QuestionEntity? = db.runQuery {
+        QueryDsl
+            .from(Meta.questionEntity)
+            .where { Meta.questionEntity.id eq id }
+            .collect { flow ->
+                flow.atMostOne()
+            }
+    }
 }
