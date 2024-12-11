@@ -2,7 +2,10 @@ openapi: 3.0.3
 info:
   title: Sprout API
   description:
-    Sprout is an application to match potential donators with fitting charitable organizations. It provides an option for those organizations to present themselves as well as their projects with reduced effort and provides those descriptions in an interaktive way to the users.
+    Sprout is an application to match potential donors with fitting charitable
+    organizations. It provides an option for those organizations to present
+    themselves as well as their projects with reduced effort and provides those
+    descriptions in an interactive way to the users.
   license:
     name: GNU Affero General Public License v3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
@@ -11,9 +14,10 @@ tags:
   - name: user
     description: Operations for user management.
   - name: questions
-    description: Operations about the initial questions.
+    description: Operations about the initial questions, their answers and the
+      filters they set.
   - name: map
-    description: Operations concerning the map.
+    description: Operations concerning the map, this includes markers.
   - name: bookmarks
     description: Operations to manage bookmarks for a logged in user.
   - name: organization
@@ -24,11 +28,11 @@ paths:
     post:
       tags:
         - user
-      summary: Create user
-      description: This can only be done by the user.
+      summary: Create user. This can only be done by the user.
+      description: Register a new user with Sprout.
       operationId: createUser
       requestBody:
-        description: Created user object.
+        description: Create user object.
         content:
           application/json:
             schema:
@@ -68,7 +72,7 @@ paths:
             type: string
       responses:
         '200':
-          description: successful operation
+          description: Successful operation.
           headers:
             X-Rate-Limit:
               description: calls per hour allowed by the user
@@ -97,14 +101,15 @@ paths:
     get:
       tags:
         - user
-      summary: Autheticate user by user token.
-      description: ''
+      summary: Authenticate user by user token.
+      description: Send a userToken to get user name and icon of the
+        corresponding account.
       operationId: getUserByToken
       parameters:
         - $ref: '#/components/parameters/userToken'
       responses:
         '200':
-          description: successful operation
+          description: Successful operation.
           content:
             application/json:
               schema:
@@ -129,8 +134,8 @@ paths:
     put:
       tags:
         - user
-      summary: Update user
-      description: This can only be done by the logged in user.
+      summary: Update user. This can only be done by the logged in user.
+      description: Update information concerning the account of a logged in user.
       operationId: updateUser
       parameters:
         - $ref: '#/components/parameters/userToken'
@@ -154,8 +159,8 @@ paths:
     delete:
       tags:
         - user
-      summary: Delete user.
-      description: This can only be done by the logged in user.
+      summary: Delete user. This can only be done by the logged in user.
+      description: Delete an existing, logged in user.
       operationId: deleteUser
       parameters:
         - $ref: '#/components/parameters/userToken'
@@ -174,7 +179,7 @@ paths:
     get:
       tags:
         - questions
-      summary: Get list of all questions.
+      summary: Get a list of all questions.
       description: ''
       operationId: getQuestions
       responses:
@@ -254,7 +259,8 @@ paths:
       tags:
         - questions
       summary: Get filter settings for the active account.
-      description: ''
+      description: Request the stored filters for the active account. This
+        includes manual set filters as well as calculated ones.
       operationId: getFilters
       parameters:
         - $ref: '#/components/parameters/userToken'
@@ -281,7 +287,8 @@ paths:
       tags:
         - map
       summary: Get list of the locations from all organizations.
-      description: ''
+      description: This returns a List of GeoJSONSources to display the pins on
+        the map.
       operationId: getOrganizationsLocations
       parameters:
       - in: query
@@ -291,7 +298,7 @@ paths:
           $ref: '#/components/schemas/AddProps'
       responses:
         '200':
-          description: successful operation
+          description: Successful operation.
           content:
             application/json:
               schema:
@@ -320,7 +327,7 @@ paths:
             type: integer
       responses:
         '200':
-          description: successful operation
+          description: Successful operation.
           content:
             application/json:
               schema:
@@ -342,7 +349,7 @@ paths:
       operationId: getOrganizations
       responses:
         '200':
-          description: successful operation
+          description: Successful operation.
           content:
             application/json:
               schema:
@@ -364,7 +371,8 @@ paths:
       tags:
         - map
       summary: Get list of all ongoing projects locations.
-      description: ''
+      description: This returns a List of GeoJSONSources to display the pins on
+        the map.
       operationId: getProjectsLocations
       parameters:
       - in: query
@@ -374,7 +382,7 @@ paths:
           $ref: '#/components/schemas/AddProps'
       responses:
         '200':
-          description: successful operation
+          description: Successful operation.
           content:
             application/json:
               schema:
@@ -391,7 +399,7 @@ paths:
     get:
       tags:
         - map
-      summary: Get project by projectId.
+      summary: Get project by ID.
       description: ''
       operationId: getProject
       parameters:
@@ -403,7 +411,7 @@ paths:
             type: integer
       responses:
         '200':
-          description: successful operation
+          description: Successful operation.
           content:
             application/json:
               schema:
@@ -425,7 +433,7 @@ paths:
       operationId: getProjects
       responses:
         '200':
-          description: successful operation
+          description: Successful operation.
           content:
             application/json:
               schema:
@@ -448,7 +456,8 @@ paths:
       tags:
         - map
       summary: Get list of regions on the map.
-      description: ''
+      description: This returns a List of GeoJSONSources to display the pins on
+        the map.
       operationId: getRegions
       parameters:
       - in: query
@@ -458,7 +467,7 @@ paths:
           $ref: '#/components/schemas/AddProps'
       responses:
         '200':
-          description: successful operation
+          description: Successful operation.
           content:
             application/json:
               schema:
@@ -475,7 +484,7 @@ paths:
     get:
       tags:
         - map
-      summary: Get region by Id.
+      summary: Get region by ID.
       description: ''
       operationId: getRegion
       parameters:
@@ -487,7 +496,7 @@ paths:
             type: integer
       responses:
         '200':
-          description: successful operation
+          description: Successful operation.
           content:
             application/json:
               schema:
@@ -504,8 +513,8 @@ paths:
     post:
       tags:
         - bookmarks
-      summary: Save a bookmark for a project.
-      description: This can only be done by the user.
+      summary: Save a bookmark for a project. This can only be done by the user.
+      description: ''
       operationId: bookmarkProject
       parameters:
         - $ref: '#/components/parameters/userToken'
@@ -555,8 +564,8 @@ paths:
     post:
       tags:
         - bookmarks
-      summary: Save a bookmark for an organization.
-      description: This can only be done by the user.
+      summary: Save a bookmark for an organization. This can only be done by the user.
+      description: ''
       operationId: bookmarkOrganization
       parameters:
         - $ref: '#/components/parameters/userToken'
@@ -607,8 +616,9 @@ paths:
     post:
       tags:
         - organization
-      summary: Create organization.
-      description: This can only be done by a logged in user.
+      summary: Create an organization. This can only be done by a logged in user.
+      description: To be able to register a new organization to Sprout it is
+        necessary to be logged in.
       operationId: createOrganization
       requestBody:
         description: Create an organization.
@@ -630,8 +640,8 @@ paths:
     put:
       tags:
         - organization
-      summary: Update organization.
-      description: This can only be done by a logged in user.
+      summary: Update organization. This can only be done by a logged in user.
+      description: Update informations to a given organization.
       operationId: updateOrganization
       parameters:
         - $ref: '#/components/parameters/userToken'
@@ -654,8 +664,8 @@ paths:
     delete:
       tags:
         - organization
-      summary: Delete organization.
-      description: This can only be done by a logged in user.
+      summary: Delete organization. This can only be done by a logged in user.
+      description: Delete an existing organization.
       operationId: deleteOrganization
       parameters:
         - $ref: '#/components/parameters/userToken'
@@ -680,8 +690,8 @@ paths:
     post:
       tags:
         - organization
-      summary: Create a project for an organization.
-      description: This can only be done by a logged in user.
+      summary: Create a project for an organization. This can only be done by a logged in user.
+      description: A project always belongs to an organization.
       operationId: createProject
       requestBody:
         description: Create a project.
@@ -691,12 +701,12 @@ paths:
               $ref: '#/components/schemas/Project'
       responses:
         default:
-          description: successful operation
+          description: Successful operation.
     put:
       tags:
         - organization
-      summary: Update project
-      description: This can only be done by a logged in user.
+      summary: Update project. This can only be done by a logged in user.
+      description: Update an existing project from an organization.
       operationId: updateProject
       parameters:
         - $ref: '#/components/parameters/userToken'
@@ -719,8 +729,8 @@ paths:
     delete:
       tags:
         - organization
-      summary: Delete organization.
-      description: This can only be done by a logged in user.
+      summary: Delete a project. This can only be done by a logged in user.
+      description: Delete a given project.
       operationId: deleteProject
       parameters:
         - $ref: '#/components/parameters/userToken'
@@ -768,15 +778,15 @@ components:
         questionId:
           type: integer
           example: 1
-          description: Unique Id of the question.
+          description: Unique ID of the question.
         questionText:
           type: string
-          example: Do you want to fokus on environment protection?
-          description: A premade question for the user.
+          example: Do you want to focus on environment protection?
+          description: A pre made question for the user.
         questionImageUrl:
           type: string
           example: url/to/question/image.pic
-          description: A picture supplementing the questionText.
+          description: A picture supplementing the text of a question.
         tagId:
           type: integer
           example: 1
@@ -908,7 +918,7 @@ components:
           type: array
           items:
             type: integer
-          description: Longitude and latitude coordinates
+          description: Longitude and latitude coordinates.
           example: [-76.53063297271729, 39.18174077994108]
       required:
         - type
@@ -923,8 +933,9 @@ components:
         name:
           type: string
           example: New Roots
-          description: Name of the organization corresponding to the orgaId.
-        description:
+          description: Name of the organization corresponding to the Id of the
+            organization.
+        description: # Not a keyword
           type: string
           example: New Roots is ...
           description: Stored short description of the organization, originally
@@ -938,7 +949,7 @@ components:
         webpageUrl:
           type: string
           example: path/to/new/roots.de
-          description: Url of the organizations website.
+          description: URL of the organizations website.
         donatePageUrl:
           type: string
           example: path/to/new/roots/donation/link.de
@@ -958,7 +969,7 @@ components:
         name:
           type: string
           example: Great Green Wall
-          description: Name of the project corresponding to the projectId.
+          description: Name of the project corresponding to the provided ID.
         description:
           type: string
           example: The Great Green Wall is ...
@@ -973,7 +984,7 @@ components:
         webpageUrl:
           type: string
           example: path/to/great/green/wall.com
-          description: Url of the projects website.
+          description: URL of the projects website.
         donatePageUrl:
           type: string
           example: path/to/great/green/wall/donation/link.com
@@ -1023,7 +1034,7 @@ components:
         name:
           type: string
           example: New Roots
-          description: Name of the organization corresponding to the orgaId.
+          description: Name of the organization corresponding to the given ID.
         description:
           type: string
           example: New Roots is ...
@@ -1038,7 +1049,7 @@ components:
         webpageUrl:
           type: string
           example: path/to/new/roots.de
-          description: Url of the organizations website.
+          description: URL of the organizations website.
         donatePageUrl:
           type: string
           example: path/to/new/roots/donation/link.de
@@ -1057,7 +1068,7 @@ components:
         name:
           type: string
           example: Great Green Wall
-          description: Name of the project corresponding to the projectId.
+          description: Name of the project corresponding to the given ID.
         description:
           type: string
           example: The Great Green Wall is ...
@@ -1072,7 +1083,7 @@ components:
         webpageUrl:
           type: string
           example: path/to/great/green/wall.com
-          description: Url of the projects website.
+          description: URL of the projects website.
         donatePageUrl:
           type: string
           example: path/to/great/green/wall/donation/link.com
@@ -1089,10 +1100,10 @@ components:
         enum: [pos, neu, neg]
         description: The enum represents the possible answers to a question.
           These questions are represented as *additionalProperties*, due to their
-          volatile behaviour.
+          volatile behavior.
   responses:
     '200':
-      description: successful operation.
+      description: Successful operation.
     '400':
       description: Bad request. Provided request is malformed.
     '401':
