@@ -9,7 +9,7 @@ info:
   license:
     name: GNU Affero General Public License v3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
-  version: 1.1.1
+  version: 1.1.3
 tags:
   - name: user
     description: Operations for user management.
@@ -319,12 +319,7 @@ paths:
       description: ''
       operationId: getOrganization
       parameters:
-        - name: orgaId
-          in: path
-          description: The ID of the organization to fetch descriptions for.
-          required: true
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/orgaId'
       responses:
         '200':
           description: Successful operation.
@@ -403,12 +398,7 @@ paths:
       description: ''
       operationId: getProject
       parameters:
-        - name: projectId
-          in: path
-          description: The ID of the project to fetch descriptions for.
-          required: true
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/projectId'
       responses:
         '200':
           description: Successful operation.
@@ -518,12 +508,7 @@ paths:
       operationId: bookmarkProject
       parameters:
         - $ref: '#/components/parameters/userToken'
-        - name: projectId
-          in: query
-          description: The ID of the project to bookmark.
-          required: true
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/projectId'
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -543,12 +528,7 @@ paths:
       operationId: deleteProjectBookmark
       parameters:
         - $ref: '#/components/parameters/userToken'
-        - name: projectId
-          in: query
-          description: The ID of the project to delete.
-          required: true
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/projectId'
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -569,12 +549,7 @@ paths:
       operationId: bookmarkOrganization
       parameters:
         - $ref: '#/components/parameters/userToken'
-        - name: orgaId
-          in: query
-          description: The ID of the organization to bookmark.
-          required: true
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/orgaId'
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -594,12 +569,7 @@ paths:
       operationId: deleteOrganizationBookmark
       parameters:
         - $ref: '#/components/parameters/userToken'
-        - name: orgaId
-          in: query
-          description: The ID of the organization to delete.
-          required: true
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/orgaId'
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -669,12 +639,7 @@ paths:
       operationId: deleteOrganization
       parameters:
         - $ref: '#/components/parameters/userToken'
-        - name: orgaId
-          in: query
-          description: The orgaId from the organization to be deleted.
-          required: true
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/orgaId'
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -734,12 +699,7 @@ paths:
       operationId: deleteProject
       parameters:
         - $ref: '#/components/parameters/userToken'
-        - name: projectId
-          in: query
-          description: The projectId from the project to be deleted.
-          required: true
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/projectId'
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -1120,3 +1080,17 @@ components:
       required: true
       schema:
         type: string
+    orgaId:
+      name: orgaId
+      in: query
+      description: The unique ID from the organization.
+      required: true
+      schema:
+        type: integer
+    projectId:
+      name: projectId
+      in: query
+      description: The unique ID from the project.
+      required: true
+      schema:
+        type: integer
