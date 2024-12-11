@@ -6,7 +6,7 @@ import saplingsquad.api.BookmarksApiDelegate
 
 @Service
 class BookmarksApiService() : BookmarksApiDelegate  {
-    override suspend fun bookmarkAssocisation(userToken: String, assocId: Int): ResponseEntity<Unit> {
+    override suspend fun bookmarkOrganization(userToken: String, orgaId: Int): ResponseEntity<Unit> {
         TODO("Not yet implemented")
     }
 
@@ -14,7 +14,7 @@ class BookmarksApiService() : BookmarksApiDelegate  {
         TODO("Not yet implemented")
     }
 
-    override suspend fun deleteAssociationBookmark(userToken: String, assocId: Int): ResponseEntity<Unit> {
+    override suspend fun deleteOrganizationBookmark(userToken: String, orgaId: Int): ResponseEntity<Unit> {
         TODO("Not yet implemented")
     }
 

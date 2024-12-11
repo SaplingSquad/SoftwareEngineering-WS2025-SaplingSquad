@@ -2,15 +2,15 @@ package saplingsquad.api.service
 
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
-import saplingsquad.api.AssociationsApiDelegate
-import saplingsquad.api.models.Association
-import saplingsquad.api.models.AssociationInformations
+import saplingsquad.api.OrganizationsApiDelegate
+import saplingsquad.api.models.Organization
+import saplingsquad.api.models.OrganizationInformations
 import saplingsquad.api.models.Project
 import saplingsquad.api.models.ProjectInformations
 
 @Service
-class AssociationsApiService() : AssociationsApiDelegate  {
-    override suspend fun createAssociation(association: Association?): ResponseEntity<Unit> {
+class OrganizationsApiService() : OrganizationsApiDelegate  {
+    override suspend fun createOrganization(organization: Organization?): ResponseEntity<Unit> {
         TODO("Not yet implemented")
     }
 
@@ -18,7 +18,7 @@ class AssociationsApiService() : AssociationsApiDelegate  {
         TODO("Not yet implemented")
     }
 
-    override suspend fun deleteAssociation(userToken: String, assocId: Int): ResponseEntity<Unit> {
+    override suspend fun deleteOrganization(userToken: String, orgaId: Int): ResponseEntity<Unit> {
         TODO("Not yet implemented")
     }
 
@@ -26,9 +26,9 @@ class AssociationsApiService() : AssociationsApiDelegate  {
         TODO("Not yet implemented")
     }
 
-    override suspend fun updateAssociation(
+    override suspend fun updateOrganization(
         userToken: String,
-        associationInformations: AssociationInformations?
+        organizationInformations: OrganizationInformations?
     ): ResponseEntity<Unit> {
         TODO("Not yet implemented")
     }
