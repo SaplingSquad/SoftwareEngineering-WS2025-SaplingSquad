@@ -1,8 +1,9 @@
-import type { ClassList, NoSerialize, QRL } from "@builder.io/qwik";
+import type { ClassList, JSXOutput, NoSerialize, QRL } from "@builder.io/qwik";
 import {
   $,
   component$,
   noSerialize,
+  render,
   useSignal,
   useVisibleTask$,
 } from "@builder.io/qwik";
@@ -172,3 +173,16 @@ export const Map = component$(
     );
   },
 );
+
+/**
+ * Creates a {@link maplibregl.Popup} with JSX contents.
+ * Needs to be called on the client (mostly the case, as map is only loaded on client).
+ *
+ * @param contents The contents of the popup
+ * @returns The created {@link maplibregl.Popup}
+ */
+export const jsxPopup = (contents: JSXOutput): maplibregl.Popup => {
+  const node = document.createElement("div");
+  render(node, contents);
+  return new maplibregl.Popup().setDOMContent(node);
+};
