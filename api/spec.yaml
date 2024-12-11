@@ -295,7 +295,7 @@ paths:
         style: deepObject
         name: answers
         schema:
-          $ref: '#/components/schemas/AddProps'
+          $ref: '#/components/schemas/AddPropsAnswers'
       responses:
         '200':
           description: Successful operation.
@@ -374,7 +374,7 @@ paths:
         style: deepObject
         name: answers
         schema:
-          $ref: '#/components/schemas/AddProps'
+          $ref: '#/components/schemas/AddPropsAnswers'
       responses:
         '200':
           description: Successful operation.
@@ -454,7 +454,7 @@ paths:
         style: deepObject
         name: answers
         schema:
-          $ref: '#/components/schemas/AddProps'
+          $ref: '#/components/schemas/AddPropsAnswers'
       responses:
         '200':
           description: Successful operation.
@@ -1053,7 +1053,7 @@ components:
         - name
         - description
         - webpageUrl
-    AddProps:
+    AddPropsAnswers:
       type: object
       additionalProperties:
         type: string
