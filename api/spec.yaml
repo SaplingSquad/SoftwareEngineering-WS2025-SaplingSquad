@@ -305,7 +305,7 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-  /map/organization/descriptions/byId:
+  /map/organization/descriptions/{orgaId}:
     get:
       tags:
         - map
@@ -314,7 +314,7 @@ paths:
       operationId: getOrganization
       parameters:
         - name: orgaId
-          in: query
+          in: path
           description: The Id of the organization to fetch descriptions for.
           required: true
           schema:
@@ -389,7 +389,7 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-  /map/project/descriptions/byId:
+  /map/project/descriptions/{projectId}:
     get:
       tags:
         - map
@@ -398,7 +398,7 @@ paths:
       operationId: getProject
       parameters:
         - name: projectId
-          in: query
+          in: path
           description: The Id of the project to fetch descriptions for.
           required: true
           schema:
@@ -474,7 +474,7 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-  /map/region/descriptions/byId:
+  /map/region/descriptions/{regionId}:
     get:
       tags:
         - map
@@ -483,7 +483,7 @@ paths:
       operationId: getRegion
       parameters:
         - name: regionId
-          in: query
+          in: path
           description: The Id of the region to fetch descriptions for.
           required: true
           schema:
