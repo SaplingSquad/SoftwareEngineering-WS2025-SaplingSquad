@@ -233,7 +233,7 @@ paths:
           schema:
             type: integer
             example: 1
-            description: Unique Id of the question.
+            description: Unique ID of the question.
       responses:
         '200':
           description: Success
@@ -314,7 +314,7 @@ paths:
       parameters:
         - name: orgaId
           in: path
-          description: The Id of the organization to fetch descriptions for.
+          description: The ID of the organization to fetch descriptions for.
           required: true
           schema:
             type: integer
@@ -397,7 +397,7 @@ paths:
       parameters:
         - name: projectId
           in: path
-          description: The Id of the project to fetch descriptions for.
+          description: The ID of the project to fetch descriptions for.
           required: true
           schema:
             type: integer
@@ -481,7 +481,7 @@ paths:
       parameters:
         - name: regionId
           in: path
-          description: The Id of the region to fetch descriptions for.
+          description: The ID of the region to fetch descriptions for.
           required: true
           schema:
             type: integer
@@ -511,7 +511,7 @@ paths:
         - $ref: '#/components/parameters/userToken'
         - name: projectId
           in: query
-          description: The Id of the project to bookmark.
+          description: The ID of the project to bookmark.
           required: true
           schema:
             type: integer
@@ -536,7 +536,7 @@ paths:
         - $ref: '#/components/parameters/userToken'
         - name: projectId
           in: query
-          description: The Id of the project to delete.
+          description: The ID of the project to delete.
           required: true
           schema:
             type: integer
@@ -562,7 +562,7 @@ paths:
         - $ref: '#/components/parameters/userToken'
         - name: orgaId
           in: query
-          description: The Id of the organization to bookmark.
+          description: The ID of the organization to bookmark.
           required: true
           schema:
             type: integer
@@ -587,7 +587,7 @@ paths:
         - $ref: '#/components/parameters/userToken'
         - name: orgaId
           in: query
-          description: The Id of the organization to delete.
+          description: The ID of the organization to delete.
           required: true
           schema:
             type: integer
@@ -789,7 +789,7 @@ components:
           questionId:
             type: integer
             example: 1
-            description: Unique Id of the question.
+            description: Unique ID of the question.
           answer:
             type: string
             enum: [pos, neu, neg]
@@ -919,7 +919,7 @@ components:
         orgaId:
           type: integer
           example: 1
-          description: The Id of the organization.
+          description: The ID of the organization.
         name:
           type: string
           example: New Roots
@@ -954,7 +954,7 @@ components:
         projectId:
           type: integer
           example: 1
-          description: The Id of the project.
+          description: The ID of the project.
         name:
           type: string
           example: Great Green Wall
@@ -989,7 +989,7 @@ components:
         regionId:
           type: integer
           example: 1
-          description: The Id of the region.
+          description: The ID of the region.
         name:
           type: string
           example: Tropical Zone
