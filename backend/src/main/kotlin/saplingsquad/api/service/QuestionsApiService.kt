@@ -57,7 +57,7 @@ class QuestionsApiService(private val repository: QuestionsRepository, @Autowire
         return Question(
             questionId = this.id,
             questionText = this.question,
-            questionImageUrl = appConfig.resourcesUrlPath + this.imageUrl,
+            questionImageUrl = this.imageUrl?.let { appConfig.resourcesUrlPath + it },
             tagId = this.tag
         )
     }

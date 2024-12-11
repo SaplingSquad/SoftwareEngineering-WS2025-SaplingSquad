@@ -7,10 +7,12 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.not
+import org.mockito.kotlin.whenever
 import org.mockito.kotlin.wheneverBlocking
 import org.springframework.http.HttpStatus
 import saplingsquad.api.models.Question
 import saplingsquad.api.service.QuestionsApiService
+import saplingsquad.config.AppConfig
 import saplingsquad.persistence.QuestionsRepository
 import saplingsquad.persistence.tables.QuestionEntity
 import kotlin.test.Test
@@ -28,6 +30,9 @@ class QuestionsApiServiceTest {
     @Mock
     lateinit var repository: QuestionsRepository
 
+    @Mock
+    lateinit var appConfig: AppConfig
+
     /**
      * Test GET /questions
      */
@@ -40,15 +45,19 @@ class QuestionsApiServiceTest {
             QuestionEntity(id = 4, question = "Question 4", imageUrl = "image2.png", tag = 2),
         )
         wheneverBlocking { repository.readAll() }.thenReturn(questionEntities)
+        val resourcesUrl = "/testapi/res/"
+        whenever(appConfig.resourcesUrlPath).thenReturn(resourcesUrl)
 
+        // @formatter:off
         val expectedBody = listOf(
             Question(questionId = 1, questionText = "Question 1", questionImageUrl = null, tagId = 1),
-            Question(questionId = 2, questionText = "Question 2", questionImageUrl = "image.png", tagId = 1),
+            Question(questionId = 2, questionText = "Question 2", questionImageUrl = "${resourcesUrl}image.png", tagId = 1),
             Question(questionId = 3, questionText = "Question 3", questionImageUrl = null, tagId = 2),
-            Question(questionId = 4, questionText = "Question 4", questionImageUrl = "image2.png", tagId = 2),
+            Question(questionId = 4, questionText = "Question 4", questionImageUrl = "${resourcesUrl}image2.png", tagId = 2),
         )
+        // @formatter:on
 
-        val service = QuestionsApiService(repository)
+        val service = QuestionsApiService(repository, appConfig)
         val response = service.getQuestions()
 
         assertEquals(response.statusCode, HttpStatus.OK)
@@ -64,10 +73,18 @@ class QuestionsApiServiceTest {
         wheneverBlocking { repository.readById(1) }.thenReturn(input)
         wheneverBlocking { repository.readById(not(eq(1))) }.thenReturn(null)
 
-        val expectedOutput =
-            Question(questionId = 1, questionText = "Question 1", questionImageUrl = "image.png", tagId = 1)
+        val resourcesUrl = "/testapi2/res/"
+        whenever(appConfig.resourcesUrlPath).thenReturn(resourcesUrl)
 
-        val service = QuestionsApiService(repository)
+        val expectedOutput =
+            Question(
+                questionId = 1,
+                questionText = "Question 1",
+                questionImageUrl = "${resourcesUrl}image.png",
+                tagId = 1
+            )
+
+        val service = QuestionsApiService(repository, appConfig)
 
         val responseExisting = service.getQuestionById(1)
 
