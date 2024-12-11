@@ -15,4 +15,7 @@ appconfig:
 springdoc:
   swagger-ui:
     url: "/api/spec.yaml" # served path to spec.yaml
+    path: "/api"
   enable-default-api-docs: false
+  webjars:
+    prefix: "/api"
