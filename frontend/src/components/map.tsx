@@ -24,19 +24,53 @@ export type Layers = Parameters<
 >[0][];
 
 /**
+ * An image source for the map.
+ * Either an already loaded source,
+ * or an url in a string, where the image should be loaded from.
+ */
+export type ImageSource =
+  | string
+  | Parameters<InstanceType<typeof maplibregl.Map>["addImage"]>[1];
+
+/**
+ * Images to load for the map.
+ * Each image has an id and can either be just an {@link ImageSource} or additionally specify some options.
+ */
+export type Images = {
+  [id: string]:
+    | ImageSource
+    | [
+        ImageSource,
+        Parameters<InstanceType<typeof maplibregl.Map>["addImage"]>[2],
+      ];
+};
+
+/**
  * Creates a maplibre Map, adding all additional properties on load.
  * @param options Options to create the map with
  * @param sources data sources for the map
  * @param layers layers for the map
+ * @param images images for the map
  * @returns a maplibre map with the passed options and additional properties
  */
 const createMap = (
   options: maplibregl.MapOptions,
   sources: Sources,
   layers: Layers,
+  images: Images,
 ) => {
   const map = new maplibregl.Map(options);
   map.on("load", () => {
+    Object.entries(images).forEach(([id, spec]) => {
+      const [image, options] = Array.isArray(spec) ? spec : [spec, undefined];
+      if (typeof image === "string") {
+        map
+          .loadImage(image)
+          .then((image) => map.addImage(id, image.data, options));
+      } else {
+        map.addImage(id, image, options);
+      }
+    });
     Object.entries(sources).forEach(([id, source]) =>
       map.addSource(id, source),
     );
@@ -54,6 +88,12 @@ export const Map = component$(
     style = "https://tiles.versatiles.org/assets/styles/colorful.json",
     sources = {},
     layers$ = $([]),
+<<<<<<< Updated upstream
+    images = [],
+=======
+    images = {},
+    onClick = {},
+>>>>>>> Stashed changes
   }: {
     /**
      * Classes to set
@@ -71,6 +111,10 @@ export const Map = component$(
      * Layers to add to the map
      */
     layers$?: QRL<Layers>;
+    /**
+     * Images to load into the map
+     */
+    images?: Images;
   }) => {
     const map = useSignal<NoSerialize<maplibregl.Map>>();
     const containerRef = useSignal<HTMLElement>();
@@ -89,6 +133,7 @@ export const Map = component$(
           },
           sources,
           await layers$.resolve(),
+          images,
         ),
       );
     });
