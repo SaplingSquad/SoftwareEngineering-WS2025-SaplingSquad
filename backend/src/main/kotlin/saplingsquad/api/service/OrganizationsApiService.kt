@@ -3,10 +3,7 @@ package saplingsquad.api.service
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import saplingsquad.api.OrganizationsApiDelegate
-import saplingsquad.api.models.Organization
-import saplingsquad.api.models.OrganizationInformations
-import saplingsquad.api.models.Project
-import saplingsquad.api.models.ProjectInformations
+import saplingsquad.api.models.*
 
 @Service
 class OrganizationsApiService() : OrganizationsApiDelegate  {
@@ -28,15 +25,16 @@ class OrganizationsApiService() : OrganizationsApiDelegate  {
 
     override suspend fun updateOrganization(
         userToken: String,
-        organizationInformations: OrganizationInformations?
+        organizationDescriptions: OrganizationDescriptions?
     ): ResponseEntity<Unit> {
         TODO("Not yet implemented")
     }
 
     override suspend fun updateProject(
         userToken: String,
-        projectInformations: ProjectInformations?
+        projectDescriptions: ProjectDescriptions?
     ): ResponseEntity<Unit> {
         TODO("Not yet implemented")
     }
+
 }

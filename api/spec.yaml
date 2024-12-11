@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: Sprout API
   description:
-    Sprout is an application to match potential donators with fitting charitable organizations. It provides an option for thos organizations to present themselves as well as their projects with reduced effort and provides those informations in an interaktive way to the users.
+    Sprout is an application to match potential donators with fitting charitable organizations. It provides an option for those organizations to present themselves as well as their projects with reduced effort and provides those descriptions in an interaktive way to the users.
   license:
     name: GNU Affero General Public License v3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
@@ -305,7 +305,7 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-  /map/organization/informations/byId:
+  /map/organization/descriptions/byId:
     get:
       tags:
         - map
@@ -315,7 +315,7 @@ paths:
       parameters:
         - name: orgaId
           in: query
-          description: The Id of the organization to fetch informations for.
+          description: The Id of the organization to fetch descriptions for.
           required: true
           schema:
             type: integer
@@ -325,7 +325,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OrganizationInformations'
+                $ref: '#/components/schemas/OrganizationDescriptions'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -334,11 +334,11 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-  /map/organization/informations:
+  /map/organization/descriptions:
     get:
       tags:
         - map
-      summary: Get list of informations for all organizations.
+      summary: Get list of descriptions for all organizations.
       description: ''
       operationId: getOrganizations
       responses:
@@ -351,7 +351,7 @@ paths:
                 items:
                   properties:
                     schema:
-                      $ref: '#/components/schemas/OrganizationInformations'
+                      $ref: '#/components/schemas/OrganizationDescriptions'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -389,7 +389,7 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-  /map/project/informations/byId:
+  /map/project/descriptions/byId:
     get:
       tags:
         - map
@@ -399,7 +399,7 @@ paths:
       parameters:
         - name: projectId
           in: query
-          description: The Id of the project to fetch informations for.
+          description: The Id of the project to fetch descriptions for.
           required: true
           schema:
             type: integer
@@ -409,7 +409,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProjectInformations'
+                $ref: '#/components/schemas/ProjectDescriptions'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -418,11 +418,11 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-  /map/project/informations:
+  /map/project/descriptions:
     get:
       tags:
         - map
-      summary: Get list of project informations.
+      summary: Get list of project descriptions.
       description: ''
       operationId: getProjects
       responses:
@@ -436,7 +436,7 @@ paths:
                   type: object
                   properties:
                     schema:
-                      $ref: '#/components/schemas/OrganizationInformations'
+                      $ref: '#/components/schemas/OrganizationDescriptions'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -474,7 +474,7 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-  /map/region/informations/byId:
+  /map/region/descriptions/byId:
     get:
       tags:
         - map
@@ -484,7 +484,7 @@ paths:
       parameters:
         - name: regionId
           in: query
-          description: The Id of the region to fetch informations for.
+          description: The Id of the region to fetch descriptions for.
           required: true
           schema:
             type: integer
@@ -494,7 +494,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RegionInformations'
+                $ref: '#/components/schemas/RegionDescriptions'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -638,11 +638,11 @@ paths:
       operationId: updateOrganization
       parameters:
         - $ref: '#/components/parameters/userToken'
-        - name: organizationInformations
+        - name: organizationDescriptions
           in: query
           description: Update an existing organization.
           schema:
-            $ref: '#/components/schemas/OrganizationInformations'
+            $ref: '#/components/schemas/OrganizationDescriptions'
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -703,11 +703,11 @@ paths:
       operationId: updateProject
       parameters:
         - $ref: '#/components/parameters/userToken'
-        - name: projectInformations
+        - name: projectDescriptions
           in: query
           description: Update an existing project.
           schema:
-            $ref: '#/components/schemas/ProjectInformations'
+            $ref: '#/components/schemas/ProjectDescriptions'
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -916,7 +916,7 @@ components:
       required:
         - type
         - coordinates
-    OrganizationInformations:
+    OrganizationDescriptions:
       type: object
       properties:
         orgaId:
@@ -951,7 +951,7 @@ components:
         - name
         - description
         - webpageUrl
-    ProjectInformations:
+    ProjectDescriptions:
       type: object
       properties:
         projectId:
@@ -986,7 +986,7 @@ components:
         - name
         - description
         - webpageUrl
-    RegionInformations:
+    RegionDescriptions:
       type: object
       properties:
         regionId:
@@ -1011,7 +1011,7 @@ components:
         webpageUrl:
           type: string
           example: path/to/wiki/tropical/zone.com
-          description: Url with informations to the region.
+          description: Url with descriptions to the region.
       required:
         - regionId
         - name

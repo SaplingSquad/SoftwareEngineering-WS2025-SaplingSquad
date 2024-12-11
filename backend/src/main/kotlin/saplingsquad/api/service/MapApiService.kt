@@ -8,7 +8,7 @@ import saplingsquad.api.models.*
 
 @Service
 class MapApiService() : MapApiDelegate {
-    override suspend fun getOrganization(orgaId: Int): ResponseEntity<OrganizationInformations> {
+    override suspend fun getOrganization(orgaId: Int): ResponseEntity<OrganizationDescriptions> {
         TODO("Not yet implemented")
     }
 
@@ -20,7 +20,7 @@ class MapApiService() : MapApiDelegate {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getProject(projectId: Int): ResponseEntity<ProjectInformations> {
+    override suspend fun getProject(projectId: Int): ResponseEntity<ProjectDescriptions> {
         TODO("Not yet implemented")
     }
 
@@ -32,7 +32,7 @@ class MapApiService() : MapApiDelegate {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getRegion(regionId: Int): ResponseEntity<RegionInformations> {
+    override suspend fun getRegion(regionId: Int): ResponseEntity<RegionDescriptions> {
         TODO("Not yet implemented")
     }
 
