@@ -10,13 +10,29 @@ import liquibase.statement.core.InsertStatement
 import kotlin.math.floor
 import kotlin.random.Random
 
+/**
+ * Generate some placeholder Organizations, Projects and Regions for demonstration purposes.
+ * The names/titles are concatenations of random words, descriptions are lorem ipsum substrings.
+ * Positions are randomly generated. To avoid an even distribution of points, (to see the pin clustering in action)
+ * the probability with which an org/project/region is placed at some position is dependent on a perlin noise map
+ * To ensure highly concentrated clusters, the noise threshold is set quite high (only around 2.5% of generation attempts
+ * succeed) but is combined with many generation attempts.
+ *
+ * Used by liquibase migration to load those into the Database
+ */
 @Suppress("unused")
 class GenerateData : CustomSqlChange {
 
     companion object {
+        /** Generate around 500 organizations **/
         private const val ORG_GENERATION_ATTEMPTS = 20000
+
+        /** Generate around 50 regions **/
         private const val REGION_GENERATION_ATTEMPTS = 2000
-        private const val PROJECT_GENERATION_ATTEMPTS = 50
+
+        /** Generate around 2-3 organizations per project **/
+        private const val PROJECT_GENERATION_ATTEMPTS = 100
+
         private const val MAX_NUM_TAGS = 10
         private val AVAILABLE_TAGS = (1..17).toList()
     }
@@ -38,7 +54,10 @@ class GenerateData : CustomSqlChange {
         return ValidationErrors()
     }
 
-    override fun generateStatements(p0: Database?): Array<SqlStatement> {
+    /**
+     * Called by liquibase to get the SQL statements for this Task
+     */
+    override fun generateStatements(db: Database?): Array<SqlStatement> {
         val statements = mutableListOf<SqlStatement>()
         generateRegions(statements)
         generateOrganizations(statements)
@@ -46,6 +65,10 @@ class GenerateData : CustomSqlChange {
     }
 
 
+    /**
+     * Generate random  and their projects. [ORG_GENERATION_ATTEMPTS] attempts are made to create a project.
+     * With a ~2.5% success chance, this leads to 0.025*[ORG_GENERATION_ATTEMPTS] organizations.
+     */
     private fun generateRegions(list: MutableList<SqlStatement>) {
         Scope.getCurrentScope().getLog(javaClass).info("Generating statements for regions...")
         for (i in 1..REGION_GENERATION_ATTEMPTS) {
@@ -57,6 +80,11 @@ class GenerateData : CustomSqlChange {
         }
     }
 
+    /**
+     * Generate random organizations and their projects. [ORG_GENERATION_ATTEMPTS] attempts are made to create an organization.
+     * With a ~2.5% success chance, this leads to 0.025*[ORG_GENERATION_ATTEMPTS] organizations.
+     * Each successful organization then has [PROJECT_GENERATION_ATTEMPTS] attempts to create a project somewhere random.
+     */
     private fun generateOrganizations(list: MutableList<SqlStatement>) {
         Scope.getCurrentScope().getLog(javaClass).info("Generating statements for organizations...")
         var projectIdCounter = 1
@@ -77,6 +105,10 @@ class GenerateData : CustomSqlChange {
         }
     }
 
+    /**
+     * Construct the SQL insert statement for organizations, also constructs the statements for insertion of
+     * the organization's tags
+     */
     private fun insertOrganizationStatement(org: Organization, list: MutableList<SqlStatement>) {
         val insertOrg = InsertStatement("postgres", "public", "organization")
             .addColumnValue("org_id", org.id)
@@ -96,6 +128,10 @@ class GenerateData : CustomSqlChange {
             .forEach(list::add)
     }
 
+    /**
+     * same as [insertOrganizationStatement]
+     * @see insertOrganizationStatement
+     */
     private fun insertProjectStatement(proj: Project, list: MutableList<SqlStatement>) {
         val insertOrg = InsertStatement("postgres", "public", "project")
             .addColumnValue("project_id", proj.id)
@@ -116,6 +152,9 @@ class GenerateData : CustomSqlChange {
             .forEach(list::add)
     }
 
+    /**
+     * Construct SQL insert statement for a region
+     */
     private fun insertRegionStatement(region: Region, list: MutableList<SqlStatement>) {
         list.add(
             InsertStatement("postgres", "public", "region")
@@ -127,6 +166,9 @@ class GenerateData : CustomSqlChange {
         )
     }
 
+    /**
+     * Generate some random tags (each additional tag is added with less probability). Limited to [MAX_NUM_TAGS]
+     */
     private fun randomTags(): Set<Int> {
         var probability = 1.0
         var i = 0
@@ -139,6 +181,9 @@ class GenerateData : CustomSqlChange {
         return tags
     }
 
+    /**
+     * Generate some random names: concatenate 3 random words from a list of words
+     */
     private fun randomName(): String {
         val nameList = arrayOf(
             "Serendipity",
@@ -165,6 +210,9 @@ class GenerateData : CustomSqlChange {
         return nameList.random() + " " + nameList.random() + " " + nameList.random()
     }
 
+    /**
+     * Generate a random description: Random substring of lorem ipsum
+     */
     private fun randomDescription(): String {
         // @formatter:off
         val lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
@@ -174,6 +222,10 @@ class GenerateData : CustomSqlChange {
         return lorem.substring(start, end)
     }
 
+    /**
+     * Generates a random coordinate, but only succeeds if the perlin noise at that point has a large enough value.
+     * Returns null otherwise
+     */
     private fun randomPoint(): Coordinates? {
         val randomX = Random.nextDouble(-180.0, 180.0)
         val randomY = Random.nextDouble(-180.0, 180.0)
@@ -184,6 +236,9 @@ class GenerateData : CustomSqlChange {
         return null
     }
 
+    /**
+     * Sample perlin noise, simply take a 2d slice out of 3d noise
+     */
     private fun samplePerlinNoiseAt(x: Double, y: Double, scale: Double = 0.1): Double {
         return Perlin.noise(x * scale, y * scale, 0.0)
     }
