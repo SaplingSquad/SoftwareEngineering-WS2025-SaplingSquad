@@ -9,6 +9,7 @@ import saplingsquad.persistence.OrganizationsRepository
 import saplingsquad.persistence.ProjectsRepository
 import saplingsquad.persistence.RegionsRepository
 import saplingsquad.utils.asHttpOkResponse
+import java.math.MathContext
 
 @Service
 class MapApiService(
@@ -37,10 +38,9 @@ class MapApiService(
                         ),
                         geometry = GeoGeometry(
                             type = GeoGeometry.Type.Point,
-                            //TODO change api to double
                             coordinates = listOf(
-                                it.coordinates.coordinatesLon.toInt(),
-                                it.coordinates.coordinatesLat.toInt()
+                                it.coordinates.coordinatesLon.toBigDecimal(),
+                                it.coordinates.coordinatesLat.toBigDecimal()
                             )
                         )
                     )
@@ -69,10 +69,9 @@ class MapApiService(
                         ),
                         geometry = GeoGeometry(
                             type = GeoGeometry.Type.Point,
-                            //TODO change api to double
                             coordinates = listOf(
-                                it.coordinates.coordinatesLon.toInt(),
-                                it.coordinates.coordinatesLat.toInt()
+                                it.coordinates.coordinatesLon.toBigDecimal(),
+                                it.coordinates.coordinatesLat.toBigDecimal()
                             )
                         )
                     )
@@ -98,14 +97,14 @@ class MapApiService(
                         ),
                         geometry = GeoGeometry(
                             type = GeoGeometry.Type.Point,
-                            //TODO change api to double
                             coordinates = listOf(
-                                it.coordinates.coordinatesLon.toInt(),
-                                it.coordinates.coordinatesLat.toInt()
+                                it.coordinates.coordinatesLon.toBigDecimal(),
+                                it.coordinates.coordinatesLat.toBigDecimal()
                             )
                         )
                     )
                 }
         ).asHttpOkResponse()
     }
+
 }
