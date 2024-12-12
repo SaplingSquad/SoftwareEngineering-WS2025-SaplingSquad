@@ -12,5 +12,7 @@
 
     <include file="classpath:db/changelog/0001-create-tables.sql"/>
     <include file="classpath:db/changelog/0002-import-data.xml"/>
+    <include file="classpath:db/changelog/0003-create-tables-org-proj-reg.sql"/>
+    <include file="classpath:db/changelog/0004-generate-org-proj-reg.xml"/>
 
 </databaseChangeLog>
