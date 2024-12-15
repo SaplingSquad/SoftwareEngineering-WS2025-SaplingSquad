@@ -72,3 +72,46 @@ Frage von uns: Passte die Anzahl bei den Fragekarten?
 Frage von uns: Gab es nennenswerte Gefühle beim beantworten der Fragen?
 
 - Nichts signifikantes.
+
+## Tester Simon
+- Leiter: Maximilian
+- Protokoll: Hannah
+
+Präambel: Du weisst von unserer Website, dass wir Vereine/ Projekte vermitteln.
+
+Laut denken beim ansehen der Fragekarten
+
+- Ich sehe verschiedene Kategorien.
+- Die Icons auf den Fragekarten sind nicht gut zu erkennen.
+- Ich fühle mich von der Anzahl der Fragen erschlagen.
+- Versuch eine Fragekarte direkt anzuklicken.
+- Der *Weiter-Button* ist nicht so prominent.
+- Das *dislike* ist makaber.
+
+Wechsel zur Karte
+
+- Zu viel Zoom (Zeit war kürzer als zuvor).
+- Infos direkt gefunden.
+- Zu viele Pins.
+- Es sollte besser gruppiert werden.
+- Übersicht, wenn ein Cluster angeklickt wird.
+    - z.B. Suchfenster als Tabelle
+    - Auto-Zoom bei Clustern währe alternativ vielleicht auch ok
+
+Frage von uns: Passte die Anzahl bei den Fragekarten?
+
+- Okish, *Weiter-Button* ist wichtig.
+
+Frage von uns: Was würdest du von einem Sad-Smiley anstelle des Stoppschilds
+halten?
+
+- Swipe währe ok, Sad-Smiley nicht.
+
+Vorschlag:
+
+- Fragekarten bzw. die Antworten möglichst permanent zu speichern.
+    - local sesssion, local storage
+    - Argument ist, dass es nervig ist das >1 mal zu machen.
+- Im Browser besser alle Fragekarten direkt anzeigen.
+- Pop-Ups bei Klick auf Fragekarte mit mehr Infos zu dem Thema.
+- Klickable Tags mit mehr Infos (Verweis auf ChatGPT Tags)
