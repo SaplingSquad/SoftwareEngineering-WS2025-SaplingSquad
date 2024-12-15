@@ -115,3 +115,31 @@ Vorschlag:
 - Im Browser besser alle Fragekarten direkt anzeigen.
 - Pop-Ups bei Klick auf Fragekarte mit mehr Infos zu dem Thema.
 - Klickable Tags mit mehr Infos (Verweis auf ChatGPT Tags)
+
+## Tester Jacob (MW)
+- Leiter: Maximilian
+- Protokoll: Robin
+
+Präambel: Du weisst von unserer Website, dass wir Vereine/ Projekte vermitteln.
+
+Laut denken beim ansehen der Fragekarten
+
+- Was kann ich klicken? (Sichtlich verwirrt)
+- Blockieren? Markieren? Symbole auf Fragekarten unklar.
+    - Stern mit Highlight wird als Ausgewählt erkannt.
+- Symbole sind als Auswahlmöglichkeit unerwartet.
+- Versucht Ordnung in den Fragekarten zu finden.
+    - Zeilen näher als Spalten (Verweis Gesetz der Nähe)
+    - Keine Ordnung gefunden (Derzeit keine vorhanden)
+
+Wechsel zur Karte
+
+- Was bedeuten die Pins?
+
+Vorschlag:
+
+- An pintereset orientieren.
+- Fragekarten allgemeiner halten.
+- Min. 3 Fragen auswählen lassen.
+- Vielleicht nicht so viele Fragekarten, Teilauswahl.
+- Interaktiv sichtbar machen, was bei Auswahl einer Fragekarte passiert.
