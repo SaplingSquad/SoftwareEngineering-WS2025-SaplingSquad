@@ -53,19 +53,18 @@ export const QuestionCard = component$((props: { data: QuestionCardProps }) => {
     <>
       <div
         class={
-          "card mx-2 mb-10 w-96 bg-neutral " +
+          "relative rounded-xl overflow-hidden mx-2 mb-10 w-96 bg-base-300 shadow-xl " +
           answerStyles.get(props.data.answer)!.card
         }
         onClick$={() => (props.data.answer = "neu")}
       >
         <figure>
           <img src={props.data.img} width="500" height="500" alt="" />
+          <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-[#1e293bee] from-10% via-transparent via-40%" />
         </figure>
-        <div class="card-body">
-          <h1 class="card-title text-3xl text-sky-600">{props.data.title}</h1>
-          <p class="text-slate-400">Möchtest du ...</p>
-          <p class="text-slate-400">{props.data.text}</p>
-        </div>
+        
+        <h1 class="absolute left-4 bottom-4 font-semibold text-3xl text-sky-200">{props.data.title}</h1>
+        
         <HiStarOutline
           class={
             "absolute left-4 top-4 cursor-pointer transition-all hover:text-gray-200 " +
