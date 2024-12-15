@@ -143,3 +143,31 @@ Vorschlag:
 - Min. 3 Fragen auswählen lassen.
 - Vielleicht nicht so viele Fragekarten, Teilauswahl.
 - Interaktiv sichtbar machen, was bei Auswahl einer Fragekarte passiert.
+- Fotos für Fragekarten von *unsplash* holen (für MVP)
+
+## Tester Jakob
+- Leiter: Fabian
+- Protokoll: Maximilian
+
+Präambel: Keine.
+
+Laut denken beim ansehen der Fragekarten
+
+- Was kann ich klicken? Wie wähle ich Fragekarten aus?
+- Beispiel was eine Fragekarte auf der Karte auswählt.
+    - Cluster anzeigen, visualisieren, wo der Prozess gerade ist
+- Funktion von Stern/ Stoppschild zeigen, danach klar.
+- Stoppschild ist nicht abschreckend
+    - Sad-Smiley wäre schlimmer
+- *Weiter-Button* ist klar.
+
+Wechsel zur Karte
+
+- Unklar, was angezeigt wird.
+- Unklar, was die Pins sind. Filter wird gesucht.
+- Klick auf Pins ist klar.
+    - Wunsch die Informationen zu vergleichen.
+
+Vorschlag:
+
+- Vielleicht bei nur positiv alles etwas ausgrauen.
