@@ -40,3 +40,35 @@ Vorschläge:
     - 3 Karte
     - ...
 - Highlight von Karten aber kein "Delight"
+
+## Tester Rayen
+- Leiter: Nico
+- Protokoll: Hannah
+
+Präambel: Du möchtest Spenden, bist überfordert von den Angeboten und willst
+auf einfache Weise den richtigen Verein finden
+
+Laut denken beim ansehen der Fragekarten
+
+- Kann man die Fragen expandieren? 9Versuch die Fragen anzuklicken)
+- Ich vermute mehr Informationen hinter der Frage
+- Ich muss nicht alles beantworten, sondern kann einfach auf weiter
+
+Wechsel zur Karte
+
+- Was bedeuten die Zahlen? (Verweist auf Clustering)
+- Sehr viel (langer) Zoom bis einzelne Marker angezeigt werden
+- Unterscheidung Verein, Projekt, Region erkannt
+- Klickt Pin von sich aus an, würde dann die Info sehen (noch nicht vorhanden)
+
+Frage von uns: Gibt es Elemente, die nicht verstanden werden?
+
+- War alles klar.
+
+Frage von uns: Passte die Anzahl bei den Fragekarten?
+
+- Etwas viel, aber ok durch den *Weiter-Button*
+
+Frage von uns: Gab es nennenswerte Gefühle beim beantworten der Fragen?
+
+- Nichts signifikantes.
