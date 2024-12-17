@@ -149,14 +149,13 @@ Vorschlag:
 - Leiter: Fabian
 - Protokoll: Maximilian
 
-Präambel: Keine.
+Präambel: Du weisst von unserer Website, dass wir Vereine/ Projekte vermitteln.
 
 Laut denken beim ansehen der Fragekarten
 
-- Was kann ich klicken? Wie wähle ich Fragekarten aus?
-- Beispiel was eine Fragekarte auf der Karte auswählt.
-    - Cluster anzeigen, visualisieren, wo der Prozess gerade ist
-- Funktion von Stern/ Stoppschild zeigen, danach klar.
+- Icons wurden übersehen. Dadurch Unklarheiten: Was kann ich klicken? Wie wähle ich Fragekarten aus?
+- Unklar: Wie weit bin ich im Prozess?
+- Funktion von Stern/ Stoppschild war klar nachdem auf deren Existenz hingewiesen wurde.
 - Stoppschild ist nicht abschreckend
     - Sad-Smiley wäre schlimmer
 - *Weiter-Button* ist klar.
@@ -164,10 +163,16 @@ Laut denken beim ansehen der Fragekarten
 Wechsel zur Karte
 
 - Unklar, was angezeigt wird.
-- Unklar, was die Pins sind. Filter wird gesucht.
-- Klick auf Pins ist klar.
-    - Wunsch die Informationen zu vergleichen.
+- Unklar, was die Pins sind. Filter wird gesucht da zu viele Pins.
+- Möglichkeit von Klick auf Pins ist klar.
+    - Wunsch die Informationen von mehreren Projekten zu vergleichen.
+- Button der zur Webseite von Projekt/Verein führt wurde fälschlicherweiße als "zurück zur Karte" interpretiert.
+- Unklar, wie man (von den Projektdetails) zu den Lesezeichen kommt.
 
 Vorschlag:
 
-- Vielleicht bei nur positiv alles etwas ausgrauen.
+- Vielleicht statt drei Antwortmöglichkeiten (pos/neu/neg) lediglich zwei (ausgewählt/nicht ausgewählt) verwenden.
+    - Nicht ausgewählte Fragen ausgrauen, ausgewählte Fragen hervorheben.
+- Beispiel/Erklärung am Anfang was eine Fragekarte auf der Karte auswählt/was für Effekte das Beantworten hat.
+- Man sollte sehen können, wie viele Fragen noch zu beantworten sind.
+- Fragen sollten gruppiert sein (z.B. nach Thema).
