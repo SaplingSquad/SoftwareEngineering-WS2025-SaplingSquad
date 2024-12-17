@@ -39,10 +39,18 @@ class QuestionsApiServiceTest {
     @Test
     fun testGetQuestions() = runTest {
         val questionEntities = listOf(
-            QuestionEntity(questionId = 1, question = "Question 1", imageUrl = null, tagId = 1),
-            QuestionEntity(questionId = 2, question = "Question 2", imageUrl = "image.png", tagId = 1),
-            QuestionEntity(questionId = 3, question = "Question 3", imageUrl = null, tagId = 2),
-            QuestionEntity(questionId = 4, question = "Question 4", imageUrl = "image2.png", tagId = 2),
+            QuestionEntity(
+                questionId = 1, questionTitle = "Question 1", question = "Content 1", imageUrl = null, tagId = 1
+            ),
+            QuestionEntity(
+                questionId = 2, questionTitle = "Question 2", question = "Content 2", imageUrl = "image.png", tagId = 1
+            ),
+            QuestionEntity(
+                questionId = 3, questionTitle = "Question 3", question = "Content 3", imageUrl = null, tagId = 2
+            ),
+            QuestionEntity(
+                questionId = 4, questionTitle = "Question 4", question = "Content 4", imageUrl = "image2.png", tagId = 2
+            ),
         )
         wheneverBlocking { repository.readAll() }.thenReturn(questionEntities)
         val resourcesUrl = "/testapi/res/"
@@ -50,10 +58,10 @@ class QuestionsApiServiceTest {
 
         // @formatter:off
         val expectedBody = listOf(
-            Question(questionId = 1, questionText = "Question 1", questionImageUrl = null, tagId = 1),
-            Question(questionId = 2, questionText = "Question 2", questionImageUrl = "${resourcesUrl}image.png", tagId = 1),
-            Question(questionId = 3, questionText = "Question 3", questionImageUrl = null, tagId = 2),
-            Question(questionId = 4, questionText = "Question 4", questionImageUrl = "${resourcesUrl}image2.png", tagId = 2),
+            Question(questionId = 1, questionTitle = "Question 1", questionText = "Content 1", questionImageUrl = null, tagId = 1),
+            Question(questionId = 2, questionTitle = "Question 2", questionText = "Content 2", questionImageUrl = "${resourcesUrl}image.png", tagId = 1),
+            Question(questionId = 3, questionTitle = "Question 3", questionText = "Content 3", questionImageUrl = null, tagId = 2),
+            Question(questionId = 4, questionTitle = "Question 4", questionText = "Content 4", questionImageUrl = "${resourcesUrl}image2.png", tagId = 2),
         )
         // @formatter:on
 
@@ -69,20 +77,22 @@ class QuestionsApiServiceTest {
      */
     @Test
     fun testGetQuestionById() = runTest {
-        val input = QuestionEntity(questionId = 1, question = "Question 1", imageUrl = "image.png", tagId = 1)
+        val input = QuestionEntity(
+            questionId = 1, questionTitle = "Question 1", question = "Content 1", imageUrl = "image.png", tagId = 1
+        )
         wheneverBlocking { repository.readById(1) }.thenReturn(input)
         wheneverBlocking { repository.readById(not(eq(1))) }.thenReturn(null)
 
         val resourcesUrl = "/testapi2/res/"
         whenever(appConfig.resourcesUrlPath).thenReturn(resourcesUrl)
 
-        val expectedOutput =
-            Question(
-                questionId = 1,
-                questionText = "Question 1",
-                questionImageUrl = "${resourcesUrl}image.png",
-                tagId = 1
-            )
+        val expectedOutput = Question(
+            questionId = 1,
+            questionTitle = "Question 1",
+            questionText = "Content 1",
+            questionImageUrl = "${resourcesUrl}image.png",
+            tagId = 1
+        )
 
         val service = QuestionsApiService(repository, appConfig)
 
