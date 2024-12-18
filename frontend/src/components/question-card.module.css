@@ -1,7 +1,7 @@
-.custom-card-highlight {
+.card_highlight {
   box-shadow: 0px 0px 20px 3px yellow;
 }
 
-.custom-thin-stroke {
+.thin_stroke {
   stroke-width: 1px;
 }
