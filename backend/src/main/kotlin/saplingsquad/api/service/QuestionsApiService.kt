@@ -56,6 +56,7 @@ class QuestionsApiService(private val repository: QuestionsRepository, @Autowire
     fun QuestionEntity.tableEntityToApi(): Question {
         return Question(
             questionId = this.questionId,
+            questionTitle = this.questionTitle,
             questionText = this.question,
             questionImageUrl = this.imageUrl?.let { appConfig.resourcesUrlPath + it },
             tagId = this.tagId

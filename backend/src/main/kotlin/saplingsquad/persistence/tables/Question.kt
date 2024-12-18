@@ -14,6 +14,8 @@ data class QuestionEntity(
     /** Unique ID of the Row */
     @KomapperId
     val questionId: Int,
+    /** The string title of the question */
+    val questionTitle: String,
     /** The question string */
     val question: String,
 

@@ -741,10 +741,19 @@ components:
           type: integer
           example: 1
           description: Unique ID of the question.
+        questionTitle:
+          type: string
+          example: Climate Action
+          description: A descriptive title for the question.
+          externalDocs:
+            description: Possibly with external context e.g. the WHO
+              sustainability goals.
+            url: https://sdgs.un.org/goals
         questionText:
           type: string
           example: Do you want to focus on environment protection?
-          description: A pre made question for the user.
+          description: A pre made question for the user. This may contain
+            further explanations w.r.t. the title.
         questionImageUrl:
           type: string
           example: url/to/question/image.pic
@@ -768,6 +777,7 @@ components:
             description: The given answer, one of positive, neutral, negative.
     GeoJsonOrganizations:
       type: object
+
       externalDocs:
         description: GepJSONSource specification
         url: https://maplibre.org/maplibre-gl-js/docs/API/classes/GeoJSONSource/

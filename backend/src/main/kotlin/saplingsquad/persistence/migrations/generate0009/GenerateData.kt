@@ -1,4 +1,4 @@
-package saplingsquad.persistence.migrations.generate0004
+package saplingsquad.persistence.migrations.generate0009
 
 import liquibase.Scope
 import liquibase.change.custom.CustomSqlChange
