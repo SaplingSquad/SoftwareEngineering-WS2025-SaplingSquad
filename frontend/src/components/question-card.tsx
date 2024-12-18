@@ -1,5 +1,4 @@
 import { component$, useSignal } from "@builder.io/qwik";
-import styles from "./question-card.module.css";
 
 /**
  * This type specifies the format in which the question is passed to the component.
@@ -8,13 +7,12 @@ export type QuestionCardProps = {
   img: string;
   title: string;
   text: string;
-  answer: "neg" | "neu" | "pos";
+  answer: "neu" | "pos";
 };
 
 type AnswerStyle = {
   card: string;
-  star: string;
-  no: string;
+  border: string;
 };
 
 const answerStyles = new Map<string, AnswerStyle>([
@@ -22,24 +20,14 @@ const answerStyles = new Map<string, AnswerStyle>([
     "pos",
     {
       card: "scale-[1.05]",
-      star: "text-8xl text-black fill-yellow-500 " + styles.thin_stroke,
-      no: "text-3xl",
+      border: "border-4 border-amber-400",
     },
   ],
   [
     "neu",
     {
-      card: "grayscale-[80%] scale-[0.90]",
-      star: "text-3xl text-yellow-500 stroke-2",
-      no: "text-3xl text-red-800 stroke-2",
-    },
-  ],
-  [
-    "neg",
-    {
-      card: "grayscale",
-      star: "text-3xl",
-      no: "text-8xl text-red-800",
+      card: "grayscale scale-[0.90]",
+      border: "",
     },
   ],
 ]);
@@ -56,7 +44,7 @@ export const QuestionCard = component$((props: { data: QuestionCardProps }) => {
     <>
       <div
         class={
-          "relative rounded-xl overflow-hidden mx-2 mb-20 w-96 bg-base-300 shadow-xl transition-all hover:scale-[1.1] hover:filter-none " +
+          "relative rounded-xl overflow-hidden mx-2 mb-20 w-96 bg-base-300 shadow-xl transition-all hover:scale-[1.1] active:scale-[1.05] " +
           answerStyles.get(props.data.answer)!.card
         }
         onClick$={() => (props.data.answer = props.data.answer == "neu" ? "pos" : "neu")}
@@ -78,13 +66,16 @@ export const QuestionCard = component$((props: { data: QuestionCardProps }) => {
         </figure>
 
         <div class="absolute top-0 left-0 w-full h-full overflow-hidden">
-          <div ref={gradientRef} class="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-[#1e293bee] from-10% via-transparent via-40%" />
-          <h1 ref={headerRef} class="absolute bottom-4 left-4 transition-all font-semibold text-3xl text-sky-200">{props.data.title}</h1>
-          <div ref={textRef} class="absolute top-96 left-4 transition-all">
+          <div ref={gradientRef} class="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-[#ffffffee] from-10% via-transparent via-40%" />
+          <h1 ref={headerRef} class="absolute bottom-4 left-4 transition-all font-semibold text-3xl text-sky-800">{props.data.title}</h1>
+          <div ref={textRef} class="absolute top-96 left-4 transition-all text-sky-700 w-11/12">
             <p>Möchtest du ...</p>
             <p>{props.data.text}</p>
           </div>
         </div>
+
+        <div class={"absolute top-0 left-0 w-full h-full rounded-xl " + answerStyles.get(props.data.answer)!.border}/>
+
       </div>
     </>
   );
