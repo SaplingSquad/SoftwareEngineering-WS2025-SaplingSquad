@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import saplingsquad.api.QuestionsApiDelegate
-import saplingsquad.api.models.AnswersInner
 import saplingsquad.api.models.Question
 import saplingsquad.config.AppConfig
 import saplingsquad.persistence.QuestionsRepository
@@ -32,6 +31,10 @@ class QuestionsApiService(private val repository: QuestionsRepository, @Autowire
             .map { it.tableEntityToApi() }
             .asHttpOkResponse()
 
+    override suspend fun postAnswers(userToken: String, answers: List<Int>?): ResponseEntity<Unit> {
+        TODO("Not yet implemented")
+    }
+
     /**
      * API Endpoint to get a single question
      */
@@ -40,10 +43,6 @@ class QuestionsApiService(private val repository: QuestionsRepository, @Autowire
         return entity
             .tableEntityToApi()
             .asHttpOkResponse()
-    }
-
-    override suspend fun postAnswers(userToken: String, answers: List<AnswersInner>?): ResponseEntity<Unit> {
-        TODO("Not yet implemented")
     }
 
     override fun getFilters(userToken: String): ResponseEntity<Flow<Int>> {
