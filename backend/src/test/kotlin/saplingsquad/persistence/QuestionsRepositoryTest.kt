@@ -9,13 +9,9 @@ import org.komapper.core.dsl.query.andThen
 import org.komapper.r2dbc.R2dbcDatabase
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import saplingsquad.persistence.QuestionsRepositoryTest.Companion.FRAGE1
-import saplingsquad.persistence.QuestionsRepositoryTest.Companion.FRAGE2
-import saplingsquad.persistence.QuestionsRepositoryTest.Companion.FRAGE3
 import saplingsquad.persistence.tables.QuestionEntity
 import saplingsquad.persistence.tables.questionEntity
 import saplingsquad.persistence.testconfig.PersistenceTestConfiguration
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
@@ -28,24 +24,24 @@ import kotlin.test.assertEquals
 class QuestionsRepositoryTest {
 
     companion object {
-        private val FRAGE1 = QuestionEntity(
+        private val Q1 = QuestionEntity(
             questionId = 1,
-            questionTitle = "Frage 1?",
-            question = "Inhalt 1",
+            questionTitle = "Question 1",
+            question = "Content 1",
             imageUrl = null,
             tagId = 1
         )
-        private val FRAGE2 = QuestionEntity(
+        private val Q2 = QuestionEntity(
             questionId = 2,
-            questionTitle = "Frage 2?",
-            question = "Inhalt 2",
+            questionTitle = "Question 2",
+            question = "Content 2",
             imageUrl = "test.png",
             tagId = 1
         )
-        private val FRAGE3 = QuestionEntity(
+        private val Q3 = QuestionEntity(
             questionId = 3,
-            questionTitle = "Frage 3?",
-            question = "Inhalt 2",
+            questionTitle = "Question 3",
+            question = "Content 3",
             imageUrl = null,
             tagId = 2
         )
@@ -60,9 +56,9 @@ class QuestionsRepositoryTest {
                 QueryDsl.create(Meta.questionEntity)
                     .andThen(
                         QueryDsl.insert(Meta.questionEntity).multiple(
-                            FRAGE1,
-                            FRAGE2,
-                            FRAGE3
+                            Q1,
+                            Q2,
+                            Q3
                         )
                     )
             )
@@ -81,9 +77,9 @@ class QuestionsRepositoryTest {
     fun testReadAll() = runTest {
         val result = repository.readAll()
         assertEquals(3, result.size)
-        assertContains(result, FRAGE1)
-        assertContains(result, FRAGE2)
-        assertContains(result, FRAGE3)
+        assertContains(result, Q1)
+        assertContains(result, Q2)
+        assertContains(result, Q3)
     }
 
     /**
@@ -92,11 +88,11 @@ class QuestionsRepositoryTest {
     @Test
     fun testReadSingle() = runTest {
         val result3 = repository.readById(3)
-        assertEquals(result3, FRAGE3)
+        assertEquals(result3, Q3)
         val result2 = repository.readById(2)
-        assertEquals(result2, FRAGE2)
+        assertEquals(result2, Q2)
         val result1 = repository.readById(1)
-        assertEquals(result1, FRAGE1)
+        assertEquals(result1, Q1)
     }
 
 
