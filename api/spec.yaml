@@ -764,17 +764,11 @@ components:
           description: The Id for a tag to be used for the filter.
     Answers:
       type: array
+      description: Contains all IDs that have been answered positively.
       items:
-        type: object
-        properties:
-          questionId:
-            type: integer
-            example: 1
-            description: Unique ID of the question.
-          answer:
-            type: string
-            enum: [pos, neu, neg]
-            description: The given answer, one of positive, neutral, negative.
+        type: integer
+        example: 1
+        description: Unique ID of the question.
     GeoJsonOrganizations:
       type: object
 
