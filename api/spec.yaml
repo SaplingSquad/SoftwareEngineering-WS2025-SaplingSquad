@@ -600,7 +600,7 @@ paths:
         required: true
       responses:
         '200':
-          $ref: '#/components/responses/200'
+          $ref: '#/components/responses/ID'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -699,7 +699,8 @@ paths:
             application/json:
               schema:
                 type: string
-                description: The temporary user token for session authentication.
+                description: The temporary organization token for session
+                             authentication.
         '400':
           description: Invalid username/password supplied.
         '401':
