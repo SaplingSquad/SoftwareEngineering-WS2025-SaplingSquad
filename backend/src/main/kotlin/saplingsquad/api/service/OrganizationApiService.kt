@@ -7,7 +7,7 @@ import saplingsquad.api.models.*
 
 @Service
 class OrganizationApiService() : OrganizationApiDelegate {
-    override suspend fun registerOrganization(organization: Organization): ResponseEntity<Unit> {
+    override suspend fun registerOrganization(organization: Organization): ResponseEntity<Int> {
         TODO("Not yet implemented")
     }
 
