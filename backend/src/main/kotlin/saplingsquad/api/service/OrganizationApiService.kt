@@ -7,19 +7,11 @@ import saplingsquad.api.models.*
 
 @Service
 class OrganizationApiService() : OrganizationApiDelegate {
-    override suspend fun createProject(project: Project?): ResponseEntity<Unit> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun deleteOrganization(orgaToken: String, orgaId: Int): ResponseEntity<Unit> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun deleteProject(userToken: String, projectId: Int): ResponseEntity<Unit> {
-        TODO("Not yet implemented")
-    }
-
     override suspend fun registerOrganization(organization: Organization): ResponseEntity<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun loginOrganization(name: String, password: String?): ResponseEntity<String> {
         TODO("Not yet implemented")
     }
 
@@ -30,10 +22,22 @@ class OrganizationApiService() : OrganizationApiDelegate {
         TODO("Not yet implemented")
     }
 
+    override suspend fun deleteOrganization(orgaToken: String, orgaId: Int): ResponseEntity<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun createProject(project: Project?): ResponseEntity<Unit> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun updateProject(
         userToken: String,
         projectDescriptions: ProjectDescriptions?
     ): ResponseEntity<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun deleteProject(userToken: String, projectId: Int): ResponseEntity<Unit> {
         TODO("Not yet implemented")
     }
 }
