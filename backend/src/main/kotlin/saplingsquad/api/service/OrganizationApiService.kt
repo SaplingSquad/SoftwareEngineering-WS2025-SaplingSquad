@@ -2,20 +2,16 @@ package saplingsquad.api.service
 
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
-import saplingsquad.api.OrganizationsApiDelegate
+import saplingsquad.api.OrganizationApiDelegate
 import saplingsquad.api.models.*
 
 @Service
-class OrganizationsApiService() : OrganizationsApiDelegate  {
-    override suspend fun createOrganization(organization: Organization?): ResponseEntity<Unit> {
-        TODO("Not yet implemented")
-    }
-
+class OrganizationApiService() : OrganizationApiDelegate {
     override suspend fun createProject(project: Project?): ResponseEntity<Unit> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun deleteOrganization(userToken: String, orgaId: Int): ResponseEntity<Unit> {
+    override suspend fun deleteOrganization(orgaToken: String, orgaId: Int): ResponseEntity<Unit> {
         TODO("Not yet implemented")
     }
 
@@ -23,8 +19,12 @@ class OrganizationsApiService() : OrganizationsApiDelegate  {
         TODO("Not yet implemented")
     }
 
+    override suspend fun registerOrganization(organization: Organization): ResponseEntity<Unit> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun updateOrganization(
-        userToken: String,
+        orgaToken: String,
         organizationDescriptions: OrganizationDescriptions?
     ): ResponseEntity<Unit> {
         TODO("Not yet implemented")
@@ -36,5 +36,4 @@ class OrganizationsApiService() : OrganizationsApiDelegate  {
     ): ResponseEntity<Unit> {
         TODO("Not yet implemented")
     }
-
 }

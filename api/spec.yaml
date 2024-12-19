@@ -583,21 +583,21 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-# TODO correct
-  /organizations:
+  /organization:
     post:
       tags:
         - organization
-      summary: Create an organization. This can only be done by a logged in user.
-      description: To be able to register a new organization to Sprout it is
-        necessary to be logged in.
-      operationId: createOrganization
+      summary: Register an organization.
+      description: Register a new organization with Sprout and create the
+        corresponding account.
+      operationId: registerOrganization
       requestBody:
         description: Create an organization.
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/Organization'
+        required: true
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -612,11 +612,13 @@ paths:
     put:
       tags:
         - organization
-      summary: Update organization. This can only be done by a logged in user.
+      summary: Update organization. This can only be done by a logged in
+        organization.
       description: Update informations to a given organization.
       operationId: updateOrganization
       parameters:
-        - $ref: '#/components/parameters/userToken'
+        - $ref: '#/components/parameters/orgaToken'
+          required: true
         - name: organizationDescriptions
           in: query
           description: Update an existing organization.
@@ -636,12 +638,16 @@ paths:
     delete:
       tags:
         - organization
-      summary: Delete organization. This can only be done by a logged in user.
-      description: Delete an existing organization.
+      summary: Delete the organization. This can only be done by the logged in
+        organization.
+      description: Delete an existing organization. The ID must be the one from
+        the logged in organization.
       operationId: deleteOrganization
       parameters:
-        - $ref: '#/components/parameters/userToken'
+        - $ref: '#/components/parameters/orgaToken'
+          required: true
         - $ref: '#/components/parameters/orgaId'
+          required: true
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -653,7 +659,9 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-  /organizations/projects:
+# TODO login for organizations
+# TODO correct
+  /organization/projects:
     post:
       tags:
         - organization
@@ -994,9 +1002,6 @@ components:
     Organization:
       type: object
       properties:
-        userToken:
-          type: string
-          description: Token for the change of account.
         name:
           type: string
           example: New Roots
@@ -1006,6 +1011,10 @@ components:
           example: New Roots is ...
           description: Stored short description of the organization, originally
                        provided by them.
+        password:
+          type: string
+          description: The password for the new organization.
+          example: supersecret
         imageUrls:
           type: array
           items:
@@ -1021,8 +1030,8 @@ components:
           example: path/to/new/roots/donation/link.de
           description: Direct link to the donation side of the organization.
       required:
-        - orgaId
         - name
+        - password
         - description
         - webpageUrl
     Project:
@@ -1082,7 +1091,14 @@ components:
     userToken:
       name: userToken
       in: query
-      description: Session token of the logged in account.
+      description: Session token of the logged in user account.
+      required: true
+      schema:
+        type: string
+    orgaToken:
+      name: orgaToken
+      in: query
+      description: Session token of the logged in organization account.
       required: true
       schema:
         type: string
