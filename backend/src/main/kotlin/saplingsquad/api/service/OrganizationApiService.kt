@@ -26,18 +26,18 @@ class OrganizationApiService() : OrganizationApiDelegate {
         TODO("Not yet implemented")
     }
 
-    override suspend fun createProject(project: Project?): ResponseEntity<Unit> {
+    override suspend fun createProject(project: Project?): ResponseEntity<Int> {
         TODO("Not yet implemented")
     }
 
     override suspend fun updateProject(
-        userToken: String,
+        orgaToken: String,
         projectDescriptions: ProjectDescriptions?
     ): ResponseEntity<Unit> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun deleteProject(userToken: String, projectId: Int): ResponseEntity<Unit> {
+    override suspend fun deleteProject(orgaToken: String, projectId: Int): ResponseEntity<Unit> {
         TODO("Not yet implemented")
     }
 }

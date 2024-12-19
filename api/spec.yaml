@@ -708,13 +708,13 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-# TODO correct
   /organization/projects:
     post:
       tags:
         - organization
-      summary: Create a project for an organization. This can only be done by a logged in user.
-      description: A project always belongs to an organization.
+      summary: Create a project for an organization. This can only be done by a
+        logged in organization.
+      description: A project always belongs to the logged in organization.
       operationId: createProject
       requestBody:
         description: Create a project.
@@ -723,16 +723,25 @@ paths:
             schema:
               $ref: '#/components/schemas/Project'
       responses:
-        default:
-          description: Successful operation.
+        '200':
+          $ref: '#/components/responses/ID'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
     put:
       tags:
         - organization
-      summary: Update project. This can only be done by a logged in user.
+      summary: Update a project. This can only be done by a logged in
+               organization.
       description: Update an existing project from an organization.
       operationId: updateProject
       parameters:
-        - $ref: '#/components/parameters/userToken'
+        - $ref: '#/components/parameters/orgaToken'
         - name: projectDescriptions
           in: query
           description: Update an existing project.
@@ -752,11 +761,12 @@ paths:
     delete:
       tags:
         - organization
-      summary: Delete a project. This can only be done by a logged in user.
+      summary: Delete a project. This can only be done by a logged in
+               organization.
       description: Delete a given project.
       operationId: deleteProject
       parameters:
-        - $ref: '#/components/parameters/userToken'
+        - $ref: '#/components/parameters/orgaToken'
         - $ref: '#/components/parameters/projectId'
       responses:
         '200':
@@ -1015,7 +1025,6 @@ components:
         - projectId
         - name
         - description
-        - webpageUrl
     RegionDescriptions:
       type: object
       properties:
@@ -1085,13 +1094,14 @@ components:
     Project:
       type: object
       properties:
-        userToken:
+        orgaToken:
           type: string
-          description: Token for the change of account.
+          description: Token of the logged in organization.
         name:
           type: string
           example: Great Green Wall
-          description: Name of the project corresponding to the given ID.
+          description: Name of the project corresponding to the logged in
+                       organization.
         description:
           type: string
           example: The Great Green Wall is ...
@@ -1112,7 +1122,7 @@ components:
           example: path/to/great/green/wall/donation/link.com
           description: Direct link to the donation side for the project.
       required:
-        - projectId
+        - orgaToken
         - name
         - description
         - webpageUrl
@@ -1127,6 +1137,14 @@ components:
   responses:
     '200':
       description: Successful operation.
+    'ID':
+      description: Successful operation.
+      content:
+        text/plain:
+          schema:
+            type: integer
+            example: 1
+            description: Generated ID. Unique w.r.t. the type of ID.
     '400':
       description: Bad request. Provided request is malformed.
     '401':
