@@ -105,7 +105,7 @@ paths:
         - user
       summary: Authenticate user by user token.
       description: Send a userToken to get user name and icon of the
-        corresponding account.
+                   corresponding account.
       operationId: getUserByToken
       parameters:
         - $ref: '#/components/parameters/userToken'
@@ -262,7 +262,7 @@ paths:
         - questions
       summary: Get filter settings for the active account.
       description: Request the stored filters for the active account. This
-        includes manual set filters as well as calculated ones.
+                   includes manual set filters as well as calculated ones.
       operationId: getFilters
       parameters:
         - $ref: '#/components/parameters/userToken'
@@ -290,7 +290,7 @@ paths:
         - map
       summary: Get list of the locations from all organizations.
       description: This returns a List of GeoJSONSources to display the pins on
-        the map.
+                   the map.
       operationId: getOrganizationsLocations
       parameters:
       - in: query
@@ -369,7 +369,7 @@ paths:
         - map
       summary: Get list of all ongoing projects locations.
       description: This returns a List of GeoJSONSources to display the pins on
-        the map.
+                   the map.
       operationId: getProjectsLocations
       parameters:
       - in: query
@@ -449,7 +449,7 @@ paths:
         - map
       summary: Get list of regions on the map.
       description: This returns a List of GeoJSONSources to display the pins on
-        the map.
+                   the map.
       operationId: getRegions
       parameters:
       - in: query
@@ -546,7 +546,8 @@ paths:
     post:
       tags:
         - bookmarks
-      summary: Save a bookmark for an organization. This can only be done by the user.
+      summary: Save a bookmark for an organization. This can only be done by the
+               user.
       description: ''
       operationId: bookmarkOrganization
       parameters:
@@ -589,7 +590,7 @@ paths:
         - organization
       summary: Register an organization.
       description: Register a new organization with Sprout and create the
-        corresponding account.
+                   corresponding account.
       operationId: registerOrganization
       requestBody:
         description: Create an organization.
@@ -613,7 +614,7 @@ paths:
       tags:
         - organization
       summary: Update organization. This can only be done by a logged in
-        organization.
+               organization.
       description: Update informations to a given organization.
       operationId: updateOrganization
       parameters:
@@ -639,9 +640,9 @@ paths:
       tags:
         - organization
       summary: Delete the organization. This can only be done by the logged in
-        organization.
+               organization.
       description: Delete an existing organization. The ID must be the one from
-        the logged in organization.
+                   the logged in organization.
       operationId: deleteOrganization
       parameters:
         - $ref: '#/components/parameters/orgaToken'
@@ -714,7 +715,7 @@ paths:
       tags:
         - organization
       summary: Create a project for an organization. This can only be done by a
-        logged in organization.
+               logged in organization.
       description: A project always belongs to the logged in organization.
       operationId: createProject
       requestBody:
@@ -814,13 +815,13 @@ components:
           description: A descriptive title for the question.
           externalDocs:
             description: Possibly with external context e.g. the WHO
-              sustainability goals.
+                         sustainability goals.
             url: https://sdgs.un.org/goals
         questionText:
           type: string
           example: Do you want to focus on environment protection?
           description: A pre made question for the user. This may contain
-            further explanations w.r.t. the title.
+                       further explanations w.r.t. the title.
         questionImageUrl:
           type: string
           example: url/to/question/image.pic
@@ -967,7 +968,7 @@ components:
           type: string
           example: New Roots
           description: Name of the organization corresponding to the Id of the
-            organization.
+                       organization.
         description: # Not a keyword
           type: string
           example: New Roots is ...
@@ -1133,8 +1134,8 @@ components:
         type: string
         enum: [pos, neu, neg]
         description: The enum represents the possible answers to a question.
-          These questions are represented as *additionalProperties*, due to their
-          volatile behavior.
+                     These questions are represented as *additionalProperties*,
+                     due to their volatile behavior.
   responses:
     '200':
       description: Successful operation.
