@@ -4,8 +4,8 @@ import {
   component$,
   noSerialize,
   render,
+  useOn,
   useSignal,
-  useVisibleTask$,
 } from "@builder.io/qwik";
 import type { MapLayerEventType } from "maplibre-gl";
 import maplibregl from "maplibre-gl";
@@ -145,25 +145,27 @@ export const Map = component$(
     const map = useSignal<NoSerialize<maplibregl.Map>>();
     const containerRef = useSignal<HTMLElement>();
 
-    // eslint-disable-next-line qwik/no-use-visible-task
-    useVisibleTask$(async () => {
-      if (!containerRef.value) {
-        console.warn("Map-container does not exist");
-        return;
-      }
-      map.value = noSerialize(
-        createMap(
-          {
-            container: containerRef.value,
-            style: style,
-          },
-          sources,
-          await layers$.resolve(),
-          images,
-          onClick,
-        ),
-      );
-    });
+    useOn(
+      "qvisible",
+      $(async () => {
+        if (!containerRef.value) {
+          console.warn("Map-container does not exist");
+          return;
+        }
+        map.value = noSerialize(
+          createMap(
+            {
+              container: containerRef.value,
+              style: style,
+            },
+            sources,
+            await layers$.resolve(),
+            images,
+            onClick,
+          ),
+        );
+      }),
+    );
 
     return (
       <div ref={containerRef} class={clz}>
