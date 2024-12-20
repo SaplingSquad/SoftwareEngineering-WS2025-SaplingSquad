@@ -62,9 +62,7 @@ export type ClickHandler = QRL<
 /**
  * A map of click-handlers per target
  */
-export type ClickHandlers = {
-  [target: string]: MaybeArray<ClickHandler>;
-};
+export type ClickHandlers = [MaybeArray<string>, MaybeArray<ClickHandler>][];
 
 /**
  * Creates a maplibre Map, adding all additional properties on load.
@@ -98,9 +96,10 @@ const createMap = (
     );
     layers.forEach((layer) => map.addLayer(layer));
   });
-  Object.entries(clickHandlers).forEach(([target, handlers]) =>
+
+  clickHandlers.forEach(([targets, handlers]) =>
     maybeArray(handlers).forEach((handler) =>
-      map.on("click", target, (e) => handler(map, e)),
+      map.on("click", maybeArray(targets), (e) => handler(map, e)),
     ),
   );
   return map;
@@ -116,7 +115,7 @@ export const Map = component$(
     sources = {},
     layers$ = $([]),
     images = {},
-    onClick = {},
+    onClick = [],
   }: {
     /**
      * Classes to set

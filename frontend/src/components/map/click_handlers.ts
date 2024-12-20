@@ -1,9 +1,14 @@
-import type { GeoJSONSource, LngLat } from "maplibre-gl";
+import {
+  type GeoJSONSource,
+  type LngLat,
+  type MapGeoJSONFeature,
+} from "maplibre-gl";
 import type { Point } from "geojson";
 import { jsxPopup, type ClickHandler, type ClickHandlers } from "../map";
 import type { JSXOutput, QRL } from "@builder.io/qwik";
 import { $ } from "@builder.io/qwik";
 import { CLUSTERS, MARKERS } from "./clustered_pin_layers";
+import { distance, maybeArray } from "~/utils";
 
 /**
  * Function to easily create all click handlers.
@@ -22,13 +27,63 @@ export const clickHandlers = ({
     [source: string]: QRL<(props: { [id: string]: any }) => JSXOutput>;
   };
 } = {}): ClickHandlers =>
-  Object.fromEntries([
-    ...useClusterZoom.map((source) => [CLUSTERS(source), clusterZoom(source)]),
-    ...Object.entries(infoComponents).map(([source, component]) => [
-      MARKERS(source),
-      info(component),
-    ]),
+  mergeHandlers([
+    ...useClusterZoom.map(
+      (source) =>
+        [CLUSTERS(source), clusterZoom(source)] as [string, ClickHandler],
+    ),
+    ...Object.entries(infoComponents).map(
+      ([source, component]) =>
+        [MARKERS(source), info(component)] as [string, ClickHandler],
+    ),
   ]);
+
+/**
+ * Merges the passed {@link ClickHandlers} such that only the click-handlers of the layer's containing the closest feature get fired.
+ * @param handlers The {@link ClickHandlers} to merge
+ * @returns the merged handlers
+ */
+export const mergeHandlers = (handlers: ClickHandlers): ClickHandlers => [
+  [
+    [...handlers.flatMap(([layers]) => layers)],
+    $((map, event) => {
+      // All point-features that were clicked on, sorted by distance
+      const features = map
+        .queryRenderedFeatures(event.point, {
+          layers: handlers.flatMap(([layers]) => layers),
+        })
+        .filter((f) => f.geometry.type === "Point")
+        .sort((a, b) => {
+          const clickLocation = event.lngLat.toArray();
+          const aLocation = (a.geometry as Point).coordinates;
+          const bLocation = (b.geometry as Point).coordinates;
+          return (
+            distance(clickLocation, aLocation) -
+            distance(clickLocation, bLocation)
+          );
+        });
+
+      // The feature that was clicked on (determined by distance)
+      const feature = features[0] as MapGeoJSONFeature | undefined;
+
+      if (!feature) {
+        console.warn("Clicked on nothing");
+        return;
+      }
+
+      // Update event features to calculated features of the clicked layer
+      event.features = features.filter((f) => f.layer.id === feature.layer.id);
+
+      // Fire all handlers of the clicked feature
+      handlers
+        .filter(([layers]) => maybeArray(layers).includes(feature.layer.id))
+        .map(([, handlers]) => handlers)
+        .forEach((handlers) =>
+          maybeArray(handlers).forEach((handler) => handler(map, event)),
+        );
+    }),
+  ],
+];
 
 /**
  * Zooms the map such that the cluster that was clicked on is split.
