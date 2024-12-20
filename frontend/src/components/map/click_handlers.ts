@@ -46,7 +46,9 @@ export const clickHandlers = ({
 export const mergeHandlers = (handlers: ClickHandlers): ClickHandlers => [
   [
     [...handlers.flatMap(([layers]) => layers)],
-    $((map, event) => {
+    $((event) => {
+      const map = event.target;
+
       // All point-features that were clicked on, sorted by distance
       const features = map
         .queryRenderedFeatures(event.point, {
@@ -79,7 +81,7 @@ export const mergeHandlers = (handlers: ClickHandlers): ClickHandlers => [
         .filter(([layers]) => maybeArray(layers).includes(feature.layer.id))
         .map(([, handlers]) => handlers)
         .forEach((handlers) =>
-          maybeArray(handlers).forEach((handler) => handler(map, event)),
+          maybeArray(handlers).forEach((handler) => handler(event)),
         );
     }),
   ],
@@ -92,7 +94,9 @@ export const mergeHandlers = (handlers: ClickHandlers): ClickHandlers => [
  * @returns The {@link ClickHandler}
  */
 export const clusterZoom: (source: string) => ClickHandler = (source) =>
-  $(async (map, e) => {
+  $(async (e) => {
+    const map = e.target;
+
     // Get rendered features at clicked location
     const features = map.queryRenderedFeatures(e.point, {
       layers: [CLUSTERS(source)],
@@ -127,7 +131,9 @@ export const clusterZoom: (source: string) => ClickHandler = (source) =>
 const info = (
   component: QRL<(props: { [id: string]: any }) => JSXOutput>,
 ): ClickHandler =>
-  $(async (map, e) => {
+  $(async (e) => {
+    const map = e.target;
+
     const feature = e.features?.[0];
     if (!feature) {
       console.warn("Clicked on nothing");

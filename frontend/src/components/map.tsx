@@ -54,7 +54,6 @@ export type Images = {
  */
 export type ClickHandler = QRL<
   (
-    map: maplibregl.Map,
     event: MapLayerEventType["click"] & object,
   ) => void | Promise<void> | PromiseLike<void>
 >;
@@ -99,7 +98,7 @@ const createMap = (
 
   clickHandlers.forEach(([targets, handlers]) =>
     maybeArray(handlers).forEach((handler) =>
-      map.on("click", maybeArray(targets), (e) => handler(map, e)),
+      map.on("click", maybeArray(targets), handler),
     ),
   );
   return map;
