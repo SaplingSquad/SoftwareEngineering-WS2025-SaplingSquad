@@ -16,8 +16,15 @@ const { dependencies = {}, devDependencies = {} } = pkg as any as {
 };
 errorOnDuplicatesPkgDeps(devDependencies, dependencies);
 
+const DEFAULT_BACKEND = "http://localhost:9000";
+
+if (!process.env.BACKEND) {
+  console.warn(`'BACKEND' url not set. Defaulting to '${DEFAULT_BACKEND}'`);
+  process.env.BACKEND = DEFAULT_BACKEND;
+}
+
 const proxy = {
-  "/api": process.env.BACKEND ?? "http://localhost:9000",
+  "/api": process.env.BACKEND,
 };
 
 /**
