@@ -1,5 +1,6 @@
 import { QwikAuth$ } from "@auth/qwik";
-import Keycloak from "@auth/qwik/providers/keycloak"; //https://authjs.dev/getting-started/typescript#module-augmentation
+import Keycloak from "@auth/qwik/providers/keycloak";
+import {keycloak_url} from "~/auth/auth_url"; //https://authjs.dev/getting-started/typescript#module-augmentation
 
 //https://authjs.dev/getting-started/typescript#module-augmentation
 declare module "@auth/qwik" {
@@ -35,12 +36,12 @@ export const { onRequest, useSession, useSignIn, useSignOut } = QwikAuth$(
     providers: [
       Keycloak({
         id: "keycloak-users",
-        issuer: "http://localhost:5555/auth/realms/sprout-users",
+        issuer: keycloak_url("/realms/sprout-users").toString(),
         clientId: "sprout-web",
       }),
       Keycloak({
         id: "keycloak-orgs",
-        issuer: "http://localhost:5555/auth/realms/sprout-orgs",
+        issuer: keycloak_url("/realms/sprout-orgs").toString(),
         clientId: "sprout-web",
       }),
     ],

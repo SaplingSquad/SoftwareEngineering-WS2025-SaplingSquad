@@ -17,14 +17,20 @@ const { dependencies = {}, devDependencies = {} } = pkg as any as {
 errorOnDuplicatesPkgDeps(devDependencies, dependencies);
 
 const DEFAULT_BACKEND = "http://localhost:9000";
+const DEFAULT_KEYCLOAK_HOST = "http://localhost:5555";
 
 if (!process.env.BACKEND) {
   console.warn(`'BACKEND' url not set. Defaulting to '${DEFAULT_BACKEND}'`);
   process.env.BACKEND = DEFAULT_BACKEND;
 }
+if (!process.env.KEYCLOAK_HOST) {
+  console.warn(`'AUTHSERVER' url not set. Defaulting to '${DEFAULT_KEYCLOAK_HOST}'`);
+  process.env.KEYCLOAK_HOST = DEFAULT_KEYCLOAK_HOST;
+}
 
 const proxy = {
   "/api": process.env.BACKEND,
+  "/auth/realms": process.env.KEYCLOAK_HOST,
 };
 
 /**
