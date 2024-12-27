@@ -13,8 +13,6 @@ info:
 servers:
   - url: /api
 tags:
-  - name: user
-    description: Operations for user management.
   - name: questions
     description: Operations about the initial questions, their answers and the
       filters they set.
@@ -56,8 +54,9 @@ paths:
       summary: Send answers to the questions.
       description: ''
       operationId: postAnswers
+      security:
+        - userToken: []
       parameters:
-        - $ref: '#/components/parameters/userToken'
         - name: answers
           in: query
           description: Answers to the questions.
@@ -113,8 +112,8 @@ paths:
       description: Request the stored filters for the active account. This
                    includes manual set filters as well as calculated ones.
       operationId: getFilters
-      parameters:
-        - $ref: '#/components/parameters/userToken'
+      security:
+        - userToken: []
       responses:
         '200':
           description: List of the filters to be activated.
@@ -357,8 +356,9 @@ paths:
       summary: Save a bookmark for a project. This can only be done by the user.
       description: ''
       operationId: bookmarkProject
+      security:
+        - userToken: []
       parameters:
-        - $ref: '#/components/parameters/userToken'
         - $ref: '#/components/parameters/projectId'
       responses:
         '200':
@@ -377,8 +377,9 @@ paths:
       summary: Delete a bookmark for a project.
       description: This can only be done by the user.
       operationId: deleteProjectBookmark
+      security:
+        - userToken: []
       parameters:
-        - $ref: '#/components/parameters/userToken'
         - $ref: '#/components/parameters/projectId'
       responses:
         '200':
@@ -399,8 +400,9 @@ paths:
                user.
       description: ''
       operationId: bookmarkOrganization
+      security:
+        - userToken: []
       parameters:
-        - $ref: '#/components/parameters/userToken'
         - $ref: '#/components/parameters/orgaId'
       responses:
         '200':
@@ -419,8 +421,9 @@ paths:
       summary: Delete a bookmark for an organization.
       description: This can only be done by the user.
       operationId: deleteOrganizationBookmark
+      security:
+        - userToken: []
       parameters:
-        - $ref: '#/components/parameters/userToken'
         - $ref: '#/components/parameters/orgaId'
       responses:
         '200':
@@ -438,11 +441,13 @@ paths:
       tags:
         - organization
       summary: Register an organization.
-      description: Register a new organization with Sprout and create the
-                   corresponding account.
+      description: Create a visible organization for an existing account of this
+                   type. This can only be done once per account.
       operationId: registerOrganization
+      security:
+        - orgaToken: []
       requestBody:
-        description: Create an organization.
+        description: Register an organization.
         content:
           application/json:
             schema:
@@ -466,9 +471,9 @@ paths:
                organization.
       description: Update informations to a given organization.
       operationId: updateOrganization
+      security:
+        - orgaToken: []
       parameters:
-        - $ref: '#/components/parameters/orgaToken'
-          required: true
         - name: organizationDescriptions
           in: query
           description: Update an existing organization.
@@ -493,6 +498,8 @@ paths:
                logged in organization.
       description: A project always belongs to the logged in organization.
       operationId: createProject
+      security:
+        - orgaToken: []
       requestBody:
         description: Create a project.
         content:
@@ -517,8 +524,9 @@ paths:
                organization.
       description: Update an existing project from an organization.
       operationId: updateProject
+      security:
+        - orgaToken: []
       parameters:
-        - $ref: '#/components/parameters/orgaToken'
         - name: projectDescriptions
           in: query
           description: Update an existing project.
@@ -542,8 +550,9 @@ paths:
                organization.
       description: Delete a given project.
       operationId: deleteProject
+      security:
+        - orgaToken: []
       parameters:
-        - $ref: '#/components/parameters/orgaToken'
         - $ref: '#/components/parameters/projectId'
       responses:
         '200':
@@ -871,9 +880,6 @@ components:
     Project:
       type: object
       properties:
-        orgaToken:
-          type: string
-          description: Token of the logged in organization.
         name:
           type: string
           example: Great Green Wall
@@ -899,7 +905,6 @@ components:
           example: path/to/great/green/wall/donation/link.com
           description: Direct link to the donation side for the project.
       required:
-        - orgaToken
         - name
         - description
         - webpageUrl
@@ -931,20 +936,6 @@ components:
     '5XX':
       description: Unexpected server error.
   parameters:
-    userToken:
-      name: userToken
-      in: query
-      description: Session token of the logged in user account.
-      required: true
-      schema:
-        type: string
-    orgaToken:
-      name: orgaToken
-      in: query
-      description: Session token of the logged in organization account.
-      required: true
-      schema:
-        type: string
     orgaId:
       name: orgaId
       in: query
@@ -959,3 +950,10 @@ components:
       required: true
       schema:
         type: integer
+  securitySchemes:
+    userToken:
+      type: http
+      scheme: bearer
+    orgaToken:
+      type: http
+      scheme: bearer

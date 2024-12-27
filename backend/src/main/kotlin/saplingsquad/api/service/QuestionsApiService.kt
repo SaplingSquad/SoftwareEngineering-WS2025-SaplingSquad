@@ -31,7 +31,7 @@ class QuestionsApiService(private val repository: QuestionsRepository, @Autowire
             .map { it.tableEntityToApi() }
             .asHttpOkResponse()
 
-    override suspend fun postAnswers(userToken: String, answers: List<Int>?): ResponseEntity<Unit> {
+    override suspend fun postAnswers(answers: List<Int>?): ResponseEntity<Unit> {
         TODO("Not yet implemented")
     }
 
@@ -45,7 +45,7 @@ class QuestionsApiService(private val repository: QuestionsRepository, @Autowire
             .asHttpOkResponse()
     }
 
-    override fun getFilters(userToken: String): ResponseEntity<Flow<Int>> {
+    override fun getFilters(): ResponseEntity<Flow<Int>> {
         TODO("Not yet implemented")
     }
 
