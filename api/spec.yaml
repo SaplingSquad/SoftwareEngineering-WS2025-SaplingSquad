@@ -619,24 +619,6 @@ paths:
 
 components:
   schemas:
-    User:
-       type: object
-       properties:
-         username:
-           type: string
-           description: The username for the new user.
-           example: exampleuser
-         password:
-           type: string
-           description: The password for the new user.
-           example: supersecret
-         icon:
-           type: string
-           format: binary
-           description: An icon image for the user's profile.
-       required:
-         - username
-         - password
     Question:
       type: object
       properties:
@@ -905,10 +887,6 @@ components:
           example: New Roots is ...
           description: Stored short description of the organization, originally
                        provided by them.
-        password:
-          type: string
-          description: The password for the new organization.
-          example: supersecret
         imageUrls:
           type: array
           items:
@@ -925,7 +903,6 @@ components:
           description: Direct link to the donation side of the organization.
       required:
         - name
-        - password
         - description
         - webpageUrl
     Project:
