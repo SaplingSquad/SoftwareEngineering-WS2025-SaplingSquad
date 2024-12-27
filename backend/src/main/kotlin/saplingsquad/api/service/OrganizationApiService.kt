@@ -11,18 +11,10 @@ class OrganizationApiService() : OrganizationApiDelegate {
         TODO("Not yet implemented")
     }
 
-    override suspend fun loginOrganization(name: String, password: String?): ResponseEntity<String> {
-        TODO("Not yet implemented")
-    }
-
     override suspend fun updateOrganization(
         orgaToken: String,
         organizationDescriptions: OrganizationDescriptions?
     ): ResponseEntity<Unit> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun deleteOrganization(orgaToken: String, orgaId: Int): ResponseEntity<Unit> {
         TODO("Not yet implemented")
     }
 
