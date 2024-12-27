@@ -1,0 +1,40 @@
+// Various utilities
+
+/**
+ * Something which can either be `T` or an array or `T`
+ */
+export type MaybeArray<T> = T | T[];
+
+/**
+ * Converts a {@link MaybeArray} to an array
+ * @param a The {@link MaybeArray}
+ * @returns An array of `T`
+ */
+export const maybeArray = <T>(a: MaybeArray<T>): T[] =>
+  Array.isArray(a) ? a : [a];
+
+/**
+ * Zips two arrays.
+ * The shorter array's length will be the length of the result.
+ *
+ * @param l The left array to zip
+ * @param r The right array to zip
+ * @returns The zipped array (containing pairs of left and right input array)
+ */
+export const zip = <L, R>(l: L[], r: R[]): [L, R][] =>
+  Array.from(Array(Math.min(l.length, r.length)), (_: any, i) => [l[i], r[i]]);
+
+/**
+ * Calculates the euclidean distance between two n-dimensional points.
+ * Assumes both points to have the same dimension.
+ *
+ * @param a a n-dimensional point
+ * @param a a n-dimensional point
+ * @returns Distance between `a` and `b`
+ */
+export const distance = (a: number[], b: number[]): number =>
+  Math.sqrt(
+    zip(a, b)
+      .map(([a, b]) => Math.pow(a - b, 2))
+      .reduce((acc, val) => acc + val, 0),
+  );
