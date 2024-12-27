@@ -17,7 +17,7 @@ export default component$(() => {
   const signOut = useSignOut();
   const session = useSession();
   const helloText = useComputed$(() => {
-    let email = session?.value?.user?.email;
+    const email = session.value?.user?.email;
     return email ? `Hallo ${email}` : "Nicht eingeloggt";
   });
   return (

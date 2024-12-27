@@ -6,7 +6,7 @@ import { AuthExampleLayout } from "~/routes/authexample";
 export default component$(() => {
   const session = useSession();
   const helloText = useComputed$(() => {
-    let email = session?.value?.user?.email;
+    const email = session.value?.user?.email;
     return email ? `Hallo ${email}` : "Nicht eingeloggt";
   });
   return (
