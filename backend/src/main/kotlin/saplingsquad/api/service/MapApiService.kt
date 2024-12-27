@@ -17,7 +17,7 @@ class MapApiService(
     val projectsRepository: ProjectsRepository,
     val regionsRepository: RegionsRepository
 ) : MapApiDelegate {
-    override suspend fun getOrganization(orgaId: Int): ResponseEntity<OrganizationDescriptions> {
+    override suspend fun getOrganizationDetails(orgaId: Int): ResponseEntity<OrganizationDescriptions> {
         TODO("Not yet implemented")
     }
 
