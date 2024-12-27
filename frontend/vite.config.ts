@@ -16,6 +16,17 @@ const { dependencies = {}, devDependencies = {} } = pkg as any as {
 };
 errorOnDuplicatesPkgDeps(devDependencies, dependencies);
 
+const DEFAULT_BACKEND = "http://localhost:9000";
+
+if (!process.env.BACKEND) {
+  console.warn(`'BACKEND' url not set. Defaulting to '${DEFAULT_BACKEND}'`);
+  process.env.BACKEND = DEFAULT_BACKEND;
+}
+
+const proxy = {
+  "/api": process.env.BACKEND,
+};
+
 /**
  * Note that Vite normally starts from `index.html` but the qwikCity plugin makes start at `src/entry.ssr.tsx` instead.
  */
@@ -51,12 +62,14 @@ export default defineConfig(({ command, mode }): UserConfig => {
         // Don't cache the server response in dev mode
         "Cache-Control": "public, max-age=0",
       },
+      proxy: proxy,
     },
     preview: {
       headers: {
         // Do cache the server response in preview (non-adapter production build)
         "Cache-Control": "public, max-age=600",
       },
+      proxy: proxy,
     },
   };
 });

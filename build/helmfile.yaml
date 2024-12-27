@@ -77,6 +77,7 @@ releases:
       PORT: 3000
       ORIGIN: {{ requiredEnv "DEPLOY_HOST" | quote }}
       REVERSE_PROXY_ENABLED: true
+      BACKEND: "http://backend:8080"
     containerPort: 3000
     ingress:
       host: {{ requiredEnv "DEPLOY_HOST" | quote }}
