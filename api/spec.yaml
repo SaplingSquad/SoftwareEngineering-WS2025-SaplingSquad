@@ -13,8 +13,6 @@ info:
 servers:
   - url: /api
 tags:
-  - name: user
-    description: Operations for user management.
   - name: questions
     description: Operations about the initial questions, their answers and the
       filters they set.
@@ -26,157 +24,6 @@ tags:
     description: Operations to manage organizations and their projects.
 
 paths:
-  /user:
-    post:
-      tags:
-        - user
-      summary: Create user. This can only be done by the user.
-      description: Register a new user with Sprout.
-      operationId: createUser
-      requestBody:
-        description: Create user object.
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        '200':
-          $ref: '#/components/responses/200'
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
-        '5XX':
-          $ref: '#/components/responses/5XX'
-  /user/login:
-    post:
-      tags:
-        - user
-      summary: Logs user into the system.
-      description: Login for a registered user account.
-      operationId: loginUser
-      parameters:
-        - name: username
-          in: query
-          description: The user name for login.
-          example: exampleuser
-          required: true
-          schema:
-            type: string
-        - name: password
-          in: query
-          description: The password for login in clear text.
-          example: supersecret
-          required: false
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successful operation.
-          headers:
-            X-Rate-Limit:
-              description: calls per hour allowed by the user
-              schema:
-                type: integer
-                format: int32
-            X-Expires-After:
-              description: date in UTC when token expires
-              schema:
-                type: string
-                format: date-time
-          content:
-            application/json:
-              schema:
-                type: string
-                description: The temporary user token for session authentication.
-        '400':
-          description: Invalid username/password supplied.
-        '401':
-          $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
-        '5XX':
-          $ref: '#/components/responses/5XX'
-  /user/authentication:
-    get:
-      tags:
-        - user
-      summary: Authenticate user by user token.
-      description: Send a userToken to get user name and icon of the
-        corresponding account.
-      operationId: getUserByToken
-      parameters:
-        - $ref: '#/components/parameters/userToken'
-      responses:
-        '200':
-          description: Successful operation.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  username:
-                    type: string
-                    description: The name of the user.
-                    example: exampleuser
-                  icon:
-                    type: string
-                    format: binary
-                    description: An icon image for the user's profile.
-        '400':
-          description: Invalid token supplied.
-        '401':
-          $ref: '#/components/responses/401'
-        '404':
-          description: No user for this token found.
-        '5XX':
-          $ref: '#/components/responses/5XX'
-    put:
-      tags:
-        - user
-      summary: Update user. This can only be done by the logged in user.
-      description: Update information concerning the account of a logged in user.
-      operationId: updateUser
-      parameters:
-        - $ref: '#/components/parameters/userToken'
-      requestBody:
-        description: Update an existent user.
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        '200':
-          $ref: '#/components/responses/200'
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
-        '5XX':
-          $ref: '#/components/responses/5XX'
-    delete:
-      tags:
-        - user
-      summary: Delete user. This can only be done by the logged in user.
-      description: Delete an existing, logged in user.
-      operationId: deleteUser
-      parameters:
-        - $ref: '#/components/parameters/userToken'
-      responses:
-        '200':
-          $ref: '#/components/responses/200'
-        '400':
-          description: Invalid user token supplied.
-        '401':
-          $ref: '#/components/responses/401'
-        '404':
-          description: No user for this token found.
-        '5XX':
-          $ref: '#/components/responses/5XX'
   /questions:
     get:
       tags:
@@ -207,8 +54,9 @@ paths:
       summary: Send answers to the questions.
       description: ''
       operationId: postAnswers
+      security:
+        - userToken: []
       parameters:
-        - $ref: '#/components/parameters/userToken'
         - name: answers
           in: query
           description: Answers to the questions.
@@ -262,10 +110,10 @@ paths:
         - questions
       summary: Get filter settings for the active account.
       description: Request the stored filters for the active account. This
-        includes manual set filters as well as calculated ones.
+                   includes manual set filters as well as calculated ones.
       operationId: getFilters
-      parameters:
-        - $ref: '#/components/parameters/userToken'
+      security:
+        - userToken: []
       responses:
         '200':
           description: List of the filters to be activated.
@@ -290,7 +138,7 @@ paths:
         - map
       summary: Get list of the locations from all organizations.
       description: This returns a List of GeoJSONSources to display the pins on
-        the map.
+                   the map.
       operationId: getOrganizationsLocations
       parameters:
       - in: query
@@ -319,7 +167,7 @@ paths:
         - map
       summary: Get organization by Id.
       description: ''
-      operationId: getOrganization
+      operationId: getOrganizationDetails
       parameters:
         - $ref: '#/components/parameters/orgaId'
       responses:
@@ -369,7 +217,7 @@ paths:
         - map
       summary: Get list of all ongoing projects locations.
       description: This returns a List of GeoJSONSources to display the pins on
-        the map.
+                   the map.
       operationId: getProjectsLocations
       parameters:
       - in: query
@@ -449,7 +297,7 @@ paths:
         - map
       summary: Get list of regions on the map.
       description: This returns a List of GeoJSONSources to display the pins on
-        the map.
+                   the map.
       operationId: getRegions
       parameters:
       - in: query
@@ -508,8 +356,9 @@ paths:
       summary: Save a bookmark for a project. This can only be done by the user.
       description: ''
       operationId: bookmarkProject
+      security:
+        - userToken: []
       parameters:
-        - $ref: '#/components/parameters/userToken'
         - $ref: '#/components/parameters/projectId'
       responses:
         '200':
@@ -528,8 +377,9 @@ paths:
       summary: Delete a bookmark for a project.
       description: This can only be done by the user.
       operationId: deleteProjectBookmark
+      security:
+        - userToken: []
       parameters:
-        - $ref: '#/components/parameters/userToken'
         - $ref: '#/components/parameters/projectId'
       responses:
         '200':
@@ -546,11 +396,13 @@ paths:
     post:
       tags:
         - bookmarks
-      summary: Save a bookmark for an organization. This can only be done by the user.
+      summary: Save a bookmark for an organization. This can only be done by the
+               user.
       description: ''
       operationId: bookmarkOrganization
+      security:
+        - userToken: []
       parameters:
-        - $ref: '#/components/parameters/userToken'
         - $ref: '#/components/parameters/orgaId'
       responses:
         '200':
@@ -569,8 +421,9 @@ paths:
       summary: Delete a bookmark for an organization.
       description: This can only be done by the user.
       operationId: deleteOrganizationBookmark
+      security:
+        - userToken: []
       parameters:
-        - $ref: '#/components/parameters/userToken'
         - $ref: '#/components/parameters/orgaId'
       responses:
         '200':
@@ -583,24 +436,49 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-# TODO correct
-  /organizations:
+  /organization:
+    get:
+      tags:
+        - organization
+      summary: Get organization informations.
+      description: Get informations for the authenticated organization.
+      operationId: getOrganization
+      security:
+        - orgaToken: []
+      responses:
+        '200':
+          description: Organization informations.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
     post:
       tags:
         - organization
-      summary: Create an organization. This can only be done by a logged in user.
-      description: To be able to register a new organization to Sprout it is
-        necessary to be logged in.
-      operationId: createOrganization
+      summary: Register an organization.
+      description: Create a visible organization for an existing account of this
+                   type. This can only be done once per account.
+      operationId: registerOrganization
+      security:
+        - orgaToken: []
       requestBody:
-        description: Create an organization.
+        description: Register an organization.
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/Organization'
+        required: true
       responses:
         '200':
-          $ref: '#/components/responses/200'
+          $ref: '#/components/responses/ID'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -612,11 +490,13 @@ paths:
     put:
       tags:
         - organization
-      summary: Update organization. This can only be done by a logged in user.
+      summary: Update organization. This can only be done by a logged in
+               organization.
       description: Update informations to a given organization.
       operationId: updateOrganization
+      security:
+        - orgaToken: []
       parameters:
-        - $ref: '#/components/parameters/userToken'
         - name: organizationDescriptions
           in: query
           description: Update an existing organization.
@@ -633,18 +513,27 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-    delete:
+  /organization/projects:
+    get:
       tags:
         - organization
-      summary: Delete organization. This can only be done by a logged in user.
-      description: Delete an existing organization.
-      operationId: deleteOrganization
-      parameters:
-        - $ref: '#/components/parameters/userToken'
-        - $ref: '#/components/parameters/orgaId'
+      summary: Get project informations.
+      description: Get informations for the authenticated organization.
+      operationId: getProjectForOrga
+      security:
+        - orgaToken: []
       responses:
         '200':
-          $ref: '#/components/responses/200'
+          description: Project informations.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    schema:
+                      $ref: '#/components/schemas/Project'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -653,13 +542,15 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-  /organizations/projects:
     post:
       tags:
         - organization
-      summary: Create a project for an organization. This can only be done by a logged in user.
-      description: A project always belongs to an organization.
+      summary: Create a project for an organization. This can only be done by a
+               logged in organization.
+      description: A project always belongs to the logged in organization.
       operationId: createProject
+      security:
+        - orgaToken: []
       requestBody:
         description: Create a project.
         content:
@@ -667,16 +558,26 @@ paths:
             schema:
               $ref: '#/components/schemas/Project'
       responses:
-        default:
-          description: Successful operation.
+        '200':
+          $ref: '#/components/responses/ID'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
     put:
       tags:
         - organization
-      summary: Update project. This can only be done by a logged in user.
+      summary: Update a project. This can only be done by a logged in
+               organization.
       description: Update an existing project from an organization.
       operationId: updateProject
+      security:
+        - orgaToken: []
       parameters:
-        - $ref: '#/components/parameters/userToken'
         - name: projectDescriptions
           in: query
           description: Update an existing project.
@@ -696,11 +597,13 @@ paths:
     delete:
       tags:
         - organization
-      summary: Delete a project. This can only be done by a logged in user.
+      summary: Delete a project. This can only be done by a logged in
+               organization.
       description: Delete a given project.
       operationId: deleteProject
+      security:
+        - orgaToken: []
       parameters:
-        - $ref: '#/components/parameters/userToken'
         - $ref: '#/components/parameters/projectId'
       responses:
         '200':
@@ -716,24 +619,6 @@ paths:
 
 components:
   schemas:
-    User:
-       type: object
-       properties:
-         username:
-           type: string
-           description: The username for the new user.
-           example: exampleuser
-         password:
-           type: string
-           description: The password for the new user.
-           example: supersecret
-         icon:
-           type: string
-           format: binary
-           description: An icon image for the user's profile.
-       required:
-         - username
-         - password
     Question:
       type: object
       properties:
@@ -747,13 +632,13 @@ components:
           description: A descriptive title for the question.
           externalDocs:
             description: Possibly with external context e.g. the WHO
-              sustainability goals.
+                         sustainability goals.
             url: https://sdgs.un.org/goals
         questionText:
           type: string
           example: Do you want to focus on environment protection?
           description: A pre made question for the user. This may contain
-            further explanations w.r.t. the title.
+                       further explanations w.r.t. the title.
         questionImageUrl:
           type: string
           example: url/to/question/image.pic
@@ -900,7 +785,7 @@ components:
           type: string
           example: New Roots
           description: Name of the organization corresponding to the Id of the
-            organization.
+                       organization.
         description: # Not a keyword
           type: string
           example: New Roots is ...
@@ -959,7 +844,6 @@ components:
         - projectId
         - name
         - description
-        - webpageUrl
     RegionDescriptions:
       type: object
       properties:
@@ -994,9 +878,6 @@ components:
     Organization:
       type: object
       properties:
-        userToken:
-          type: string
-          description: Token for the change of account.
         name:
           type: string
           example: New Roots
@@ -1021,20 +902,17 @@ components:
           example: path/to/new/roots/donation/link.de
           description: Direct link to the donation side of the organization.
       required:
-        - orgaId
         - name
         - description
         - webpageUrl
     Project:
       type: object
       properties:
-        userToken:
-          type: string
-          description: Token for the change of account.
         name:
           type: string
           example: Great Green Wall
-          description: Name of the project corresponding to the given ID.
+          description: Name of the project corresponding to the logged in
+                       organization.
         description:
           type: string
           example: The Great Green Wall is ...
@@ -1055,7 +933,6 @@ components:
           example: path/to/great/green/wall/donation/link.com
           description: Direct link to the donation side for the project.
       required:
-        - projectId
         - name
         - description
         - webpageUrl
@@ -1065,11 +942,19 @@ components:
         type: string
         enum: [pos, neu, neg]
         description: The enum represents the possible answers to a question.
-          These questions are represented as *additionalProperties*, due to their
-          volatile behavior.
+                     These questions are represented as *additionalProperties*,
+                     due to their volatile behavior.
   responses:
     '200':
       description: Successful operation.
+    'ID':
+      description: Generated ID.
+      content:
+        text/plain:
+          schema:
+            type: integer
+            example: 1
+            description: Generated ID. Unique w.r.t. the type of ID.
     '400':
       description: Bad request. Provided request is malformed.
     '401':
@@ -1079,13 +964,6 @@ components:
     '5XX':
       description: Unexpected server error.
   parameters:
-    userToken:
-      name: userToken
-      in: query
-      description: Session token of the logged in account.
-      required: true
-      schema:
-        type: string
     orgaId:
       name: orgaId
       in: query
@@ -1100,3 +978,10 @@ components:
       required: true
       schema:
         type: integer
+  securitySchemes:
+    userToken:
+      type: http
+      scheme: bearer
+    orgaToken:
+      type: http
+      scheme: bearer

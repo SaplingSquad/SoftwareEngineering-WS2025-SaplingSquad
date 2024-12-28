@@ -5,11 +5,9 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
-import org.mockito.kotlin.eq
-import org.mockito.kotlin.not
-import org.mockito.kotlin.whenever
-import org.mockito.kotlin.wheneverBlocking
+import org.mockito.kotlin.*
 import org.springframework.http.HttpStatus
+import org.springframework.http.server.reactive.ServerHttpRequest
 import saplingsquad.api.models.Question
 import saplingsquad.api.service.QuestionsApiService
 import saplingsquad.config.AppConfig
@@ -23,6 +21,9 @@ import kotlin.test.assertEquals
  */
 @ExtendWith(MockitoExtension::class)
 class QuestionsApiServiceTest {
+    companion object {
+        var dontTouchThisRequest: ServerHttpRequest = mock(defaultAnswer = { throw RuntimeException("Don't use the request!") })
+    }
 
     /**
      * Mock the persistence layer
@@ -32,6 +33,7 @@ class QuestionsApiServiceTest {
 
     @Mock
     lateinit var appConfig: AppConfig
+
 
     /**
      * Test GET /questions
@@ -66,7 +68,7 @@ class QuestionsApiServiceTest {
         // @formatter:on
 
         val service = QuestionsApiService(repository, appConfig)
-        val response = service.getQuestions()
+        val response = service.getQuestions(dontTouchThisRequest)
 
         assertEquals(response.statusCode, HttpStatus.OK)
         assertEquals(expectedBody, response.body?.toList())
@@ -96,12 +98,12 @@ class QuestionsApiServiceTest {
 
         val service = QuestionsApiService(repository, appConfig)
 
-        val responseExisting = service.getQuestionById(1)
+        val responseExisting = service.getQuestionById(dontTouchThisRequest, 1)
 
         assertEquals(responseExisting.statusCode, HttpStatus.OK)
         assertEquals(expectedOutput, responseExisting.body)
 
-        val responseNonexisting = service.getQuestionById(5)
+        val responseNonexisting = service.getQuestionById(dontTouchThisRequest, 5)
         assertEquals(responseNonexisting.statusCode, HttpStatus.NOT_FOUND)
     }
 

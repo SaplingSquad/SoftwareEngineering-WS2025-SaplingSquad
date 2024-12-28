@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
+import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.stereotype.Service
 import saplingsquad.api.QuestionsApiDelegate
 import saplingsquad.api.models.Question
@@ -25,27 +26,27 @@ class QuestionsApiService(private val repository: QuestionsRepository, @Autowire
     /**
      * API Endpoint to get a list of all questions.
      */
-    override fun getQuestions(): ResponseEntity<Flow<Question>> =
+    override fun getQuestions(rawRequest: ServerHttpRequest): ResponseEntity<Flow<Question>> =
         repository::readAll
             .flowOfList()
             .map { it.tableEntityToApi() }
             .asHttpOkResponse()
 
-    override suspend fun postAnswers(userToken: String, answers: List<Int>?): ResponseEntity<Unit> {
+    override suspend fun postAnswers(rawRequest: ServerHttpRequest, answers: List<Int>?): ResponseEntity<Unit> {
         TODO("Not yet implemented")
     }
 
     /**
      * API Endpoint to get a single question
      */
-    override suspend fun getQuestionById(questionId: Int): ResponseEntity<Question> {
+    override suspend fun getQuestionById(rawRequest: ServerHttpRequest, questionId: Int): ResponseEntity<Question> {
         val entity = repository.readById(questionId) ?: return ResponseEntity.notFound().build()
         return entity
             .tableEntityToApi()
             .asHttpOkResponse()
     }
 
-    override fun getFilters(userToken: String): ResponseEntity<Flow<Int>> {
+    override fun getFilters(rawRequest: ServerHttpRequest): ResponseEntity<Flow<Int>> {
         TODO("Not yet implemented")
     }
 
