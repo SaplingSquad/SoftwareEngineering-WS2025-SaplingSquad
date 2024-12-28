@@ -5,7 +5,7 @@ COPY --chown=gradle:gradle ./api /build/api
 ENV API_ROOT="/build/api"
 RUN gradle bootJar --no-daemon
 
-FROM openjdk:21-slim AS run
+FROM eclipse-temurin:21 AS run
 WORKDIR /app
 COPY --from=build /build/build/libs/backend.jar /app/backend.jar
 EXPOSE 8080
