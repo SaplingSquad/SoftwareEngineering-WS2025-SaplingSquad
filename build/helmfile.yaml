@@ -46,6 +46,9 @@ releases:
       requests:
         cpu: "500m"
         memory: "512Mi"
+    probe:
+      enabled: true
+      path: "/actuator/health"
   needs:
   - secrets
 - name: database
