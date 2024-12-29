@@ -13,6 +13,7 @@ export type QuestionCardProps = {
 type AnswerStyle = {
   card: string;
   border: string;
+  check: string;
 };
 
 const answerStyles = new Map<string, AnswerStyle>([
@@ -20,7 +21,8 @@ const answerStyles = new Map<string, AnswerStyle>([
     "pos",
     {
       card: "scale-[1.05]",
-      border: "border-4 border-amber-400",
+      border: "border-4 border-primary",
+      check: "",
     },
   ],
   [
@@ -28,6 +30,7 @@ const answerStyles = new Map<string, AnswerStyle>([
     {
       card: "grayscale scale-[0.90]",
       border: "",
+      check: "opacity-0",
     },
   ],
 ]);
@@ -44,10 +47,12 @@ export const QuestionCard = component$((props: { data: QuestionCardProps }) => {
     <>
       <div
         class={
-          "relative rounded-xl overflow-hidden mx-2 mb-20 w-96 bg-base-300 shadow-xl transition-all hover:scale-[1.1] active:scale-[1.05] " +
+          "relative mx-2 mb-20 w-96 overflow-hidden rounded-xl shadow-xl transition-all hover:scale-[1.1] active:scale-[1.05] " +
           answerStyles.get(props.data.answer)!.card
         }
-        onClick$={() => (props.data.answer = props.data.answer == "neu" ? "pos" : "neu")}
+        onClick$={() =>
+          (props.data.answer = props.data.answer == "neu" ? "pos" : "neu")
+        }
         onMouseEnter$={() => {
           headerRef.value!.classList.replace("bottom-4", "bottom-32");
           textRef.value!.classList.replace("top-96", "top-72");
@@ -65,17 +70,50 @@ export const QuestionCard = component$((props: { data: QuestionCardProps }) => {
           <img src={props.data.img} width="500" height="500" alt="" />
         </figure>
 
-        <div class="absolute top-0 left-0 w-full h-full overflow-hidden">
-          <div ref={gradientRef} class="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-[#ffffffee] from-10% via-transparent via-40%" />
-          <h1 ref={headerRef} class="absolute bottom-4 left-4 transition-all font-semibold text-3xl text-sky-800">{props.data.title}</h1>
-          <div ref={textRef} class="absolute top-96 left-4 transition-all text-sky-700 w-11/12">
+        <div class="absolute left-0 top-0 h-full w-full overflow-hidden">
+          <div
+            ref={gradientRef}
+            class="absolute left-0 top-0 h-full w-full bg-gradient-to-t from-primary from-10% via-transparent via-40%"
+          />
+          <h1
+            ref={headerRef}
+            class="absolute bottom-4 left-4 text-3xl font-semibold text-primary-content transition-all"
+          >
+            {props.data.title}
+          </h1>
+          <div
+            ref={textRef}
+            class="absolute left-4 top-96 w-11/12 text-primary-content transition-all"
+          >
             <p>Möchtest du ...</p>
             <p>{props.data.text}</p>
           </div>
         </div>
 
-        <div class={"absolute top-0 left-0 w-full h-full rounded-xl " + answerStyles.get(props.data.answer)!.border}/>
+        <div class="absolute right-4 top-4 h-24 w-24">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            stroke-width="1.3"
+            class={
+              "fill-primary-content stroke-primary transition-all duration-100 ease-in-out " +
+              answerStyles.get(props.data.answer)!.check
+            }
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M9 12.75 11.25 15 15 9.75 11.25 15 9 12.75 M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+            />
+          </svg>
+        </div>
 
+        <div
+          class={
+            "absolute left-0 top-0 h-full w-full rounded-xl " +
+            answerStyles.get(props.data.answer)!.border
+          }
+        />
       </div>
     </>
   );
