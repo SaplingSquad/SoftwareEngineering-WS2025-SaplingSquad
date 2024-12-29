@@ -33,8 +33,8 @@ const regions: {
  */
 export const Filter = component$(() => {
   return (
-    <div class="inline-block w-96 space-y-4 rounded-xl bg-slate-800 p-4">
-      <a href="/questions" class="btn w-full">
+    <div class="inline-block w-96 space-y-4 rounded-xl bg-base-100 p-4">
+      <a href="/questions" class="btn btn-primary w-full">
         Gewählte Schwerpunkte bearbeiten
       </a>
       <div>
