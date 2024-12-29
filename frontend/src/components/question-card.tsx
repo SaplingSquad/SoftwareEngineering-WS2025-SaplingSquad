@@ -7,64 +7,25 @@ export type QuestionCardProps = {
   img: string;
   title: string;
   text: string;
-  answer: "neu" | "pos";
+  isSelected: boolean;
 };
-
-type AnswerStyle = {
-  card: string;
-  border: string;
-  check: string;
-};
-
-const answerStyles = new Map<string, AnswerStyle>([
-  [
-    "pos",
-    {
-      card: "scale-[1.05]",
-      border: "border-4 border-primary",
-      check: "",
-    },
-  ],
-  [
-    "neu",
-    {
-      card: "grayscale scale-[0.90]",
-      border: "",
-      check: "opacity-0",
-    },
-  ],
-]);
 
 /**
  * Component displaying a single question as a card.
  */
 export const QuestionCard = component$((props: { data: QuestionCardProps }) => {
-  const headerRef = useSignal<HTMLElement>();
-  const textRef = useSignal<HTMLElement>();
-  const gradientRef = useSignal<HTMLElement>();
+  const cardHovered = useSignal<boolean>(false);
 
   return (
     <>
       <div
-        class={
-          "relative mx-2 mb-20 w-96 overflow-hidden rounded-xl shadow-xl transition-all hover:scale-[1.1] active:scale-[1.05] " +
-          answerStyles.get(props.data.answer)!.card
-        }
-        onClick$={() =>
-          (props.data.answer = props.data.answer == "neu" ? "pos" : "neu")
-        }
-        onMouseEnter$={() => {
-          headerRef.value!.classList.replace("bottom-4", "bottom-32");
-          textRef.value!.classList.replace("top-96", "top-72");
-          gradientRef.value!.classList.replace("from-10%", "from-40%");
-          gradientRef.value!.classList.replace("via-40%", "via-80%");
-        }}
-        onMouseLeave$={() => {
-          headerRef.value!.classList.replace("bottom-32", "bottom-4");
-          textRef.value!.classList.replace("top-72", "top-96");
-          gradientRef.value!.classList.replace("from-40%", "from-10%");
-          gradientRef.value!.classList.replace("via-80%", "via-40%");
-        }}
+        class={[
+          "relative mx-2 mb-20 w-96 overflow-hidden rounded-xl shadow-xl transition-all hover:scale-[1.1] active:scale-[1.05]",
+          props.data.isSelected ? "scale-[1.05]" : "scale-[0.90] grayscale",
+        ]}
+        onClick$={() => (props.data.isSelected = !props.data.isSelected)}
+        onMouseEnter$={() => (cardHovered.value = true)}
+        onMouseLeave$={() => (cardHovered.value = false)}
       >
         <figure>
           <img src={props.data.img} width="500" height="500" alt="" />
@@ -72,18 +33,24 @@ export const QuestionCard = component$((props: { data: QuestionCardProps }) => {
 
         <div class="absolute left-0 top-0 h-full w-full overflow-hidden">
           <div
-            ref={gradientRef}
-            class="absolute left-0 top-0 h-full w-full bg-gradient-to-t from-primary from-10% via-transparent via-40%"
+            class={[
+              "absolute left-0 top-0 h-full w-full bg-gradient-to-t from-primary via-transparent",
+              cardHovered.value ? "from-40% via-80%" : "from-10% via-40%",
+            ]}
           />
           <h1
-            ref={headerRef}
-            class="absolute bottom-4 left-4 text-3xl font-semibold text-primary-content transition-all"
+            class={[
+              "absolute left-4 text-3xl font-semibold text-primary-content transition-all",
+              cardHovered.value ? "bottom-32" : "bottom-4",
+            ]}
           >
             {props.data.title}
           </h1>
           <div
-            ref={textRef}
-            class="absolute left-4 top-96 w-11/12 text-primary-content transition-all"
+            class={[
+              "absolute left-4 w-11/12 text-primary-content transition-all",
+              cardHovered.value ? "top-72" : "top-96",
+            ]}
           >
             <p>Möchtest du ...</p>
             <p>{props.data.text}</p>
@@ -95,10 +62,10 @@ export const QuestionCard = component$((props: { data: QuestionCardProps }) => {
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             stroke-width="1.3"
-            class={
-              "fill-primary-content stroke-primary transition-all duration-100 ease-in-out " +
-              answerStyles.get(props.data.answer)!.check
-            }
+            class={[
+              "fill-primary-content stroke-primary transition-all duration-100 ease-in-out",
+              props.data.isSelected ? "" : "opacity-0",
+            ]}
           >
             <path
               stroke-linecap="round"
@@ -109,10 +76,10 @@ export const QuestionCard = component$((props: { data: QuestionCardProps }) => {
         </div>
 
         <div
-          class={
-            "absolute left-0 top-0 h-full w-full rounded-xl " +
-            answerStyles.get(props.data.answer)!.border
-          }
+          class={[
+            "absolute left-0 top-0 h-full w-full rounded-xl",
+            props.data.isSelected ? "border-4 border-primary" : "",
+          ]}
         />
       </div>
     </>
