@@ -6,6 +6,7 @@ import {
   defaultFilterSettings,
   Filter,
 } from "~/components/filter";
+import { MapMenu } from "~/components/map-ui";
 
 export default component$(() => {
   const filterSettings: FilterSettings = useStore(defaultFilterSettings());
@@ -13,6 +14,7 @@ export default component$(() => {
   return (
     <>
       <Map />
+      <MapMenu />
       <FilterPane filterSettings={filterSettings} />
     </>
   );
