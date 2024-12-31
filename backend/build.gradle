@@ -37,6 +37,8 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-devtools"
     implementation "org.springframework.boot:spring-boot-starter-webflux"
     implementation "org.springframework.boot:spring-boot-starter-validation"
+    implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server"
+    implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
     implementation "org.springframework.boot:spring-boot-configuration-processor"
     implementation "org.springframework.boot:spring-boot-starter-actuator"
 
@@ -115,6 +117,7 @@ tasks {
 
 openApiGenerate {
     //https://openapi-generator.tech/docs/generators/kotlin-spring
+    configFile.set("$rootDir/templates/openapi-generator-additional-files-config.json")
     inputSpec.set("$apiSource/spec.yaml")
     generatorName.set("kotlin-spring")
     library.set("spring-boot")

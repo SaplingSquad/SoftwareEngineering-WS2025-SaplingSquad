@@ -48,6 +48,8 @@ import {{javaxPackage}}.validation.constraints.Size
 import {{javaxPackage}}.validation.Valid
 {{/useBeanValidation}}
 
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
+
 {{#reactive}}
 import kotlinx.coroutines.flow.Flow
 {{/reactive}}
@@ -104,12 +106,12 @@ interface {{classname}} {
             produces = [{{#produces}}"{{{mediaType}}}"{{^-last}}, {{/-last}}{{/produces}}]{{/hasProduces}}{{#hasConsumes}},
             consumes = [{{#consumes}}"{{{mediaType}}}"{{^-last}}, {{/-last}}{{/consumes}}]{{/hasConsumes}}{{/singleContentTypes}}
     )
-    {{#reactive}}{{^isArray}}suspend {{/isArray}}{{/reactive}}fun {{operationId}}(rawRequest: ServerHttpRequest, {{#allParams}}{{>queryParams}}{{>pathParams}}{{>headerParams}}{{>cookieParams}}{{>bodyParams}}{{>formParams}}{{^-last}},{{/-last}}{{/allParams}}): ResponseEntity<{{>returnTypes}}>{{^skipDefaultApiInterface}} {
+    {{#reactive}}{{^isArray}}suspend {{/isArray}}{{/reactive}}fun {{operationId}}({{#authMethods}}{{#isBasicBearer}}{{name}}: JwtAuthenticationToken, {{/isBasicBearer}}{{/authMethods}}{{#allParams}}{{>queryParams}}{{>pathParams}}{{>headerParams}}{{>cookieParams}}{{>bodyParams}}{{>formParams}}{{^-last}},{{/-last}}{{/allParams}}): ResponseEntity<{{>returnTypes}}>{{^skipDefaultApiInterface}} {
         {{^isDelegate}}
         return {{>returnValue}}
         {{/isDelegate}}
         {{#isDelegate}}
-        return getDelegate().{{operationId}}(rawRequest, {{#allParams}}{{{paramName}}}{{^-last}}, {{/-last}}{{/allParams}})
+            return getDelegate().{{operationId}}({{#authMethods}}{{#isBasicBearer}}{{name}}, {{/isBasicBearer}}{{/authMethods}}{{#allParams}}{{{paramName}}}{{^-last}}, {{/-last}}{{/allParams}})
         {{/isDelegate}}
     }{{/skipDefaultApiInterface}}
 {{/operation}}

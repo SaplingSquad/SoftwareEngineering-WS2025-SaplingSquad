@@ -1,0 +1,10 @@
+{
+  "files": {
+    "custom/generatedSecurity.mustache": {
+      "template": "generatedSecurity.mustache",
+      "templateType": "SupportingFiles",
+      "folder": "src/main/kotlin/saplingsquad/config",
+      "destinationFilename": "GeneratedSecurityConfiguration.kt"
+    }
+  }
+}

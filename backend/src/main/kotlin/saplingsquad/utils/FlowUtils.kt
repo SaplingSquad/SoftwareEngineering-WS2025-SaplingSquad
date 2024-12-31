@@ -2,6 +2,7 @@ package saplingsquad.utils
 
 import kotlinx.coroutines.flow.*
 import org.springframework.http.ResponseEntity
+import reactor.core.publisher.Mono
 
 /**
  * Utility method to convert a list which is **produced in a coroutine** to a Flow of its elements.
@@ -45,4 +46,8 @@ suspend fun <T> Flow<T>.atMostOne(): T? {
                 v
             }
         }
+}
+
+fun Mono<Boolean>.booleanAnd(other: Mono<Boolean>): Mono<Boolean> {
+    return this.filter { it }.flatMap { other }.defaultIfEmpty(false)
 }
