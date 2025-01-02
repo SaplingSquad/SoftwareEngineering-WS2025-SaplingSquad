@@ -1,51 +1,63 @@
 import { component$ } from "@builder.io/qwik";
-import { HiUserCircleOutline } from "@qwikest/icons/heroicons";
+import { HiUserCircleOutline, HiPlusCircleSolid } from "@qwikest/icons/heroicons";
 
-export const Profile = component$(() => {
+export type ProfileProjectsProps = {
+    img: string;
+    title: string;
+    text: string;
+};
+
+const ProjectCard = component$((props: { p: ProfileProjectsProps }) => {
+    return (
+        <>
+            <div class="card bg-base-100 w-96 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title">{props.p.title}</h2>
+                    <p>{props.p.text}</p>
+                    <div class="card-actions justify-end">
+                        <button class="btn btn-primary">Bearbeiten</button>
+                    </div>
+                </div>
+            </div>
+        </>
+    )
+})
+
+const ProjectDummy = component$(() => {
+    return (
+        <>
+            <div class="card bg-primary-content card-bordered border-primary border-dashed border-4 w-96 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title text-primary">Neues Projekt hinzufügen</h2>
+                    <div class="flex items-center justify-center">
+                        <button class="hover:text-secondary" >
+                            <HiPlusCircleSolid class="text-primary text-6xl text-opacity-80 hover:text-secondary transition-all" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </>
+    )
+})
+
+
+
+export const Profile = component$((inputData: { data: ProfileProjectsProps[] }) => {
     return (
         <>
             <div class="relative flex flex-wrap justify-center">
                 <div class="card bg-base-300 rounded-box place-items-stretch m-4 p-4 space-y-4 w-5/6 min-w-fit ">
                     <h2 class="card-title">Profil</h2>
                     <div class="flex flex-wrap justify-around">
-                        <div class="card bg-base-100 rounded-box place-items-stretch m-4 p-4 space-y-4 [max-height:90dvh] w-9/12 min-w-fit ">
+                        <div class="card bg-base-200 rounded-box place-items-stretch m-4 p-4 space-y-4 [max-height:90dvh] w-9/12 ">
                             <h2 class="card-title">Projekte</h2>
-                            <div class="collapse collapse-arrow bg-base-200">
-                                <input type="radio" name="my-accordion-2" />
-                                <div class="collapse-title text-xl font-medium">Projekt 1</div>
-                                <div class="collapse-content">
-                                    <div class="card bg-primary rounded-box place-items-stretch m-4 p-4 w-1/2 min-w-fit">
-                                        <h2 class="card-title text-primary-content">Spendenfortschritt</h2>
-                                        <input type="range" min="0" max="100" value="25" class="range range-accent" step="10" />
-                                        <div class="flex w-full justify-between px-2 text-xs">
-                                            <span>|</span>
-                                            <span>|</span>
-                                            <span>|</span>
-                                            <span>|</span>
-                                            <span>|</span>
-                                            <span>|</span>
-                                            <span>|</span>
-                                            <span>|</span>
-                                            <span>|</span>
-                                            <span>|</span>
-                                            <span>|</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="collapse collapse-arrow bg-base-200">
-                                <input type="radio" name="my-accordion-2" />
-                                <div class="collapse-title text-xl font-medium">Projekt 2</div>
-                                <div class="collapse-content">
-                                    <p>hello</p>
-                                </div>
-                            </div>
-                            <div class="collapse collapse-arrow bg-base-200">
-                                <input type="radio" name="my-accordion-2" />
-                                <div class="collapse-title text-xl font-medium">Projekt 3</div>
-                                <div class="collapse-content">
-                                    <p>hello</p>
-                                </div>
+                            <div class="flex flex-wrap gap-6">
+                                {
+                                    inputData.data.map((item, idx: number) => (
+                                        <ProjectCard key={idx} p={item} />
+                                    ))
+                                }
+                                <ProjectDummy />
                             </div>
                         </div>
                         <div class="card bg-base-100 rounded-box place-items-stretch m-4 p-4 space-y-4 h-fit flex-initial w-2/12 min-w-fit">
