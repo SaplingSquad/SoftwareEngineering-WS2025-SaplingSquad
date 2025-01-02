@@ -1,6 +1,7 @@
 spring.application.name: backend
 server.port: ${port:9000}
 
+
 spring:
   r2dbc:
     url: "r2dbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_DATABASE:postgres}"
@@ -29,12 +30,10 @@ spring:
               - openid
         provider:
           keycloak-users:
-            issuer-uri: ${appconfig.openapi.oauth2.users-issuer.issuer-uri}
+            issuer-uri: ${appconfig.oauth2.users-issuer.issuer-uri}
           keycloak-orgas:
-            issuer-uri: ${appconfig.openapi.oauth2.orgas-issuer.issuer-uri}
+            issuer-uri: ${appconfig.oauth2.orgas-issuer.issuer-uri}
       # END only for dev purposes
-
-
 
 appconfig:
   openapi:
