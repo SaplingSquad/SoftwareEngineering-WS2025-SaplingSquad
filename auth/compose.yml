@@ -4,9 +4,24 @@ services:
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
       KC_BOOTSTRAP_ADMIN_PASSWORD: admin
-      KC_HTTP_RELATIVE_PATH: /auth
+      KC_HTTP_RELATIVE_PATH: /authkc
+
+      # Use the following to run Keycloak proxied by vite through the frontend
+      KC_HOSTNAME: http://localhost:5173/authkc
+      KC_PROXY_HEADERS: xforwarded
+      KC_HTTP_ENABLED": true
+
+      # Use the following to run Keycloak not proxied
+      # KC_HOSTNAME: http://localhost:5555/authkc
+
+      # Access to admin console only from localhost (proxy must also be configured to not allow /admin routes)
+      KC_HOSTNAME_ADMIN: http://localhost:5555/authkc
     ports:
       - "5555:8080"
-    command: start-dev --import-realm
+    command: [
+      "start-dev",
+      "--import-realm",
+      "--hostname-backchannel-dynamic", "true"
+    ]
     volumes:
       - ./initrealms:/opt/keycloak/data/import

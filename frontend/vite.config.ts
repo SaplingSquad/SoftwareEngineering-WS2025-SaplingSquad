@@ -17,20 +17,36 @@ const { dependencies = {}, devDependencies = {} } = pkg as any as {
 errorOnDuplicatesPkgDeps(devDependencies, dependencies);
 
 const DEFAULT_BACKEND = "http://localhost:9000";
-const DEFAULT_KEYCLOAK_HOST = "http://localhost:5555";
+// Host address for proxying
+const DEFAULT_KEYCLOAK_HOST_INTERNAL = "http://localhost:5555";
+// Host address for oidc issuer-uri
+const DEFAULT_KEYCLOAK_HOST_PUBLIC = process.env.ORIGIN ?? "http://localhost:5173";
 
 if (!process.env.BACKEND) {
   console.warn(`'BACKEND' url not set. Defaulting to '${DEFAULT_BACKEND}'`);
   process.env.BACKEND = DEFAULT_BACKEND;
 }
-if (!process.env.KEYCLOAK_HOST) {
-  console.warn(`'AUTHSERVER' url not set. Defaulting to '${DEFAULT_KEYCLOAK_HOST}'`);
-  process.env.KEYCLOAK_HOST = DEFAULT_KEYCLOAK_HOST;
+if (!process.env.INTERNAL_KEYCLOAK_HOST) {
+  console.warn(`'INTERNAL_KEYCLOAK_HOST' url not set. Defaulting to '${DEFAULT_KEYCLOAK_HOST_INTERNAL}'`);
+  process.env.INTERNAL_KEYCLOAK_HOST = DEFAULT_KEYCLOAK_HOST_INTERNAL;
+}
+if (!process.env.PUBLIC_KEYCLOAK_HOST) {
+  console.warn(`'PUBLIC_KEYCLOAK_HOST' url not set. Defaulting to '${DEFAULT_KEYCLOAK_HOST_PUBLIC}'`);
+  process.env.PUBLIC_KEYCLOAK_HOST = DEFAULT_KEYCLOAK_HOST_PUBLIC;
+}
+
+const kcProxyConfig = {
+  target: process.env.INTERNAL_KEYCLOAK_HOST,
+  // USE THESE ONLY IF THERE IS ANOTHER PROXY IN FRONT OF QWIK
+  // xfwd: true,
+  // changeOrigin: true,
 }
 
 const proxy = {
   "/api": process.env.BACKEND,
-  "/auth/realms": process.env.KEYCLOAK_HOST,
+  "/authkc/realms": kcProxyConfig,
+  "/authkc/resources": kcProxyConfig,
+  "/authkc/robots.txt": kcProxyConfig,
 };
 
 /**

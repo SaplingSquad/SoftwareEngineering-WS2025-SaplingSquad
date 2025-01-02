@@ -11,7 +11,7 @@ const LogoutButton = () => {
 }
 
 /**
- * Custom sign in page
+ * Custom sign out page
  */
 export default component$(() => {
     return (
