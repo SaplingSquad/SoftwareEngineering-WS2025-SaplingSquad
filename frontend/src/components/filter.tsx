@@ -33,7 +33,7 @@ const regions: {
  */
 export const Filter = component$(() => {
   return (
-    <div class="inline-block w-96 space-y-4 rounded-xl bg-base-100 p-4">
+    <div class="w-104 inline-block space-y-4 rounded-xl bg-base-100 p-4">
       <a href="/questions" class="btn btn-primary w-full">
         Gewählte Schwerpunkte bearbeiten
       </a>
@@ -42,6 +42,7 @@ export const Filter = component$(() => {
         <PinToggle labelText="Projekt-Pins anzeigen" />
         <PinToggle labelText="Regionen-Pins anzeigen" />
       </div>
+      <SizeFilter />
       <GeographicFilter />
     </div>
   );
@@ -52,16 +53,58 @@ export const Filter = component$(() => {
  */
 const PinToggle = component$((props: { labelText: string }) => {
   return (
-    <div class="form-control">
-      <label class="label cursor-pointer justify-start space-x-4">
+    <label class="label cursor-pointer justify-start space-x-4">
+      <input
+        type="checkbox"
+        class="toggle toggle-primary"
+        checked
+        onClick$={(_, currentTarget) => console.log(currentTarget.checked)}
+      />
+      <span class="label-text">{props.labelText}</span>
+    </label>
+  );
+});
+
+const SizeFilter = component$(() => {
+  const limitSize = useSignal<boolean>(false);
+
+  return (
+    <div class="space-y-0">
+      <label class="label cursor-pointer space-x-4 pt-0">
+        <span class="label-text">
+          Nur Vereine (und deren Projekte) bestimmter Größe anzeigen?
+        </span>
         <input
           type="checkbox"
           class="toggle toggle-primary"
-          checked
-          onClick$={(_, currentTarget) => console.log(currentTarget.checked)}
+          onClick$={(_, currentTarget) =>
+            (limitSize.value = currentTarget.checked)
+          }
         />
-        <span class="label-text">{props.labelText}</span>
       </label>
+      <input
+        type="range"
+        min="0"
+        max="3"
+        value="1"
+        class={[
+          "range",
+          limitSize.value ? "range-primary" : "[--range-shdw:#e8e8e8]",
+        ]}
+        step="1"
+        disabled={!limitSize.value}
+      />
+      <div
+        class={[
+          "flex w-full justify-between px-2 text-xs",
+          limitSize.value ? "" : "text-[#8a8a8a]",
+        ]}
+      >
+        <span>&lt;20 Mitglieder</span>
+        <span>&lt;100 Mitglieder</span>
+        <span>&lt;500 Mitglieder</span>
+        <span>&lt;1000 Mitglieder</span>
+      </div>
     </div>
   );
 });
