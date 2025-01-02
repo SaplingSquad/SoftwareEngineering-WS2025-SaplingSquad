@@ -149,6 +149,13 @@ springBoot {
     mainClass.set("saplingsquad.ApplicationKt")
 }
 
+bootRun {
+    //allow passing jvm args to bootRun command
+    if (project.hasProperty('jvmArgs') ) {
+        jvmArgs = (project.jvmArgs.split("\\s+") as List)
+    }
+}
+
 test {
     useJUnitPlatform()
     jvmArgs("-javaagent:${configurations.mockitoAgent.asPath}")

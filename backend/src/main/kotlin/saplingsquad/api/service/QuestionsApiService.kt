@@ -52,8 +52,8 @@ class QuestionsApiService(
     }
 
     override fun getFilters(userToken: JwtAuthenticationToken): ResponseEntity<Flow<Int>> {
-        LogManager.getLogger().info(userToken)
-        return flowOf(1).asHttpOkResponse()
+        //TODO
+        return flowOf(1, 2, 3, userToken.token.expiresAt!!.epochSecond.toInt()).asHttpOkResponse()
     }
 
     /**

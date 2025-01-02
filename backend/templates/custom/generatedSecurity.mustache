@@ -15,11 +15,10 @@ enum class UserType {
 {{/authMethods}}
 }
 
-@Component
-class GeneratedAuthorizationManager(val authorizationManagerFactory: AuthorizationManagerFactory) {
+class GeneratedAuthorizationManager(val authorizationManagerProvider: UserTypeAuthorizationManagerProvider) {
     fun generatedExchangeAuthorization(exchanges: ServerHttpSecurity.AuthorizeExchangeSpec) {
     {{#authMethods}}
-    val {{name}}Manager = authorizationManagerFactory.getAuthorizationManager(UserType.{{#lambda.uppercase}}{{#lambda.snakecase}}{{name}}{{/lambda.snakecase}}{{/lambda.uppercase}})
+    val {{name}}Manager = authorizationManagerProvider.forUserType(UserType.{{#lambda.uppercase}}{{#lambda.snakecase}}{{name}}{{/lambda.snakecase}}{{/lambda.uppercase}})
     {{/authMethods}}
     {{#apiInfo.apis}}
     {{#operations}}
@@ -36,6 +35,6 @@ class GeneratedAuthorizationManager(val authorizationManagerFactory: Authorizati
     }
 }
 
-interface AuthorizationManagerFactory {
-    fun getAuthorizationManager(userType: UserType): ReactiveAuthorizationManager<AuthorizationContext>
+interface UserTypeAuthorizationManagerProvider {
+    fun forUserType(userType: UserType): ReactiveAuthorizationManager<AuthorizationContext>
 }

@@ -16,8 +16,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtIssuerReactiveAuthenticationManagerResolver
 import org.springframework.security.web.server.SecurityWebFilterChain
 import org.springframework.security.web.server.authorization.AuthorizationContext
-import org.springframework.stereotype.Component
-import saplingsquad.utils.booleanAnd
+import saplingsquad.utils.reactiveAuthorizationManagersAllOf
 
 @Configuration
 @EnableWebFluxSecurity
@@ -29,12 +28,13 @@ class JwtAuthConfig(
     fun springSecurityFilterChain(
         http: ServerHttpSecurity,
         clientRegistrationRepository: ReactiveClientRegistrationRepository,
-        generatedAuthorizationManager: GeneratedAuthorizationManager
     ): SecurityWebFilterChain {
         val authResolver = JwtIssuerReactiveAuthenticationManagerResolver.fromTrustedIssuers(
             config.oauth2.usersIssuer.issuerUri,
             config.oauth2.orgasIssuer.issuerUri
         )
+        val authManagers = AuthManagers(config)
+        val generatedAuthorizationManager = GeneratedAuthorizationManager(authManagers)
         http
             .authorizeExchange(generatedAuthorizationManager::generatedExchangeAuthorization)
             .authorizeExchange { exchanges ->
@@ -55,37 +55,38 @@ class JwtAuthConfig(
 
 }
 
-@Component
-class AuthResolverFactory(config: AppConfig) : AuthorizationManagerFactory {
+
+class AuthManagers(private val config: AppConfig) : UserTypeAuthorizationManagerProvider {
     private val authenticatedAuthorizationManager =
         AuthenticatedReactiveAuthorizationManager.authenticated<AuthorizationContext>()
     private val logger = LogManager.getLogger()
 
-    private val typeOfIssuers = mapOf(
-        config.oauth2.usersIssuer.issuerUri to UserType.USER_TOKEN,
-        config.oauth2.orgasIssuer.issuerUri to UserType.ORGA_TOKEN
-    )
+    override fun forUserType(userType: UserType): ReactiveAuthorizationManager<AuthorizationContext> {
+        return reactiveAuthorizationManagersAllOf(
+            authenticatedAuthorizationManager,
+            correctIssuerForUserTypeAuthorization(userType)
+        )
+    }
 
-    override fun getAuthorizationManager(userType: UserType): ReactiveAuthorizationManager<AuthorizationContext> {
-
-        return ReactiveAuthorizationManager { authentication, obj ->
-            val authenticated = authenticatedAuthorizationManager.check(authentication, obj)
-                .map(AuthorizationDecision::isGranted)
-            val correctType = authentication
+    private fun correctIssuerForUserTypeAuthorization(userType: UserType) =
+        ReactiveAuthorizationManager<AuthorizationContext> { authentication, _ ->
+            authentication
                 .filter { it.isOfType<JwtAuthenticationToken>() }
                 .cast(JwtAuthenticationToken::class.java)
                 .map { auth -> compareIssuer(auth, userType) }
                 .defaultIfEmpty(false)
-            return@ReactiveAuthorizationManager authenticated.booleanAnd(correctType)
                 .map { AuthorizationDecision(it) }
+        }
+
+    private fun issuerOfType(type: UserType): String {
+        return when (type) {
+            UserType.USER_TOKEN -> config.oauth2.usersIssuer.issuerUri
+            UserType.ORGA_TOKEN -> config.oauth2.orgasIssuer.issuerUri
         }
     }
 
     private fun compareIssuer(auth: JwtAuthenticationToken, userType: UserType): Boolean {
-        // Error on unknown token issuer to detect potential configuration mistakes
-        val tokenUserType = typeOfIssuers[auth.token.issuer.toString()]
-            ?: throw IllegalArgumentException("Unknown issuer: ${auth.token.issuer}")
-        return tokenUserType == userType
+        return issuerOfType(userType) == auth.token.issuer.toString()
     }
 
     private inline fun <reified T> Authentication.isOfType(): Boolean {
