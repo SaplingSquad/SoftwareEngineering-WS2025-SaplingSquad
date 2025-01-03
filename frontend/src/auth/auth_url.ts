@@ -1,3 +1,6 @@
+import {Session} from "@auth/qwik";
+import {clientId} from "~/routes/plugin@auth";
+
 /**
  * Gets a full Keycloak-Server-URL based on the passed path.
  *
@@ -18,3 +21,21 @@ export const keycloak_url = (path: `/${string}`, prefix: string = "/authkc/") =>
     //Always
     new URL(prefix, import.meta.env.PUBLIC_KEYCLOAK_HOST),
   );
+
+export function keycloak_logout_url({
+  session,
+  redirect_uri,
+}: {
+  session: Session | null;
+  redirect_uri?: string | URL;
+}) {
+  if (!session?.realm) {
+    return undefined;
+  }
+  const url = new URL(`${session.realm}/protocol/openid-connect/logout`);
+  url.searchParams.set("client_id", clientId);
+  if (redirect_uri) {
+    url.searchParams.set("post_logout_redirect_uri", redirect_uri.toString());
+  }
+  return url;
+}

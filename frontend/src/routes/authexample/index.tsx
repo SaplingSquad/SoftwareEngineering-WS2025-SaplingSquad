@@ -1,6 +1,8 @@
 import { component$, Slot, useComputed$ } from "@builder.io/qwik";
 import { useSession, useSignIn, useSignOut } from "~/routes/plugin@auth";
 import { Link } from "@builder.io/qwik-city";
+import { LoginOverviewParamsForm } from "~/components/auth/login";
+import { LogoutParamsForm } from "~/components/auth/logout";
 
 export const AuthExampleLayout = component$(() => {
   return (
@@ -24,18 +26,12 @@ export default component$(() => {
     <AuthExampleLayout>
       <h1 class="text-xl">Beispiel für Authentifizierung</h1>
       <h2 class="text-lg">{helloText.value}</h2>
-      <button
-        class={"btn"}
-        onClick$={() => signIn.submit({ redirectTo: "/authexample" })}
-      >
-        Login
-      </button>
-      <button
-        class={"btn"}
-        onClick$={() => signOut.submit({ redirectTo: "/authexample" })}
-      >
-        Logout
-      </button>
+      <LoginOverviewParamsForm redirectTo={"/authexample"}>
+        <button class={"btn w-full"}>Login</button>
+      </LoginOverviewParamsForm>
+      <LogoutParamsForm redirectTo={"/authexample"}>
+        <button class={"btn w-full"}>Logout</button>
+      </LogoutParamsForm>
       <Link class="link link-primary" href="subpath/">
         Woanders hin navigieren (SPA)
       </Link>

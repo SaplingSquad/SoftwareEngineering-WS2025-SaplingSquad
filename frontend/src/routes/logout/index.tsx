@@ -1,28 +1,25 @@
 import {component$} from "@builder.io/qwik";
-
-const LogoutButton = () => {
-    return (
-        // /auth/signout is provided by auth.js library
-        <form method={"POST"} action={`/auth/signout`}>
-            <input type="hidden" name="crsfToken"/>
-            <button class={"btn btn-block"}>Ausloggen</button>
-        </form>
-    );
-}
+import {LogoutParamsForm} from "~/components/auth/logout";
 
 /**
  * Custom sign out page
  */
 export default component$(() => {
-    return (
-        <div class={"w-full flex flex-row justify-center min-h-dvh items-center bg-base-200"}>
-            <div class={"max-w-lg w-full card shadow-xl bg-base-100"}>
-                <div class={"card-body"}>
-                    <h1 class={"text-2xl text-center mb-4"}>Ausloggen</h1>
-                    <p>Sicher, dass du dich abmelden möchtest?</p>
-                    <LogoutButton></LogoutButton>
-                </div>
-            </div>
+  return (
+    <div
+      class={
+        "flex min-h-dvh w-full flex-row items-center justify-center bg-base-200"
+      }
+    >
+      <div class={"card w-full max-w-lg bg-base-100 shadow-xl"}>
+        <div class={"card-body"}>
+          <h1 class={"mb-4 text-center text-2xl"}>Ausloggen</h1>
+          <p>Sicher, dass du dich abmelden möchtest?</p>
+          <LogoutParamsForm>
+            <button class={"btn btn-block"}>Ausloggen</button>
+          </LogoutParamsForm>
         </div>
-    );
+      </div>
+    </div>
+  );
 });

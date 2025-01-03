@@ -7,6 +7,8 @@ import { isServer } from "@builder.io/qwik/build";
 declare module "@auth/qwik" {
   interface Session {
     accessToken?: string;
+    providerId?: string;
+    realm?: string;
   }
 }
 
@@ -26,7 +28,7 @@ let customizedFetch: typeof fetch | undefined = undefined;
 if (isServer) {
   // Allow self-signed certificates (only for development!)
   // https://authjs.dev/guides/corporate-proxy
-  if (process.env.ALLOW_SELF_SIGNED_CERTIFICATES?.toLowerCase()=="true") {
+  if (process.env.ALLOW_SELF_SIGNED_CERTIFICATES?.toLowerCase() == "true") {
     const { Agent, fetch: undiciFetch } = await import("undici");
     const dispatcher = new Agent({
       connect: {
@@ -62,7 +64,7 @@ const extendToken: JwtCallback = async ({ token, account }) => {
       throw new TypeError("Missing refresh_token");
     }
     try {
-      const issuerUri = providerById(token.providerId!!)!!.options!!.issuer;
+      const issuerUri = keycloakRealmById(token.providerId!);
       const response = await (customizedFetch || fetch)(
         `${issuerUri}/protocol/openid-connect/token`,
         {
@@ -98,7 +100,7 @@ const extendToken: JwtCallback = async ({ token, account }) => {
   }
 };
 
-const clientId = "sprout-web";
+export const clientId = "sprout-web";
 const providers = [
   Keycloak({
     [customFetch]: customizedFetch,
@@ -114,8 +116,9 @@ const providers = [
   }),
 ];
 
-function providerById(id: string) {
-  return providers.find((provider) => provider.options?.id === id);
+export function keycloakRealmById(id: string): string {
+  return providers.find((provider) => provider.options?.id === id)!.options!
+    .issuer!;
 }
 
 export const { onRequest, useSession, useSignIn, useSignOut } = QwikAuth$(
@@ -134,6 +137,8 @@ export const { onRequest, useSession, useSignIn, useSignOut } = QwikAuth$(
       },
       session({ session, token }) {
         session.accessToken = token.accessToken;
+        session.providerId = token.providerId;
+        session.realm = keycloakRealmById(token.providerId!);
         return session;
       },
     },
