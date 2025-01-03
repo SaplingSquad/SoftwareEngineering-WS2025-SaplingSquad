@@ -142,10 +142,11 @@ paths:
       operationId: getOrganizationsLocations
       parameters:
       - in: query
-        style: deepObject
+        style: form
+        explode: false
         name: answers
         schema:
-          $ref: '#/components/schemas/AddPropsAnswers'
+          $ref: '#/components/schemas/Answers'
       responses:
         '200':
           description: Successful operation.
@@ -221,10 +222,11 @@ paths:
       operationId: getProjectsLocations
       parameters:
       - in: query
-        style: deepObject
+        style: form
+        explode: false
         name: answers
         schema:
-          $ref: '#/components/schemas/AddPropsAnswers'
+          $ref: '#/components/schemas/Answers'
       responses:
         '200':
           description: Successful operation.
@@ -301,10 +303,11 @@ paths:
       operationId: getRegions
       parameters:
       - in: query
-        style: deepObject
+        style: form
+        explode: false
         name: answers
         schema:
-          $ref: '#/components/schemas/AddPropsAnswers'
+          $ref: '#/components/schemas/Answers'
       responses:
         '200':
           description: Successful operation.
@@ -936,13 +939,6 @@ components:
         - name
         - description
         - webpageUrl
-    AddPropsAnswers:
-      type: object
-      additionalProperties:
-        type: string
-        enum: [pos, neu, neg]
-        description: The enum represents the possible answers to a question.
-                     These questions are represented as *additionalProperties*,
                      due to their volatile behavior.
   responses:
     '200':
