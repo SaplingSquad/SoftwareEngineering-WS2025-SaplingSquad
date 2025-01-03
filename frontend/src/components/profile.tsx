@@ -1,5 +1,5 @@
 import { component$ } from "@builder.io/qwik";
-import { HiUserCircleOutline, HiPlusCircleSolid } from "@qwikest/icons/heroicons";
+import { HiUserCircleOutline, HiPlusCircleSolid, HiCog6ToothOutline, HiTrashOutline } from "@qwikest/icons/heroicons";
 
 export type ProfileProjectsProps = {
     img: string;
@@ -15,7 +15,11 @@ const ProjectCard = component$((props: { p: ProfileProjectsProps }) => {
                     <h2 class="card-title">{props.p.title}</h2>
                     <p>{props.p.text}</p>
                     <div class="card-actions justify-end">
-                        <button class="btn btn-primary">Bearbeiten</button>
+                        <button class="btn btn-primary">Bearbeiten
+                            <div class="text-2xl">
+                                <HiCog6ToothOutline />
+                            </div>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -40,7 +44,42 @@ const ProjectDummy = component$(() => {
     )
 })
 
+const ProfileInformation = component$(() => {
+    return (
+        <>
+            <div class="card bg-base-100 rounded-box place-items-stretch m-4 p-4 space-y-4 h-fit flex-initial w-2/12 min-w-fit">
+                <div class="w-full flex justify-center">
+                    <div class="avatar placeholder w-5/6 justify-center min-w-10 max-w-28">
+                        <div class="ring-primary ring-offset-base-100 rounded-full ring ring-offset-2 w-28">
+                            <span class="text-4xl">D</span>
+                        </div>
+                    </div>
+                </div>
+                <p>Name</p>
+                <p>Email</p>
+                <button class="btn btn-error x-1/2">Abmelden</button>
+            </div>
+        </>
+    )
+})
 
+const ProjectManagement = component$((inputData: { data: ProfileProjectsProps[] }) => {
+    return (
+        <>
+            <div class="card bg-base-200 rounded-box place-items-stretch m-4 p-4 space-y-4 [max-height:90dvh] w-9/12 ">
+                <h2 class="card-title">Projekte</h2>
+                <div class="flex flex-wrap gap-6">
+                    {
+                        inputData.data.map((item, idx: number) => (
+                            <ProjectCard key={idx} p={item} />
+                        ))
+                    }
+                    <ProjectDummy />
+                </div>
+            </div>
+        </>
+    )
+})
 
 export const Profile = component$((inputData: { data: ProfileProjectsProps[] }) => {
     return (
@@ -49,29 +88,8 @@ export const Profile = component$((inputData: { data: ProfileProjectsProps[] }) 
                 <div class="card bg-base-300 rounded-box place-items-stretch m-4 p-4 space-y-4 w-5/6 min-w-fit ">
                     <h2 class="card-title">Profil</h2>
                     <div class="flex flex-wrap justify-around">
-                        <div class="card bg-base-200 rounded-box place-items-stretch m-4 p-4 space-y-4 [max-height:90dvh] w-9/12 ">
-                            <h2 class="card-title">Projekte</h2>
-                            <div class="flex flex-wrap gap-6">
-                                {
-                                    inputData.data.map((item, idx: number) => (
-                                        <ProjectCard key={idx} p={item} />
-                                    ))
-                                }
-                                <ProjectDummy />
-                            </div>
-                        </div>
-                        <div class="card bg-base-100 rounded-box place-items-stretch m-4 p-4 space-y-4 h-fit flex-initial w-2/12 min-w-fit">
-                            <div class="w-full flex justify-center">
-                                <div class="avatar placeholder w-5/6 justify-center min-w-10 max-w-28">
-                                    <div class="ring-primary ring-offset-base-100 rounded-full ring ring-offset-2 w-28">
-                                        <span class="text-4xl">D</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <p>Name</p>
-                            <p>Email</p>
-                            <button class="btn btn-error x-1/2">Abmelden</button>
-                        </div>
+                        <ProjectManagement data={inputData.data} />
+                        <ProfileInformation />
                     </div>
                 </div>
             </div>
