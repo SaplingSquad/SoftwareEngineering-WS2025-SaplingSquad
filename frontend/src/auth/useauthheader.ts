@@ -1,9 +1,10 @@
-import { Signal, useComputed$ } from "@builder.io/qwik";
-import { RequestEventCommon } from "@builder.io/qwik-city";
-import { Session } from "@auth/qwik";
+import type { Signal } from "@builder.io/qwik";
+import { useComputed$ } from "@builder.io/qwik";
+import type { RequestEventCommon } from "@builder.io/qwik-city";
+import type { Session } from "@auth/qwik";
 
 export function buildAuthHeader(session: Session | null) {
-  console.log(session)
+  console.log(session);
   if (session?.accessToken) {
     return { Authorization: `Bearer ${session.accessToken}` };
   } else {

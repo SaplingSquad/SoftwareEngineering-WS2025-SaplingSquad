@@ -16,7 +16,7 @@ import { api } from "~/api/api_url";
 
 export const useQuestionFilter = routeLoader$(async (req) => {
   const session = getSession(req);
-  const authHeader = buildAuthHeader(session)!!;
+  const authHeader = buildAuthHeader(session)!;
 
   const response = await fetch(api("/questions/filter"), {
     headers: authHeader,

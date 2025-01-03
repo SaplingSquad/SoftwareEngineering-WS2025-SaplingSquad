@@ -1,5 +1,5 @@
 import { component$, Slot, useComputed$ } from "@builder.io/qwik";
-import { useSession, useSignIn, useSignOut } from "~/routes/plugin@auth";
+import { useSession } from "~/routes/plugin@auth";
 import { Link } from "@builder.io/qwik-city";
 import { LoginOverviewParamsForm } from "~/components/auth/login";
 import { LogoutParamsForm } from "~/components/auth/logout";
@@ -15,8 +15,6 @@ export const AuthExampleLayout = component$(() => {
 });
 
 export default component$(() => {
-  const signIn = useSignIn();
-  const signOut = useSignOut();
   const session = useSession();
   const helloText = useComputed$(() => {
     const email = session.value?.user?.email;

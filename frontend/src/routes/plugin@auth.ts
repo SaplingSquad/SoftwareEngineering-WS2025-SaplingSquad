@@ -1,4 +1,5 @@
-import { customFetch, QwikAuth$, QwikAuthConfig } from "@auth/qwik";
+import type { QwikAuthConfig } from "@auth/qwik";
+import { customFetch, QwikAuth$ } from "@auth/qwik";
 import Keycloak from "@auth/qwik/providers/keycloak";
 import { keycloak_url } from "~/auth/auth_url";
 import { isServer } from "@builder.io/qwik/build";
@@ -57,7 +58,7 @@ const extendToken: JwtCallback = async ({ token, account }) => {
       refreshToken: account.refresh_token,
       providerId: account.provider,
     };
-  } else if (Date.now() < token.expiresAt!! * 1000) {
+  } else if (Date.now() < token.expiresAt! * 1000) {
     return token;
   } else {
     if (!token.refreshToken) {

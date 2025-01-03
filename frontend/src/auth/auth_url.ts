@@ -1,4 +1,4 @@
-import {Session} from "@auth/qwik";
+import type {Session} from "@auth/qwik";
 import {clientId} from "~/routes/plugin@auth";
 
 /**
