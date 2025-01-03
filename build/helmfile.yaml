@@ -102,3 +102,22 @@ releases:
 - name: secrets
   namespace: sprout
   chart: ./secrets
+- name: auth
+  namespace: sprout
+  chart: bitnami/keycloak
+  values:
+  - ingress:
+      enabled: true
+      pathType: Prefix
+      hostname: {{ requiredEnv "DEPLOY_HOST" | quote }}
+    httpRelativePath: "/authkc/"
+    proxyHeaders: "xforwarded"
+    auth:
+      adminUser: "admin"
+    resources:
+      requests:
+        cpu: "500m"
+        memory: "512Mi"
+      limits:
+        cpu: "1"
+        memory: "1Gi"
