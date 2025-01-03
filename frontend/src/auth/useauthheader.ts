@@ -4,7 +4,6 @@ import type { RequestEventCommon } from "@builder.io/qwik-city";
 import type { Session } from "@auth/qwik";
 
 export function buildAuthHeader(session: Session | null) {
-  console.log(session);
   if (session?.accessToken) {
     return { Authorization: `Bearer ${session.accessToken}` };
   } else {

@@ -1,7 +1,7 @@
 import { component$, Slot, useComputed$ } from "@builder.io/qwik";
 import { useSession, useSignOut } from "~/routes/plugin@auth";
 import { Form, useLocation } from "@builder.io/qwik-city";
-import { keycloak_logout_url } from "~/auth/auth_url";
+import { provider_logout_url } from "~/auth/auth_url";
 
 export type LogoutParamsProps = { redirectTo?: string };
 export const LogoutParamsForm = component$(
@@ -11,7 +11,7 @@ export const LogoutParamsForm = component$(
     const location = useLocation();
     const realRedirectTo = useComputed$(() => {
       const redirectToWithOrigin = new URL(redirectTo, location.url);
-      return keycloak_logout_url({
+      return provider_logout_url({
         session: session.value,
         redirect_uri: redirectToWithOrigin,
       });

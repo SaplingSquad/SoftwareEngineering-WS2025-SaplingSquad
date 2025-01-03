@@ -1,7 +1,6 @@
 import type { QwikAuthConfig } from "@auth/qwik";
 import { customFetch, QwikAuth$ } from "@auth/qwik";
 import Keycloak from "@auth/qwik/providers/keycloak";
-import { keycloak_url } from "~/auth/auth_url";
 import { isServer } from "@builder.io/qwik/build";
 import { Agent, fetch as undiciFetch } from "undici";
 
@@ -49,7 +48,6 @@ type JwtCallback = NonNullable<NonNullable<QwikAuthConfig["callbacks"]>["jwt"]>;
 const extendToken: JwtCallback = async ({ token, account }) => {
   //https://authjs.dev/guides/refresh-token-rotation
   if (account) {
-    console.log(account);
     // First login
     return {
       ...token,
@@ -106,13 +104,13 @@ const providers = [
   Keycloak({
     [customFetch]: customizedFetch,
     id: "keycloak-users",
-    issuer: keycloak_url("/realms/sprout-users").toString(),
+    issuer: import.meta.env.AUTH_ISSUER_USERS,
     clientId,
   }),
   Keycloak({
     [customFetch]: customizedFetch,
     id: "keycloak-orgs",
-    issuer: keycloak_url("/realms/sprout-orgs").toString(),
+    issuer: import.meta.env.AUTH_ISSUER_ORGS,
     clientId,
   }),
 ];
