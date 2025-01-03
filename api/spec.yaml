@@ -939,7 +939,6 @@ components:
         - name
         - description
         - webpageUrl
-                     due to their volatile behavior.
   responses:
     '200':
       description: Successful operation.
