@@ -3,6 +3,7 @@ import { customFetch, QwikAuth$ } from "@auth/qwik";
 import Keycloak from "@auth/qwik/providers/keycloak";
 import { keycloak_url } from "~/auth/auth_url";
 import { isServer } from "@builder.io/qwik/build";
+import { Agent, fetch as undiciFetch } from "undici";
 
 //https://authjs.dev/getting-started/typescript#module-augmentation
 declare module "@auth/qwik" {
@@ -30,7 +31,6 @@ if (isServer) {
   // Allow self-signed certificates (only for development!)
   // https://authjs.dev/guides/corporate-proxy
   if (process.env.ALLOW_SELF_SIGNED_CERTIFICATES?.toLowerCase() == "true") {
-    const { Agent, fetch: undiciFetch } = await import("undici");
     const dispatcher = new Agent({
       connect: {
         rejectUnauthorized: false,
