@@ -47,7 +47,3 @@ suspend fun <T> Flow<T>.atMostOne(): T? {
             }
         }
 }
-
-fun Mono<Boolean>.booleanAnd(other: Mono<Boolean>): Mono<Boolean> {
-    return this.filter { it }.flatMap { other }.defaultIfEmpty(false)
-}
