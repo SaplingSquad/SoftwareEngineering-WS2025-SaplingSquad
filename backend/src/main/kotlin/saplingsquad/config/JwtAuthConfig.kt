@@ -16,6 +16,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtIssuerReactiveAuthenticationManagerResolver
 import org.springframework.security.web.server.SecurityWebFilterChain
 import org.springframework.security.web.server.authorization.AuthorizationContext
+import org.springframework.stereotype.Component
 import saplingsquad.utils.reactiveAuthorizationManagersAllOf
 
 @Configuration
@@ -28,13 +29,12 @@ class JwtAuthConfig(
     fun springSecurityFilterChain(
         http: ServerHttpSecurity,
         clientRegistrationRepository: ReactiveClientRegistrationRepository,
+        generatedAuthorizationManager: GeneratedAuthorizationManager,
     ): SecurityWebFilterChain {
         val authResolver = JwtIssuerReactiveAuthenticationManagerResolver.fromTrustedIssuers(
             config.oauth2.usersIssuer.issuerUri,
             config.oauth2.orgasIssuer.issuerUri
         )
-        val authManagers = AuthManagers(config)
-        val generatedAuthorizationManager = GeneratedAuthorizationManager(authManagers)
         http
             .authorizeExchange(generatedAuthorizationManager::generatedExchangeAuthorization)
             .authorizeExchange { exchanges ->
@@ -56,6 +56,7 @@ class JwtAuthConfig(
 }
 
 
+@Component
 class AuthManagers(private val config: AppConfig) : UserTypeAuthorizationManagerProvider {
     private val authenticatedAuthorizationManager =
         AuthenticatedReactiveAuthorizationManager.authenticated<AuthorizationContext>()

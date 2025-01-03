@@ -1,5 +1,6 @@
 package saplingsquad.config
 
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpMethod
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -15,23 +16,31 @@ enum class UserType {
 {{/authMethods}}
 }
 
-class GeneratedAuthorizationManager(val authorizationManagerProvider: UserTypeAuthorizationManagerProvider) {
+@Component
+class GeneratedAuthorizationManager(
+    {{=<% %>=}}
+    @Value("\${openapi.<%title%>.base-path:<%>defaultBasePath%>}")
+    <%={{ }}=%>
+    private val basePath: String,
+    private val authorizationManagerProvider: UserTypeAuthorizationManagerProvider
+) {
+
     fun generatedExchangeAuthorization(exchanges: ServerHttpSecurity.AuthorizeExchangeSpec) {
-    {{#authMethods}}
-    val {{name}}Manager = authorizationManagerProvider.forUserType(UserType.{{#lambda.uppercase}}{{#lambda.snakecase}}{{name}}{{/lambda.snakecase}}{{/lambda.uppercase}})
-    {{/authMethods}}
-    {{#apiInfo.apis}}
-    {{#operations}}
-    // {{classname}}
-    {{#operation}}
-    {{#authMethods}}
-    {{#isBasicBearer}}
-    exchanges.pathMatchers(HttpMethod.{{httpMethod}},"{{{path}}}").access({{name}}Manager)
-    {{/isBasicBearer}}
-    {{/authMethods}}
-    {{/operation}}
-    {{/operations}}
-    {{/apiInfo.apis}}
+        {{#authMethods}}
+        val {{name}}Manager = authorizationManagerProvider.forUserType(UserType.{{#lambda.uppercase}}{{#lambda.snakecase}}{{name}}{{/lambda.snakecase}}{{/lambda.uppercase}})
+        {{/authMethods}}
+        {{#apiInfo.apis}}
+        {{#operations}}
+        // {{classname}}
+        {{#operation}}
+        {{#authMethods}}
+        {{#isBasicBearer}}
+        exchanges.pathMatchers(HttpMethod.{{httpMethod}}, "$basePath{{{path}}}").access({{name}}Manager)
+        {{/isBasicBearer}}
+        {{/authMethods}}
+        {{/operation}}
+        {{/operations}}
+        {{/apiInfo.apis}}
     }
 }
 
