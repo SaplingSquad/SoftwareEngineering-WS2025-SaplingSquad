@@ -22,6 +22,8 @@ The following variables are set in the deployment:
 
 - `PORT`: Port the frontend is expected to listen on
 - `ORIGIN`: The origin domain
+- `AUTH_ISSUER_USERS`: The issuer-url of user-accounts
+- `AUTH_ISSUER_ORGS`: The issuer-url of organization-accounts
 
 #### Backend
 
@@ -33,3 +35,5 @@ The following variables are set in the deployment:
 - `DB_HOST`: address of the database
 - `ORIGIN`: The origin domain
 - `BASE_PATH`: The base path to serve at
+- `AUTH_ISSUER_USERS`: The issuer-url of user-accounts
+- `AUTH_ISSUER_ORGS`: The issuer-url of organization-accounts
