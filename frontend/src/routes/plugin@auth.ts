@@ -100,17 +100,21 @@ const extendToken: JwtCallback = async ({ token, account }) => {
 };
 
 export const clientId = "sprout-web";
+
+//============================ !!IMPORTANT ASSUMPTION!! ====================================
+// providers are only accessed in the server (otherwise we must send the env variables to the frontend and
+// do some complicated stuff)
 const providers = [
   Keycloak({
     [customFetch]: customizedFetch,
     id: "keycloak-users",
-    issuer: import.meta.env.AUTH_ISSUER_USERS,
+    issuer: isServer ? process.env.AUTH_ISSUER_USERS : undefined,
     clientId,
   }),
   Keycloak({
     [customFetch]: customizedFetch,
     id: "keycloak-orgs",
-    issuer: import.meta.env.AUTH_ISSUER_ORGS,
+    issuer: isServer ? process.env.AUTH_ISSUER_ORGS : undefined,
     clientId,
   }),
 ];
