@@ -23,7 +23,6 @@ class R2dbcH2Configuration {
     /** Use H2 named in-memory database */
     @Bean
     fun connectionFactory(): ConnectionFactory {
-        println("TEEESTATASTTATAT")
         val connectionFactory = H2ConnectionFactory.inMemory("test")
         val db = R2dbcDatabase(connectionFactory = connectionFactory, dialect = H2R2dbcDialect())
         setupDb(db)
