@@ -95,6 +95,7 @@ releases:
       - {{ . }}
     {{- end }}
     {{- end }}
+    secretName: sprout-frontend-secret
     vars:
       PORT: 3000
       ORIGIN: {{ requiredEnv "DEPLOY_HOST" | quote }}

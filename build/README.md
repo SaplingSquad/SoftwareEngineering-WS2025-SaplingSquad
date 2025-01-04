@@ -24,6 +24,7 @@ The following variables are set in the deployment:
 - `ORIGIN`: The origin domain
 - `AUTH_ISSUER_USERS`: The issuer-url of user-accounts
 - `AUTH_ISSUER_ORGS`: The issuer-url of organization-accounts
+- `AUTH_SECRET`: Random secret to encrypt auth tokens with
 
 #### Backend
 
