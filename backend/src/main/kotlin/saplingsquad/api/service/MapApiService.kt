@@ -2,7 +2,6 @@ package saplingsquad.api.service
 
 import kotlinx.coroutines.flow.Flow
 import org.springframework.http.ResponseEntity
-import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.stereotype.Service
 import saplingsquad.api.MapApiDelegate
 import saplingsquad.api.models.*
@@ -10,7 +9,6 @@ import saplingsquad.persistence.OrganizationsRepository
 import saplingsquad.persistence.ProjectsRepository
 import saplingsquad.persistence.RegionsRepository
 import saplingsquad.utils.asHttpOkResponse
-import java.math.MathContext
 
 @Service
 class MapApiService(
@@ -18,21 +16,15 @@ class MapApiService(
     val projectsRepository: ProjectsRepository,
     val regionsRepository: RegionsRepository
 ) : MapApiDelegate {
-    override suspend fun getOrganizationDetails(
-        rawRequest: ServerHttpRequest,
-        orgaId: Int
-    ): ResponseEntity<OrganizationDescriptions> {
+    override suspend fun getOrganizationDetails(orgaId: Int): ResponseEntity<OrganizationDescriptions> {
         TODO("Not yet implemented")
     }
 
-    override fun getOrganizations(rawRequest: ServerHttpRequest): ResponseEntity<Flow<GetOrganizations200ResponseInner>> {
+    override fun getOrganizations(): ResponseEntity<Flow<GetOrganizations200ResponseInner>> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getOrganizationsLocations(
-        rawRequest: ServerHttpRequest,
-        answers: Map<String, String>?
-    ): ResponseEntity<GeoJsonOrganizations> {
+    override suspend fun getOrganizationsLocations(answers: Map<String, String>?): ResponseEntity<GeoJsonOrganizations> {
         return GeoJsonOrganizations(
             type = GeoJsonOrganizations.Type.FeatureCollection,
             features = organizationsRepository
@@ -55,21 +47,15 @@ class MapApiService(
         ).asHttpOkResponse()
     }
 
-    override suspend fun getProject(
-        rawRequest: ServerHttpRequest,
-        projectId: Int
-    ): ResponseEntity<ProjectDescriptions> {
+    override suspend fun getProject(projectId: Int): ResponseEntity<ProjectDescriptions> {
         TODO("Not yet implemented")
     }
 
-    override fun getProjects(rawRequest: ServerHttpRequest): ResponseEntity<Flow<GetProjects200ResponseInner>> {
+    override fun getProjects(): ResponseEntity<Flow<GetProjects200ResponseInner>> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getProjectsLocations(
-        rawRequest: ServerHttpRequest,
-        answers: Map<String, String>?
-    ): ResponseEntity<GeoJsonProjects> {
+    override suspend fun getProjectsLocations(answers: Map<String, String>?): ResponseEntity<GeoJsonProjects> {
         return GeoJsonProjects(
             type = GeoJsonProjects.Type.FeatureCollection,
             features = projectsRepository
@@ -92,14 +78,11 @@ class MapApiService(
         ).asHttpOkResponse()
     }
 
-    override suspend fun getRegion(rawRequest: ServerHttpRequest, regionId: Int): ResponseEntity<RegionDescriptions> {
+    override suspend fun getRegion(regionId: Int): ResponseEntity<RegionDescriptions> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getRegions(
-        rawRequest: ServerHttpRequest,
-        answers: Map<String, String>?
-    ): ResponseEntity<GeoJsonRegions> {
+    override suspend fun getRegions(answers: Map<String, String>?): ResponseEntity<GeoJsonRegions> {
         return GeoJsonRegions(
             type = GeoJsonRegions.Type.FeatureCollection,
             features = regionsRepository

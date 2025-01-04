@@ -1,6 +1,16 @@
 helmDefaults:
   createNamespace: {{ default false (eq (env "CREATE_NAMESPACE") "true") }}
 
+# Keycloak config:
+# Prefix of the Keycloak URL
+{{- $KEYCLOAK_PREFIX := (coalesce (env "KEYCLOAK_PREFIX") "authkc") }}
+# The Keycloak URL
+{{- $KEYCLOAK_URL := (printf "https://%s/%s" (requiredEnv "DEPLOY_HOST") ($KEYCLOAK_PREFIX)) }}
+# The Auth issuer for user accounts
+{{- $AUTH_ISSUER_USERS := (printf "%s/realms/%s" ($KEYCLOAK_URL) (coalesce (env "USER_REALM") "sprout-users")) }}
+# The Auth issuer for organization accounts
+{{- $AUTH_ISSUER_ORGS := (printf "%s/realms/%s" ($KEYCLOAK_URL) (coalesce (env "ORGS_REALM") "sprout-orgs")) }}
+
 repositories:
 - name: onechart
   url: https://chart.onechart.dev
@@ -35,6 +45,8 @@ releases:
       PORT: 8080
       ORIGIN: {{ requiredEnv "DEPLOY_HOST" | quote }}
       BASE_PATH: /api
+      AUTH_ISSUER_USERS: {{ $AUTH_ISSUER_USERS | quote }}
+      AUTH_ISSUER_ORGS: {{ $AUTH_ISSUER_ORGS | quote }}
     containerPort: 8080
     ingress:
       host: {{ requiredEnv "DEPLOY_HOST" | quote }}
@@ -83,11 +95,14 @@ releases:
       - {{ . }}
     {{- end }}
     {{- end }}
+    secretName: sprout-frontend-secret
     vars:
       PORT: 3000
       ORIGIN: {{ requiredEnv "DEPLOY_HOST" | quote }}
       REVERSE_PROXY_ENABLED: true
       BACKEND: "http://backend:8080"
+      AUTH_ISSUER_USERS: {{ $AUTH_ISSUER_USERS | quote }}
+      AUTH_ISSUER_ORGS: {{ $AUTH_ISSUER_ORGS | quote }}
     containerPort: 3000
     ingress:
       host: {{ requiredEnv "DEPLOY_HOST" | quote }}
@@ -102,3 +117,22 @@ releases:
 - name: secrets
   namespace: sprout
   chart: ./secrets
+- name: auth
+  namespace: sprout
+  chart: bitnami/keycloak
+  values:
+  - ingress:
+      enabled: true
+      pathType: Prefix
+      hostname: {{ requiredEnv "DEPLOY_HOST" | quote }}
+    httpRelativePath: {{ printf "/%s/" $KEYCLOAK_PREFIX | quote }}
+    proxyHeaders: "xforwarded"
+    auth:
+      adminUser: "admin"
+    resources:
+      requests:
+        cpu: "500m"
+        memory: "512Mi"
+      limits:
+        cpu: "1"
+        memory: "1Gi"

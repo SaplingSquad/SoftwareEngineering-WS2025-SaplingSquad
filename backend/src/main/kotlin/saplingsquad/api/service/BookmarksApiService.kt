@@ -1,28 +1,32 @@
 package saplingsquad.api.service
 
 import org.springframework.http.ResponseEntity
-import org.springframework.http.server.reactive.ServerHttpRequest
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.stereotype.Service
-import org.springframework.web.context.request.NativeWebRequest
 import saplingsquad.api.BookmarksApiDelegate
-import java.util.*
 
 @Service
-class BookmarksApiService() : BookmarksApiDelegate  {
+class BookmarksApiService() : BookmarksApiDelegate {
 
-    override suspend fun bookmarkOrganization(rawRequest: ServerHttpRequest, orgaId: Int): ResponseEntity<Unit> {
+    override suspend fun bookmarkOrganization(userToken: JwtAuthenticationToken, orgaId: Int): ResponseEntity<Unit> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun bookmarkProject(rawRequest: ServerHttpRequest, projectId: Int): ResponseEntity<Unit> {
+    override suspend fun bookmarkProject(userToken: JwtAuthenticationToken, projectId: Int): ResponseEntity<Unit> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun deleteOrganizationBookmark(rawRequest: ServerHttpRequest, orgaId: Int): ResponseEntity<Unit> {
+    override suspend fun deleteOrganizationBookmark(
+        userToken: JwtAuthenticationToken,
+        orgaId: Int
+    ): ResponseEntity<Unit> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun deleteProjectBookmark(rawRequest: ServerHttpRequest, projectId: Int): ResponseEntity<Unit> {
+    override suspend fun deleteProjectBookmark(
+        userToken: JwtAuthenticationToken,
+        projectId: Int
+    ): ResponseEntity<Unit> {
         TODO("Not yet implemented")
     }
 }

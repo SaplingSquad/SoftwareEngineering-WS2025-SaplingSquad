@@ -17,14 +17,37 @@ const { dependencies = {}, devDependencies = {} } = pkg as any as {
 errorOnDuplicatesPkgDeps(devDependencies, dependencies);
 
 const DEFAULT_BACKEND = "http://localhost:9000";
+// Host address for proxying
+const KEYCLOAK_HOST_FOR_PROXY = "http://localhost:5555";
+// address for oidc issuer-uri
+const DEFAULT_AUTH_ISSUER_USERS = `${(process.env.ORIGIN ?? "http://localhost:5173")}/authkc/realms/sprout-users`;
+const DEFAULT_AUTH_ISSUER_ORGS = `${(process.env.ORIGIN ?? "http://localhost:5173")}/authkc/realms/sprout-orgs`;
 
 if (!process.env.BACKEND) {
   console.warn(`'BACKEND' url not set. Defaulting to '${DEFAULT_BACKEND}'`);
   process.env.BACKEND = DEFAULT_BACKEND;
 }
+if (!process.env.AUTH_ISSUER_USERS) {
+  console.warn(`'AUTH_ISSUER_USERS' url not set. Defaulting to '${DEFAULT_AUTH_ISSUER_USERS}'`);
+  process.env.AUTH_ISSUER_USERS = DEFAULT_AUTH_ISSUER_USERS;
+}
+if (!process.env.AUTH_ISSUER_ORGS) {
+  console.warn(`'AUTH_ISSUER_ORGS' url not set. Defaulting to '${DEFAULT_AUTH_ISSUER_ORGS}'`);
+  process.env.AUTH_ISSUER_ORGS = DEFAULT_AUTH_ISSUER_ORGS;
+}
+
+const kcProxyConfig = {
+  target: KEYCLOAK_HOST_FOR_PROXY
+  // USE THESE ONLY IF THERE IS ANOTHER PROXY IN FRONT OF QWIK
+  // xfwd: true,
+  // changeOrigin: true,
+}
 
 const proxy = {
   "/api": process.env.BACKEND,
+  "/authkc/realms": kcProxyConfig,
+  "/authkc/resources": kcProxyConfig,
+  "/authkc/robots.txt": kcProxyConfig,
 };
 
 /**

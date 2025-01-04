@@ -1,6 +1,7 @@
 spring.application.name: backend
 server.port: ${port:9000}
 
+
 spring:
   r2dbc:
     url: "r2dbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_DATABASE:postgres}"
@@ -11,11 +12,40 @@ spring:
     url: "jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_DATABASE:postgres}"
     user: ${DB_USER:sapling-squad}
     password: ${DB_PASSWORD:sapling-squad}
+
+  security:
+    oauth2:
+      # only for dev purposes (get access token without starting the frontend)
+      client:
+        registration:
+          keycloak-users:
+            client-id: dev-api
+            provider: keycloak-users
+            scope:
+              - openid
+          keycloak-orgas:
+            client-id: dev-api
+            provider: keycloak-orgas
+            scope:
+              - openid
+        provider:
+          keycloak-users:
+            issuer-uri: ${appconfig.oauth2.users-issuer.issuer-uri}
+          keycloak-orgas:
+            issuer-uri: ${appconfig.oauth2.orgas-issuer.issuer-uri}
+      # END only for dev purposes
+
 appconfig:
   openapi:
     spec: "static/api/spec.yaml" # local path to spec.yaml
-  allow-wildcard-cors: true
+  allow-wildcard-cors: false
   resources-url-path: "/api/rsc/"
+  showTokenEndpoints: ${SHOW_TOKEN_ENDPOINTS:true}
+  oauth2:
+    users-issuer:
+      issuer-uri: "${AUTH_ISSUER_USERS:http://localhost:5555/authkc/realms/sprout-users}"
+    orgas-issuer:
+      issuer-uri: "${AUTH_ISSUER_ORGS:http://localhost:5555/authkc/realms/sprout-orgs}"
 
 springdoc:
   swagger-ui:

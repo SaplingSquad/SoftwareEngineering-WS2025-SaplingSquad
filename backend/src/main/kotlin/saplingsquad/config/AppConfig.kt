@@ -16,6 +16,10 @@ data class AppConfig @ConstructorBinding constructor(
     val allowWildcardCors: Boolean = false,
     /** Path where the resources should be hosted **/
     val resourcesUrlPath: String,
+    /** OAuth2 resource server configuration */
+    val oauth2: Oauth2,
+    /** Show token endpoints for dev purposes */
+    val showTokenEndpoints: Boolean,
 ) {
 
     /** Configuration concerning OpenAPI */
@@ -24,6 +28,16 @@ data class AppConfig @ConstructorBinding constructor(
         val spec: String
     )
 
+    data class Oauth2(
+        /** Issuer configuration for the user authentication */
+        val usersIssuer: Issuer,
+        /** Issuer configuration for the organization authentication */
+        val orgasIssuer: Issuer,
+    )
+
+    data class Issuer(
+        val issuerUri: String
+    )
 }
 
 /**

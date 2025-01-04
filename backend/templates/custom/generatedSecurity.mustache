@@ -1,0 +1,49 @@
+package saplingsquad.config
+
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpMethod
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.security.authorization.ReactiveAuthorizationManager
+import org.springframework.stereotype.Component
+
+import org.springframework.security.config.web.server.ServerHttpSecurity
+import org.springframework.security.web.server.authorization.AuthorizationContext
+
+enum class UserType {
+{{#authMethods}}
+    {{#lambda.uppercase}}{{#lambda.snakecase}}{{#lambda.uncamelize}}{{name}}{{/lambda.uncamelize}}{{/lambda.snakecase}}{{/lambda.uppercase}},
+{{/authMethods}}
+}
+
+@Component
+class GeneratedAuthorizationManager(
+    {{=<% %>=}}
+    @Value("\${openapi.<%title%>.base-path:<%>defaultBasePath%>}")
+    <%={{ }}=%>
+    private val basePath: String,
+    private val authorizationManagerProvider: UserTypeAuthorizationManagerProvider
+) {
+
+    fun generatedExchangeAuthorization(exchanges: ServerHttpSecurity.AuthorizeExchangeSpec) {
+        {{#authMethods}}
+        val {{name}}Manager = authorizationManagerProvider.forUserType(UserType.{{#lambda.uppercase}}{{#lambda.snakecase}}{{name}}{{/lambda.snakecase}}{{/lambda.uppercase}})
+        {{/authMethods}}
+        {{#apiInfo.apis}}
+        {{#operations}}
+        // {{classname}}
+        {{#operation}}
+        {{#authMethods}}
+        {{#isBasicBearer}}
+        exchanges.pathMatchers(HttpMethod.{{httpMethod}}, "$basePath{{{path}}}").access({{name}}Manager)
+        {{/isBasicBearer}}
+        {{/authMethods}}
+        {{/operation}}
+        {{/operations}}
+        {{/apiInfo.apis}}
+    }
+}
+
+interface UserTypeAuthorizationManagerProvider {
+    fun forUserType(userType: UserType): ReactiveAuthorizationManager<AuthorizationContext>
+}
