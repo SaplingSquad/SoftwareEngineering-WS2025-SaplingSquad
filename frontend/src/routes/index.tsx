@@ -2,18 +2,24 @@ import { component$, useSignal, useStore } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { Map } from "~/views/map";
 import { HiFunnelOutline } from "@qwikest/icons/heroicons";
-import { Filter } from "~/components/filter";
+import {
+  type FilterSettings,
+  defaultFilterSettings,
+  Filter,
+} from "~/components/filter";
 
 export default component$(() => {
+  const filterSettings: FilterSettings = useStore(defaultFilterSettings());
+
   return (
     <>
       <Map />
-      <FilterPane />
+      <FilterPane filterSettings={filterSettings} />
     </>
   );
 });
 
-const FilterPane = component$(() => {
+const FilterPane = component$((props: { filterSettings: FilterSettings }) => {
   const filterActive = useSignal<boolean>(false);
 
   return (
@@ -30,7 +36,7 @@ const FilterPane = component$(() => {
           filterActive.value ? "" : "invisible",
         ]}
       >
-        <Filter />
+        <Filter filterSettings={props.filterSettings} />
       </div>
     </>
   );
