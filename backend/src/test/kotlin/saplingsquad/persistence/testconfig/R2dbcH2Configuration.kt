@@ -3,6 +3,7 @@ package saplingsquad.persistence.testconfig;
 import io.r2dbc.h2.H2ConnectionFactory
 import io.r2dbc.spi.ConnectionFactory
 import org.komapper.dialect.h2.r2dbc.H2R2dbcDialect
+import org.komapper.r2dbc.R2dbcDatabase
 import org.komapper.spring.boot.autoconfigure.r2dbc.KomapperR2dbcAutoConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -21,5 +22,12 @@ class R2dbcH2Configuration {
 
     /** Use H2 named in-memory database */
     @Bean
-    fun connectionFactory(): ConnectionFactory = H2ConnectionFactory.inMemory("test")
+    fun connectionFactory(): ConnectionFactory {
+        println("TEEESTATASTTATAT")
+        val connectionFactory = H2ConnectionFactory.inMemory("test")
+        val db = R2dbcDatabase(connectionFactory = connectionFactory, dialect = H2R2dbcDialect())
+        setupDb(db)
+        return connectionFactory
+    }
+
 }
