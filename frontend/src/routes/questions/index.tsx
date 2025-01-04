@@ -66,7 +66,7 @@ export default component$(() => {
         </div>
         <a
           ref={buttonRef}
-          class="btn btn-lg fixed bottom-6 right-10 border border-4 border-primary bg-primary-content text-primary"
+          class="btn btn-lg fixed bottom-6 right-10 border border-4 border-primary bg-primary-content text-primary hover:scale-[1.02] hover:border-secondary hover:bg-base-100"
           href="/"
           style={{
             width: buttonWidth.value ? buttonWidth.value + 1 + "px" : "auto",
