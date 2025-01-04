@@ -21,23 +21,23 @@ class OrganizationsRepository(private val db: R2dbcDatabase) {
 private fun filterByTagsSqlQuery(answers: List<Int>) = QueryDsl
     .fromTemplate(
         """
-        with tags_from_answers as (select distinct tag_id
+        with tags_from_answers as (select distinct question.tag_id
                                    from question
                                             join filter_tag using (tag_id)
                                    where question_id in /*answers*/(1, 2, 3)),
-             intersect_with_tags as (select *
+             intersect_with_tags as (select organization_tags.*
                                      from organization_tags
                                               join tags_from_answers using (tag_id)),
-             intersection_size as (select org_id, count(tag_id) as intersection_size
+             intersection_size as (select organization.org_id, count(tag_id) as intersection_size
                                    from organization
                                             left join intersect_with_tags using (org_id)
-                                   group by org_id),
+                                   group by organization.org_id),
              with_rank as (select *, row_number() over (order by intersection_size desc) as rank
                            from intersection_size),
              min_filter_intersection_size as (select min(intersection_size)
                                               from with_rank
                                               where rank <= 3),
-             result as (select *
+             result as (select organization.*
                         from organization
                                  join intersection_size using (org_id)
                         where intersection_size >= (select * from min_filter_intersection_size)
