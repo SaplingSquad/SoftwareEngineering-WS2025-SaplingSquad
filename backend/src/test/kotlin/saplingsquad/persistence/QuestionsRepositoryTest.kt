@@ -28,7 +28,7 @@ class QuestionsRepositoryTest {
     @Test
     fun testReadAll() = runTest {
         val result = repository.readAll()
-        assertEquals(3, result.size)
+        assertEquals(ExampleQuestionsAndTags.questions.size, result.size)
         assert(result.containsAll(ExampleQuestionsAndTags.questions))
     }
 
@@ -37,12 +37,10 @@ class QuestionsRepositoryTest {
      */
     @Test
     fun testReadSingle() = runTest {
-        val result3 = repository.readById(3)
-        assertEquals(result3, ExampleQuestionsAndTags.Q3)
-        val result2 = repository.readById(2)
-        assertEquals(result2, ExampleQuestionsAndTags.Q2)
-        val result1 = repository.readById(1)
-        assertEquals(result1, ExampleQuestionsAndTags.Q1)
+        for (question in ExampleQuestionsAndTags.questions) {
+            val result = repository.readById(question.questionId)
+            assertEquals(question, result)
+        }
     }
 
 

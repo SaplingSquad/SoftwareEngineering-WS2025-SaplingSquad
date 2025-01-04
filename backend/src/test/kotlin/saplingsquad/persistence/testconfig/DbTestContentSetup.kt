@@ -12,35 +12,22 @@ import saplingsquad.persistence.tables.questionEntity
 
 
 object ExampleQuestionsAndTags {
-    val Q1 = QuestionEntity(
-        questionId = 1,
-        questionTitle = "Question 1",
-        question = "Content 1",
-        imageUrl = null,
-        tagId = 1
-    )
-    val Q2 = QuestionEntity(
-        questionId = 2,
-        questionTitle = "Question 2",
-        question = "Content 2",
-        imageUrl = "test.png",
-        tagId = 1
-    )
-    val Q3 = QuestionEntity(
-        questionId = 3,
-        questionTitle = "Question 3",
-        question = "Content 3",
-        imageUrl = null,
-        tagId = 2
-    )
 
-    val questions = listOf(Q1, Q2, Q3)
+    private fun createQuestionI(i: Int): QuestionEntity {
+        return QuestionEntity(
+            questionId = i,
+            questionTitle = "Question $i",
+            question = "Content $i",
+            imageUrl = if (i % 2 == 0) "image$i.png" else null,
+            tagId = i
+        )
+    }
+
+    val questions = List(10) { idx -> createQuestionI(idx) }
 
     private fun tagsFromQuestions(list: List<QuestionEntity>): List<FilterTagEntity> {
         return list
-            .map {
-                it.tagId
-            }
+            .map { it.tagId }
             .distinct()
             .map {
                 FilterTagEntity(
