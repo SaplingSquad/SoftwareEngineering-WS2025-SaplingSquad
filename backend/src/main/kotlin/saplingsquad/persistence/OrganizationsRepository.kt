@@ -18,7 +18,7 @@ class OrganizationsRepository(private val db: R2dbcDatabase) {
     }
 }
 
-fun filterByTagsSqlQuery(answers: List<Int>) = QueryDsl
+private fun filterByTagsSqlQuery(answers: List<Int>) = QueryDsl
     .fromTemplate(
         """
         with tags_from_answers as (select distinct tag_id

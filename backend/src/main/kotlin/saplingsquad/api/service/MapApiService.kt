@@ -62,7 +62,7 @@ class MapApiService(
         return GeoJsonProjects(
             type = GeoJsonProjects.Type.FeatureCollection,
             features = projectsRepository
-                .readProjects()
+                .readProjects(answers ?: emptyList())
                 .map {
                     GeoFeatureProject(
                         type = GeoFeatureProject.Type.Feature,
@@ -78,6 +78,7 @@ class MapApiService(
                         )
                     )
                 }
+                .toList()
         ).asHttpOkResponse()
     }
 
