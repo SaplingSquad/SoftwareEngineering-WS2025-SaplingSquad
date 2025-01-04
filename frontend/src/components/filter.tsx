@@ -85,7 +85,7 @@ export const Filter = component$(
     });
 
     return (
-      <div class="w-104 inline-block space-y-4 rounded-xl bg-base-100 p-4">
+      <div class="w-104 inline-block space-y-4 rounded-xl bg-base-100 p-4 shadow-2xl">
         <a href="/questions" class="btn btn-primary w-full">
           Gewählte Schwerpunkte bearbeiten
         </a>
