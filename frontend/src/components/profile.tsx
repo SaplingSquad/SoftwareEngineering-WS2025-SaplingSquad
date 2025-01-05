@@ -98,6 +98,11 @@ const Vereinsinfo = component$(() => {
                     <div class="stat-title">Mitglieder</div>
                     <div class="stat-value text-primary">16000</div>
                 </div>
+
+                <div class="stat place-items-center">
+                    <div class="stat-title">Aufrufe</div>
+                    <div class="stat-value text-primary">30</div>
+                </div>
             </div>
             <div class="card-actions justify-end mx-4 py-4">
                 <button class="btn btn-primary">Bearbeiten
