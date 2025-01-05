@@ -72,8 +72,8 @@ object ExampleOrgas {
     // Some orgas have only one tag
     private fun tagsOfOrga(o: OrganizationEntity) =
         when (o.orgId) {
-            in 0..1 -> listOf(0, 1, 2)
-            in 2..6 -> listOf(2, 3)
+            in 0..4 -> listOf(0, 1, 2)
+            in 5..6 -> listOf(2, 3)
             // tag id := Orga id
             else -> listOf(o.orgId)
         }

@@ -39,11 +39,12 @@ class OrganizationRepositoryTest {
      */
     @Test
     fun testFilterAtLeast3() = runTest {
-        // Very specific filter, only 2 organizations (ids 0,1) in test setup have all those tags
-        val result = repository.readOrganizations(listOf(0, 1, 2)).toList()
+        // Very specific filter, only 2 organizations (ids 5,6) in test setup have all those tags
+        val result = repository.readOrganizations(listOf(2, 3)).toList()
+        result.forEach(::println)
         assertEquals(7, result.size)
-        assertContains(0..1, result[0].orgId)
-        assertContains(0..1, result[1].orgId)
+        assertContains(5..6, result[0].orgId)
+        assertContains(5..6, result[1].orgId)
     }
 
     /**
@@ -51,10 +52,10 @@ class OrganizationRepositoryTest {
      */
     @Test
     fun testFilterNonSpecific() = runTest {
-        val result = repository.readOrganizations(listOf(3)).toList()
+        val result = repository.readOrganizations(listOf(1)).toList()
         assertEquals(5, result.size)
         for (r in result) {
-            assertContains(2..6, r.orgId)
+            assertContains(0..4, r.orgId)
         }
     }
 
