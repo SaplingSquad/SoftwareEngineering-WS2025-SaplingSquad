@@ -1,4 +1,4 @@
-package saplingsquad.persistence.migrations.generate0009
+package saplingsquad.persistence.migrations.generate0012
 
 import liquibase.Scope
 import liquibase.change.custom.CustomSqlChange
@@ -7,7 +7,10 @@ import liquibase.exception.ValidationErrors
 import liquibase.resource.ResourceAccessor
 import liquibase.statement.SqlStatement
 import liquibase.statement.core.InsertStatement
+import java.time.LocalDate
 import kotlin.math.floor
+import kotlin.math.max
+import kotlin.math.pow
 import kotlin.random.Random
 
 /**
@@ -59,26 +62,10 @@ class GenerateData : CustomSqlChange {
      */
     override fun generateStatements(db: Database?): Array<SqlStatement> {
         val statements = mutableListOf<SqlStatement>()
-        generateRegions(statements)
         generateOrganizations(statements)
         return statements.toTypedArray()
     }
 
-
-    /**
-     * Generate random  and their projects. [ORG_GENERATION_ATTEMPTS] attempts are made to create a project.
-     * With a ~2.5% success chance, this leads to 0.025*[ORG_GENERATION_ATTEMPTS] organizations.
-     */
-    private fun generateRegions(list: MutableList<SqlStatement>) {
-        Scope.getCurrentScope().getLog(javaClass).info("Generating statements for regions...")
-        for (i in 1..REGION_GENERATION_ATTEMPTS) {
-            val point = randomPoint() ?: continue
-            val region = Region(
-                i, randomName(), randomDescription(), point
-            )
-            insertRegionStatement(region, list)
-        }
-    }
 
     /**
      * Generate random organizations and their projects. [ORG_GENERATION_ATTEMPTS] attempts are made to create an organization.
@@ -91,13 +78,31 @@ class GenerateData : CustomSqlChange {
         for (i in 1..ORG_GENERATION_ATTEMPTS) {
             var point = randomPoint() ?: continue
             val org = Organization(
-                i, randomName(), randomDescription(), point, randomTags()
+                i,
+                randomName(),
+                randomDescription(),
+                randomFoundingYear(),
+                randomMemberNumber(),
+                generateWebsiteUrl(i),
+                generateDonationUrl(i),
+                point,
+                randomTags()
             )
             insertOrganizationStatement(org, list)
             for (j in 1..PROJECT_GENERATION_ATTEMPTS) {
                 point = randomPoint() ?: continue
+                val timespan = randomTimespan()
                 val proj = Project(
-                    projectIdCounter, org.id, randomName(), randomDescription(), point, randomTags()
+                    projectIdCounter,
+                    org.id,
+                    randomName(),
+                    randomDescription(),
+                    timespan.first,
+                    timespan.second,
+                    generateWebsiteUrl(org.id, projectIdCounter),
+                    generateDonationUrl(org.id, projectIdCounter),
+                    point,
+                    randomTags()
                 )
                 insertProjectStatement(proj, list)
                 projectIdCounter++
@@ -114,6 +119,10 @@ class GenerateData : CustomSqlChange {
             .addColumnValue("org_id", org.id)
             .addColumnValue("name", org.name)
             .addColumnValue("description", org.description)
+            .addColumnValue("founding_year", org.foundingYear)
+            .addColumnValue("members", org.members)
+            .addColumnValue("website_url", org.websiteUrl)
+            .addColumnValue("donation_url", org.donationUrl)
             .addColumnValue("coordinates_lon", org.coordinates.lon)
             .addColumnValue("coordinates_lat", org.coordinates.lat)
 
@@ -138,6 +147,10 @@ class GenerateData : CustomSqlChange {
             .addColumnValue("org_id", proj.orgId)
             .addColumnValue("title", proj.title)
             .addColumnValue("description", proj.description)
+            .addColumnValue("date_from", proj.timeFrom)
+            .addColumnValue("date_to", proj.timeTo)
+            .addColumnValue("website_url", proj.websiteUrl)
+            .addColumnValue("donation_url", proj.donationUrl)
             .addColumnValue("coordinates_lon", proj.coordinates.lon)
             .addColumnValue("coordinates_lat", proj.coordinates.lat)
 
@@ -150,20 +163,6 @@ class GenerateData : CustomSqlChange {
                     .addColumnValue("tag_id", it)
             }
             .forEach(list::add)
-    }
-
-    /**
-     * Construct SQL insert statement for a region
-     */
-    private fun insertRegionStatement(region: Region, list: MutableList<SqlStatement>) {
-        list.add(
-            InsertStatement("postgres", "public", "region")
-                .addColumnValue("region_id", region.id)
-                .addColumnValue("name", region.name)
-                .addColumnValue("description", region.description)
-                .addColumnValue("coordinates_lon", region.coordinates.lon)
-                .addColumnValue("coordinates_lat", region.coordinates.lat)
-        )
     }
 
     /**
@@ -237,6 +236,57 @@ class GenerateData : CustomSqlChange {
     }
 
     /**
+     * Generate a random timespan or no timespan.
+     *
+     * 50% prob. for timespan, distributed as:
+     * - 25% prob. for timespan with start and end
+     * - 25% prob. for timespan with either start or end, distributed as:
+     *     - 12.5% prob for timespan with only start
+     *     - 12.5% prob for timespan with only end
+     */
+    private fun randomTimespan(): Pair<LocalDate?, LocalDate?> {
+        val hasTimespan = Random.nextBoolean()
+        if (!hasTimespan) return null to null
+
+        val minDate = LocalDate.ofYearDay(1990, 1).toEpochDay()
+        val maxDate = LocalDate.ofYearDay(2040, 1).toEpochDay()
+
+        // make later dates more likely
+        val fromDate = max(Random.nextLong(minDate, maxDate), Random.nextLong(minDate, maxDate))
+        val toDate = Random.nextLong(fromDate, maxDate)
+
+        val hasBoth = Random.nextBoolean()
+        return if (hasBoth) {
+            LocalDate.ofEpochDay(fromDate) to LocalDate.ofEpochDay(toDate)
+        } else if (Random.nextBoolean()) {
+            LocalDate.ofEpochDay(fromDate) to null
+        } else {
+            null to LocalDate.ofEpochDay(toDate)
+        }
+    }
+
+    private fun randomFoundingYear(): Int {
+        return Random.nextInt(1990, 2024)
+    }
+
+    private fun randomMemberNumber(): Int {
+        // bias towards more smaller orgas
+        val magnitude = Random.nextDouble(0.0, 3.0) + Random.nextDouble(0.0, 3.0)
+        return 10.0.pow(magnitude).toInt()
+    }
+
+    private fun generateWebsiteUrl(orgId: Int, projectId: Int? = null): String {
+        var url = "https://example.com/orga-homepage/${orgId}/"
+        if (projectId != null) {
+            url += "proj/${projectId}"
+        }
+        return url
+    }
+
+    private fun generateDonationUrl(orgId: Int, projectId: Int? = null): String = generateWebsiteUrl(orgId, projectId)
+
+
+    /**
      * Sample perlin noise, simply take a 2d slice out of 3d noise
      */
     private fun samplePerlinNoiseAt(x: Double, y: Double, scale: Double = 0.1): Double {
@@ -248,6 +298,11 @@ class GenerateData : CustomSqlChange {
         val id: Int,
         val name: String,
         val description: String,
+        val foundingYear: Int,
+        val members: Int?,
+        val websiteUrl: String?,
+        val donationUrl: String?,
+
         val coordinates: Coordinates,
         val tags: Set<Int>
     )
@@ -257,6 +312,13 @@ class GenerateData : CustomSqlChange {
         val orgId: Int,
         val title: String,
         val description: String,
+
+        val timeFrom: LocalDate?,
+        val timeTo: LocalDate?,
+
+        val websiteUrl: String?,
+        val donationUrl: String?,
+
         val coordinates: Coordinates,
         val tags: Set<Int>
     )
