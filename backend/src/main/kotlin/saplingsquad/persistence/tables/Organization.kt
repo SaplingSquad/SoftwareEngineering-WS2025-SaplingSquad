@@ -20,6 +20,14 @@ data class OrganizationEntity(
 
     val description: String,
 
+    val foundingYear: Int,
+
+    val memberCount: Int,
+
+    val websiteUrl: String,
+
+    val donationUrl: String,
+
     @KomapperEmbedded
     val coordinates: CoordinatesEmbedded,
 )

@@ -4,6 +4,7 @@ import org.komapper.annotation.KomapperEmbedded
 import org.komapper.annotation.KomapperEntity
 import org.komapper.annotation.KomapperId
 import org.komapper.annotation.KomapperTable
+import java.time.LocalDate
 
 /**
  * The (expected) layout of the "project" table in the DB
@@ -21,6 +22,14 @@ data class ProjectEntity(
     val title: String,
 
     val description: String,
+
+    val dateFrom: LocalDate,
+
+    val dateTo: LocalDate,
+
+    val websiteUrl: String,
+
+    val donationUrl: String,
 
     @KomapperEmbedded
     val coordinates: CoordinatesEmbedded,
