@@ -794,6 +794,15 @@ components:
           example: New Roots is ...
           description: Stored short description of the organization, originally
                        provided by them.
+        foundingYear:
+          type: integer
+          example: 1998
+          description: The founding year of the organization.
+        memberCount:
+          type: integer
+          example: 7
+          description: Number of persons in the organization. Can be used to
+                       find organizations by size.
         imageUrls:
           type: array
           items:
@@ -829,6 +838,15 @@ components:
           example: The Great Green Wall is ...
           description: Stored short description of the project, originally
                        provided by the responsible organization.
+        dateFrom:
+          type: string
+          example: 21.12.2024
+          description: Starting date of the project. Needs to uphold the format.
+        dateTo:
+          type: string
+          example: 16.01.2025
+          description: Planned finish date of the project. Needs to uphold the
+                       format.
         imageUrls:
           type: array
           items:
