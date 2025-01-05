@@ -7,12 +7,12 @@ services:
       KC_HTTP_RELATIVE_PATH: /authkc
 
       # Use the following to run Keycloak proxied by vite through the frontend
-      # KC_HOSTNAME: http://localhost:5173/authkc
-      # KC_PROXY_HEADERS: xforwarded
-      # KC_HTTP_ENABLED": true
+      KC_HOSTNAME: http://localhost:5173/authkc
+      KC_PROXY_HEADERS: xforwarded
+      KC_HTTP_ENABLED": true
 
       # Use the following to run Keycloak not proxied
-      KC_HOSTNAME: http://localhost:5555/authkc
+      # KC_HOSTNAME: http://localhost:5555/authkc
 
       # Access to admin console only from localhost (proxy must also be configured to not allow /admin routes)
       KC_HOSTNAME_ADMIN: http://localhost:5555/authkc
