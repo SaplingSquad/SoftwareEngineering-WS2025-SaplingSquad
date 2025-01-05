@@ -14,7 +14,7 @@ export default component$(() => {
       <div class="flex w-3/4 space-x-16">
         <a
           href="/questions"
-          class="transform-all card grow bg-primary hover:scale-105 active:scale-[1.02]"
+          class="transform-all card grow bg-primary hover:scale-105 active:scale-[1.02] transition-all"
         >
           <h3 class="my-2 text-center text-xl font-bold text-primary-content">
             Präferenzen angeben
@@ -32,7 +32,7 @@ export default component$(() => {
         <div class="divider divider-primary divider-horizontal">ODER</div>
         <a
           href="/map"
-          class="transform-all card grow bg-primary hover:scale-105 active:scale-[1.02]"
+          class="transform-all card grow bg-primary hover:scale-105 active:scale-[1.02] transition-all"
         >
           <h3 class="my-2 text-center text-xl font-bold text-primary-content">
             Direkt zur Karte
