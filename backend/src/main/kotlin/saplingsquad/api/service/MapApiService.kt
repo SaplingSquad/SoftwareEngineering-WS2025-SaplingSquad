@@ -1,6 +1,8 @@
 package saplingsquad.api.service
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import saplingsquad.api.MapApiDelegate
@@ -28,7 +30,7 @@ class MapApiService(
         return GeoJsonOrganizations(
             type = GeoJsonOrganizations.Type.FeatureCollection,
             features = organizationsRepository
-                .readOrganizations()
+                .readOrganizations(answers ?: emptyList())
                 .map {
                     GeoFeatureOrganization(
                         type = GeoFeatureOrganization.Type.Feature,
@@ -44,6 +46,7 @@ class MapApiService(
                         )
                     )
                 }
+                .toList()
         ).asHttpOkResponse()
     }
 
@@ -59,7 +62,7 @@ class MapApiService(
         return GeoJsonProjects(
             type = GeoJsonProjects.Type.FeatureCollection,
             features = projectsRepository
-                .readProjects()
+                .readProjects(answers ?: emptyList())
                 .map {
                     GeoFeatureProject(
                         type = GeoFeatureProject.Type.Feature,
@@ -75,6 +78,7 @@ class MapApiService(
                         )
                     )
                 }
+                .toList()
         ).asHttpOkResponse()
     }
 
