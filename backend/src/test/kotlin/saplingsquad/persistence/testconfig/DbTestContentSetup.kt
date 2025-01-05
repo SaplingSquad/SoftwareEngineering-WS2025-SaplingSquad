@@ -70,7 +70,7 @@ object ExampleOrgas {
     // Some orgas have some common tags
     // Some orgas have some multiple tags
     // Some orgas have only one tag
-    fun tagsOfOrga(o: OrganizationEntity) =
+    private fun tagsOfOrga(o: OrganizationEntity) =
         when (o.orgId) {
             in 0..1 -> listOf(0, 1, 2)
             in 2..6 -> listOf(2, 3)
@@ -109,7 +109,68 @@ object ExampleOrgas {
     }
 }
 
+object ExampleProjects {
+
+    private fun createProjectI(i: Int, orgId: Int): ProjectEntity {
+        return ProjectEntity(
+            projectId = i,
+            orgId = orgId,
+            title = "Project $i",
+            description = "Description $i",
+            coordinates = CoordinatesEmbedded(i.toDouble(), i.toDouble())
+        )
+    }
+
+    // Create unique projectIds with 1 to 3 projects per organization
+    val projects = List(10) { orgId ->
+        val n = orgId + 10
+        when (orgId) {
+            in 0..3 -> listOf(n, 2 * n, 3 * n)
+            in 4..5 -> listOf(4 * n, 5 * n)
+            else -> listOf(6 * n)
+        }.map { projectId -> createProjectI(projectId, orgId) }
+    }.flatten()
+
+    private fun tagsOfProject(p: ProjectEntity) =
+        when (p.orgId) {
+            in 0..1 -> listOf(0, 1, 2)
+            in 2..6 -> listOf(2, 3)
+            else -> listOf(p.orgId)
+        }
+
+    val projectTags = projects
+        .flatMap { project ->
+            tagsOfProject(project).map { tagId ->
+                ProjectTagsEntity(
+                    projectId = project.projectId,
+                    tagId = tagId
+                )
+            }
+        }
+
+    internal suspend fun setupProjects(db: R2dbcDatabase) {
+
+        db.runQuery(
+            QueryDsl.create(Meta.projectEntity)
+                .andThen(
+                    QueryDsl.insert(Meta.projectEntity).multiple(
+                        projects
+                    )
+                )
+        )
+        db.runQuery {
+            QueryDsl.create(Meta.projectTagsEntity)
+                .andThen(
+                    QueryDsl.insert(Meta.projectTagsEntity).multiple(
+                        projectTags
+                    )
+                )
+        }
+    }
+}
+
 fun setupDb(db: R2dbcDatabase) = runBlocking {
     ExampleQuestionsAndTags.setupQuestions(db)
     ExampleOrgas.setupOrgas(db)
+    ExampleProjects.setupProjects(db)
 }
