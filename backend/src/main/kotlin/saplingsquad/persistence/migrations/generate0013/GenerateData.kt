@@ -1,6 +1,7 @@
-package saplingsquad.persistence.migrations.generate0012
+package saplingsquad.persistence.migrations.generate0013
 
 import liquibase.Scope
+import liquibase.change.ColumnConfig
 import liquibase.change.custom.CustomSqlChange
 import liquibase.database.Database
 import liquibase.exception.ValidationErrors
@@ -30,9 +31,6 @@ class GenerateData : CustomSqlChange {
         /** Generate around 500 organizations **/
         private const val ORG_GENERATION_ATTEMPTS = 20000
 
-        /** Generate around 50 regions **/
-        private const val REGION_GENERATION_ATTEMPTS = 2000
-
         /** Generate around 2-3 organizations per project **/
         private const val PROJECT_GENERATION_ATTEMPTS = 100
 
@@ -41,7 +39,7 @@ class GenerateData : CustomSqlChange {
     }
 
     override fun getConfirmationMessage(): String {
-        return "Organizations, Projects and Regions generated"
+        return "Organizations and Projects generated"
     }
 
     override fun setUp() {
@@ -120,7 +118,7 @@ class GenerateData : CustomSqlChange {
             .addColumnValue("name", org.name)
             .addColumnValue("description", org.description)
             .addColumnValue("founding_year", org.foundingYear)
-            .addColumnValue("members", org.members)
+            .addColumnValue("member_count", org.members)
             .addColumnValue("website_url", org.websiteUrl)
             .addColumnValue("donation_url", org.donationUrl)
             .addColumnValue("coordinates_lon", org.coordinates.lon)
@@ -147,8 +145,8 @@ class GenerateData : CustomSqlChange {
             .addColumnValue("org_id", proj.orgId)
             .addColumnValue("title", proj.title)
             .addColumnValue("description", proj.description)
-            .addColumnValue("date_from", proj.timeFrom)
-            .addColumnValue("date_to", proj.timeTo)
+            .addColumn(ColumnConfig.fromName("date_from").setValueDate(proj.timeFrom?.toString()))
+            .addColumn(ColumnConfig.fromName("date_to").setValueDate(proj.timeTo?.toString()))
             .addColumnValue("website_url", proj.websiteUrl)
             .addColumnValue("donation_url", proj.donationUrl)
             .addColumnValue("coordinates_lon", proj.coordinates.lon)
