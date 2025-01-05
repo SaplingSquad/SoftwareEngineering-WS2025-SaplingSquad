@@ -67,18 +67,15 @@ const ProfileInformation = component$(() => {
 const ProjectManagement = component$((inputData: { data: ProfileProjectsProps[] }) => {
     return (
         <>
-            <div class="collapse bg-base-200">
-                <input type="checkbox" />
-                <div class="collapse-title text-xl font-medium">Projekte</div>
-                <div class="collapse-content">
-                    <div class="flex flex-wrap gap-6">
-                        {
-                            inputData.data.map((item, idx: number) => (
-                                <ProjectCard key={idx} p={item} />
-                            ))
-                        }
-                        <ProjectDummy />
-                    </div>
+            <div class="card bg-base-200 p-4">
+                <div class="card-title text-xl font-medium pb-4">Projekte</div>
+                <div class="flex flex-wrap gap-6">
+                    {
+                        inputData.data.map((item, idx: number) => (
+                            <ProjectCard key={idx} p={item} />
+                        ))
+                    }
+                    <ProjectDummy />
                 </div>
             </div>
         </>
