@@ -177,7 +177,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OrganizationDescriptions'
+                allOf:
+                  - $ref: '#/components/schemas/OrganizationId'
+                  - $ref: '#/components/schemas/Organization'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -203,7 +205,9 @@ paths:
                 items:
                   properties:
                     schema:
-                      $ref: '#/components/schemas/OrganizationDescriptions'
+                      allOf:
+                        - $ref: '#/components/schemas/OrganizationId'
+                        - $ref: '#/components/schemas/Organization'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -257,7 +261,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProjectDescriptions'
+                allOf:
+                  - $ref: '#/components/schemas/ProjectId'
+                  - $ref: '#/components/schemas/Project'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -284,7 +290,9 @@ paths:
                   type: object
                   properties:
                     schema:
-                      $ref: '#/components/schemas/OrganizationDescriptions'
+                      allOf:
+                        - $ref: '#/components/schemas/OrganizationId'
+                        - $ref: '#/components/schemas/Organization'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -343,7 +351,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RegionDescriptions'
+                $ref: '#/components/schemas/Region'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -504,7 +512,9 @@ paths:
           in: query
           description: Update an existing organization.
           schema:
-            $ref: '#/components/schemas/OrganizationDescriptions'
+            allOf:
+              - $ref: '#/components/schemas/OrganizationId'
+              - $ref: '#/components/schemas/Organization'
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -585,7 +595,9 @@ paths:
           in: query
           description: Update an existing project.
           schema:
-            $ref: '#/components/schemas/ProjectDescriptions'
+            allOf:
+              - $ref: '#/components/schemas/ProjectId'
+              - $ref: '#/components/schemas/Project'
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -777,13 +789,18 @@ components:
       required:
         - type
         - coordinates
-    OrganizationDescriptions:
+    OrganizationId:
       type: object
       properties:
         orgaId:
           type: integer
           example: 1
           description: The ID of the organization.
+      required:
+        - orgaId
+    Organization:
+      type: object
+      properties:
         name:
           type: string
           example: New Roots
@@ -794,6 +811,15 @@ components:
           example: New Roots is ...
           description: Stored short description of the organization, originally
                        provided by them.
+        foundingYear:
+          type: integer
+          example: 1998
+          description: The founding year of the organization.
+        memberCount:
+          type: integer
+          example: 7
+          description: Number of persons in the organization. Can be used to
+                       find organizations by size.
         imageUrls:
           type: array
           items:
@@ -809,11 +835,19 @@ components:
           example: path/to/new/roots/donation/link.de
           description: Direct link to the donation side of the organization.
       required:
-        - orgaId
         - name
         - description
         - webpageUrl
-    ProjectDescriptions:
+    ProjectId:
+      type: object
+      properties:
+        projectId:
+          type: integer
+          example: 1
+          description: The ID of the project.
+      required:
+        - projectId
+    Project:
       type: object
       properties:
         projectId:
@@ -829,6 +863,15 @@ components:
           example: The Great Green Wall is ...
           description: Stored short description of the project, originally
                        provided by the responsible organization.
+        dateFrom:
+          type: string
+          example: 21.12.2024
+          description: Starting date of the project. Needs to uphold the format.
+        dateTo:
+          type: string
+          example: 16.01.2025
+          description: Planned finish date of the project. Needs to uphold the
+                       format.
         imageUrls:
           type: array
           items:
@@ -844,10 +887,9 @@ components:
           example: path/to/great/green/wall/donation/link.com
           description: Direct link to the donation side for the project.
       required:
-        - projectId
         - name
         - description
-    RegionDescriptions:
+    Region:
       type: object
       properties:
         regionId:
@@ -875,67 +917,6 @@ components:
           description: Url with descriptions to the region.
       required:
         - regionId
-        - name
-        - description
-        - webpageUrl
-    Organization:
-      type: object
-      properties:
-        name:
-          type: string
-          example: New Roots
-          description: Name of the organization corresponding to the given ID.
-        description:
-          type: string
-          example: New Roots is ...
-          description: Stored short description of the organization, originally
-                       provided by them.
-        imageUrls:
-          type: array
-          items:
-            type: string
-            example: path/to/image/url.pic
-            description: List of images provided by the organization.
-        webpageUrl:
-          type: string
-          example: path/to/new/roots.de
-          description: URL of the organizations website.
-        donatePageUrl:
-          type: string
-          example: path/to/new/roots/donation/link.de
-          description: Direct link to the donation side of the organization.
-      required:
-        - name
-        - description
-        - webpageUrl
-    Project:
-      type: object
-      properties:
-        name:
-          type: string
-          example: Great Green Wall
-          description: Name of the project corresponding to the logged in
-                       organization.
-        description:
-          type: string
-          example: The Great Green Wall is ...
-          description: Stored short description of the project, originally
-                       provided by the responsible organization.
-        imageUrls:
-          type: array
-          items:
-            type: string
-            example: path/to/image/url.pic
-            description: List of images provided by the organization.
-        webpageUrl:
-          type: string
-          example: path/to/great/green/wall.com
-          description: URL of the projects website.
-        donatePageUrl:
-          type: string
-          example: path/to/great/green/wall/donation/link.com
-          description: Direct link to the donation side for the project.
-      required:
         - name
         - description
         - webpageUrl

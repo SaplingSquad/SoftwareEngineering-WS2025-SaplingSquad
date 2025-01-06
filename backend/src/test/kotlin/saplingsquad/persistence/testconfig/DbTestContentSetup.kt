@@ -6,6 +6,7 @@ import org.komapper.core.dsl.QueryDsl
 import org.komapper.core.dsl.query.andThen
 import org.komapper.r2dbc.R2dbcDatabase
 import saplingsquad.persistence.tables.*
+import java.time.LocalDate
 
 
 object ExampleQuestionsAndTags {
@@ -60,6 +61,10 @@ object ExampleOrgas {
             orgId = i,
             name = "Org $i",
             description = "Description $i",
+            foundingYear = 2000,
+            memberCount = i,
+            websiteUrl = "Website Url $1",
+            donationUrl = "Donation Url $1",
             coordinates = CoordinatesEmbedded(i.toDouble(), i.toDouble())
         )
     }
@@ -117,6 +122,10 @@ object ExampleProjects {
             orgId = orgId,
             title = "Project $i",
             description = "Description $i",
+            dateFrom = LocalDate.of(2020, 1, 1),
+            dateTo = LocalDate.of(2020, 1, 1),
+            websiteUrl = "Website Url $1",
+            donationUrl = "Donation Url $1",
             coordinates = CoordinatesEmbedded(i.toDouble(), i.toDouble())
         )
     }

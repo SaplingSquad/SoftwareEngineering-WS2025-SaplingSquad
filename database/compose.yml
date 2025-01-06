@@ -1,6 +1,6 @@
 services:
   sapling-squad-db:
-    image: postgres
+    image: postgis/postgis:17-3.5
     restart: always
     ports:
       - "5432:5432"

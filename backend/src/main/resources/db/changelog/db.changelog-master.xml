@@ -19,7 +19,13 @@
     <include file="classpath:db/changelog/0005-drop-tables.sql"/>
     <include file="classpath:db/changelog/0006-create-tables.sql"/>
     <include file="classpath:db/changelog/0007-import-data.xml"/>
-    <include file="classpath:db/changelog/0008-create-tables-org-proj-reg.sql"/>
-    <include file="classpath:db/changelog/0009-generate-org-proj-reg.xml"/>
+    <!--    Don't do unnecessary stuff which is dropped later anyways-->
+    <!--    <include file="classpath:db/changelog/0008-create-tables-org-proj-reg.sql"/>-->
+    <!--    <include file="classpath:db/changelog/0009-generate-org-proj-reg.xml"/>-->
+    <include file="classpath:db/changelog/0010-drop-org-proj-reg-tables.sql"/>
+    <include file="classpath:db/changelog/0011-enable-postgis.sql"/>
+    <include file="classpath:db/changelog/0012-create-tables-org-proj.sql"/>
+    <include file="classpath:db/changelog/0013-generate-org-proj.xml"/>
+    <include file="classpath:db/changelog/0014-import-regions.xml"/>
 
 </databaseChangeLog>
