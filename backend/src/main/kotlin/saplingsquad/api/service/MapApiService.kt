@@ -18,7 +18,7 @@ class MapApiService(
     val projectsRepository: ProjectsRepository,
     val regionsRepository: RegionsRepository
 ) : MapApiDelegate {
-    override suspend fun getOrganizationDetails(orgaId: Int): ResponseEntity<OrganizationDescriptions> {
+    override suspend fun getOrganizationDetails(orgaId: Int): ResponseEntity<GetOrganizationDetails200Response> {
         TODO("Not yet implemented")
     }
 
@@ -50,7 +50,7 @@ class MapApiService(
         ).asHttpOkResponse()
     }
 
-    override suspend fun getProject(projectId: Int): ResponseEntity<ProjectDescriptions> {
+    override suspend fun getProject(projectId: Int): ResponseEntity<GetProject200Response> {
         TODO("Not yet implemented")
     }
 
@@ -82,7 +82,7 @@ class MapApiService(
         ).asHttpOkResponse()
     }
 
-    override suspend fun getRegion(regionId: Int): ResponseEntity<RegionDescriptions> {
+    override suspend fun getRegion(regionId: Int): ResponseEntity<Region> {
         TODO("Not yet implemented")
     }
 

@@ -22,7 +22,7 @@ class OrganizationApiService() : OrganizationApiDelegate {
 
     override suspend fun updateOrganization(
         orgaToken: JwtAuthenticationToken,
-        organizationDescriptions: OrganizationDescriptions?
+        organizationDescriptions: GetOrganizationDetails200Response?
     ): ResponseEntity<Unit> {
         TODO("Not yet implemented")
     }
@@ -37,7 +37,7 @@ class OrganizationApiService() : OrganizationApiDelegate {
 
     override suspend fun updateProject(
         orgaToken: JwtAuthenticationToken,
-        projectDescriptions: ProjectDescriptions?
+        projectDescriptions: GetProject200Response?
     ): ResponseEntity<Unit> {
         TODO("Not yet implemented")
     }
