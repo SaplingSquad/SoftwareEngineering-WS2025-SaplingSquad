@@ -462,7 +462,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Organization'
+                allOf:
+                  - $ref: '#/components/schemas/OrganizationId'
+                  - $ref: '#/components/schemas/Organization'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -834,10 +836,17 @@ components:
           type: string
           example: path/to/new/roots/donation/link.de
           description: Direct link to the donation side of the organization.
+        coordinates:
+          type: array
+          items:
+            type: number
+          description: Longitude and latitude coordinates.
+          example: [-76.53063297271729, 39.18174077994108]
       required:
         - name
         - description
         - webpageUrl
+        - coordinates
     ProjectId:
       type: object
       properties:

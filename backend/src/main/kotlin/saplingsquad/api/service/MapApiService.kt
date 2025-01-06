@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import saplingsquad.api.MapApiDelegate
 import saplingsquad.api.models.*
+import saplingsquad.api.toLonLatList
 import saplingsquad.persistence.OrganizationsRepository
 import saplingsquad.persistence.ProjectsRepository
 import saplingsquad.persistence.RegionsRepository
@@ -39,10 +40,7 @@ class MapApiService(
                         ),
                         geometry = GeoGeometry(
                             type = GeoGeometry.Type.Point,
-                            coordinates = listOf(
-                                it.coordinates.coordinatesLon.toBigDecimal(),
-                                it.coordinates.coordinatesLat.toBigDecimal()
-                            )
+                            coordinates = it.coordinates.toLonLatList()
                         )
                     )
                 }
@@ -71,10 +69,7 @@ class MapApiService(
                         ),
                         geometry = GeoGeometry(
                             type = GeoGeometry.Type.Point,
-                            coordinates = listOf(
-                                it.coordinates.coordinatesLon.toBigDecimal(),
-                                it.coordinates.coordinatesLat.toBigDecimal()
-                            )
+                            coordinates = it.coordinates.toLonLatList()
                         )
                     )
                 }

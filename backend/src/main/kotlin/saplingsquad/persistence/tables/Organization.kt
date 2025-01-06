@@ -1,9 +1,8 @@
 package saplingsquad.persistence.tables
 
-import org.komapper.annotation.KomapperEmbedded
-import org.komapper.annotation.KomapperEntity
-import org.komapper.annotation.KomapperId
-import org.komapper.annotation.KomapperTable
+import org.komapper.annotation.*
+
+typealias OrganizationId = Int;
 
 /**
  * The (expected) layout of the "organization" table in the DB
@@ -13,8 +12,9 @@ import org.komapper.annotation.KomapperTable
 @KomapperTable("organization")
 data class OrganizationEntity(
     /** Unique ID of the Row */
+    @KomapperAutoIncrement
     @KomapperId
-    val orgId: Int,
+    val orgId: OrganizationId,
 
     val name: String,
 
@@ -26,7 +26,7 @@ data class OrganizationEntity(
 
     val websiteUrl: String,
 
-    val donationUrl: String,
+    val donationUrl: String?,
 
     @KomapperEmbedded
     val coordinates: CoordinatesEmbedded,
@@ -37,7 +37,7 @@ data class OrganizationEntity(
 data class OrganizationTagsEntity(
     /** ID of the Organization */
     @KomapperId
-    val orgId: Int,
+    val orgId: OrganizationId,
     /** ID of the Tag */
     @KomapperId
     val tagId: Int,

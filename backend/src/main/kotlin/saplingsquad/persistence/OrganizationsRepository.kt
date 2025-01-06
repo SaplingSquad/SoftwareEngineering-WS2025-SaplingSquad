@@ -4,10 +4,15 @@ import kotlinx.coroutines.flow.Flow
 import org.komapper.core.dsl.Meta
 import org.komapper.core.dsl.QueryDsl
 import org.komapper.core.dsl.query.bind
+import org.komapper.core.dsl.query.firstOrNull
+import org.komapper.core.dsl.query.map
+import org.komapper.core.dsl.query.on
 import org.komapper.r2dbc.R2dbcDatabase
+import org.komapper.tx.core.TransactionProperty
 import org.springframework.stereotype.Repository
-import saplingsquad.persistence.tables.OrganizationEntity
-import saplingsquad.persistence.tables.organizationEntity
+import saplingsquad.persistence.tables.*
+import saplingsquad.utils.atMostOne
+
 
 @Repository
 class OrganizationsRepository(private val db: R2dbcDatabase) {
@@ -16,6 +21,50 @@ class OrganizationsRepository(private val db: R2dbcDatabase) {
             filterByTagsSqlQuery(answers)
         }
     }
+
+    suspend fun tryRegisterOrganization(
+        accountId: String,
+        organization: OrganizationEntity
+    ): OrganizationRegisterResult =
+        db.withTransaction(transactionProperty = TransactionProperty.IsolationLevel.SERIALIZABLE) {
+            val exists =
+                db.runQuery {
+                    QueryDsl.from(Meta.organizationAccountEntity)
+                        .where { Meta.organizationAccountEntity.accountId eq accountId }
+                        .firstOrNull()
+                        .map { it != null }
+                }
+            if (exists) {
+                return@withTransaction OrganizationRegisterResult.AlreadyRegistered
+            }
+            val orgId = db.runQuery {
+                QueryDsl.insert(Meta.organizationEntity)
+                    .single(organization)
+                    .returning(Meta.organizationEntity.orgId)
+            }!!
+
+            db.runQuery {
+                QueryDsl.insert(Meta.organizationAccountEntity)
+                    .single(OrganizationAccountEntity(accountId = accountId, orgId = orgId, verified = false))
+            }
+
+            OrganizationRegisterResult.Success(orgId)
+        }
+
+    suspend fun readOrganizationOfAccount(accountId: String): OrganizationEntity? {
+        val org = Meta.organizationEntity
+        val orgAcc = Meta.organizationAccountEntity
+        return db.flowQuery {
+            QueryDsl.from(org)
+                .innerJoin(orgAcc, on { org.orgId eq orgAcc.orgId })
+                .where { orgAcc.accountId eq accountId }
+        }.atMostOne()
+    }
+}
+
+sealed class OrganizationRegisterResult {
+    data class Success(val id: OrganizationId) : OrganizationRegisterResult()
+    data object AlreadyRegistered : OrganizationRegisterResult()
 }
 
 private fun filterByTagsSqlQuery(answers: List<Int>) = QueryDsl
