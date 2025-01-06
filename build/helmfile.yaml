@@ -75,6 +75,14 @@ releases:
       database: sprout
     containerPorts:
       postgresql: 5432
+    primary:
+      initdb:
+        scripts:
+          # https://github.com/bitnami/charts/issues/9048#issuecomment-1855705696
+          postgis.sh: |
+            #!/usr/bin/env sh
+            export PGPASSWORD="$POSTGRES_POSTGRES_PASSWORD"
+            psql -U postgres -d "$POSTGRES_DATABASE" -c "create extension if not exists postgis;"
   needs:
   - secrets
 - name: frontend
