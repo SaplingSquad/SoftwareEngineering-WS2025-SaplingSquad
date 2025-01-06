@@ -4,6 +4,9 @@ import Keycloak from "@auth/qwik/providers/keycloak";
 import { isServer } from "@builder.io/qwik/build";
 import { Agent, fetch as undiciFetch } from "undici";
 
+export const USERS_PROVIDER_ID = "keycloak-users"
+export const ORGS_PROVIDER_ID = "keycloak-orgs"
+
 //https://authjs.dev/getting-started/typescript#module-augmentation
 declare module "@auth/qwik" {
   interface Session {
@@ -107,13 +110,13 @@ export const clientId = "sprout-web";
 const providers = [
   Keycloak({
     [customFetch]: customizedFetch,
-    id: "keycloak-users",
+    id: USERS_PROVIDER_ID,
     issuer: isServer ? process.env.AUTH_ISSUER_USERS : undefined,
     clientId,
   }),
   Keycloak({
     [customFetch]: customizedFetch,
-    id: "keycloak-orgs",
+    id: ORGS_PROVIDER_ID,
     issuer: isServer ? process.env.AUTH_ISSUER_ORGS : undefined,
     clientId,
   }),

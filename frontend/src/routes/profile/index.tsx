@@ -1,6 +1,9 @@
-import { component$, useStore, } from "@builder.io/qwik";
-import { Profile } from "~/components/profile";
-import type { ProfileProjectsProps } from "~/components/profile";
+import { component$, useComputed$, useStore, } from "@builder.io/qwik";
+import { UserProfile, VereinProfile } from "~/components/profile/profile";
+import type { ProfileProjectsProps } from "~/components/profile/profile";
+import { useSession } from "../plugin@auth";
+import { getAccountType, isAccTypeOrg, isAccTypeUser, useAccountType } from "~/auth/tools";
+import { LoginOverviewParamsForm } from "~/components/auth/login";
 
 const DEMO_IMAGE = "https://picsum.photos/300";
 
@@ -13,10 +16,44 @@ const data: ProfileProjectsProps[] = [
 
 export default component$(() => {
     const store = useStore(data);
+    const session = useSession();
+    const accType = getAccountType(session.value)
+    const useaccType = useAccountType(session)
 
+    const ProfileAccountController = useComputed$(() => {
+        const isAuthorized = session.value?.user?.email
+
+        return (
+            isAccTypeUser(useaccType) ?
+                <>
+                    <UserProfile profiledata={session} />
+                </>
+                : isAccTypeOrg(useaccType) ?
+                    <>
+                        <VereinProfile projectdata={store} profiledata={session} />
+                    </>
+                    :
+                    <>
+                        <div class="flex justify-center p-32">
+                            <div class="card bg-base-100 w-96 shadow-xl">
+                                <div class="card-body items-center text-center">
+                                    <h2 class="card-title">Nicht eingeloggt.</h2>
+                                    <div class="card-actions">
+                                        <LoginOverviewParamsForm redirectTo={"/profile"}>
+                                            <button class="btn btn-primary">Hier einloggen!</button>
+                                        </LoginOverviewParamsForm>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </>
+        )
+    })
     return (
         <>
-            <Profile data={store} />
+            <div>
+                {ProfileAccountController}
+            </div>
         </>
     )
 })

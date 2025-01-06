@@ -1,5 +1,8 @@
-import { component$ } from "@builder.io/qwik";
+import { Session } from "@auth/qwik";
+import { component$, Signal } from "@builder.io/qwik";
 import { HiUserCircleOutline, HiPlusCircleSolid, HiCog6ToothOutline, HiTrashOutline } from "@qwikest/icons/heroicons";
+import { LogoutParamsForm } from "../auth/logout";
+import { ProfileImage } from "./utils";
 
 export type ProfileProjectsProps = {
     img: string;
@@ -44,7 +47,7 @@ const ProjectDummy = component$(() => {
     )
 })
 
-const ProfileInformation = component$(() => {
+const ProfileInformation = component$((inputData: { profiledata: Readonly<Signal<null>> | Readonly<Signal<Session>> }) => {
     return (
         <>
             <div class="card bg-base-100 rounded-box place-items-stretch m-4 p-4 space-y-4 h-fit flex-initial w-2/12 min-w-fit card-bordered border-secondary border-4">
@@ -52,13 +55,15 @@ const ProfileInformation = component$(() => {
                 <div class="w-full flex justify-center">
                     <div class="avatar placeholder w-5/6 justify-center min-w-10 max-w-28">
                         <div class="ring-primary ring-offset-base-100 rounded-full ring ring-offset-2 w-28">
-                            <span class="text-4xl">D</span>
+                            <ProfileImage profiledata={inputData.profiledata} imgSize="size-32" />
                         </div>
                     </div>
                 </div>
-                <p>Name</p>
-                <p>Email</p>
-                <button class="btn btn-error x-1/2">Abmelden</button>
+                <p>Name: {inputData.profiledata.value?.user?.name}</p>
+                <p>E-Mail: {inputData.profiledata.value?.user?.email}</p>
+                <LogoutParamsForm redirectTo={"/map"}>
+                    <button class="btn btn-block btn-error x-full">Abmelden</button>
+                </LogoutParamsForm>
             </div>
         </>
     )
@@ -133,13 +138,21 @@ const VereinInfoProjects = component$((inputData: { data: ProfileProjectsProps[]
     )
 })
 
-export const Profile = component$((inputData: { data: ProfileProjectsProps[] }) => {
+export const UserProfile = component$((inputData: { profiledata: Readonly<Signal<null>> | Readonly<Signal<Session>> }) => {
+    return (
+        <>
+            <ProfileInformation profiledata={inputData.profiledata} />
+        </>
+    )
+})
+
+export const VereinProfile = component$((inputData: { projectdata: ProfileProjectsProps[], profiledata: Readonly<Signal<null>> | Readonly<Signal<Session>> }) => {
     return (
         <>
             <div class="relative flex flex-wrap justify-center">
                 <div class="flex flex-wrap justify-around">
-                    <VereinInfoProjects data={inputData.data} />
-                    <ProfileInformation />
+                    <VereinInfoProjects data={inputData.projectdata} />
+                    <ProfileInformation profiledata={inputData.profiledata} />
                 </div>
             </div>
         </>
