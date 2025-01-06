@@ -23,13 +23,13 @@ data class ProjectEntity(
 
     val description: String,
 
-    val dateFrom: LocalDate,
+    val dateFrom: LocalDate?,
 
-    val dateTo: LocalDate,
+    val dateTo: LocalDate?,
 
-    val websiteUrl: String,
+    val websiteUrl: String?,
 
-    val donationUrl: String,
+    val donationUrl: String?,
 
     @KomapperEmbedded
     val coordinates: CoordinatesEmbedded,

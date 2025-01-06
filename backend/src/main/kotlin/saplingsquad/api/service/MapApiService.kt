@@ -87,27 +87,7 @@ class MapApiService(
     }
 
     override suspend fun getRegions(answers: List<Int>?): ResponseEntity<GeoJsonRegions> {
-        return GeoJsonRegions(
-            type = GeoJsonRegions.Type.FeatureCollection,
-            features = regionsRepository
-                .readRegions()
-                .map {
-                    GeoFeatureRegion(
-                        type = GeoFeatureRegion.Type.Feature,
-                        properties = GeoFeatureRegionProperties(
-                            regionId = it.regionId,
-                            name = it.name
-                        ),
-                        geometry = GeoGeometry(
-                            type = GeoGeometry.Type.Point,
-                            coordinates = listOf(
-                                it.coordinates.coordinatesLon.toBigDecimal(),
-                                it.coordinates.coordinatesLat.toBigDecimal()
-                            )
-                        )
-                    )
-                }
-        ).asHttpOkResponse()
+        TODO("Not yet implemented")
     }
 
 }

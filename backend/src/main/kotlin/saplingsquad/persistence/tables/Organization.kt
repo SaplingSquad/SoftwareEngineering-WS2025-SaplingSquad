@@ -20,9 +20,9 @@ data class OrganizationEntity(
 
     val description: String,
 
-    val foundingYear: Int,
+    val foundingYear: Int?,
 
-    val memberCount: Int,
+    val memberCount: Int?,
 
     val websiteUrl: String,
 
