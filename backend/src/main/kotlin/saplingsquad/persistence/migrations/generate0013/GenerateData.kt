@@ -269,8 +269,11 @@ class GenerateData : CustomSqlChange {
 
     private fun randomMemberNumber(): Int {
         // bias towards more smaller orgas
-        val magnitude = Random.nextDouble(0.0, 3.0) + Random.nextDouble(0.0, 3.0)
-        return 10.0.pow(magnitude).toInt()
+        val sqrt = kotlin.math.sqrt(6.0) // max 10^6
+        val magnitude = Random.nextDouble(0.0, sqrt) * Random.nextDouble(0.0, sqrt)
+        // Make orgas with very very few members less likely
+        val shift = max(Random.nextInt(0, 5), Random.nextInt(0, 5))
+        return 10.0.pow(magnitude).toInt() + shift
     }
 
     private fun generateWebsiteUrl(orgId: Int, projectId: Int? = null): String {
