@@ -462,7 +462,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Organization'
+                allOf:
+                  - $ref: '#/components/schemas/OrganizationId'
+                  - $ref: '#/components/schemas/Organization'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -507,14 +509,14 @@ paths:
       operationId: updateOrganization
       security:
         - orgaToken: []
-      parameters:
-        - name: organizationDescriptions
-          in: query
-          description: Update an existing organization.
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/OrganizationId'
-              - $ref: '#/components/schemas/Organization'
+      requestBody:
+        description: Update an existing organization.
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/OrganizationId'
+                - $ref: '#/components/schemas/Organization'
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -834,10 +836,27 @@ components:
           type: string
           example: path/to/new/roots/donation/link.de
           description: Direct link to the donation side of the organization.
+        coordinates:
+          type: array
+          items:
+            type: number
+          description: Longitude and latitude coordinates of the organization's
+                       location. For displaying on a map use the 
+                       /map/organization/locations Endpoint to get the location
+                       as GeoJSON features
+          example: [-76.53063297271729, 39.18174077994108]
+        tags:
+          type: array
+          items:
+            type: integer
+          example: [1, 4, 5]
+          description: The tags of this organization
       required:
         - name
         - description
         - webpageUrl
+        - coordinates
+        - tags
     ProjectId:
       type: object
       properties:
