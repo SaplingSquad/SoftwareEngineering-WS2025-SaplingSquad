@@ -38,10 +38,11 @@ class MapApiService(
             imageUrls = emptyList(), //TODO maybe implement images sometime
             coordinates = org.coordinates.toLonLatList(),
             tags = tags.toList(),
+            projectIds = emptyList() //TODO
         ).asHttpOkResponse()
     }
 
-    override fun getOrganizations(): ResponseEntity<Flow<GetOrganizationDetails200Response>> {
+    override fun getOrganizations(): ResponseEntity<Flow<GetOrganizations200ResponseInner>> {
         TODO("Not yet implemented")
     }
 
