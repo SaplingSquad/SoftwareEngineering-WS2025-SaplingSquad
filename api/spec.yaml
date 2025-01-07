@@ -840,13 +840,23 @@ components:
           type: array
           items:
             type: number
-          description: Longitude and latitude coordinates.
+          description: Longitude and latitude coordinates of the organization's
+                       location. For displaying on a map use the 
+                       /map/organization/locations Endpoint to get the location
+                       as GeoJSON features
           example: [-76.53063297271729, 39.18174077994108]
+        tags:
+          type: array
+          items:
+            type: integer
+          example: [1, 4, 5]
+          description: The tags of this organization
       required:
         - name
         - description
         - webpageUrl
         - coordinates
+        - tags
     ProjectId:
       type: object
       properties:

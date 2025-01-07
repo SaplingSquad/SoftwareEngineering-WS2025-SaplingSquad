@@ -1,6 +1,8 @@
 package saplingsquad.persistence
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toSet
 import org.komapper.core.dsl.Meta
 import org.komapper.core.dsl.QueryDsl
 import org.komapper.core.dsl.query.bind
@@ -24,7 +26,8 @@ class OrganizationsRepository(private val db: R2dbcDatabase) {
 
     suspend fun tryRegisterOrganization(
         accountId: String,
-        organization: OrganizationEntity
+        organization: OrganizationEntity,
+        tags: Set<TagId>,
     ): OrganizationRegisterResult =
         db.withTransaction(transactionProperty = TransactionProperty.IsolationLevel.SERIALIZABLE) {
             val org = Meta.organizationEntity
@@ -50,15 +53,19 @@ class OrganizationsRepository(private val db: R2dbcDatabase) {
                     .single(OrganizationAccountEntity(accountId = accountId, orgId = orgId, verified = false))
             }
 
+            insertTagsForOrganization(orgId, tags)
+
             OrganizationRegisterResult.Success(orgId)
         }
 
     suspend fun updateOrganizationOfAccount(
         accountId: String,
-        organization: OrganizationEntity
+        organization: OrganizationEntity,
+        tags: Set<TagId>,
     ): OrganizationUpdateResult =
         db.withTransaction(transactionProperty = TransactionProperty.IsolationLevel.SERIALIZABLE) {
             val org = Meta.organizationEntity
+            val orgTags = Meta.organizationTagsEntity
             val existing = readOrganizationOfAccount(accountId)
                 ?: return@withTransaction OrganizationUpdateResult.NoOrganizationRegsitered
             if (existing.orgId != organization.orgId) {
@@ -69,10 +76,28 @@ class OrganizationsRepository(private val db: R2dbcDatabase) {
                     .update(org)
                     .single(organization)
             }
+            db.runQuery {
+                QueryDsl.delete(orgTags).where { orgTags.orgId eq existing.orgId }
+            }
+            insertTagsForOrganization(existing.orgId, tags)
             OrganizationUpdateResult.Success
         }
 
-    suspend fun readOrganizationOfAccount(accountId: String): OrganizationEntity? {
+    suspend fun readOrganizationAndTagsOfAccount(accountId: String): Pair<OrganizationEntity, Set<TagId>>? =
+        db.withTransaction(transactionProperty = TransactionProperty.IsolationLevel.SERIALIZABLE) {
+            val organization = readOrganizationOfAccount(accountId) ?: return@withTransaction null
+
+            val orgTags = Meta.organizationTagsEntity
+            val tags = db.flowQuery {
+                QueryDsl.from(orgTags).where {
+                    orgTags.orgId eq organization.orgId
+                }
+            }.map { it.tagId }.toSet()
+
+            return@withTransaction organization to tags
+        }
+
+    private suspend fun readOrganizationOfAccount(accountId: String): OrganizationEntity? {
         val org = Meta.organizationEntity
         val orgAcc = Meta.organizationAccountEntity
         return db.flowQuery {
@@ -80,6 +105,14 @@ class OrganizationsRepository(private val db: R2dbcDatabase) {
                 .innerJoin(orgAcc, on { org.orgId eq orgAcc.orgId })
                 .where { orgAcc.accountId eq accountId }
         }.atMostOne()
+    }
+
+    private suspend fun insertTagsForOrganization(orgId: OrganizationId, tags: Set<TagId>) {
+        val orgTag = Meta.organizationTagsEntity
+        db.runQuery {
+            QueryDsl.insert(orgTag)
+                .multiple(tags.map { OrganizationTagsEntity(orgId = orgId, tagId = it) })
+        }
     }
 }
 
