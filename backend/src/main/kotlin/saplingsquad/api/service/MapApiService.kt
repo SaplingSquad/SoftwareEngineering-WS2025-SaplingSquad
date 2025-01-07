@@ -22,11 +22,14 @@ class MapApiService(
     val regionsRepository: RegionsRepository
 ) : MapApiDelegate {
     override suspend fun getOrganizationDetails(orgaId: Int): ResponseEntity<GetOrganizationDetails200Response> {
-        val result = organizationsRepository.readOrganizationAndTagsById(orgaId) ?: throw ResponseStatusException(
-            HttpStatus.NOT_FOUND,
-            "ID does not exist"
-        )
-        val (org, tags) = result
+        val result =
+            organizationsRepository.readOrganizationAndTagsAndProjectsById(orgaId) ?: throw ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "ID does not exist"
+            )
+        val org = result.org
+        val tags = result.tags
+        val projectIds = result.projectIds
         return GetOrganizationDetails200Response(
             orgaId = org.orgId,
             name = org.name,
@@ -38,7 +41,7 @@ class MapApiService(
             imageUrls = emptyList(), //TODO maybe implement images sometime
             coordinates = org.coordinates.toLonLatList(),
             tags = tags.toList(),
-            projectIds = emptyList() //TODO
+            projectIds = projectIds
         ).asHttpOkResponse()
     }
 

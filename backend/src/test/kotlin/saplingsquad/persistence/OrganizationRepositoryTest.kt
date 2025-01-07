@@ -14,6 +14,7 @@ import saplingsquad.persistence.tables.CoordinatesEmbedded
 import saplingsquad.persistence.tables.OrganizationEntity
 import saplingsquad.persistence.tables.organizationEntity
 import saplingsquad.persistence.testconfig.ExampleOrgas
+import saplingsquad.persistence.testconfig.ExampleProjects
 import saplingsquad.persistence.testconfig.PersistenceTestConfiguration
 import kotlin.test.*
 
@@ -34,12 +35,13 @@ class OrganizationRepositoryTest {
     @Test
     fun testGetById() = runTest {
         for (org in ExampleOrgas.orgas) {
-            val result = repository.readOrganizationAndTagsById(org.orgId)
+            val result = repository.readOrganizationAndTagsAndProjectsById(org.orgId)
             assertNotNull(result)
-            assertEquals(org, result.first)
-            assertEquals(ExampleOrgas.tagsOfOrga(org).toSet(), result.second)
+            assertEquals(org, result.org)
+            assertEquals(ExampleOrgas.tagsOfOrga(org).toSet(), result.tags)
+            assertEquals(ExampleProjects.projectIdsForOrga(org.orgId), result.projectIds)
         }
-        val notExistent = repository.readOrganizationAndTagsById(-1)
+        val notExistent = repository.readOrganizationAndTagsAndProjectsById(-1)
         assertNull(notExistent)
     }
 

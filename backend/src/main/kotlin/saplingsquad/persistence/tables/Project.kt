@@ -6,6 +6,9 @@ import org.komapper.annotation.KomapperId
 import org.komapper.annotation.KomapperTable
 import java.time.LocalDate
 
+
+typealias ProjectId = Int
+
 /**
  * The (expected) layout of the "project" table in the DB
  * Represents a single row in the table.
@@ -15,7 +18,7 @@ import java.time.LocalDate
 data class ProjectEntity(
     /** Unique ID of the Row */
     @KomapperId
-    val projectId: Int,
+    val projectId: ProjectId,
 
     val orgId: Int,
 
@@ -40,7 +43,7 @@ data class ProjectEntity(
 data class ProjectTagsEntity(
     /** ID of the Organization */
     @KomapperId
-    val projectId: Int,
+    val projectId: ProjectId,
     /** ID of the Tag */
     @KomapperId
     val tagId: Int,
