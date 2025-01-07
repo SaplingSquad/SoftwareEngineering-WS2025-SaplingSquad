@@ -72,7 +72,7 @@ class OrganizationsRepository(private val db: R2dbcDatabase) {
                 QueryDsl.insert(org)
                     .single(organization)
                     .returning(org.orgId)
-            }!!
+            } ?: throw IllegalStateException("Insertion did not return a new id")
 
             db.runQuery {
                 QueryDsl.insert(orgAcc)

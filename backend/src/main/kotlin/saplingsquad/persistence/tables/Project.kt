@@ -1,9 +1,6 @@
 package saplingsquad.persistence.tables
 
-import org.komapper.annotation.KomapperEmbedded
-import org.komapper.annotation.KomapperEntity
-import org.komapper.annotation.KomapperId
-import org.komapper.annotation.KomapperTable
+import org.komapper.annotation.*
 import java.time.LocalDate
 
 
@@ -17,6 +14,7 @@ typealias ProjectId = Int
 @KomapperTable("project")
 data class ProjectEntity(
     /** Unique ID of the Row */
+    @KomapperAutoIncrement
     @KomapperId
     val projectId: ProjectId,
 
