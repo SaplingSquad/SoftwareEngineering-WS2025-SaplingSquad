@@ -361,6 +361,32 @@ paths:
         '5XX':
           $ref: '#/components/responses/5XX'
   /bookmarks/projects:
+    get:
+      tags:
+        - bookmarks
+      summary: Get project-bookmarks for the active account.
+      description: Request the stored project-bookmarks for the active account.
+      operationId: getProjectBookmarks
+      security:
+        - userToken: []
+      responses:
+        '200':
+          description: List of the project-bookmarks.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  description: The projectId for a bookmarked project.
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
     post:
       tags:
         - bookmarks
@@ -404,6 +430,32 @@ paths:
         '5XX':
           $ref: '#/components/responses/5XX'
   /bookmarks/organizations:
+    get:
+      tags:
+        - bookmarks
+      summary: Get organization-bookmarks for the active account.
+      description: Request the stored project-bookmarks for the active account.
+      operationId: getOrganizationBookmarks
+      security:
+        - userToken: []
+      responses:
+        '200':
+          description: List of the organization-bookmarks.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  description: The orgaId for a bookmarked organization.
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
     post:
       tags:
         - bookmarks
