@@ -1,5 +1,6 @@
 package saplingsquad.api.service
 
+import kotlinx.coroutines.flow.Flow
 import org.springframework.http.ResponseEntity
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.stereotype.Service
@@ -29,4 +30,13 @@ class BookmarksApiService() : BookmarksApiDelegate {
     ): ResponseEntity<Unit> {
         TODO("Not yet implemented")
     }
+
+    override fun getOrganizationBookmarks(userToken: JwtAuthenticationToken): ResponseEntity<Flow<Int>> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getProjectBookmarks(userToken: JwtAuthenticationToken): ResponseEntity<Flow<Int>> {
+        TODO("Not yet implemented")
+    }
+
 }
