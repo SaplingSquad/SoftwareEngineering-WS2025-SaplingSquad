@@ -56,7 +56,7 @@ export default component$(() => {
                     <ul class="menu bg-base-200 text-base-content min-h-full w-80 p-4">
                         <li class="menu-title text-xl">Sprout</li>
 
-                        <li><a href="/">Karte</a></li>
+                        <li><a href="/map">Karte</a></li>
                         <li><a href="/questions">Fragen</a></li>
                     </ul>
                 </div>
