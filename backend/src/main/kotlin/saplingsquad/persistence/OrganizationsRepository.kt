@@ -53,6 +53,25 @@ class OrganizationsRepository(private val db: R2dbcDatabase) {
             OrganizationRegisterResult.Success(orgId)
         }
 
+    suspend fun updateOrganizationOfAccount(
+        accountId: String,
+        organization: OrganizationEntity
+    ): OrganizationUpdateResult =
+        db.withTransaction(transactionProperty = TransactionProperty.IsolationLevel.SERIALIZABLE) {
+            val org = Meta.organizationEntity
+            val existing = readOrganizationOfAccount(accountId)
+                ?: return@withTransaction OrganizationUpdateResult.NoOrganizationRegsitered
+            if (existing.orgId != organization.orgId) {
+                return@withTransaction OrganizationUpdateResult.WrongOrganizationId
+            }
+            db.runQuery {
+                QueryDsl
+                    .update(org)
+                    .single(organization)
+            }
+            OrganizationUpdateResult.Success
+        }
+
     suspend fun readOrganizationOfAccount(accountId: String): OrganizationEntity? {
         val org = Meta.organizationEntity
         val orgAcc = Meta.organizationAccountEntity
@@ -67,6 +86,12 @@ class OrganizationsRepository(private val db: R2dbcDatabase) {
 sealed class OrganizationRegisterResult {
     data class Success(val id: OrganizationId) : OrganizationRegisterResult()
     data object AlreadyRegistered : OrganizationRegisterResult()
+}
+
+enum class OrganizationUpdateResult {
+    Success,
+    NoOrganizationRegsitered,
+    WrongOrganizationId
 }
 
 private fun filterByTagsSqlQuery(answers: List<Int>) = QueryDsl

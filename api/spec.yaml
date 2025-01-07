@@ -509,14 +509,14 @@ paths:
       operationId: updateOrganization
       security:
         - orgaToken: []
-      parameters:
-        - name: organizationDescriptions
-          in: query
-          description: Update an existing organization.
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/OrganizationId'
-              - $ref: '#/components/schemas/Organization'
+      requestBody:
+        description: Update an existing organization.
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/OrganizationId'
+                - $ref: '#/components/schemas/Organization'
       responses:
         '200':
           $ref: '#/components/responses/200'

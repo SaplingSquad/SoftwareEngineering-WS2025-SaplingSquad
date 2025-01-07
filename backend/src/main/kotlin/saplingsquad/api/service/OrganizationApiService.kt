@@ -8,11 +8,12 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
 import saplingsquad.api.OrganizationApiDelegate
+import saplingsquad.api.listToCoordinates
 import saplingsquad.api.models.*
 import saplingsquad.api.toLonLatList
 import saplingsquad.persistence.OrganizationRegisterResult
+import saplingsquad.persistence.OrganizationUpdateResult
 import saplingsquad.persistence.OrganizationsRepository
-import saplingsquad.persistence.tables.CoordinatesEmbedded
 import saplingsquad.persistence.tables.OrganizationEntity
 import saplingsquad.utils.asHttpOkResponse
 
@@ -31,12 +32,7 @@ class OrganizationApiService(private val organizationsRepository: OrganizationsR
                 memberCount = organization.memberCount,
                 websiteUrl = organization.webpageUrl,
                 donationUrl = organization.donatePageUrl,
-                coordinates = organization.coordinates.let {
-                    CoordinatesEmbedded(
-                        it[0].toDouble(),
-                        it[1].toDouble()
-                    )
-                }
+                coordinates = listToCoordinates(organization.coordinates)
             )
         )
         return when (result) {
@@ -73,9 +69,33 @@ class OrganizationApiService(private val organizationsRepository: OrganizationsR
 
     override suspend fun updateOrganization(
         orgaToken: JwtAuthenticationToken,
-        organizationDescriptions: GetOrganizationDetails200Response?
+        getOrganizationDetails200Response: GetOrganizationDetails200Response?
     ): ResponseEntity<Unit> {
-        TODO("Not yet implemented")
+        val organization = getOrganizationDetails200Response ?: throw ResponseStatusException(
+            HttpStatus.BAD_REQUEST, "Missing body"
+        )
+        val result = organizationsRepository.updateOrganizationOfAccount(
+            orgaToken.token.subject, OrganizationEntity(
+                orgId = organization.orgaId,
+                name = organization.name,
+                description = organization.description,
+                foundingYear = organization.foundingYear,
+                memberCount = organization.memberCount,
+                websiteUrl = organization.webpageUrl,
+                donationUrl = organization.donatePageUrl,
+                coordinates = listToCoordinates(organization.coordinates)
+            )
+        )
+        return when (result) {
+            OrganizationUpdateResult.Success -> ResponseEntity.ok().build()
+            OrganizationUpdateResult.NoOrganizationRegsitered -> throw ResponseStatusException(
+                HttpStatus.BAD_REQUEST, "No organization registered yet"
+            )
+
+            OrganizationUpdateResult.WrongOrganizationId -> throw ResponseStatusException(
+                HttpStatus.BAD_REQUEST, "Wrong organization ID in body"
+            )
+        }
     }
 
     override suspend fun createProject(orgaToken: JwtAuthenticationToken, project: Project?): ResponseEntity<Int> {

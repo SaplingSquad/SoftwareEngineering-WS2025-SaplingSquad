@@ -1,5 +1,7 @@
 package saplingsquad.api
 
+import org.springframework.http.HttpStatus
+import org.springframework.web.server.ResponseStatusException
 import saplingsquad.persistence.tables.CoordinatesEmbedded
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -11,9 +13,20 @@ fun CoordinatesEmbedded.toLonLatList(precision: Int? = 6): List<BigDecimal> {
     )
 }
 
+fun listToCoordinates(
+    list: List<BigDecimal>,
+    throwOnError: (size: Int) -> Throwable = { size ->
+        ResponseStatusException(HttpStatus.BAD_REQUEST, "Coordinates array has wrong size (${size})")
+    }
+): CoordinatesEmbedded {
+    if (list.size != 2) throw throwOnError(list.size)
+    return CoordinatesEmbedded(list[0].toDouble(), list[1].toDouble())
+}
+
 private fun BigDecimal.withPrecision(precision: Int?): BigDecimal {
     if (precision == null) {
         return this
     }
     return this.setScale(precision, RoundingMode.HALF_UP)
 }
+
