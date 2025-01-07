@@ -74,7 +74,7 @@ class OrganizationRepositoryTest {
      * - orga id was auto-generated
      */
     @Test
-    fun registerAndReadOrganization() = runTest {
+    fun registerReadAndUpdateOrganization() = runTest {
         val placeholderOrgId = 100
         val testOrg = OrganizationEntity(
             orgId = placeholderOrgId, // must be ignored
@@ -86,6 +86,16 @@ class OrganizationRepositoryTest {
             donationUrl = "test-donation-url",
             coordinates = CoordinatesEmbedded(50.0, 100.0)
         )
+        val updateData = OrganizationEntity(
+            orgId = placeholderOrgId + 1, // must be ignored
+            name = "test-orga-updated",
+            description = "test-description-updated",
+            foundingYear = 1999,
+            memberCount = 99,
+            websiteUrl = "test-website-url-updated",
+            donationUrl = "test-donation-url-updated",
+            coordinates = CoordinatesEmbedded(60.0, 90.0)
+        )
         val accountId = "testaccount-1"
         db.withTransaction(transactionProperty = TransactionProperty.IsolationLevel.SERIALIZABLE) { tx ->
             run {
@@ -93,7 +103,7 @@ class OrganizationRepositoryTest {
                 assertNull(result)
             }
             // Test registration
-            run {
+            val newId = run {
                 val result = repository.tryRegisterOrganization(accountId, testOrg)
                 val id = assertIs<OrganizationRegisterResult.Success>(result).id
                 val inDb = db.runQuery {
@@ -103,15 +113,33 @@ class OrganizationRepositoryTest {
                 }
                 assert(inDb.orgId >= 1000) // Used auto generated id
                 assertEquals(testOrg, inDb.copy(orgId = placeholderOrgId))//reset orgId for comparison
+                id
             }
             // Test retrieval
             run {
                 val result = repository.readOrganizationOfAccount(accountId)
-                assertEquals(testOrg, result?.copy(orgId = placeholderOrgId))
+                assertEquals(testOrg.copy(orgId = newId), result)
 
                 val nonExistentResult = repository.readOrganizationOfAccount("testaccount-2 (non-existent)")
                 assertNull(nonExistentResult)
+
             }
+            // Test update
+            run {
+                val nonExistentResult =
+                    repository.updateOrganizationOfAccount("testaccount-2 (non-existent)", updateData)
+                assertEquals(OrganizationUpdateResult.NoOrganizationRegsitered, nonExistentResult)
+
+                val wrongIdResult = repository.updateOrganizationOfAccount(accountId, updateData)
+                assertEquals(OrganizationUpdateResult.WrongOrganizationId, wrongIdResult)
+
+                val result = repository.updateOrganizationOfAccount(accountId, updateData.copy(orgId = newId))
+                assertEquals(OrganizationUpdateResult.Success, result)
+
+                val updatedResult = repository.readOrganizationOfAccount(accountId)
+                assertEquals(updateData.copy(orgId = newId), updatedResult)
+            }
+
             tx.setRollbackOnly() //Rollback this transaction (only used for this test)
         }
     }
