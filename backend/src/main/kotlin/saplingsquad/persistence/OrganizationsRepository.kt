@@ -27,10 +27,12 @@ class OrganizationsRepository(private val db: R2dbcDatabase) {
         organization: OrganizationEntity
     ): OrganizationRegisterResult =
         db.withTransaction(transactionProperty = TransactionProperty.IsolationLevel.SERIALIZABLE) {
+            val org = Meta.organizationEntity
+            val orgAcc = Meta.organizationAccountEntity
             val exists =
                 db.runQuery {
-                    QueryDsl.from(Meta.organizationAccountEntity)
-                        .where { Meta.organizationAccountEntity.accountId eq accountId }
+                    QueryDsl.from(orgAcc)
+                        .where { orgAcc.accountId eq accountId }
                         .firstOrNull()
                         .map { it != null }
                 }
@@ -38,13 +40,13 @@ class OrganizationsRepository(private val db: R2dbcDatabase) {
                 return@withTransaction OrganizationRegisterResult.AlreadyRegistered
             }
             val orgId = db.runQuery {
-                QueryDsl.insert(Meta.organizationEntity)
+                QueryDsl.insert(org)
                     .single(organization)
-                    .returning(Meta.organizationEntity.orgId)
+                    .returning(org.orgId)
             }!!
 
             db.runQuery {
-                QueryDsl.insert(Meta.organizationAccountEntity)
+                QueryDsl.insert(orgAcc)
                     .single(OrganizationAccountEntity(accountId = accountId, orgId = orgId, verified = false))
             }
 
