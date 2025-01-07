@@ -15,14 +15,28 @@ import org.springframework.stereotype.Repository
 import saplingsquad.persistence.tables.*
 import saplingsquad.utils.atMostOne
 
+typealias OrganizationEntityAndTags = Pair<OrganizationEntity, Set<TagId>>
 
 @Repository
 class OrganizationsRepository(private val db: R2dbcDatabase) {
-    suspend fun readOrganizations(answers: List<Int>): Flow<OrganizationEntity> {
+    fun readOrganizations(answers: List<Int>): Flow<OrganizationEntity> {
         return db.flowQuery {
             filterByTagsSqlQuery(answers)
         }
     }
+
+    suspend fun readOrganizationAndTagsById(organizationId: OrganizationId): OrganizationEntityAndTags? =
+        db.withTransaction {
+            val org = readOrganizationById(organizationId) ?: return@withTransaction null
+
+            val orgTags = Meta.organizationTagsEntity
+
+            val tags = db.flowQuery {
+                QueryDsl.from(orgTags).where { orgTags.orgId eq organizationId }
+            }.map { it.tagId }.toSet()
+
+            return@withTransaction org to tags
+        }
 
     suspend fun tryRegisterOrganization(
         accountId: String,
@@ -83,7 +97,7 @@ class OrganizationsRepository(private val db: R2dbcDatabase) {
             OrganizationUpdateResult.Success
         }
 
-    suspend fun readOrganizationAndTagsOfAccount(accountId: String): Pair<OrganizationEntity, Set<TagId>>? =
+    suspend fun readOrganizationAndTagsOfAccount(accountId: String): OrganizationEntityAndTags? =
         db.withTransaction(transactionProperty = TransactionProperty.IsolationLevel.SERIALIZABLE) {
             val organization = readOrganizationOfAccount(accountId) ?: return@withTransaction null
 
@@ -104,6 +118,14 @@ class OrganizationsRepository(private val db: R2dbcDatabase) {
             QueryDsl.from(org)
                 .innerJoin(orgAcc, on { org.orgId eq orgAcc.orgId })
                 .where { orgAcc.accountId eq accountId }
+        }.atMostOne()
+    }
+
+    private suspend fun readOrganizationById(organizationId: OrganizationId): OrganizationEntity? {
+        val org = Meta.organizationEntity
+        return db.flowQuery {
+            QueryDsl.from(org)
+                .where { org.orgId eq organizationId }
         }.atMostOne()
     }
 

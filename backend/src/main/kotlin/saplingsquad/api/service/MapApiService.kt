@@ -3,8 +3,10 @@ package saplingsquad.api.service
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
+import org.springframework.web.server.ResponseStatusException
 import saplingsquad.api.MapApiDelegate
 import saplingsquad.api.models.*
 import saplingsquad.api.toLonLatList
@@ -20,10 +22,26 @@ class MapApiService(
     val regionsRepository: RegionsRepository
 ) : MapApiDelegate {
     override suspend fun getOrganizationDetails(orgaId: Int): ResponseEntity<GetOrganizationDetails200Response> {
-        TODO("Not yet implemented")
+        val result = organizationsRepository.readOrganizationAndTagsById(orgaId) ?: throw ResponseStatusException(
+            HttpStatus.NOT_FOUND,
+            "ID does not exist"
+        )
+        val (org, tags) = result
+        return GetOrganizationDetails200Response(
+            orgaId = org.orgId,
+            name = org.name,
+            description = org.description,
+            foundingYear = org.foundingYear,
+            memberCount = org.memberCount,
+            webpageUrl = org.websiteUrl,
+            donatePageUrl = org.donationUrl,
+            imageUrls = emptyList(), //TODO maybe implement images sometime
+            coordinates = org.coordinates.toLonLatList(),
+            tags = tags.toList(),
+        ).asHttpOkResponse()
     }
 
-    override fun getOrganizations(): ResponseEntity<Flow<GetOrganizations200ResponseInner>> {
+    override fun getOrganizations(): ResponseEntity<Flow<GetOrganizationDetails200Response>> {
         TODO("Not yet implemented")
     }
 
@@ -52,7 +70,7 @@ class MapApiService(
         TODO("Not yet implemented")
     }
 
-    override fun getProjects(): ResponseEntity<Flow<GetProjects200ResponseInner>> {
+    override fun getProjects(): ResponseEntity<Flow<GetProject200Response>> {
         TODO("Not yet implemented")
     }
 
