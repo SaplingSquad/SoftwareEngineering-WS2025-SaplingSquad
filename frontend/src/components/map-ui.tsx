@@ -1,163 +1,197 @@
-import { component$, useSignal } from "@builder.io/qwik";
+import { type Signal, component$, Slot, useSignal } from "@builder.io/qwik";
 import {
-  HiBars3Outline,
   HiBookmarkOutline,
+  HiChevronDownOutline,
+  HiChevronUpOutline,
+  HiClockOutline,
+  HiFunnelOutline,
   HiMagnifyingGlassOutline,
+  HiMapOutline,
+  HiXMarkOutline,
 } from "@qwikest/icons/heroicons";
 import SproutIcon from "~/../public/Sprout_icon.png?jsx";
+import { defaultFilterSettings, Filter } from "./filter";
+
+// prettier-ignore
+const projects = [
+  { isFavourite: false, title: "Lorem ipsum dolor sit amet" },
+  { isFavourite: true, title: "consetetur sadipscing elitr" },
+  { isFavourite: false, title: "sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat" },
+  { isFavourite: false, title: "sed diam voluptua" },
+  { isFavourite: true, title: "At vero eos et accusam et justo duo dolores et ea rebum" },
+  { isFavourite: false, title: "Stet clita kasd gubergren" },
+  { isFavourite: false, title: "no sea takimata sanctus est Lorem ipsum dolor sit amet" },
+  { isFavourite: false, title: "Lorem ipsum dolor sit amet" },
+  { isFavourite: false, title: "consetetur sadipscing elitr" },
+  { isFavourite: false, title: "sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat" },
+  { isFavourite: false, title: "sed diam voluptua" },
+  { isFavourite: false, title: "At vero eos et accusam et justo duo dolores et ea rebum" },
+  { isFavourite: false, title: "Stet clita kasd gubergren" },
+  { isFavourite: false, title: "no sea takimata sanctus est Lorem ipsum dolor sit amet" },
+];
 
 export const MapMenu = component$(() => {
   const searchActive = useSignal<boolean>(false);
-  const booksmarksActive = useSignal<boolean>(false);
   const listActive = useSignal<boolean>(false);
+  const searchInputRef = useSignal<HTMLInputElement>();
+  const selection = useSignal<number>(0);
+  const filterActive = useSignal<boolean>(false);
+  const listCollapsed = useSignal<boolean>(true);
 
   return (
     <>
-      <div class="navbar fixed top-0 m-4 w-1/5 min-w-fit rounded-box bg-base-100">
-        <div class="navbar-start">
-          <a href="/" class="btn btn-ghost flex items-center text-2xl">
-            <SproutIcon class="h-6 w-6" />
-            Sprout
-          </a>
-        </div>
-        <div class="navbar-center"></div>
-        <div class="navbar-end">
-          <input
-            type="text"
-            placeholder="Suche hier"
-            class={[
-              "rounded-full border px-4 py-2",
-              searchActive.value ? "" : "invisible",
-            ]}
-            onKeyDown$={(event) => {
-              if (event.key == "Enter") {
-                listActive.value = true;
-              }
-            }}
-          />
-          <button
-            class="btn btn-circle btn-ghost"
-            onClick$={() => (searchActive.value = !searchActive.value)}
-          >
-            <HiMagnifyingGlassOutline
-              class={["size-6", searchActive.value ? "fill-black" : ""]}
-            />
-          </button>
-          <button
-            class="btn btn-circle btn-ghost"
-            onClick$={() => (booksmarksActive.value = !booksmarksActive.value)}
-          >
-            <HiBookmarkOutline
-              class={["size-6", booksmarksActive.value ? "fill-black" : ""]}
-            />
-          </button>
-        </div>
-      </div>
-      {listActive.value ? (
-        <div class="fixed left-4 top-24 max-h-[800px] overflow-auto rounded-box bg-base-100 shadow-2xl">
-          <div class="m-4 h-32 w-96 rounded-box bg-base-200 p-4">
-            Hello world
-          </div>
-          <div class="m-4 h-32 w-96 rounded-box bg-base-200 p-4">
-            Hello world
-          </div>
-          <div class="m-4 h-32 w-96 rounded-box bg-base-200 p-4">
-            Hello world
-          </div>
-          <div class="m-4 h-32 w-96 rounded-box bg-base-200 p-4">
-            Hello world
-          </div>
-          <div class="m-4 h-32 w-96 rounded-box bg-base-200 p-4">
-            Hello world
-          </div>
-          <div class="m-4 h-32 w-96 rounded-box bg-base-200 p-4">
-            Hello world
-          </div>
-          <div class="m-4 h-32 w-96 rounded-box bg-base-200 p-4">
-            Hello world
-          </div>
-          <div class="m-4 h-32 w-96 rounded-box bg-base-200 p-4">
-            Hello world
-          </div>
-        </div>
-      ) : (
-        <></>
-      )}
-    </>
-  );
-
-  return (
-    <>
-      <div class="navbar fixed top-0 m-4 w-1/5 min-w-fit rounded-box bg-base-100">
-        <div class="navbar-start">
-          <div class="dropdown">
-            <div tabIndex={0} role="button" class="btn btn-circle btn-ghost">
-              <HiBars3Outline class="size-6" />
-            </div>
-            <ul
-              tabIndex={0}
-              class="menu dropdown-content menu-sm z-[1] mt-3 w-52 rounded-box bg-base-100 p-2 shadow"
-            >
-              <li>
-                <a href="/questions">Questions</a>
-              </li>
-              <li>
-                <a href="/">About</a>
-              </li>
-            </ul>
-          </div>
-          <button
-            class="btn btn-circle btn-ghost"
-            onClick$={() =>
-              (booksmarksSelected.value = !booksmarksSelected.value)
-            }
-          >
-            <HiBookmarkOutline
-              class={["size-6", booksmarksSelected.value ? "fill-black" : ""]}
-            />
-          </button>
-        </div>
-        <div class="navbar-center">
-          <a href="/" class="btn btn-ghost flex items-center text-2xl">
-            <SproutIcon class="h-6 w-6" />
-            Sprout
-          </a>
-        </div>
-        <div class="navbar-end">
-          <button class="btn btn-circle btn-ghost">
-            <HiMagnifyingGlassOutline class="size-6" />
-          </button>
-          <div class="dropdown dropdown-end">
-            <div
-              tabIndex={0}
-              role="button"
-              class="avatar placeholder btn btn-circle btn-ghost indicator"
-            >
-              <span class="badge indicator-item badge-secondary"></span>
-              <div class="w-10 rounded-full bg-accent text-accent-content">
-                <span class="text-2xl">D</span>
+      <div class="pointer-events-none fixed left-0 top-0 flex max-h-screen space-x-2 p-4">
+        <div class="flex flex-col items-center">
+          <div class="flex h-[95%] max-h-max max-w-min flex-col overflow-hidden rounded-box bg-base-200">
+            <div class="navbar pointer-events-auto w-max space-x-2 bg-base-100">
+              <div class="navbar-start">
+                <a href="/" class="btn btn-ghost flex items-center text-2xl">
+                  <SproutIcon class="h-6 w-6" />
+                  Sprout
+                </a>
+              </div>
+              <div class="navbar-end space-x-1">
+                <div class="relative">
+                  <input
+                    ref={searchInputRef}
+                    type="text"
+                    placeholder="Suche nach Projekten, ..."
+                    class="rounded-full border border-primary py-2 pl-4 pr-10 outline-secondary"
+                    onKeyDown$={(event, elem) => {
+                      if (event.key == "Enter") {
+                        listActive.value = true;
+                        elem.blur();
+                      }
+                    }}
+                    onFocusIn$={() => (searchActive.value = true)}
+                    onFocusOut$={(_, elem) =>
+                      (searchActive.value = !!elem.value.trim())
+                    }
+                  />
+                  <button
+                    class={[
+                      "absolute right-3 top-2",
+                      searchActive.value ? "" : "invisible",
+                    ]}
+                    onClick$={() => {
+                      searchInputRef.value!.value = "";
+                      searchActive.value = false;
+                      listActive.value = false;
+                    }}
+                  >
+                    <HiXMarkOutline class="size-7 hover:stroke-error" />
+                  </button>
+                </div>
+                <button
+                  class="btn btn-circle btn-ghost"
+                  onClick$={() => {
+                    if (searchInputRef.value?.value.trim()) {
+                      listActive.value = true;
+                    } else {
+                      searchInputRef.value?.focus();
+                    }
+                  }}
+                >
+                  <HiMagnifyingGlassOutline class="size-6" />
+                </button>
+                <button
+                  class="btn btn-circle btn-ghost"
+                  onClick$={() => (filterActive.value = !filterActive.value)}
+                >
+                  <HiFunnelOutline
+                    class={[
+                      "size-8",
+                      filterActive.value ? "fill-secondary" : "",
+                    ]}
+                  />
+                </button>
               </div>
             </div>
-            <ul
-              tabIndex={0}
-              class="menu dropdown-content menu-sm z-[1] mt-3 w-52 rounded-box bg-base-100 p-2 shadow"
+            <div
+              class={[
+                "transition-all",
+                listCollapsed.value ? "max-h-0" : "max-h-screen",
+              ]}
             >
-              <li>
-                <a href="/" class="justify-between">
-                  Profile
-                  <span class="badge">New</span>
-                </a>
-              </li>
-              <li>
-                <a href="/">Settings</a>
-              </li>
-              <li>
-                <a href="/">Logout</a>
-              </li>
-            </ul>
+              <div class="w-full border"></div>
+              <div class="pointer-events-auto flex-col space-y-4 overflow-auto bg-base-100 p-4 shadow-2xl">
+                <div role="tablist" class="flex">
+                  <Tab selection={selection} idx={0}>
+                    <HiMapOutline class="size-6 stroke-inherit" />
+                  </Tab>
+                  <Tab selection={selection} idx={1}>
+                    <HiBookmarkOutline class="size-6 stroke-inherit" />
+                  </Tab>
+                  <Tab selection={selection} idx={2}>
+                    <HiClockOutline class="size-6 stroke-inherit" />
+                  </Tab>
+                </div>
+                {projects
+                  .filter((proj) =>
+                    proj.title.includes(
+                      searchInputRef.value === undefined
+                        ? ""
+                        : searchInputRef.value.value,
+                    ),
+                  )
+                  .map((proj, idx) => (
+                    <div key={idx} class="h-32 rounded-box bg-base-200 p-4">
+                      {proj.title}
+                    </div>
+                  ))}
+              </div>
+            </div>
           </div>
+          <div
+            class="btn pointer-events-auto w-32 rounded-t-none border-t-0 bg-base-100"
+            onClick$={() => (listCollapsed.value = !listCollapsed.value)}
+          >
+            {listCollapsed.value ? (
+              <HiChevronDownOutline class="size-8" />
+            ) : (
+              <HiChevronUpOutline class="size-8" />
+            )}
+          </div>
+        </div>
+        <div
+          class={[
+            "pointer-events-auto h-fit w-fit",
+            filterActive.value ? "" : "hidden",
+          ]}
+        >
+          <Filter filterSettings={defaultFilterSettings() /* TODO */} />
         </div>
       </div>
     </>
+  );
+});
+
+const Tab = component$((props: { selection: Signal<number>; idx: number }) => {
+  return (
+    <label class="w-full cursor-pointer justify-items-center space-y-2">
+      <input
+        type="radio"
+        name="scope"
+        role="tab"
+        class="hidden"
+        onClick$={() => (props.selection.value = props.idx)}
+        checked
+      />
+      <div
+        class={
+          props.selection.value === props.idx
+            ? "stroke-primary"
+            : "stroke-black"
+        }
+      >
+        <Slot />
+      </div>
+      <div
+        class={[
+          "w-full border",
+          props.selection.value === props.idx ? "border-primary" : "",
+        ]}
+      ></div>
+    </label>
   );
 });
