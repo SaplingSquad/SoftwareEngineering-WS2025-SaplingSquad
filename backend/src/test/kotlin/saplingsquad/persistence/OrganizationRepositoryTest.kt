@@ -31,6 +31,17 @@ class OrganizationRepositoryTest {
     @Autowired
     lateinit var db: R2dbcDatabase
 
+    @Test
+    fun testGetById() = runTest {
+        for (org in ExampleOrgas.orgas) {
+            val result = repository.readOrganizationAndTagsById(org.orgId)
+            assertNotNull(result)
+            assertEquals(org, result.first)
+            assertEquals(ExampleOrgas.tagsOfOrga(org).toSet(), result.second)
+        }
+        val notExistent = repository.readOrganizationAndTagsById(-1)
+        assertNull(notExistent)
+    }
 
     /**
      * Ensure that an empty filter returns every organization

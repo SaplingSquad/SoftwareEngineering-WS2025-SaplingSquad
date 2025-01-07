@@ -77,7 +77,7 @@ object ExampleOrgas {
     // Some orgas have some common tags
     // Some orgas have some multiple tags
     // Some orgas have only one tag
-    private fun tagsOfOrga(o: OrganizationEntity) =
+    fun tagsOfOrga(o: OrganizationEntity) =
         when (o.orgId) {
             in 0..4 -> listOf(0, 1, 2)
             in 5..6 -> listOf(2, 3)
