@@ -15,10 +15,7 @@ import saplingsquad.persistence.tables.OrganizationEntity
 import saplingsquad.persistence.tables.organizationEntity
 import saplingsquad.persistence.testconfig.ExampleOrgas
 import saplingsquad.persistence.testconfig.PersistenceTestConfiguration
-import kotlin.test.Test
-import kotlin.test.assertContains
-import kotlin.test.assertEquals
-import kotlin.test.assertIs
+import kotlin.test.*
 
 /**
  * Test correct behavior of [OrganizationsRepository]
@@ -77,9 +74,10 @@ class OrganizationRepositoryTest {
      * - orga id was auto-generated
      */
     @Test
-    fun registerOrganizationInsertsAllColumns() = runTest {
+    fun registerAndReadOrganization() = runTest {
+        val placeholderOrgId = 100
         val testOrg = OrganizationEntity(
-            orgId = 100, // must be ignored
+            orgId = placeholderOrgId, // must be ignored
             name = "test-orga",
             description = "test-description",
             foundingYear = 2000,
@@ -88,19 +86,33 @@ class OrganizationRepositoryTest {
             donationUrl = "test-donation-url",
             coordinates = CoordinatesEmbedded(50.0, 100.0)
         )
-        val accountId = "account-1"
-        val inDb = db.withTransaction(transactionProperty = TransactionProperty.IsolationLevel.SERIALIZABLE) { tx ->
-            val result = repository.tryRegisterOrganization(accountId, testOrg)
-            val id = assertIs<OrganizationRegisterResult.Success>(result).id
-            val inDb = db.runQuery {
-                QueryDsl.from(Meta.organizationEntity).where {
-                    Meta.organizationEntity.orgId eq id
-                }.single()
+        val accountId = "testaccount-1"
+        db.withTransaction(transactionProperty = TransactionProperty.IsolationLevel.SERIALIZABLE) { tx ->
+            run {
+                val result = repository.readOrganizationOfAccount(accountId)
+                assertNull(result)
+            }
+            // Test registration
+            run {
+                val result = repository.tryRegisterOrganization(accountId, testOrg)
+                val id = assertIs<OrganizationRegisterResult.Success>(result).id
+                val inDb = db.runQuery {
+                    QueryDsl.from(Meta.organizationEntity).where {
+                        Meta.organizationEntity.orgId eq id
+                    }.single()
+                }
+                assert(inDb.orgId >= 1000) // Used auto generated id
+                assertEquals(testOrg, inDb.copy(orgId = placeholderOrgId))//reset orgId for comparison
+            }
+            // Test retrieval
+            run {
+                val result = repository.readOrganizationOfAccount(accountId)
+                assertEquals(testOrg, result?.copy(orgId = placeholderOrgId))
+
+                val nonExistentResult = repository.readOrganizationOfAccount("testaccount-2 (non-existent)")
+                assertNull(nonExistentResult)
             }
             tx.setRollbackOnly() //Rollback this transaction (only used for this test)
-            inDb
         }
-        assert(inDb.orgId >= 1000) // Used auto generated id
-        assertEquals(testOrg, inDb.copy(orgId = 100))//reset orgId for comparison
     }
 }
