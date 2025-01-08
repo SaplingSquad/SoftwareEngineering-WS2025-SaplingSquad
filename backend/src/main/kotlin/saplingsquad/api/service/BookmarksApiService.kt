@@ -1,32 +1,46 @@
 package saplingsquad.api.service
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import org.springframework.http.ResponseEntity
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.stereotype.Service
 import saplingsquad.api.BookmarksApiDelegate
+import saplingsquad.persistence.BookmarksRepository
 
 @Service
-class BookmarksApiService() : BookmarksApiDelegate {
-
+class BookmarksApiService(private val bookmarksRepository: BookmarksRepository) : BookmarksApiDelegate {
     override suspend fun bookmarkOrganization(userToken: JwtAuthenticationToken, orgaId: Int): ResponseEntity<Unit> {
-        TODO("Not yet implemented")
+        bookmarksRepository.insertOrganizationBookmark(userToken.token.subject, orgaId)
+        return ResponseEntity.ok().build()
     }
 
     override suspend fun bookmarkProject(userToken: JwtAuthenticationToken, projectId: Int): ResponseEntity<Unit> {
-        TODO("Not yet implemented")
+        bookmarksRepository.insertProjectBookmark(userToken.token.subject, projectId)
+        return ResponseEntity.ok().build()
     }
 
     override suspend fun deleteOrganizationBookmark(
-        userToken: JwtAuthenticationToken,
-        orgaId: Int
+        userToken: JwtAuthenticationToken, orgaId: Int
     ): ResponseEntity<Unit> {
-        TODO("Not yet implemented")
+        bookmarksRepository.deleteOrganizationBookmark(userToken.token.subject, orgaId)
+        return ResponseEntity.ok().build()
     }
 
     override suspend fun deleteProjectBookmark(
-        userToken: JwtAuthenticationToken,
-        projectId: Int
+        userToken: JwtAuthenticationToken, projectId: Int
     ): ResponseEntity<Unit> {
-        TODO("Not yet implemented")
+        bookmarksRepository.deleteProjectBookmark(userToken.token.subject, projectId)
+        return ResponseEntity.ok().build()
+    }
+
+    override fun getOrganizationBookmarks(userToken: JwtAuthenticationToken): ResponseEntity<Flow<Int>> {
+        val result = bookmarksRepository.readOrganizationBookmarks(userToken.token.subject).map { e -> e.orgId }
+        return ResponseEntity.ok().body(result)
+    }
+
+    override fun getProjectBookmarks(userToken: JwtAuthenticationToken): ResponseEntity<Flow<Int>> {
+        val result = bookmarksRepository.readProjectBookmarks(userToken.token.subject).map { e -> e.projectId }
+        return ResponseEntity.ok().body(result)
     }
 }

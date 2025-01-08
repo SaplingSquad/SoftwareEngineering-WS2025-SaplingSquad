@@ -42,3 +42,14 @@ data class OrganizationTagsEntity(
     @KomapperId
     val tagId: Int,
 )
+
+@KomapperEntity
+@KomapperTable("organization_bookmarks")
+data class OrganizationBookmarksEntity(
+    /** Keycloak ID of the user account */
+    @KomapperId
+    val accountId: String,
+    /** ID of the Organization */
+    @KomapperId
+    val orgId: Int,
+)
