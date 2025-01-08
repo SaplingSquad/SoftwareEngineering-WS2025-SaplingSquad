@@ -12,6 +12,12 @@ import SproutIcon from "/src/images/Sprout_icon.png?jsx";
 import AllIcon from "/src/images/All_Icon.svg?jsx";
 import { type FilterSettings, Filter } from "./filter";
 
+enum ResultTab {
+  ALL,
+  BOOKMARKS,
+  HISTORY,
+}
+
 // prettier-ignore
 const projects = [
   { isFavourite: false, title: "Lorem ipsum dolor sit amet" },
@@ -34,9 +40,28 @@ const projects = [
  * The UI laid over the map, provides options to control what is shown on the map and displays the results in a list.
  */
 export const MapUI = component$((props: { filterSettings: FilterSettings }) => {
-  const selection = useSignal<number>(0);
+  const tabSelection = useSignal<ResultTab>(ResultTab.ALL);
   const filterActive = useSignal<boolean>(false);
-  const listCollapsed = useSignal<boolean>(true);
+  const listExpanded = useSignal<boolean>(false);
+  const searchText = useSignal<string>("");
+
+  const filteredProjects = projects
+    .filter((proj) => {
+      switch (tabSelection.value) {
+        case ResultTab.ALL:
+          return true;
+        case ResultTab.BOOKMARKS:
+          return proj.isFavourite;
+        case ResultTab.HISTORY:
+          return false;
+      }
+    })
+    .filter((proj) => proj.title.includes(searchText.value))
+    .map((proj, idx) => (
+      <div key={idx} class="h-32 rounded-box bg-base-200 p-4">
+        {proj.title}
+      </div>
+    ));
 
   return (
     <>
@@ -46,28 +71,26 @@ export const MapUI = component$((props: { filterSettings: FilterSettings }) => {
             <Navbar
               filterSettings={props.filterSettings}
               filterWindowActive={filterActive}
+              listExpanded={listExpanded}
+              searchText={searchText}
             />
             <div class="w-full border" />
             <div class="flex flex-col overflow-hidden bg-base-100 p-4">
               <Tablist
-                selection={selection}
-                useBtnStyle={listCollapsed.value}
+                selection={tabSelection}
+                useBtnStyle={!listExpanded.value}
               />
               <div
                 class={[
                   "space-y-2 overflow-y-auto transition-all",
-                  listCollapsed.value ? "h-0" : "h-full",
+                  listExpanded.value ? "h-full" : "h-0",
                 ]}
               >
-                {projects.map((proj, idx) => (
-                  <div key={idx} class="h-32 rounded-box bg-base-200 p-4">
-                    {proj.title}
-                  </div>
-                ))}
+                {filteredProjects}
               </div>
             </div>
           </div>
-          <ExpandLatch collapsedProperty={listCollapsed} />
+          <ExpandLatch expandedProperty={listExpanded} />
         </div>
         <div
           class={[
@@ -83,17 +106,15 @@ export const MapUI = component$((props: { filterSettings: FilterSettings }) => {
 });
 
 /**
- * The navbar allows to search the results and configure the filter.
+ * The navbar shows the project logo and name, contains the search and allows to configure the filter.
  */
 const Navbar = component$(
   (props: {
     filterSettings: FilterSettings;
     filterWindowActive: Signal<boolean>;
+    listExpanded: Signal<boolean>;
+    searchText: Signal<string>;
   }) => {
-    const searchInputRef = useSignal<HTMLInputElement>();
-    const searchActive = useSignal<boolean>(false);
-    const listActive = useSignal<boolean>(false);
-
     return (
       <div class="navbar w-max space-x-2 bg-base-100">
         <div class="navbar-start">
@@ -103,55 +124,78 @@ const Navbar = component$(
           </a>
         </div>
         <div class="navbar-end space-x-1">
-          <div class="relative">
-            <input
-              ref={searchInputRef}
-              type="text"
-              placeholder="Suche nach Projekten, ..."
-              class="rounded-full border border-primary py-2 pl-4 pr-10 outline-secondary"
-              onKeyDown$={(event, elem) => {
-                if (event.key == "Enter") {
-                  listActive.value = true;
-                  elem.blur();
-                }
-              }}
-              onFocusIn$={() => (searchActive.value = true)}
-              onFocusOut$={(_, elem) =>
-                (searchActive.value = !!elem.value.trim())
-              }
-            />
-            <button
-              class={[
-                "absolute right-3 top-2",
-                searchActive.value ? "" : "invisible",
-              ]}
-              onClick$={() => {
-                searchInputRef.value!.value = "";
-                searchActive.value = false;
-                listActive.value = false;
-              }}
-            >
-              <HiXMarkOutline class="size-7 hover:stroke-error" />
-            </button>
-          </div>
-          <button
-            class="btn btn-circle btn-ghost"
-            onClick$={() => {
-              if (searchInputRef.value?.value.trim()) {
-                listActive.value = true;
-              } else {
-                searchInputRef.value?.focus();
-              }
-            }}
-          >
-            <HiMagnifyingGlassOutline class="size-6" />
-          </button>
+          <Search
+            listExpanded={props.listExpanded}
+            searchText={props.searchText}
+          />
           <FilterButton
             filterSettings={props.filterSettings}
             filterWindowActive={props.filterWindowActive}
           />
         </div>
       </div>
+    );
+  },
+);
+
+/**
+ * The search helps in finding specific projects and organizations.
+ */
+const Search = component$(
+  (props: { listExpanded: Signal<boolean>; searchText: Signal<string> }) => {
+    const searchInputRef = useSignal<HTMLInputElement>();
+    const searchActive = useSignal<boolean>(false);
+
+    return (
+      <>
+        <div class="relative">
+          <input
+            ref={searchInputRef}
+            type="text"
+            placeholder="Suche nach Projekten, ..."
+            class="rounded-full border border-primary py-2 pl-4 pr-10 outline-secondary"
+            onKeyDown$={(event, elem) => {
+              const searchText = elem.value.trim();
+              if (searchText && event.key == "Enter") {
+                elem.blur();
+                props.listExpanded.value = true;
+                props.searchText.value = searchText;
+              }
+            }}
+            onFocusIn$={() => (searchActive.value = true)}
+            onFocusOut$={(_, elem) =>
+              (searchActive.value = !!elem.value.trim())
+            }
+          />
+          <button
+            class={[
+              "absolute right-3 top-2",
+              searchActive.value ? "" : "invisible",
+            ]}
+            onClick$={() => {
+              searchInputRef.value!.value = "";
+              searchActive.value = false;
+              props.searchText.value = "";
+            }}
+          >
+            <HiXMarkOutline class="size-7 hover:stroke-error" />
+          </button>
+        </div>
+        <button
+          class="btn btn-circle btn-ghost"
+          onClick$={() => {
+            const searchText = searchInputRef.value?.value.trim();
+            if (searchText) {
+              props.listExpanded.value = true;
+              props.searchText.value = searchText;
+            } else {
+              searchInputRef.value?.focus();
+            }
+          }}
+        >
+          <HiMagnifyingGlassOutline class="size-6" />
+        </button>
+      </>
     );
   },
 );
@@ -283,18 +327,18 @@ const Tab = component$(
  * This latch controls whether the list view is collapsed or expanded.
  */
 const ExpandLatch = component$(
-  (props: { collapsedProperty: Signal<boolean> }) => {
+  (props: { expandedProperty: Signal<boolean> }) => {
     return (
       <div
         class="btn pointer-events-auto w-32 rounded-t-none border-t-0 bg-base-100"
         onClick$={() =>
-          (props.collapsedProperty.value = !props.collapsedProperty.value)
+          (props.expandedProperty.value = !props.expandedProperty.value)
         }
       >
-        {props.collapsedProperty.value ? (
-          <HiChevronDownOutline class="size-8" />
-        ) : (
+        {props.expandedProperty.value ? (
           <HiChevronUpOutline class="size-8" />
+        ) : (
+          <HiChevronDownOutline class="size-8" />
         )}
       </div>
     );
