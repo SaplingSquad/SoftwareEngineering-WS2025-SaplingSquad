@@ -2,7 +2,6 @@ package saplingsquad.api.service
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.runBlocking
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -49,16 +48,12 @@ class BookmarksApiService(private val bookmarksRepository: BookmarksRepository) 
     }
 
     override fun getOrganizationBookmarks(userToken: JwtAuthenticationToken): ResponseEntity<Flow<Int>> {
-        val result = runBlocking<Flow<Int>> {
-            bookmarksRepository.readOrganizationBookmarks(userToken.token.subject).map { e -> e.orgId }
-        }
+        val result = bookmarksRepository.readOrganizationBookmarks(userToken.token.subject).map { e -> e.orgId }
         return ResponseEntity.ok().contentType(MediaType.TEXT_PLAIN).body(result)
     }
 
     override fun getProjectBookmarks(userToken: JwtAuthenticationToken): ResponseEntity<Flow<Int>> {
-        val result = runBlocking<Flow<Int>> {
-            bookmarksRepository.readProjectBookmarks(userToken.token.subject).map { e -> e.projectId }
-        }
+        val result = bookmarksRepository.readProjectBookmarks(userToken.token.subject).map { e -> e.projectId }
         return ResponseEntity.ok().contentType(MediaType.TEXT_PLAIN).body(result)
     }
 }

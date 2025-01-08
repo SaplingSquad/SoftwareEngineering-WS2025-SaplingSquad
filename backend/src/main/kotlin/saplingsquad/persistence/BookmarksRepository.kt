@@ -75,7 +75,7 @@ class BookmarksRepository(private val db: R2dbcDatabase) {
     /**
      * Read all project bookmarks for the given user ID
      */
-    suspend fun readProjectBookmarks(userId: String): Flow<ProjectBookmarksEntity> = db.flowQuery {
+    fun readProjectBookmarks(userId: String): Flow<ProjectBookmarksEntity> = db.flowQuery {
         val p = Meta.projectBookmarksEntity
         QueryDsl.from(p).where { p.accountId eq userId }
     }
@@ -83,7 +83,7 @@ class BookmarksRepository(private val db: R2dbcDatabase) {
     /**
      * Read all organization bookmarks for the given user ID
      */
-    suspend fun readOrganizationBookmarks(userId: String): Flow<OrganizationBookmarksEntity> = db.flowQuery {
+    fun readOrganizationBookmarks(userId: String): Flow<OrganizationBookmarksEntity> = db.flowQuery {
         val o = Meta.organizationBookmarksEntity
         QueryDsl.from(o).where { o.accountId eq userId }
     }
