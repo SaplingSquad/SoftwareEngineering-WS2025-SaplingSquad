@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import saplingsquad.persistence.tables.CoordinatesEmbedded
 import saplingsquad.persistence.tables.OrganizationEntity
+import saplingsquad.persistence.tables.OrganizationId
 import saplingsquad.persistence.tables.ProjectEntity
 import saplingsquad.persistence.testconfig.ExampleProjects
 import saplingsquad.persistence.testconfig.PersistenceTestConfiguration
@@ -118,30 +119,19 @@ class ProjectRepositoryTest {
                 if (i != 5) setOf(i, i + 1) else emptySet()
             )
         }
-        val updateData = ProjectEntity(
-            projectId = placeholderProjectId, // set this later in test
-            orgId = placeholderProjectOrgId + 1, // must be ignored
-            title = "test-proj-updated",
-            description = "test-description-updated",
-            dateFrom = null,
-            dateTo = LocalDate.of(2024, 10, 10),
-            websiteUrl = "test-website-url-updated",
-            donationUrl = "test-donation-url-updated",
-            coordinates = CoordinatesEmbedded(60.0, 90.0)
-        )
-        val updateTags = setOf(4, 5, 6)
         val accountId = "testaccount-1"
+        val nonExistentAccountId = "testaccount-2 (non-existent)"
         db.withTransaction(transactionProperty = TransactionProperty.IsolationLevel.SERIALIZABLE) { tx ->
             val orgaId = run {
                 val result = orgaRepository.tryRegisterOrganization(accountId, testOrg, testTags)
-                val id = assertIs<OrganizationRegisterResult.Success>(result).id
+                val id = result.assertSuccess()
                 id
             }
             // Test insertion
             val projectIds = run {
                 val projectIds = testProjects.map { (project, tags) ->
                     val result = repository.createProjectForAccount(accountId, project, tags)
-                    val id = assertIs<ProjectCreateResult.Success>(result).id
+                    val id = assertIs<ProjectCrRdResult.Success<Int>>(result).value
                     // Check uses auto generated Id
                     assert(id >= 1000)
                     id
@@ -150,18 +140,18 @@ class ProjectRepositoryTest {
                 assertEquals(projectIds.toSet().size, projectIds.size)
 
                 val nonExistentResult = repository.createProjectForAccount(
-                    "testaccount-2 (non-existent)",
+                    nonExistentAccountId,
                     testProjects[0].first,
                     testProjects[0].second
                 )
-                assertIs<ProjectCreateResult.OrganizationNotRegisteredYet>(nonExistentResult)
+                assertIs<ProjectCrRdResult.OrganizationNotRegisteredYet>(nonExistentResult)
                 projectIds
             }
 
             // Test retrieval
-            val projects = run {
+            run {
                 val result = repository.readProjectsByAccount(accountId)
-                val projects = assertIs<ProjectsReadFromAccountResult.Success>(result).projects
+                val projects = assertIs<ProjectCrRdResult.Success<List<ProjectEntityAndTags>>>(result).value
                 assertEquals(testProjects.size, projects.size)
 
                 // Check all ids match with created
@@ -183,12 +173,47 @@ class ProjectRepositoryTest {
                     }.toSet()
                 )
 
-                val nonExistentResult = repository.readProjectsByAccount("testaccount-2 (non-existent)")
-                assertIs<ProjectsReadFromAccountResult.OrganizationNotRegisteredYet>(nonExistentResult)
-                projects
+                val nonExistentResult = repository.readProjectsByAccount(nonExistentAccountId)
+                assertIs<ProjectCrRdResult.OrganizationNotRegisteredYet>(nonExistentResult)
+            }
+
+            // Test update
+            run {
+                val toUpdateProjectId = projectIds[2]
+                val updateData = ProjectEntity(
+                    projectId = toUpdateProjectId, // set this later in test
+                    orgId = placeholderProjectOrgId + 1, // must be ignored
+                    title = "test-proj-updated",
+                    description = "test-description-updated",
+                    dateFrom = null,
+                    dateTo = LocalDate.of(2024, 10, 10),
+                    websiteUrl = "test-website-url-updated",
+                    donationUrl = "test-donation-url-updated",
+                    coordinates = CoordinatesEmbedded(60.0, 90.0)
+                )
+                val updateTags = setOf(2, 4, 5)
+                val result = repository.updateProjectOfAccount(accountId, updateData, updateTags)
+                assertEquals(ProjectUpdDelResult.Success, result)
+
+                val wrongAccountResult =
+                    repository.updateProjectOfAccount(accountId, updateData.copy(projectId = 10), updateTags)
+                assertEquals(ProjectUpdDelResult.ProjectDoesNotBelongToAccount, wrongAccountResult)
+
+                // ids of ExampleProject.projects are multiples of 10
+                val nonExistentProjectResult =
+                    repository.updateProjectOfAccount(accountId, updateData.copy(projectId = 11), updateTags)
+                assertEquals(ProjectUpdDelResult.ProjectDoesNotBelongToAccount, nonExistentProjectResult)
             }
 
             tx.setRollbackOnly() //Rollback this transaction (only used for this test)
         }
     }
+}
+
+private fun OrganizationRegisterResult.assertSuccess(): OrganizationId {
+    return assertIs<OrganizationRegisterResult.Success>(this).id
+}
+
+private fun <T> ProjectCrRdResult<T>.assertSuccess(): T {
+    return assertIs<ProjectCrRdResult.Success<T>>(this).value
 }

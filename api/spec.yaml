@@ -568,7 +568,7 @@ paths:
       security:
         - orgaToken: []
       requestBody:
-        description: Create a project.
+        description: The data of the new Project
         content:
           application/json:
             schema:
@@ -590,18 +590,19 @@ paths:
         - organization
       summary: Update a project. This can only be done by a logged in
                organization.
-      description: Update an existing project from an organization.
+      description: Update an existing project of an organization.
       operationId: updateProject
       security:
         - orgaToken: []
-      parameters:
-        - name: projectDescriptions
-          in: query
-          description: Update an existing project.
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/ProjectId'
-              - $ref: '#/components/schemas/Project'
+      requestBody:
+        description: The existing project with the matching projectId is fully overwritten with this.
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/ProjectId'
+                - $ref: '#/components/schemas/Project'
+        required: true
       responses:
         '200':
           $ref: '#/components/responses/200'

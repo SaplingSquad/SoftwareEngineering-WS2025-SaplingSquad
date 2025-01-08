@@ -123,8 +123,8 @@ class OrganizationApiService(
             tags = project.tags.toSet()
         )
         return when (result) {
-            is ProjectCreateResult.Success -> result.id.asHttpOkResponse()
-            is ProjectCreateResult.OrganizationNotRegisteredYet -> throw ResponseStatusException(
+            is ProjectCrRdResult.Success -> result.value.asHttpOkResponse()
+            is ProjectCrRdResult.OrganizationNotRegisteredYet -> throw ResponseStatusException(
                 HttpStatus.FORBIDDEN,
                 "Organization registration not completed yet"
             )
@@ -134,12 +134,12 @@ class OrganizationApiService(
     override fun getProjectForOrga(orgaToken: JwtAuthenticationToken): ResponseEntity<Flow<GetProject200Response>> {
         return flowOfList {
             when (val result = projectsRepository.readProjectsByAccount(orgaToken.token.subject)) {
-                is ProjectsReadFromAccountResult.OrganizationNotRegisteredYet -> throw ResponseStatusException(
+                is ProjectCrRdResult.OrganizationNotRegisteredYet -> throw ResponseStatusException(
                     HttpStatus.FORBIDDEN,
                     "Organization registration not completed yet"
                 )
 
-                is ProjectsReadFromAccountResult.Success -> result.projects.map { (proj, tags) ->
+                is ProjectCrRdResult.Success -> result.value.map { (proj, tags) ->
                     GetProject200Response(
                         projectId = proj.projectId,
                         name = proj.title,
@@ -159,9 +159,39 @@ class OrganizationApiService(
 
     override suspend fun updateProject(
         orgaToken: JwtAuthenticationToken,
-        projectDescriptions: GetProject200Response?
+        getProject200Response: GetProject200Response
     ): ResponseEntity<Unit> {
-        TODO("Not yet implemented")
+        //noinspection UnnecessaryLocalVariable
+        val proj = getProject200Response
+
+        val result = projectsRepository.updateProjectOfAccount(
+            orgaToken.token.subject,
+            ProjectEntity(
+                projectId = proj.projectId,
+                orgId = 0, // must be ignored by repository
+                title = proj.name,
+                description = proj.description,
+                dateFrom = proj.dateFrom?.let { monthAndYearToDate(it, DateContext.START_DATE) },
+                dateTo = proj.dateTo?.let { monthAndYearToDate(it, DateContext.END_DATE) },
+                websiteUrl = proj.webpageUrl,
+                donationUrl = proj.donatePageUrl,
+                coordinates = listToCoordinates(proj.coordinates)
+            ),
+            proj.tags.toSet()
+        )
+        return when (result) {
+            ProjectUpdDelResult.Success -> ResponseEntity.ok().build()
+            ProjectUpdDelResult.OrganizationNotRegisteredYet -> throw ResponseStatusException(
+                HttpStatus.FORBIDDEN,
+                "Organization registration not completed yet"
+            )
+
+            ProjectUpdDelResult.NonExistentProjectId, ProjectUpdDelResult.ProjectDoesNotBelongToAccount ->
+                throw ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Invalid project id"
+                )
+        }
     }
 
     override suspend fun deleteProject(orgaToken: JwtAuthenticationToken, projectId: Int): ResponseEntity<Unit> {
