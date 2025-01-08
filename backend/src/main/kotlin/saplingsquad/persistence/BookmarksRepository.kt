@@ -16,6 +16,27 @@ import saplingsquad.persistence.tables.projectBookmarksEntity
  */
 @Repository
 class BookmarksRepository(private val db: R2dbcDatabase) {
+    /**
+     * Insert a bookmark for a project for the given user ID
+     */
+    suspend fun insertProjectBookmark(userId: String, projectId: Int): ProjectBookmarksEntity? {
+        return db.runQuery {
+            QueryDsl.insert(Meta.projectBookmarksEntity)
+                .onDuplicateKeyIgnore()
+                .executeAndGet(ProjectBookmarksEntity(userId, projectId))
+        }
+    }
+
+    /**
+     * Insert a bookmark for an organization for the given user ID
+     */
+    suspend fun insertOrganizationBookmark(userId: String, projectId: Int): OrganizationBookmarksEntity? {
+        return db.runQuery {
+            QueryDsl.insert(Meta.organizationBookmarksEntity)
+                .onDuplicateKeyIgnore()
+                .executeAndGet(OrganizationBookmarksEntity(userId, projectId))
+        }
+    }
 
     /**
      * Read all project bookmarks for the given user ID
