@@ -4,9 +4,11 @@ on:
   push:
     paths:
       - "backend/**"
+      - "api/**"
   pull_request:
     paths:
       - "backend/**"
+      - "api/**"
   workflow_dispatch:
 
 defaults:

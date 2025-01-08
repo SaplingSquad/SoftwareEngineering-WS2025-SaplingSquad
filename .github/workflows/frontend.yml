@@ -4,9 +4,11 @@ on:
   push:
     paths:
       - "frontend/**"
+      - "api/**"
   pull_request:
     paths:
       - "frontend/**"
+      - "api/**"
 
 defaults:
   run:
