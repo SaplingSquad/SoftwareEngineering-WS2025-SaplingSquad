@@ -50,7 +50,6 @@ class OrganizationRepositoryTest {
     fun testFilterAtLeast3() = runTest {
         // Very specific filter, only 2 organizations (ids 5,6) in test setup have all those tags
         val result = repository.readOrganizations(listOf(2, 3)).toList()
-        result.forEach(::println)
         assertEquals(7, result.size)
         assertContains(5..6, result[0].orgId)
         assertContains(5..6, result[1].orgId)
