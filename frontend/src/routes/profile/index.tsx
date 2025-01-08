@@ -4,6 +4,8 @@ import type { ProfileProjectsProps } from "~/components/profile/profile";
 import { useSession } from "../plugin@auth";
 import { getAccountType, isAccTypeOrg, isAccTypeUser, useAccountType } from "~/auth/tools";
 import { LoginOverviewParamsForm } from "~/components/auth/login";
+import { routeLoader$ } from "@builder.io/qwik-city";
+import { api } from "~/api/api_url";
 
 const DEMO_IMAGE = "https://picsum.photos/300";
 
@@ -14,11 +16,24 @@ const data: ProfileProjectsProps[] = [
     { img: DEMO_IMAGE, title: "Katastrophenhilfe", text: "Gemeinden in Katastrophengebieten mit Nothilfe und langfristiger Unterstützung beistehen?" },
 ]
 
+export const VereinInformations = routeLoader$(async () => {
+    try {
+        const resp = await fetch(api("/organization"))
+        const json = await resp.json();
+        return (
+            json
+        )
+    } catch (error) {
+        return []
+    }
+})
+
 export default component$(() => {
     const store = useStore(data);
     const session = useSession();
     const accType = getAccountType(session.value)
     const useaccType = useAccountType(session)
+    const vereinData = VereinInformations().value
 
     const ProfileAccountController = useComputed$(() => {
         const isAuthorized = session.value?.user?.email
