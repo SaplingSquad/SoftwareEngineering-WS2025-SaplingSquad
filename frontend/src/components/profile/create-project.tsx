@@ -1,102 +1,10 @@
 import { $, ClassList, component$, noSerialize, NoSerialize, QRL, useOn, useSignal } from "@builder.io/qwik";
 import { HiUserCircleOutline, HiPlusCircleSolid, HiCog6ToothOutline, HiTrashOutline } from "@qwikest/icons/heroicons";
 import maplibregl from "maplibre-gl";
-import { ClickHandlers, Images, Layers, Sources } from "./map";
+import { ClickHandlers, Images, Layers, Sources } from "../map";
+import { MapLocationInput } from "./utils";
 /*import { Map } from "~/views/map";*/
 /*import { Map } from "~/components/map";*/
-
-const createMap = (
-    options: maplibregl.MapOptions,
-    sources: Sources,
-    layers: Layers,
-    images: Images,
-    clickHandlers: ClickHandlers,
-) => {
-    const map = new maplibregl.Map(options);
-    return map;
-};
-
-const Map = component$(
-    ({
-        class: clz,
-        style = "https://tiles.versatiles.org/assets/styles/colorful.json",
-        sources = {},
-        layers$ = $([]),
-        images = {},
-        onClick = [],
-    }: {
-        /**
-         * Classes to set
-         */
-        class?: ClassList;
-        /**
-         * The map style. Will default to versatiles colorful
-         */
-        style?: string;
-        /**
-         * Datasources to add to the map
-         */
-        sources?: Sources;
-        /**
-         * Layers to add to the map
-         */
-        layers$?: QRL<Layers>;
-        /**
-         * Images to load into the map
-         */
-        images?: Images;
-        /**
-         * Handlers for click events on the map
-         */
-        onClick?: ClickHandlers;
-    }) => {
-        const map = useSignal<NoSerialize<maplibregl.Map>>();
-        const markSign = useSignal<NoSerialize<maplibregl.Marker>>();
-        const containerRef = useSignal<HTMLElement>();
-        const coordsLat = useSignal<number>();
-        const coordsLng = useSignal<number>();
-
-        useOn(
-            "qvisible",
-            $(async () => {
-                if (!containerRef.value) {
-                    console.warn("Map-container does not exist");
-                    return;
-                }
-                const createdMap = createMap(
-                    {
-                        container: containerRef.value,
-                        style: style,
-                    },
-                    sources,
-                    await layers$.resolve(),
-                    images,
-                    onClick,
-                )
-                markSign.value = noSerialize(
-                    new maplibregl.Marker({ draggable: true })
-                        .setLngLat([0, 0])
-                        .addTo(createdMap)
-                )
-                coordsLat.value = markSign.value?.getLngLat().lat
-                coordsLng.value = markSign.value?.getLngLat().lng
-                /*map.value = noSerialize(
-                    createdMap[0],
-                );*/
-            }),
-        );
-
-        return (
-            <>
-                <div>
-                    <div ref={containerRef} class={clz}>
-                        Loading map...
-                    </div>
-                </div>
-            </>
-        );
-    },
-);
 
 const Vereinsdaten = component$(() => {
     return (
@@ -126,10 +34,9 @@ const Vereinsdaten = component$(() => {
                     <div class="card card-compact bg-base-100 shadow-xl">
                         <figure>
                             <div id="map"></div>
-                            <Map class="h-[30rem] w-[40rem] rounded-2xl" />
+                            <MapLocationInput class="h-[30rem] w-[40rem] rounded-2xl" />
                         </figure>
                     </div>
-
                 </div>
             </label>
             <label class="form-control w-full max-w">
