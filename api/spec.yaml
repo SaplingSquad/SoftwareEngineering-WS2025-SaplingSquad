@@ -180,6 +180,13 @@ paths:
                 allOf:
                   - $ref: '#/components/schemas/OrganizationId'
                   - $ref: '#/components/schemas/Organization'
+                  - type: object
+                    properties:
+                      projectIds:
+                        type: array
+                        items:
+                          type: integer
+                          description: Unique ID of a project from the organization.
         '400':
           $ref: '#/components/responses/400'
         '401':

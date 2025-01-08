@@ -50,11 +50,11 @@ class OrganizationApiService(private val organizationsRepository: OrganizationsR
         }
     }
 
-    override suspend fun getOrganization(orgaToken: JwtAuthenticationToken): ResponseEntity<GetOrganizationDetails200Response> {
+    override suspend fun getOrganization(orgaToken: JwtAuthenticationToken): ResponseEntity<GetOrganizations200ResponseInner> {
         return organizationsRepository
             .readOrganizationAndTagsOfAccount(orgaToken.token.subject)!!
             .let { (org, tags) ->
-                GetOrganizationDetails200Response(
+                GetOrganizations200ResponseInner(
                     orgaId = org.orgId,
                     name = org.name,
                     description = org.description,
@@ -72,9 +72,9 @@ class OrganizationApiService(private val organizationsRepository: OrganizationsR
 
     override suspend fun updateOrganization(
         orgaToken: JwtAuthenticationToken,
-        getOrganizationDetails200Response: GetOrganizationDetails200Response?
+        getOrganizations200ResponseInner: GetOrganizations200ResponseInner?
     ): ResponseEntity<Unit> {
-        val organization = getOrganizationDetails200Response ?: throw ResponseStatusException(
+        val organization = getOrganizations200ResponseInner ?: throw ResponseStatusException(
             HttpStatus.BAD_REQUEST, "Missing body"
         )
         val result = organizationsRepository.updateOrganizationOfAccount(

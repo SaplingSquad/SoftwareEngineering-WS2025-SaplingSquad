@@ -143,13 +143,17 @@ object ExampleProjects {
     }
 
     // Create unique projectIds with 1 to 3 projects per organization
-    val projects = List(10) { orgId ->
+    fun projectIdsForOrga(orgId: OrganizationId): List<ProjectId> {
         val n = orgId + 10
-        when (orgId) {
+        return when (orgId) {
             in 0..3 -> listOf(n, 2 * n, 3 * n)
             in 4..5 -> listOf(4 * n, 5 * n)
             else -> listOf(6 * n)
-        }.map { projectId -> createProjectI(projectId, orgId) }
+        }
+    }
+
+    val projects = List(10) { orgId ->
+        projectIdsForOrga(orgId).map { projectId -> createProjectI(projectId, orgId) }
     }.flatten()
 
     private fun tagsOfProject(p: ProjectEntity) =

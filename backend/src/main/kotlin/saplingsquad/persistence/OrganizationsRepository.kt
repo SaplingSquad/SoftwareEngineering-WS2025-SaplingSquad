@@ -2,6 +2,7 @@ package saplingsquad.persistence
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.flow.toSet
 import org.komapper.core.dsl.Meta
 import org.komapper.core.dsl.QueryDsl
@@ -17,6 +18,12 @@ import saplingsquad.utils.atMostOne
 
 typealias OrganizationEntityAndTags = Pair<OrganizationEntity, Set<TagId>>
 
+data class OrganizationEntityProjectIdsAndTags(
+    val org: OrganizationEntity,
+    val tags: Set<TagId>,
+    val projectIds: List<ProjectId>
+)
+
 @Repository
 class OrganizationsRepository(private val db: R2dbcDatabase) {
     fun readOrganizations(answers: List<Int>): Flow<OrganizationEntity> {
@@ -25,7 +32,7 @@ class OrganizationsRepository(private val db: R2dbcDatabase) {
         }
     }
 
-    suspend fun readOrganizationAndTagsById(organizationId: OrganizationId): OrganizationEntityAndTags? =
+    suspend fun readOrganizationAndTagsAndProjectsById(organizationId: OrganizationId): OrganizationEntityProjectIdsAndTags? =
         db.withTransaction {
             val org = readOrganizationById(organizationId) ?: return@withTransaction null
 
@@ -35,7 +42,12 @@ class OrganizationsRepository(private val db: R2dbcDatabase) {
                 QueryDsl.from(orgTags).where { orgTags.orgId eq organizationId }
             }.map { it.tagId }.toSet()
 
-            return@withTransaction org to tags
+            val proj = Meta.projectEntity
+            val projectIds = db.flowQuery {
+                QueryDsl.from(proj).where { proj.orgId eq organizationId }
+            }.map { it.projectId }.toList()
+
+            return@withTransaction OrganizationEntityProjectIdsAndTags(org, tags, projectIds)
         }
 
     suspend fun tryRegisterOrganization(
