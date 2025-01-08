@@ -30,57 +30,61 @@ const projects = [
   { isFavourite: false, title: "no sea takimata sanctus est Lorem ipsum dolor sit amet" },
 ];
 
-export const MapMenu = component$(
-  (props: { filterSettings: FilterSettings }) => {
-    const selection = useSignal<number>(0);
-    const filterActive = useSignal<boolean>(false);
-    const listCollapsed = useSignal<boolean>(true);
+/**
+ * The UI laid over the map, provides options to control what is shown on the map and displays the results in a list.
+ */
+export const MapUI = component$((props: { filterSettings: FilterSettings }) => {
+  const selection = useSignal<number>(0);
+  const filterActive = useSignal<boolean>(false);
+  const listCollapsed = useSignal<boolean>(true);
 
-    return (
-      <>
-        <div class="pointer-events-none fixed left-0 top-0 flex h-screen items-start space-x-2 p-4">
-          <div class="flex h-full flex-col items-center">
-            <div class="pointer-events-auto flex max-w-min flex-col overflow-hidden rounded-box bg-base-200">
-              <Navbar
-                filterSettings={props.filterSettings}
-                filterWindowActive={filterActive}
+  return (
+    <>
+      <div class="pointer-events-none fixed left-0 top-0 flex h-screen items-start space-x-2 p-4">
+        <div class="flex h-full flex-col items-center">
+          <div class="pointer-events-auto flex max-w-min flex-col overflow-hidden rounded-box bg-base-200">
+            <Navbar
+              filterSettings={props.filterSettings}
+              filterWindowActive={filterActive}
+            />
+            <div class="w-full border" />
+            <div class="flex flex-col overflow-hidden bg-base-100 p-4">
+              <Tablist
+                selection={selection}
+                useBtnStyle={listCollapsed.value}
               />
-              <div class="w-full border" />
-              <div class="flex flex-col overflow-hidden bg-base-100 p-4">
-                <Tablist
-                  selection={selection}
-                  useBtnStyle={listCollapsed.value}
-                />
-                <div
-                  class={[
-                    "space-y-2 overflow-y-auto transition-all",
-                    listCollapsed.value ? "h-0" : "h-full",
-                  ]}
-                >
-                  {projects.map((proj, idx) => (
-                    <div key={idx} class="h-32 rounded-box bg-base-200 p-4">
-                      {proj.title}
-                    </div>
-                  ))}
-                </div>
+              <div
+                class={[
+                  "space-y-2 overflow-y-auto transition-all",
+                  listCollapsed.value ? "h-0" : "h-full",
+                ]}
+              >
+                {projects.map((proj, idx) => (
+                  <div key={idx} class="h-32 rounded-box bg-base-200 p-4">
+                    {proj.title}
+                  </div>
+                ))}
               </div>
             </div>
-            <ExpandLatch collapsedProperty={listCollapsed} />
           </div>
-          <div
-            class={[
-              "pointer-events-auto w-full",
-              filterActive.value ? "" : "hidden",
-            ]}
-          >
-            <Filter filterSettings={props.filterSettings} />
-          </div>
+          <ExpandLatch collapsedProperty={listCollapsed} />
         </div>
-      </>
-    );
-  },
-);
+        <div
+          class={[
+            "pointer-events-auto w-full",
+            filterActive.value ? "" : "hidden",
+          ]}
+        >
+          <Filter filterSettings={props.filterSettings} />
+        </div>
+      </div>
+    </>
+  );
+});
 
+/**
+ * The navbar allows to search the results and configure the filter.
+ */
 const Navbar = component$(
   (props: {
     filterSettings: FilterSettings;
@@ -152,6 +156,9 @@ const Navbar = component$(
   },
 );
 
+/**
+ * A button to open the filter pane, which also communicates whether the filter is active.
+ */
 const FilterButton = component$(
   (props: {
     filterSettings: FilterSettings;
@@ -193,6 +200,9 @@ const FilterButton = component$(
   },
 );
 
+/**
+ * The tablist allows to switch between showing all results, only the bookmarked results or only the recent results.
+ */
 const Tablist = component$(
   (props: { selection: Signal<number>; useBtnStyle: boolean }) => {
     return (
@@ -223,6 +233,9 @@ const Tablist = component$(
   },
 );
 
+/**
+ * Each tab can either be styled as a tab or as a button, depending on whether the list view is collapsed or not.
+ */
 const Tab = component$(
   (props: { useBtnStyle: boolean; selection: Signal<number>; idx: number }) => {
     return (
@@ -266,6 +279,9 @@ const Tab = component$(
   },
 );
 
+/**
+ * This latch controls whether the list view is collapsed or expanded.
+ */
 const ExpandLatch = component$(
   (props: { collapsedProperty: Signal<boolean> }) => {
     return (
