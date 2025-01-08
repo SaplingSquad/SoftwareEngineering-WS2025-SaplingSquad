@@ -33,7 +33,7 @@ export const useQuestionFilter = routeLoader$(async (req) => {
 
 export default component$(() => {
   const session = useSession();
-  const authHeader = useAuthHeader(session);
+  const authHeader = useAuthHeader();
   const helloText = useComputed$(() => {
     const email = session.value?.user?.email;
     return email ? `Hallo ${email}` : "Nicht eingeloggt";

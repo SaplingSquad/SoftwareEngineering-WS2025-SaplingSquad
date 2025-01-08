@@ -3,8 +3,8 @@ FROM node:22-alpine AS cache
 
 WORKDIR /cache
 
-COPY ./package.json ./
-COPY ./package-lock.json ./
+COPY ./frontend/package.json ./
+COPY ./frontend/package-lock.json ./
 
 RUN npm ci
 
@@ -17,6 +17,8 @@ COPY --from=cache /cache/node_modules ./node_modules
 
 COPY ./ ./
 
+WORKDIR /build/frontend
+
 RUN npm run build
 
 # Final run-image
@@ -24,9 +26,9 @@ FROM node:22-alpine AS run
 
 WORKDIR /app
 
-COPY --from=build /build/node_modules ./node_modules
-COPY --from=build /build/server ./server
-COPY --from=build /build/dist ./dist
+COPY --from=build /build/frontend/node_modules ./node_modules
+COPY --from=build /build/frontend/server ./server
+COPY --from=build /build/frontend/dist ./dist
 
 EXPOSE 3000
 
