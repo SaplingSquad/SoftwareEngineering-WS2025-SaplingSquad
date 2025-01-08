@@ -1,0 +1,111 @@
+<svg
+      fill="none"
+      viewBox="0 0 41 24"
+      stroke-width="1.5"
+      stroke="inherit"
+      version="1.1"
+      id="svg2"
+      width="41"
+      xmlns="http://www.w3.org/2000/svg"
+>
+    <defs id="defs2">
+    <linearGradient id="swatch6">
+        <stop
+        style="stop-color:#000000;stop-opacity:1;"
+        offset="0"
+        id="stop6"
+        />
+    </linearGradient>
+    <linearGradient id="swatch5">
+        <stop
+        style="stop-color:#000000;stop-opacity:1;"
+        offset="0"
+        id="stop5"
+        />
+    </linearGradient>
+    <linearGradient id="swatch4">
+        <stop
+        style="stop-color:#000000;stop-opacity:1;"
+        offset="0"
+        id="stop4"
+        />
+    </linearGradient>
+    <linearGradient id="swatch3">
+        <stop
+        style="stop-color:#000000;stop-opacity:1;"
+        offset="0"
+        id="stop3"
+        />
+    </linearGradient>
+    <linearGradient id="swatch2">
+        <stop
+        style="stop-color:#000000;stop-opacity:1;"
+        offset="0"
+        id="stop2"
+        />
+    </linearGradient>
+    <linearGradient id="swatch1">
+        <stop
+        style="stop-color:#000000;stop-opacity:1;"
+        offset="0"
+        id="stop1"
+        />
+    </linearGradient>
+    </defs>
+    <g
+    id="g4"
+    style="fill:#ffffff;fill-opacity:0"
+    transform="rotate(-20.934588,14.337702,18.244507)"
+    >
+    <path
+        id="path4"
+        style="fill:none;fill-opacity:0"
+        d="M 14.318357,3.3664402 A 7.5,7.5 0 0 0 4.5005967,10.499306 c 0,7.142 7.4987653,11.250077 7.4987653,11.250077 0,0 2.304322,-1.26212 4.358076,-3.602533 -0.727961,-2.446786 -0.981076,-5.334289 0.133822,-8.2486397 A 8.4749602,8.4749602 0 0 1 18.529295,6.8447647 7.5,7.5 0 0 0 14.318357,3.3664402 Z"
+    />
+    <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="m 15,10.5 a 3,3 0 1 1 -6,0 3,3 0 0 1 6,0 z"
+        id="path3"
+        style="fill:#ffffff;fill-opacity:0"
+    />
+    </g>
+    <g
+    id="g10"
+    style="fill:#ffffff;fill-opacity:0"
+    transform="matrix(1.1299947,0,0,1.1299947,8.2813781,-2.1845193)"
+    >
+    <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="m 15,10.5 a 3,3 0 1 1 -6,0 3,3 0 0 1 6,0 z"
+        id="path10"
+        style="fill:#ffffff;fill-opacity:0"
+    />
+    <path
+        id="path11"
+        style="display:inline;fill:#ffffff;fill-opacity:0;stroke-linecap:butt;stroke-miterlimit:4"
+        d="m 19.482625,11.04899 c 0.0098,-0.181206 0.01729,-0.364332 0.01729,-0.549643 -1.72e-4,-4.1418951 -3.3578,-7.4995208 -7.499695,-7.4996892 -4.1418928,1.717e-4 -7.4995175,3.3577964 -7.4996891,7.4996892 0,7.142 7.4996891,11.250399 7.4996891,11.250399 0,0 2.994304,-1.642674 5.199106,-4.653592 0.0342,-0.0467 0.05784,-0.09719 0.102012,-0.141093"
+    />
+    </g>
+    <g
+    id="g8"
+    style="fill:#ffffff;fill-opacity:0"
+    transform="matrix(0.69819782,0.33786154,-0.33786154,0.69819782,28.977992,3.553379)"
+    >
+    <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="m 19.5,10.5 c 0,7.142 -7.5,11.25 -7.5,11.25 0,0 -7.5,-4.108 -7.5,-11.25 a 7.5,7.5 0 1 1 15,0 z"
+        id="path7"
+        style="fill:#ffffff;fill-opacity:0"
+    />
+    <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="m 15,10.5 a 3,3 0 1 1 -6,0 3,3 0 0 1 6,0 z"
+        id="path8"
+        style="fill:#ffffff;fill-opacity:0"
+    />
+    </g>
+</svg>
