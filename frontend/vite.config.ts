@@ -5,7 +5,6 @@
 import { defineConfig, type UserConfig } from "vite";
 import { qwikVite } from "@builder.io/qwik/optimizer";
 import { qwikCity } from "@builder.io/qwik-city/vite";
-import { generateContract } from "@openapi-ts-rest/core";
 import { exec } from "child_process";
 import fs from "fs";
 import { promisify } from "util";
@@ -27,10 +26,8 @@ const KEYCLOAK_HOST_FOR_PROXY = "http://localhost:5555";
 const DEFAULT_AUTH_ISSUER_USERS = `${(process.env.ORIGIN ?? "http://localhost:5173")}/authkc/realms/sprout-users`;
 const DEFAULT_AUTH_ISSUER_ORGS = `${(process.env.ORIGIN ?? "http://localhost:5173")}/authkc/realms/sprout-orgs`;
 
-
-// Paths for API-generator
+// Path to api-specification
 const API_SPEC = "../api/spec.yaml";
-const API_CLIENT_TARGET = "./src/api/api_client.gen.ts";
 
 if (!process.env.BACKEND) {
   console.warn(`'BACKEND' url not set. Defaulting to '${DEFAULT_BACKEND}'`);
@@ -66,18 +63,11 @@ export default defineConfig(({ command, mode }): UserConfig => {
   return {
     plugins: [
       {
-        name: "generate-api-client",
+        name: "generate-api",
         buildStart: {
           async handler() {
             // Generate API based on API spec.
-            const update_api = async () => {
-              // api_client
-              await generateContract({ openApi: API_SPEC })
-                .then((api) => fs.promises.writeFile(API_CLIENT_TARGET, api))
-                .then(() => console.log("Updated api spec"));
-              // api helpers
-              await promisify(exec)("npm run build.api_helpers");
-            };
+            const update_api = () => promisify(exec)("npm run gen.api");
             await update_api();
             /// Automatically update API in watch-mode
             if (this.meta.watchMode) fs.watchFile(API_SPEC, update_api);

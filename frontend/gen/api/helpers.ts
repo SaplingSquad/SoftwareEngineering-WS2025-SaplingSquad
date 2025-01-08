@@ -1,12 +1,13 @@
 // Generates helpers (functions and hooks) for the API using templates in `templates`
 
-import { AppRoute, isAppRouteMutation, isAppRouteNoBody } from "@ts-rest/core";
-import nunjucks from "nunjucks";
-import { ZodObject } from "zod";
-import { contract as apiContract } from "./src/api/api_client.gen";
-import fs from "fs";
 import SwaggerParser from "@apidevtools/swagger-parser";
+import type { AppRoute } from "@ts-rest/core";
+import { isAppRouteMutation, isAppRouteNoBody } from "@ts-rest/core";
+import fs from "fs";
+import nunjucks from "nunjucks";
 import { OpenAPIV3 as OpenAPI } from "openapi-types";
+import { ZodObject } from "zod";
+import { contract as apiContract } from "~/api/api_client.gen";
 
 /**
  * The target location for the hooks
@@ -38,11 +39,9 @@ const apiSpec = (await SwaggerParser.dereference(
  * @returns whether authentication is required
  */
 const requiresAuthentication = (operation: string): boolean => {
-  if (!apiSpec.paths)
-    throw new Error("Mismatch in API-spec: API-spec is empty.");
   const operationSpec = Object.values(apiSpec.paths)
     .filter((e) => !!e)
-    .flatMap((e) => Object.values(OpenAPI.HttpMethods).map((m) => e[m]))
+    .flatMap((e) => Object.values(OpenAPI.HttpMethods).map((m) => e?.[m]))
     .filter((e) => e?.operationId === operation)[0];
   if (!operationSpec)
     throw new Error(
@@ -94,7 +93,7 @@ const objectKeys = (object: unknown) => {
  * The hook-definitions extracted from the API-contract and the API-spec.
  */
 const apiDef = Object.entries(apiContract).map(([name, r]) => {
-  const route: AppRoute = r;
+  const route = r as AppRoute;
 
   // Deduplication for hook-parameters
   const dedup = mkDedup();
