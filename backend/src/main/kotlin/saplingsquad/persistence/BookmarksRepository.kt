@@ -53,7 +53,7 @@ class BookmarksRepository(private val db: R2dbcDatabase) {
                     .map { it != null }
             }
         if (exists)
-            QueryDsl.delete(p).single(ProjectBookmarksEntity(userId, projectId))
+            db.runQuery { QueryDsl.delete(p).single(ProjectBookmarksEntity(userId, projectId)) }
     }
 
     /**
@@ -69,7 +69,7 @@ class BookmarksRepository(private val db: R2dbcDatabase) {
                     .map { it != null }
             }
         if (exists)
-            QueryDsl.delete(o).single(OrganizationBookmarksEntity(userId, projectId))
+            db.runQuery { QueryDsl.delete(o).single(OrganizationBookmarksEntity(userId, projectId)) }
     }
 
     /**
