@@ -1,0 +1,75 @@
+// This file is generated using `gen_hooks` (`npm run gen_hooks`) from `api_hooks.ts.njk`.
+// Do not edit manually!
+
+import { useResource$ } from "@builder.io/qwik";
+import type { ClientInferRequest } from "@ts-rest/core";
+{% for hook in hooks -%}
+	{%- if not authImported and hook.auth -%}
+		{%- set authImported = true -%}
+		import { useAuthHeader } from "~/auth/useauthheader";
+	{%- endif -%}
+{%- endfor %}
+import type { MaybeSignal } from "./api";
+import { client, maybeTrack } from "./api";
+import type { contract } from "./api_client.gen";
+
+// https://stackoverflow.com/a/57103940
+type DistributiveOmit<T, K extends keyof any> = T extends any
+  ? Omit<T, K>
+  : never;
+
+{% for hook in hooks %}
+export const use{{ hook.name }} = (
+	{%- for param in hook.params %}
+		{{ param.deduplicated }}: MaybeSignal<ClientInferRequest<typeof contract.{{ hook.function }}>["params"]["{{ param.original }}"]>,
+	{%- endfor %}
+	{%- for query in hook.query %}
+		{{ query.deduplicated }}: MaybeSignal<ClientInferRequest<typeof contract.{{ hook.function }}>["query"]["{{ query.original }}"]>,
+	{%- endfor %}
+	{%- if hook.body %}
+		body: MaybeSignal<ClientInferRequest<typeof contract.{{ hook.function }}>["body"]>,
+	{%- endif %}
+) => {
+	{%- if hook.auth %}
+		const authHeaders = useAuthHeader();
+	{%- endif %}
+	return useResource$((
+		{%- if hook.params|length or hook.query|length or hook.body %}
+			{ track }
+		{%- endif %}
+	) =>
+		client
+			.{{ hook.function }}({
+				{%- if hook.params|length %}
+					params: { 
+						{%- for param in hook.params %}
+							{{ param.original }}: maybeTrack<ClientInferRequest<typeof contract.{{ hook.function }}>["params"]["{{ param.original }}"]>(track, {{ param.deduplicated }}),
+						{%- endfor %}
+					},
+				{%- endif %}
+				{%- if hook.query|length %}
+					query: { 
+						{%- for query in hook.query %}
+							{{ query.original }}: maybeTrack<ClientInferRequest<typeof contract.{{ hook.function }}>["query"]["{{ query.original }}"]>(track, {{ query.deduplicated }}),
+						{%- endfor %}
+					},
+				{%- endif %}
+				{%- if hook.body %}
+					body: maybeTrack<ClientInferRequest<typeof contract.{{ hook.function }}>["body"]>(track, body),
+				{%- endif %}
+				{%- if hook.auth %}
+					extraHeaders: authHeaders.value,
+				{%- endif %}
+			})
+		.then((e) =>
+			({
+				status: e.status,
+				headers: Object.fromEntries(e.headers.entries()), // Make headers serializable
+				body: e.body,
+			}) as DistributiveOmit<typeof e, "headers"> & {
+				headers: Record<string, string>;
+			},
+		),
+	);
+}
+{%- endfor %}

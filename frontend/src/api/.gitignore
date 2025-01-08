@@ -1,2 +1,2 @@
-# The generated API-client
-api_client.gen.ts
+# Generated API-files
+*.gen.ts

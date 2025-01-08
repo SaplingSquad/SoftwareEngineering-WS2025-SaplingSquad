@@ -6,7 +6,9 @@ import { defineConfig, type UserConfig } from "vite";
 import { qwikVite } from "@builder.io/qwik/optimizer";
 import { qwikCity } from "@builder.io/qwik-city/vite";
 import { generateContract } from "@openapi-ts-rest/core";
+import { exec } from "child_process";
 import fs from "fs";
+import { promisify } from "util";
 import tsconfigPaths from "vite-tsconfig-paths";
 import pkg from "./package.json";
 
@@ -68,10 +70,14 @@ export default defineConfig(({ command, mode }): UserConfig => {
         buildStart: {
           async handler() {
             // Generate API based on API spec.
-            const update_api = () =>
-              generateContract({ openApi: API_SPEC })
+            const update_api = async () => {
+              // api_client
+              await generateContract({ openApi: API_SPEC })
                 .then((api) => fs.promises.writeFile(API_CLIENT_TARGET, api))
                 .then(() => console.log("Updated api spec"));
+              // api_hooks
+              await promisify(exec)("npm run build.api_hooks");
+            };
             await update_api();
             /// Automatically update API in watch-mode
             if (this.meta.watchMode) fs.watchFile(API_SPEC, update_api);
