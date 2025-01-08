@@ -15,12 +15,16 @@ export const {{ def.function }} = (
 	{%- if def.auth %}
 		authHeaders: Record<string, string> | undefined,
 	{%- endif %}
-	{%- for param in def.params %}
-		{{ param.deduplicated }}: ClientInferRequest<typeof contract.{{ def.function }}>["params"]["{{ param.original }}"],
-	{%- endfor %}
-	{%- for query in def.query %}
-		{{ query.deduplicated }}: ClientInferRequest<typeof contract.{{ def.function }}>["query"]["{{ query.original }}"],
-	{%- endfor %}
+	{%- if def.params|length or def.query|length %}
+		parameters: {
+			{%- for param in def.params %}
+				{{ param.deduplicated }}: ClientInferRequest<typeof contract.{{ def.function }}>["params"]["{{ param.original }}"],
+			{%- endfor %}
+			{%- for query in def.query %}
+				{{ query.deduplicated }}: ClientInferRequest<typeof contract.{{ def.function }}>["query"]["{{ query.original }}"],
+			{%- endfor %}
+		},
+	{%- endif %}
 	{%- if def.body %}
 		body: ClientInferRequest<typeof contract.{{ def.function }}>["body"],
 	{%- endif %}
@@ -29,14 +33,14 @@ export const {{ def.function }} = (
 		{%- if def.params|length %}
 			params: { 
 				{%- for param in def.params %}
-					{{ param.original }}: {{ param.deduplicated }},
+					{{ param.original }}: parameters.{{ param.deduplicated }},
 				{%- endfor %}
 			},
 		{%- endif %}
 		{%- if def.query|length %}
 			query: { 
 				{%- for query in def.query %}
-					{{ query.original }}: {{ query.deduplicated }},
+					{{ query.original }}: parameters.{{ query.deduplicated }},
 				{%- endfor %}
 			},
 		{%- endif %}

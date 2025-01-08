@@ -16,12 +16,16 @@ import * as api from "./api_methods.gen";
 
 {% for def in apiDef %}
 export const use{{ def.name }} = (
-	{%- for param in def.params %}
-		{{ param.deduplicated }}: MaybeSignal<ClientInferRequest<typeof contract.{{ def.function }}>["params"]["{{ param.original }}"]>,
-	{%- endfor %}
-	{%- for query in def.query %}
-		{{ query.deduplicated }}: MaybeSignal<ClientInferRequest<typeof contract.{{ def.function }}>["query"]["{{ query.original }}"]>,
-	{%- endfor %}
+	{%- if def.params|length or def.query|length %}
+		parameters: {
+			{%- for param in def.params %}
+				{{ param.deduplicated }}: MaybeSignal<ClientInferRequest<typeof contract.{{ def.function }}>["params"]["{{ param.original }}"]>,
+			{%- endfor %}
+			{%- for query in def.query %}
+				{{ query.deduplicated }}: MaybeSignal<ClientInferRequest<typeof contract.{{ def.function }}>["query"]["{{ query.original }}"]>,
+			{%- endfor %}
+		},
+	{%- endif %}
 	{%- if def.body %}
 		body: MaybeSignal<ClientInferRequest<typeof contract.{{ def.function }}>["body"]>,
 	{%- endif %}
@@ -38,12 +42,16 @@ export const use{{ def.name }} = (
 			{%- if def.auth %}
 				authHeaders.value,
 			{%- endif %}
-			{%- for param in def.params %}
-				maybeTrack<ClientInferRequest<typeof contract.{{ def.function }}>["params"]["{{ param.original }}"]>(track, {{ param.deduplicated }}),
-			{%- endfor %}
-			{%- for query in def.query %}
-				maybeTrack<ClientInferRequest<typeof contract.{{ def.function }}>["query"]["{{ query.original }}"]>(track, {{ query.deduplicated }}),
-			{%- endfor %}
+			{%- if def.params|length or def.query|length %}
+				{
+					{%- for param in def.params %}
+						{{ param.deduplicated }}: maybeTrack<ClientInferRequest<typeof contract.{{ def.function }}>["params"]["{{ param.original }}"]>(track, parameters.{{ param.deduplicated }}),
+					{%- endfor %}
+					{%- for query in def.query %}
+						{{ query.deduplicated }}: maybeTrack<ClientInferRequest<typeof contract.{{ def.function }}>["query"]["{{ query.original }}"]>(track, parameters.{{ query.deduplicated }}),
+					{%- endfor %}
+				},
+			{%- endif %}
 			{%- if def.body %}
 				maybeTrack<ClientInferRequest<typeof contract.{{ def.function }}>["body"]>(track, body),
 			{%- endif %}
