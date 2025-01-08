@@ -78,19 +78,22 @@ class ProjectsRepository(private val db: R2dbcDatabase) {
         }
 
     /**
-     * Read the list of projects belonging to the account's organization.
+     * Update a single project belonging to the account's organization.
+     * This method ignores [project.orgId][ProjectEntity.orgId]:
+     * - `orgId` is derived from the [accountId] parameter
      * @return
      *  - [OrganizationNotRegisteredYet][ProjectUpdDelResult.OrganizationNotRegisteredYet]
      * if the org-account has never called the POST /organization endpoint to complete the registration
-     *  - [NonExistentProjectId][ProjectUpdDelResult.NonExistentProjectId] if a project with this id does not exist or
-     *  does not belong to this organization
+     *  - [NonExistentProjectId][ProjectUpdDelResult.NonExistentProjectId] if a project with this id does not exist
+     *  - [ProjectDoesNotBelongtoAccount][ProjectUpdDelResult.ProjectDoesNotBelongToAccount] if a project with this id does not
+     *  belong to this organization
      *  - [Success][ProjectUpdDelResult.Success] on success
      */
     suspend fun updateProjectOfAccount(
         accountId: String,
         project: ProjectEntity,
         tags: Set<TagId>
-    ): ProjectUpdDelResult = db.withTransaction {
+    ): ProjectUpdDelResult = db.withTransaction(transactionProperty = SERIALIZABLE) {
         val account =
             readOrgAccount(accountId) ?: return@withTransaction ProjectUpdDelResult.OrganizationNotRegisteredYet
         val p = Meta.projectEntity
@@ -115,6 +118,41 @@ class ProjectsRepository(private val db: R2dbcDatabase) {
         insertTagsForProject(project.projectId, tags)
         ProjectUpdDelResult.Success
     }
+
+    /**
+     * Delete a project belonging to the account's organization.
+     * @return
+     *  - [OrganizationNotRegisteredYet][ProjectUpdDelResult.OrganizationNotRegisteredYet]
+     * if the org-account has never called the POST /organization endpoint to complete the registration
+     *  - [NonExistentProjectId][ProjectUpdDelResult.NonExistentProjectId] if a project with this id does not exist
+     *  - [ProjectDoesNotBelongtoAccount][ProjectUpdDelResult.ProjectDoesNotBelongToAccount] if a project with this id
+     *  does not belong to this organization
+     *  - [Success][ProjectUpdDelResult.Success] on success
+     */
+    suspend fun deleteProjectOfAccount(accountId: String, projectId: ProjectId) =
+        db.withTransaction(transactionProperty = SERIALIZABLE) {
+            val account =
+                readOrgAccount(accountId) ?: return@withTransaction ProjectUpdDelResult.OrganizationNotRegisteredYet
+            val p = Meta.projectEntity
+            val pTags = Meta.projectTagsEntity
+
+            val existingProject = db.flowQuery {
+                QueryDsl.from(p)
+                    .where { p.projectId eq projectId }
+            }.atMostOne() ?: return@withTransaction ProjectUpdDelResult.NonExistentProjectId
+
+            if (existingProject.orgId != account.orgId) {
+                return@withTransaction ProjectUpdDelResult.ProjectDoesNotBelongToAccount
+            }
+
+            db.runQuery {
+                QueryDsl.delete(pTags).where { pTags.projectId eq projectId }
+            }
+            db.runQuery {
+                QueryDsl.delete(p).where { p.projectId eq projectId }
+            }
+            ProjectUpdDelResult.Success
+        }
 
     private suspend fun insertTagsForProject(projectId: ProjectId, tags: Set<TagId>) {
         val pTag = Meta.projectTagsEntity

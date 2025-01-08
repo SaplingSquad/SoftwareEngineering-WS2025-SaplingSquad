@@ -199,10 +199,27 @@ class ProjectRepositoryTest {
                     repository.updateProjectOfAccount(accountId, updateData.copy(projectId = 10), updateTags)
                 assertEquals(ProjectUpdDelResult.ProjectDoesNotBelongToAccount, wrongAccountResult)
 
-                // ids of ExampleProject.projects are multiples of 10
+                // ids of ExampleProject.projects start from 10
                 val nonExistentProjectResult =
-                    repository.updateProjectOfAccount(accountId, updateData.copy(projectId = 11), updateTags)
-                assertEquals(ProjectUpdDelResult.ProjectDoesNotBelongToAccount, nonExistentProjectResult)
+                    repository.updateProjectOfAccount(accountId, updateData.copy(projectId = 9), updateTags)
+                assertEquals(ProjectUpdDelResult.NonExistentProjectId, nonExistentProjectResult)
+            }
+
+            // Test delete
+            run {
+                val removeWithId = projectIds[3]
+                val result = repository.deleteProjectOfAccount(accountId, removeWithId)
+                assertEquals(ProjectUpdDelResult.Success, result)
+
+                val readProjectsResult = repository.readProjectsByAccount(accountId).assertSuccess()
+                assertEquals(testProjects.size - 1, readProjectsResult.size)
+                assert(readProjectsResult.none { it.first.projectId == removeWithId })
+
+                val wrongAccountResult = repository.deleteProjectOfAccount(accountId, 10)
+                assertEquals(ProjectUpdDelResult.ProjectDoesNotBelongToAccount, wrongAccountResult)
+
+                val nonExistentProjectResult = repository.deleteProjectOfAccount(accountId, 9)
+                assertEquals(ProjectUpdDelResult.NonExistentProjectId, nonExistentProjectResult)
             }
 
             tx.setRollbackOnly() //Rollback this transaction (only used for this test)

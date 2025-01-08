@@ -195,6 +195,19 @@ class OrganizationApiService(
     }
 
     override suspend fun deleteProject(orgaToken: JwtAuthenticationToken, projectId: Int): ResponseEntity<Unit> {
-        TODO("Not yet implemented")
+        val result = projectsRepository.deleteProjectOfAccount(orgaToken.token.subject, projectId)
+        return when (result) {
+            ProjectUpdDelResult.Success -> ResponseEntity.ok().build()
+            ProjectUpdDelResult.OrganizationNotRegisteredYet -> throw ResponseStatusException(
+                HttpStatus.FORBIDDEN,
+                "Organization registration not completed yet"
+            )
+
+            ProjectUpdDelResult.NonExistentProjectId, ProjectUpdDelResult.ProjectDoesNotBelongToAccount ->
+                throw ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Invalid project id"
+                )
+        }
     }
 }
