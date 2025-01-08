@@ -37,13 +37,15 @@ class BookmarksApiService(private val bookmarksRepository: BookmarksRepository) 
     override suspend fun deleteOrganizationBookmark(
         userToken: JwtAuthenticationToken, orgaId: Int
     ): ResponseEntity<Unit> {
-        TODO("Not yet implemented")
+        bookmarksRepository.deleteOrganizationBookmark(userToken.token.subject, orgaId)
+        return ResponseEntity.ok().build()
     }
 
     override suspend fun deleteProjectBookmark(
         userToken: JwtAuthenticationToken, projectId: Int
     ): ResponseEntity<Unit> {
-        TODO("Not yet implemented")
+        bookmarksRepository.deleteProjectBookmark(userToken.token.subject, projectId)
+        return ResponseEntity.ok().build()
     }
 
     override fun getOrganizationBookmarks(userToken: JwtAuthenticationToken): ResponseEntity<Flow<Int>> {

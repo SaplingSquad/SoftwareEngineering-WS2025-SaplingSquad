@@ -3,6 +3,8 @@ package saplingsquad.persistence
 import kotlinx.coroutines.flow.Flow
 import org.komapper.core.dsl.Meta
 import org.komapper.core.dsl.QueryDsl
+import org.komapper.core.dsl.query.firstOrNull
+import org.komapper.core.dsl.query.map
 import org.komapper.r2dbc.R2dbcDatabase
 import org.springframework.stereotype.Repository
 import saplingsquad.persistence.tables.OrganizationBookmarksEntity
@@ -36,6 +38,38 @@ class BookmarksRepository(private val db: R2dbcDatabase) {
                 .onDuplicateKeyIgnore()
                 .executeAndGet(OrganizationBookmarksEntity(userId, projectId))
         }
+    }
+
+    /**
+     * Delete a bookmark for a project for the given user ID
+     */
+    suspend fun deleteProjectBookmark(userId: String, projectId: Int) {
+        val p = Meta.projectBookmarksEntity
+        val exists =
+            db.runQuery {
+                QueryDsl.from(p)
+                    .where { p.accountId eq userId }
+                    .firstOrNull()
+                    .map { it != null }
+            }
+        if (exists)
+            QueryDsl.delete(p).single(ProjectBookmarksEntity(userId, projectId))
+    }
+
+    /**
+     * Delete a bookmark for an organization for the given user ID
+     */
+    suspend fun deleteOrganizationBookmark(userId: String, projectId: Int) {
+        val o = Meta.organizationBookmarksEntity
+        val exists =
+            db.runQuery {
+                QueryDsl.from(o)
+                    .where { o.accountId eq userId }
+                    .firstOrNull()
+                    .map { it != null }
+            }
+        if (exists)
+            QueryDsl.delete(o).single(OrganizationBookmarksEntity(userId, projectId))
     }
 
     /**
