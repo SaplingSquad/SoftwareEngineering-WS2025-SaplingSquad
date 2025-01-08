@@ -1,0 +1,2 @@
+# Ignore SQL files containing the region data in the backend
+backend/src/main/resources/db/static-data/0014/*.sql linguist-vendored
