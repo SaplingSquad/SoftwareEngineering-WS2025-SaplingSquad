@@ -45,3 +45,14 @@ data class ProjectTagsEntity(
     @KomapperId
     val tagId: Int,
 )
+
+@KomapperEntity
+@KomapperTable("project_bookmarks")
+data class ProjectBookmarksEntity(
+    /** Keycloak ID of the user account */
+    @KomapperId
+    val accountId: String,
+    /** ID of the Project */
+    @KomapperId
+    val projectId: Int,
+)
