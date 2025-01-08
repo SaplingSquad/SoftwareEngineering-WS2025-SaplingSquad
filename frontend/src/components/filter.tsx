@@ -31,6 +31,7 @@ const regions: {
 const orgSizes = [20, 100, 500, 1000];
 
 export type FilterSettings = {
+  filterActive: boolean;
   orgPins: boolean;
   projectPins: boolean;
   regionPins: boolean;
@@ -42,6 +43,7 @@ export type FilterSettings = {
 
 export function defaultFilterSettings(): FilterSettings {
   return {
+    filterActive: true,
     orgPins: true,
     projectPins: true,
     regionPins: true,
@@ -55,9 +57,9 @@ export function defaultFilterSettings(): FilterSettings {
 /**
  * A filter component styled like a card which can be used to return to the questions page and allows to configure various filters.
  */
-// Getters & Setters or nested object and attribute name strings
 export const Filter = component$(
   (props: { filterSettings: FilterSettings }) => {
+    const filterActive = useSignal<boolean>(props.filterSettings.filterActive);
     const orgPins = useSignal<boolean>(props.filterSettings.orgPins);
     const projectPins = useSignal<boolean>(props.filterSettings.projectPins);
     const regionPins = useSignal<boolean>(props.filterSettings.regionPins);
@@ -75,6 +77,7 @@ export const Filter = component$(
 
     // prettier-ignore
     useTask$(({ track }) => {
+      props.filterSettings.filterActive = track(() => filterActive.value);
       props.filterSettings.orgPins = track(() => orgPins.value);
       props.filterSettings.projectPins = track(() => projectPins.value);
       props.filterSettings.regionPins = track(() => regionPins.value);
@@ -85,29 +88,42 @@ export const Filter = component$(
     });
 
     return (
-      <div class="w-104 inline-block space-y-4 rounded-xl bg-base-100 p-4 shadow-2xl">
-        <a href="/questions" class="btn btn-primary w-full">
-          Gewählte Schwerpunkte bearbeiten
-        </a>
-        <div>
-          <PinToggle labelText="Verein-Pins anzeigen" property={orgPins} />
-          <PinToggle labelText="Projekt-Pins anzeigen" property={projectPins} />
-          <PinToggle labelText="Regionen-Pins anzeigen" property={regionPins} />
+      <div class="w-104 inline-block space-y-2 rounded-xl bg-base-100 p-4 shadow-2xl">
+        <Toggle labelText="Ergebnisse filtern" property={filterActive} />
+        <div class={filterActive.value ? "" : "cursor-not-allowed"}>
+          <div
+            class={[
+              "space-y-4",
+              filterActive.value
+                ? ""
+                : "bg-gray pointer-events-none opacity-60",
+            ]}
+          >
+            <div class="w-full border" />
+            <a href="/questions" class="btn btn-primary w-full">
+              Gewählte Schwerpunkte bearbeiten
+            </a>
+            <div>
+              <Toggle labelText="Vereine anzeigen" property={orgPins} />
+              <Toggle labelText="Projekte anzeigen" property={projectPins} />
+              <Toggle labelText="Regionen anzeigen" property={regionPins} />
+            </div>
+            <SizeFilter limitOrgSize={limitOrgSize} maxOrgSize={maxOrgSize} />
+            <GeographicFilter
+              selectedContinent={selectedContinent}
+              selectedRegion={selectedRegion}
+            />
+          </div>
         </div>
-        <SizeFilter limitOrgSize={limitOrgSize} maxOrgSize={maxOrgSize} />
-        <GeographicFilter
-          selectedContinent={selectedContinent}
-          selectedRegion={selectedRegion}
-        />
       </div>
     );
   },
 );
 
 /**
- * A simple toggle that controls whether pins of a certain type are shown.
+ * A simple toggle that controls a single property.
  */
-const PinToggle = component$(
+const Toggle = component$(
   (props: { labelText: string; property: Signal<boolean> }) => {
     return (
       <label class="label cursor-pointer justify-start space-x-4">
@@ -183,7 +199,9 @@ const GeographicFilter = component$(
     return (
       <div class="space-y-2">
         <div class="form-control space-y-1">
-          <div class="label-text">Pins auf einen Kontinent beschränken?</div>
+          <div class="label-text">
+            Ergebnisse auf einen Kontinent beschränken?
+          </div>
           <select
             class="select select-primary"
             bind:value={props.selectedContinent}
@@ -203,7 +221,7 @@ const GeographicFilter = component$(
           </select>
         </div>
         <div class="form-control space-y-1">
-          <div class="label-text">Pins auf eine Region beschränken?</div>
+          <div class="label-text">Ergebnisse auf eine Region beschränken?</div>
           <select
             class="select select-primary"
             bind:value={props.selectedRegion}

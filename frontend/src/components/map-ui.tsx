@@ -1,10 +1,4 @@
-import {
-  type Signal,
-  component$,
-  Slot,
-  useSignal,
-  useStore,
-} from "@builder.io/qwik";
+import { type Signal, component$, Slot, useSignal } from "@builder.io/qwik";
 import {
   HiBookmarkOutline,
   HiChevronDownOutline,
@@ -16,7 +10,7 @@ import {
 } from "@qwikest/icons/heroicons";
 import SproutIcon from "/src/images/Sprout_icon.png?jsx";
 import AllIcon from "/src/images/All_Icon.svg?jsx";
-import { type FilterSettings, defaultFilterSettings, Filter } from "./filter";
+import { type FilterSettings, Filter } from "./filter";
 
 // prettier-ignore
 const projects = [
@@ -36,56 +30,56 @@ const projects = [
   { isFavourite: false, title: "no sea takimata sanctus est Lorem ipsum dolor sit amet" },
 ];
 
-export const MapMenu = component$(() => {
-  const filterSettings = useStore(defaultFilterSettings());
+export const MapMenu = component$(
+  (props: { filterSettings: FilterSettings }) => {
+    const selection = useSignal<number>(0);
+    const filterActive = useSignal<boolean>(false);
+    const listCollapsed = useSignal<boolean>(true);
 
-  const selection = useSignal<number>(0);
-  const filterActive = useSignal<boolean>(false);
-  const listCollapsed = useSignal<boolean>(true);
-
-  return (
-    <>
-      <div class="pointer-events-none fixed left-0 top-0 flex h-screen items-start space-x-2 p-4">
-        <div class="flex h-full flex-col items-center">
-          <div class="pointer-events-auto flex max-w-min flex-col overflow-hidden rounded-box bg-base-200">
-            <Navbar
-              filterSettings={filterSettings}
-              filterWindowActive={filterActive}
-            />
-            <div class="w-full border" />
-            <div class="flex flex-col overflow-hidden bg-base-100 p-4">
-              <Tablist
-                selection={selection}
-                useBtnStyle={listCollapsed.value}
+    return (
+      <>
+        <div class="pointer-events-none fixed left-0 top-0 flex h-screen items-start space-x-2 p-4">
+          <div class="flex h-full flex-col items-center">
+            <div class="pointer-events-auto flex max-w-min flex-col overflow-hidden rounded-box bg-base-200">
+              <Navbar
+                filterSettings={props.filterSettings}
+                filterWindowActive={filterActive}
               />
-              <div
-                class={[
-                  "space-y-2 overflow-y-auto transition-all",
-                  listCollapsed.value ? "h-0" : "h-full",
-                ]}
-              >
-                {projects.map((proj, idx) => (
-                  <div key={idx} class="h-32 rounded-box bg-base-200 p-4">
-                    {proj.title}
-                  </div>
-                ))}
+              <div class="w-full border" />
+              <div class="flex flex-col overflow-hidden bg-base-100 p-4">
+                <Tablist
+                  selection={selection}
+                  useBtnStyle={listCollapsed.value}
+                />
+                <div
+                  class={[
+                    "space-y-2 overflow-y-auto transition-all",
+                    listCollapsed.value ? "h-0" : "h-full",
+                  ]}
+                >
+                  {projects.map((proj, idx) => (
+                    <div key={idx} class="h-32 rounded-box bg-base-200 p-4">
+                      {proj.title}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
+            <ExpandLatch collapsedProperty={listCollapsed} />
           </div>
-          <ExpandLatch collapsedProperty={listCollapsed} />
+          <div
+            class={[
+              "pointer-events-auto w-full",
+              filterActive.value ? "" : "hidden",
+            ]}
+          >
+            <Filter filterSettings={props.filterSettings} />
+          </div>
         </div>
-        <div
-          class={[
-            "pointer-events-auto w-full",
-            filterActive.value ? "" : "hidden",
-          ]}
-        >
-          <Filter filterSettings={filterSettings} />
-        </div>
-      </div>
-    </>
-  );
-});
+      </>
+    );
+  },
+);
 
 const Navbar = component$(
   (props: {
@@ -170,12 +164,30 @@ const FilterButton = component$(
           (props.filterWindowActive.value = !props.filterWindowActive.value)
         }
       >
-        <HiFunnelOutline
-          class={[
-            "size-8",
-            props.filterWindowActive.value ? "fill-secondary" : "",
-          ]}
-        />
+        <div class="relative">
+          <HiFunnelOutline
+            class={[
+              "size-8",
+              props.filterWindowActive.value ? "fill-secondary" : "",
+            ]}
+          />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="3"
+            class={[
+              "absolute left-0 top-0 size-8 stroke-error",
+              props.filterSettings.filterActive ? "invisible" : "",
+            ]}
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M5,2 L19,19"
+            />
+          </svg>
+        </div>
       </button>
     );
   },
