@@ -75,8 +75,8 @@ export default defineConfig(({ command, mode }): UserConfig => {
               await generateContract({ openApi: API_SPEC })
                 .then((api) => fs.promises.writeFile(API_CLIENT_TARGET, api))
                 .then(() => console.log("Updated api spec"));
-              // api_hooks
-              await promisify(exec)("npm run build.api_hooks");
+              // api helpers
+              await promisify(exec)("npm run build.api_helpers");
             };
             await update_api();
             /// Automatically update API in watch-mode

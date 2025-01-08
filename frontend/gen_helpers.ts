@@ -1,4 +1,4 @@
-// Generates hooks for the API using the template in `templates/api_hooks.ts.njk`
+// Generates helpers (functions and hooks) for the API using templates in `templates`
 
 import { AppRoute, isAppRouteMutation, isAppRouteNoBody } from "@ts-rest/core";
 import nunjucks from "nunjucks";
@@ -9,9 +9,13 @@ import SwaggerParser from "@apidevtools/swagger-parser";
 import { OpenAPIV3 as OpenAPI } from "openapi-types";
 
 /**
- * The target location
+ * The target location for the hooks
  */
-const OUTPUT = "./src/api/api_hooks.gen.ts";
+const OUTPUT_HOOKS = "./src/api/api_hooks.gen.ts";
+/**
+ * The target location for the methods
+ */
+const OUTPUT_METHODS = "./src/api/api_methods.gen.ts";
 /**
  * Location of the api-spec
  */
@@ -89,7 +93,7 @@ const objectKeys = (object: unknown) => {
 /**
  * The hook-definitions extracted from the API-contract and the API-spec.
  */
-const hooks = Object.entries(apiContract).map(([name, r]) => {
+const apiDef = Object.entries(apiContract).map(([name, r]) => {
   const route: AppRoute = r;
 
   // Deduplication for hook-parameters
@@ -122,7 +126,11 @@ const hooks = Object.entries(apiContract).map(([name, r]) => {
 
 // Render the template
 nunjucks.configure("templates", { autoescape: false });
-const renderedHooks = nunjucks.render("api_hooks.ts.njk", { hooks: hooks });
+const renderedHooks = nunjucks.render("api_hooks.ts.njk", { apiDef: apiDef });
+const renderedMethods = nunjucks.render("api_methods.ts.njk", {
+  apiDef: apiDef,
+});
 
 // Write the template to a the target
-await fs.promises.writeFile(OUTPUT, renderedHooks);
+await fs.promises.writeFile(OUTPUT_HOOKS, renderedHooks);
+await fs.promises.writeFile(OUTPUT_METHODS, renderedMethods);
