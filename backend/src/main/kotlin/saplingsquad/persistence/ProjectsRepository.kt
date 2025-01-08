@@ -10,6 +10,8 @@ import org.springframework.stereotype.Repository
 import saplingsquad.persistence.tables.*
 import saplingsquad.utils.atMostOne
 
+typealias ProjectEntityAndTags = Pair<ProjectEntity, Set<TagId>>
+
 @Repository
 class ProjectsRepository(private val db: R2dbcDatabase) {
 
@@ -30,10 +32,8 @@ class ProjectsRepository(private val db: R2dbcDatabase) {
      */
     suspend fun createProjectForAccount(accountId: String, project: ProjectEntity, tags: Set<TagId>) =
         db.withTransaction(transactionProperty = SERIALIZABLE) {
-            val orgAcc = Meta.organizationAccountEntity
-            val account = db.flowQuery {
-                QueryDsl.from(orgAcc).where { orgAcc.accountId eq accountId }
-            }.atMostOne() ?: return@withTransaction ProjectCreateResult.OrganizationNotRegisteredYet
+            val account =
+                readOrgAccount(accountId) ?: return@withTransaction ProjectCreateResult.OrganizationNotRegisteredYet
 
             val p = Meta.projectEntity
             val projectId = db.runQuery {
@@ -46,6 +46,33 @@ class ProjectsRepository(private val db: R2dbcDatabase) {
             ProjectCreateResult.Success(projectId)
         }
 
+    /**
+     * Read the list of projects belonging to the account's organization.
+     * @return
+     *  - [OrganizationNotRegisteredYet][ProjectsReadFromAccountResult.OrganizationNotRegisteredYet]
+     * if the org-account has never called the POST /organization endpoint to complete the registration
+     *  - [Success][ProjectsReadFromAccountResult.Success] (containing the ID of the newly created project) on success
+     */
+    suspend fun readProjectsByAccount(accountId: String): ProjectsReadFromAccountResult =
+        db.withTransaction(transactionProperty = SERIALIZABLE) {
+            val account = readOrgAccount(accountId)
+                ?: return@withTransaction ProjectsReadFromAccountResult.OrganizationNotRegisteredYet
+            val p = Meta.projectEntity
+            val pTags = Meta.projectTagsEntity
+            val projects = db.runQuery(
+                QueryDsl.from(p)
+                    .where { p.orgId eq account.orgId }
+                    .leftJoin(pTags) {
+                        p.projectId eq pTags.projectId
+                    }.includeAll()
+            )
+            return@withTransaction ProjectsReadFromAccountResult.Success(
+                projects.oneToMany(p, pTags)
+                    .mapValues { it.value.mapTo(mutableSetOf<TagId>(), ProjectTagsEntity::tagId) }
+                    .toList()
+            )
+        }
+
     private suspend fun insertTagsForProject(projectId: ProjectId, tags: Set<TagId>) {
         val pTag = Meta.projectTagsEntity
         db.runQuery {
@@ -53,11 +80,25 @@ class ProjectsRepository(private val db: R2dbcDatabase) {
                 .multiple(tags.map { ProjectTagsEntity(projectId = projectId, tagId = it) })
         }
     }
+
+    private suspend fun readOrgAccount(accountId: String): OrganizationAccountEntity? {
+        val orgAcc = Meta.organizationAccountEntity
+        val account = db.flowQuery {
+            QueryDsl.from(orgAcc).where { orgAcc.accountId eq accountId }
+        }.atMostOne()
+        return account
+    }
+
 }
 
 sealed class ProjectCreateResult {
     data class Success(val id: ProjectId) : ProjectCreateResult()
     data object OrganizationNotRegisteredYet : ProjectCreateResult()
+}
+
+sealed class ProjectsReadFromAccountResult {
+    data class Success(val projects: List<ProjectEntityAndTags>) : ProjectsReadFromAccountResult()
+    data object OrganizationNotRegisteredYet : ProjectsReadFromAccountResult()
 }
 
 private fun filterByTagsSqlQuery(answers: List<Int>) = QueryDsl

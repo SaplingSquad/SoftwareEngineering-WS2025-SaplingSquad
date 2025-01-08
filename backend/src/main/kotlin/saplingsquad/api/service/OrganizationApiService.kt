@@ -8,11 +8,15 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
 import saplingsquad.api.*
-import saplingsquad.api.models.*
+import saplingsquad.api.models.GetOrganizations200ResponseInner
+import saplingsquad.api.models.GetProject200Response
+import saplingsquad.api.models.Organization
+import saplingsquad.api.models.Project
 import saplingsquad.persistence.*
 import saplingsquad.persistence.tables.OrganizationEntity
 import saplingsquad.persistence.tables.ProjectEntity
 import saplingsquad.utils.asHttpOkResponse
+import saplingsquad.utils.flowOfList
 
 @Service
 class OrganizationApiService(
@@ -127,8 +131,30 @@ class OrganizationApiService(
         }
     }
 
-    override fun getProjectForOrga(orgaToken: JwtAuthenticationToken): ResponseEntity<Flow<GetProjectForOrga200ResponseInner>> {
-        TODO("Not yet implemented")
+    override fun getProjectForOrga(orgaToken: JwtAuthenticationToken): ResponseEntity<Flow<GetProject200Response>> {
+        return flowOfList {
+            when (val result = projectsRepository.readProjectsByAccount(orgaToken.token.subject)) {
+                is ProjectsReadFromAccountResult.OrganizationNotRegisteredYet -> throw ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Organization registration not completed yet"
+                )
+
+                is ProjectsReadFromAccountResult.Success -> result.projects.map { (proj, tags) ->
+                    GetProject200Response(
+                        projectId = proj.projectId,
+                        name = proj.title,
+                        description = proj.description,
+                        dateFrom = proj.dateFrom?.let(::dateToMonthAndYear),
+                        dateTo = proj.dateTo?.let(::dateToMonthAndYear),
+                        imageUrls = emptyList(),
+                        webpageUrl = proj.websiteUrl,
+                        donatePageUrl = proj.donationUrl,
+                        coordinates = proj.coordinates.toLonLatList(),
+                        tags = tags.toList()
+                    )
+                }
+            }
+        }.asHttpOkResponse()
     }
 
     override suspend fun updateProject(
