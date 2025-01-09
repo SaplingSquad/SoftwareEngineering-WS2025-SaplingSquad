@@ -10,6 +10,12 @@ type DistributiveOmit<T, K extends keyof any> = T extends any
   ? Omit<T, K>
   : never;
 
+type ReplaceBlobBodies<T> = T extends any
+	? T extends { body: Blob }
+		? Omit<T, 'body'> & { body: Promise<Uint8Array> } 
+		: T
+	: never;
+
 {% for def in apiDef %}
 export const {{ def.function }} = (
 	{%- if def.auth %}
@@ -55,8 +61,8 @@ export const {{ def.function }} = (
 	({
 		status: e.status,
 		headers: Object.fromEntries(e.headers.entries()), // Make headers serializable
-		body: e.body,
-	}) as DistributiveOmit<typeof e, "headers"> & {
+		body: e.body instanceof Blob ? e.body.arrayBuffer().then(b => new Uint8Array(b)) : e.body, // Make blobs serializable by converting to Uint8Array
+	}) as DistributiveOmit<ReplaceBlobBodies<typeof e>, "headers"> & {
 		headers: Record<string, string>;
 	},
 );
