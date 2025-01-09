@@ -599,10 +599,9 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    schema:
-                      $ref: '#/components/schemas/Project'
+                  allOf:
+                    - $ref: '#/components/schemas/ProjectId'
+                    - $ref: '#/components/schemas/Project'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -621,11 +620,12 @@ paths:
       security:
         - orgaToken: []
       requestBody:
-        description: Create a project.
+        description: The data of the new Project
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/Project'
+        required: true
       responses:
         '200':
           $ref: '#/components/responses/ID'
@@ -642,18 +642,19 @@ paths:
         - organization
       summary: Update a project. This can only be done by a logged in
                organization.
-      description: Update an existing project from an organization.
+      description: Update an existing project of an organization.
       operationId: updateProject
       security:
         - orgaToken: []
-      parameters:
-        - name: projectDescriptions
-          in: query
-          description: Update an existing project.
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/ProjectId'
-              - $ref: '#/components/schemas/Project'
+      requestBody:
+        description: The existing project with the matching projectId is fully overwritten with this.
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/ProjectId'
+                - $ref: '#/components/schemas/Project'
+        required: true
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -923,10 +924,6 @@ components:
     Project:
       type: object
       properties:
-        projectId:
-          type: integer
-          example: 1
-          description: The ID of the project.
         name:
           type: string
           example: Great Green Wall
@@ -938,13 +935,14 @@ components:
                        provided by the responsible organization.
         dateFrom:
           type: string
-          example: 21.12.2024
-          description: Starting date of the project. Needs to uphold the format.
+          example: 2024-12
+          description: Starting date of the project (only month and year). 
+                       Needs to uphold the format.
         dateTo:
           type: string
-          example: 16.01.2025
-          description: Planned finish date of the project. Needs to uphold the
-                       format.
+          example: 2025-01
+          description: Planned finish date of the project (only month and year).
+                       Needs to uphold the format.
         imageUrls:
           type: array
           items:
@@ -959,9 +957,25 @@ components:
           type: string
           example: path/to/great/green/wall/donation/link.com
           description: Direct link to the donation side for the project.
+        coordinates:
+          type: array
+          items:
+            type: number
+          description: Longitude and latitude coordinates of the projects's
+                       location. For displaying on a map use the /map/project/locations 
+                       endpoint to get the location as GeoJSON feature
+          example: [-76.53063297271729, 39.18174077994108]
+        tags:
+          type: array
+          items:
+            type: integer
+          example: [1, 4, 5]
+          description: The tags of this organization
       required:
         - name
         - description
+        - coordinates
+        - tags
     Region:
       type: object
       properties:

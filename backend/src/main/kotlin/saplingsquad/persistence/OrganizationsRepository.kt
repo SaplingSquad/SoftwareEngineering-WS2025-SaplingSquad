@@ -14,7 +14,7 @@ import org.komapper.r2dbc.R2dbcDatabase
 import org.komapper.tx.core.TransactionProperty
 import org.springframework.stereotype.Repository
 import saplingsquad.persistence.tables.*
-import saplingsquad.utils.atMostOne
+import saplingsquad.utils.expectZeroOrOne
 
 typealias OrganizationEntityAndTags = Pair<OrganizationEntity, Set<TagId>>
 
@@ -72,7 +72,7 @@ class OrganizationsRepository(private val db: R2dbcDatabase) {
                 QueryDsl.insert(org)
                     .single(organization)
                     .returning(org.orgId)
-            }!!
+            } ?: throw IllegalStateException("Insertion did not return a new id")
 
             db.runQuery {
                 QueryDsl.insert(orgAcc)
@@ -93,7 +93,7 @@ class OrganizationsRepository(private val db: R2dbcDatabase) {
             val org = Meta.organizationEntity
             val orgTags = Meta.organizationTagsEntity
             val existing = readOrganizationOfAccount(accountId)
-                ?: return@withTransaction OrganizationUpdateResult.NoOrganizationRegsitered
+                ?: return@withTransaction OrganizationUpdateResult.NoOrganizationRegistered
             if (existing.orgId != organization.orgId) {
                 return@withTransaction OrganizationUpdateResult.WrongOrganizationId
             }
@@ -130,7 +130,7 @@ class OrganizationsRepository(private val db: R2dbcDatabase) {
             QueryDsl.from(org)
                 .innerJoin(orgAcc, on { org.orgId eq orgAcc.orgId })
                 .where { orgAcc.accountId eq accountId }
-        }.atMostOne()
+        }.expectZeroOrOne()
     }
 
     private suspend fun readOrganizationById(organizationId: OrganizationId): OrganizationEntity? {
@@ -138,7 +138,7 @@ class OrganizationsRepository(private val db: R2dbcDatabase) {
         return db.flowQuery {
             QueryDsl.from(org)
                 .where { org.orgId eq organizationId }
-        }.atMostOne()
+        }.expectZeroOrOne()
     }
 
     private suspend fun insertTagsForOrganization(orgId: OrganizationId, tags: Set<TagId>) {
@@ -157,7 +157,7 @@ sealed class OrganizationRegisterResult {
 
 enum class OrganizationUpdateResult {
     Success,
-    NoOrganizationRegsitered,
+    NoOrganizationRegistered,
     WrongOrganizationId
 }
 

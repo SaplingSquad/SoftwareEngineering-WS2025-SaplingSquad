@@ -4,7 +4,7 @@ import org.komapper.core.dsl.Meta
 import org.komapper.core.dsl.QueryDsl
 import org.komapper.r2dbc.R2dbcDatabase
 import org.springframework.stereotype.Repository
-import saplingsquad.utils.atMostOne
+import saplingsquad.utils.expectZeroOrOne
 import saplingsquad.persistence.tables.QuestionEntity
 import saplingsquad.persistence.tables.questionEntity
 
@@ -30,7 +30,7 @@ class QuestionsRepository(private val db: R2dbcDatabase) {
             .from(Meta.questionEntity)
             .where { Meta.questionEntity.questionId eq id }
             .collect { flow ->
-                flow.atMostOne()
+                flow.expectZeroOrOne()
             }
     }
 }
