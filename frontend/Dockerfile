@@ -13,9 +13,10 @@ FROM node:22-alpine AS build
 
 WORKDIR /build
 
-COPY --from=cache /cache/node_modules ./node_modules
+COPY --from=cache /cache/node_modules ./frontend/node_modules
 
-COPY ./ ./
+COPY ./api ./api
+COPY ./frontend ./frontend
 
 WORKDIR /build/frontend
 
