@@ -5,6 +5,9 @@
 import { defineConfig, type UserConfig } from "vite";
 import { qwikVite } from "@builder.io/qwik/optimizer";
 import { qwikCity } from "@builder.io/qwik-city/vite";
+import { exec } from "child_process";
+import fs from "fs";
+import { promisify } from "util";
 import tsconfigPaths from "vite-tsconfig-paths";
 import pkg from "./package.json";
 
@@ -22,6 +25,9 @@ const KEYCLOAK_HOST_FOR_PROXY = "http://localhost:5555";
 // address for oidc issuer-uri
 const DEFAULT_AUTH_ISSUER_USERS = `${(process.env.ORIGIN ?? "http://localhost:5173")}/authkc/realms/sprout-users`;
 const DEFAULT_AUTH_ISSUER_ORGS = `${(process.env.ORIGIN ?? "http://localhost:5173")}/authkc/realms/sprout-orgs`;
+
+// Path to api-specification
+const API_SPEC = "../api/spec.yaml";
 
 if (!process.env.BACKEND) {
   console.warn(`'BACKEND' url not set. Defaulting to '${DEFAULT_BACKEND}'`);
@@ -55,7 +61,23 @@ const proxy = {
  */
 export default defineConfig(({ command, mode }): UserConfig => {
   return {
-    plugins: [qwikCity(), qwikVite(), tsconfigPaths()],
+    plugins: [
+      {
+        name: "generate-api",
+        buildStart: {
+          async handler() {
+            // Generate API based on API spec.
+            const update_api = () => promisify(exec)("npm run gen.api");
+            await update_api();
+            /// Automatically update API in watch-mode
+            if (this.meta.watchMode) fs.watchFile(API_SPEC, update_api);
+          },
+        },
+      },
+      qwikCity(),
+      qwikVite(),
+      tsconfigPaths(),
+    ],
     // This tells Vite which dependencies to pre-build in dev mode.
     optimizeDeps: {
       // Put problematic deps that break bundling here, mostly those with binaries.

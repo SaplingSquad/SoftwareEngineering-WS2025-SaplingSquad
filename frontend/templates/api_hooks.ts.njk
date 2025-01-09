@@ -1,0 +1,61 @@
+// This file is generated using a generator from `gen` (`npm run gen`) based off `api_hooks.ts.njk`.
+// Do not edit manually!
+
+import { useResource$ } from "@builder.io/qwik";
+import type { ClientInferRequest } from "@ts-rest/core";
+{% for def in apiDef -%}
+	{%- if not authImported and def.auth -%}
+		{%- set authImported = true -%}
+		import { useAuthHeader } from "~/auth/useauthheader";
+	{%- endif -%}
+{%- endfor %}
+import type { MaybeSignal } from "./api";
+import { maybeTrack } from "./api";
+import type { contract } from "./api_client.gen";
+import * as api from "./api_methods.gen";
+
+{% for def in apiDef %}
+export const use{{ def.name }} = (
+	{%- if def.params|length or def.query|length %}
+		parameters: {
+			{%- for param in def.params %}
+				{{ param.deduplicated }}: MaybeSignal<ClientInferRequest<typeof contract.{{ def.function }}>["params"]["{{ param.original }}"]>,
+			{%- endfor %}
+			{%- for query in def.query %}
+				{{ query.deduplicated }}: MaybeSignal<ClientInferRequest<typeof contract.{{ def.function }}>["query"]["{{ query.original }}"]>,
+			{%- endfor %}
+		},
+	{%- endif %}
+	{%- if def.body %}
+		body: MaybeSignal<ClientInferRequest<typeof contract.{{ def.function }}>["body"]>,
+	{%- endif %}
+) => {
+	{%- if def.auth %}
+		const authHeaders = useAuthHeader();
+	{%- endif %}
+	return useResource$((
+		{%- if def.params|length or def.query|length or def.body %}
+			{ track }
+		{%- endif %}
+	) => api
+		.{{ def.function }}(
+			{%- if def.auth %}
+				authHeaders.value,
+			{%- endif %}
+			{%- if def.params|length or def.query|length %}
+				{
+					{%- for param in def.params %}
+						{{ param.deduplicated }}: maybeTrack<ClientInferRequest<typeof contract.{{ def.function }}>["params"]["{{ param.original }}"]>(track, parameters.{{ param.deduplicated }}),
+					{%- endfor %}
+					{%- for query in def.query %}
+						{{ query.deduplicated }}: maybeTrack<ClientInferRequest<typeof contract.{{ def.function }}>["query"]["{{ query.original }}"]>(track, parameters.{{ query.deduplicated }}),
+					{%- endfor %}
+				},
+			{%- endif %}
+			{%- if def.body %}
+				maybeTrack<ClientInferRequest<typeof contract.{{ def.function }}>["body"]>(track, body),
+			{%- endif %}
+		),
+	);
+}
+{%- endfor %}

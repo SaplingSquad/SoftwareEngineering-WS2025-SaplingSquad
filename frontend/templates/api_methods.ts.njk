@@ -1,0 +1,69 @@
+// This file is generated using a generator from `gen` (`npm run gen`) based off `api_methods.ts.njk`.
+// Do not edit manually!
+
+import type { ClientInferRequest } from "@ts-rest/core";
+import { client } from "./api";
+import type { contract } from "./api_client.gen";
+
+// https://stackoverflow.com/a/57103940
+type DistributiveOmit<T, K extends keyof any> = T extends any
+  ? Omit<T, K>
+  : never;
+
+type ReplaceBlobBodies<T> = T extends any
+	? T extends { body: Blob }
+		? Omit<T, 'body'> & { body: Promise<Uint8Array> } 
+		: T
+	: never;
+
+{% for def in apiDef %}
+export const {{ def.function }} = (
+	{%- if def.auth %}
+		authHeaders: Record<string, string> | undefined,
+	{%- endif %}
+	{%- if def.params|length or def.query|length %}
+		parameters: {
+			{%- for param in def.params %}
+				{{ param.deduplicated }}: ClientInferRequest<typeof contract.{{ def.function }}>["params"]["{{ param.original }}"],
+			{%- endfor %}
+			{%- for query in def.query %}
+				{{ query.deduplicated }}: ClientInferRequest<typeof contract.{{ def.function }}>["query"]["{{ query.original }}"],
+			{%- endfor %}
+		},
+	{%- endif %}
+	{%- if def.body %}
+		body: ClientInferRequest<typeof contract.{{ def.function }}>["body"],
+	{%- endif %}
+) => client
+	.{{ def.function }}({
+		{%- if def.params|length %}
+			params: { 
+				{%- for param in def.params %}
+					{{ param.original }}: parameters.{{ param.deduplicated }},
+				{%- endfor %}
+			},
+		{%- endif %}
+		{%- if def.query|length %}
+			query: { 
+				{%- for query in def.query %}
+					{{ query.original }}: parameters.{{ query.deduplicated }},
+				{%- endfor %}
+			},
+		{%- endif %}
+		{%- if def.body %}
+			body: body,
+		{%- endif %}
+		{%- if def.auth %}
+			extraHeaders: authHeaders,
+		{%- endif %}
+	})
+.then((e) =>
+	({
+		status: e.status,
+		headers: Object.fromEntries(e.headers.entries()), // Make headers serializable
+		body: e.body instanceof Blob ? e.body.arrayBuffer().then(b => new Uint8Array(b)) : e.body, // Make blobs serializable by converting to Uint8Array
+	}) as DistributiveOmit<ReplaceBlobBodies<typeof e>, "headers"> & {
+		headers: Record<string, string>;
+	},
+);
+{%- endfor %}
