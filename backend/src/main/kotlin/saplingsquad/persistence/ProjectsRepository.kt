@@ -8,7 +8,7 @@ import org.komapper.r2dbc.R2dbcDatabase
 import org.komapper.tx.core.TransactionProperty.IsolationLevel.SERIALIZABLE
 import org.springframework.stereotype.Repository
 import saplingsquad.persistence.tables.*
-import saplingsquad.utils.atMostOne
+import saplingsquad.utils.expectZeroOrOne
 
 typealias ProjectEntityAndTags = Pair<ProjectEntity, Set<TagId>>
 
@@ -102,7 +102,7 @@ class ProjectsRepository(private val db: R2dbcDatabase) {
         val existingProject = db.flowQuery {
             QueryDsl.from(p)
                 .where { p.projectId eq project.projectId }
-        }.atMostOne() ?: return@withTransaction ProjectUpdDelResult.NonExistentProjectId
+        }.expectZeroOrOne() ?: return@withTransaction ProjectUpdDelResult.NonExistentProjectId
 
         if (existingProject.orgId != account.orgId) {
             return@withTransaction ProjectUpdDelResult.ProjectDoesNotBelongToAccount
@@ -139,7 +139,7 @@ class ProjectsRepository(private val db: R2dbcDatabase) {
             val existingProject = db.flowQuery {
                 QueryDsl.from(p)
                     .where { p.projectId eq projectId }
-            }.atMostOne() ?: return@withTransaction ProjectUpdDelResult.NonExistentProjectId
+            }.expectZeroOrOne() ?: return@withTransaction ProjectUpdDelResult.NonExistentProjectId
 
             if (existingProject.orgId != account.orgId) {
                 return@withTransaction ProjectUpdDelResult.ProjectDoesNotBelongToAccount
@@ -166,7 +166,7 @@ class ProjectsRepository(private val db: R2dbcDatabase) {
         val orgAcc = Meta.organizationAccountEntity
         val account = db.flowQuery {
             QueryDsl.from(orgAcc).where { orgAcc.accountId eq accountId }
-        }.atMostOne()
+        }.expectZeroOrOne()
         return account
     }
 

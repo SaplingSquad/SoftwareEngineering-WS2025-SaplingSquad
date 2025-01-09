@@ -33,9 +33,10 @@ fun <T> T.asHttpOkResponse(): ResponseEntity<T> {
  * [Flow.singleOrNull] returns null if 0 or >1 elements.
  * This only returns null if 0 elements, throws [IllegalStateException] if >1 elements.
  *
- * Working on flows avoids accidentally loading large datasets into memory when only one element is expected
+ * Working on flows instead of lists avoids accidentally loading large datasets into memory when only one element is
+ * expected
  */
-suspend fun <T> Flow<T>.atMostOne(): T? {
+suspend fun <T> Flow<T>.expectZeroOrOne(): T? {
     return this
         .take(2)
         .fold<T, T?>(null) { prev, v ->
