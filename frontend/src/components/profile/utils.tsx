@@ -24,6 +24,7 @@ import { $, noSerialize, NoSerialize, QRL, useOn, useSignal } from "@builder.io/
 import maplibregl from "maplibre-gl";
 import { ClickHandlers, Images, Layers, Sources } from "../map";
 import { isServer } from "@builder.io/qwik/build";
+import { InputMarkerLocation } from "./profile";
 /*import { Map } from "~/views/map";*/
 /*import { Map } from "~/components/map";*/
 
@@ -46,6 +47,7 @@ export const MapLocationInput = component$(
         layers$ = $([]),
         images = {},
         onClick = [],
+        location
     }: {
         /**
          * Classes to set
@@ -71,6 +73,7 @@ export const MapLocationInput = component$(
          * Handlers for click events on the map
          */
         onClick?: ClickHandlers;
+        location: InputMarkerLocation;
     }) => {
         const map = useSignal<NoSerialize<maplibregl.Map>>();
         const markSign = useSignal<NoSerialize<maplibregl.Marker>>();
@@ -99,14 +102,22 @@ export const MapLocationInput = component$(
                 )
                 markSign.value = noSerialize(
                     new maplibregl.Marker({ draggable: true })
-                        .setLngLat([0, 0])
+                        .setLngLat([location.lng, location.lat])
                         .addTo(createdMap)
                 )
 
                 markSign.value?.on('dragend', () => {
                     const lngLat = markSign.value?.getLngLat()
+                    if (lngLat?.lng) {
+                        location.lng = lngLat?.lng
+                    }
+                    if (lngLat?.lat) {
+                        location.lat = lngLat?.lat
+                    }
                     coordsLng.value = lngLat?.lng
                     coordsLat.value = lngLat?.lat
+                    console.log(location.lng)
+                    console.log(location.lat)
                 })
             },
             { strategy: 'document-ready' }

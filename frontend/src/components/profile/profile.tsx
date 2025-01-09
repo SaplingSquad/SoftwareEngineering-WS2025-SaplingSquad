@@ -11,12 +11,18 @@ export type ProfileProjectsProps = {
     text: string;
 };
 
+export type InputMarkerLocation = {
+    lng: number;
+    lat: number
+}
+
 export type OrgaInformationsProps = {
     name: string | null | undefined;
     description: string;
-    location: [Number, Number];
+    location: InputMarkerLocation;
     numbPers: Number;
     founding: Number;
+    logoUrl: string;
     imageUrls: [string];
     webpageUrl: string;
     donatePageUrl: string;
@@ -62,7 +68,7 @@ const ProjectDummy = component$(() => {
 const ProfileInformation = component$((inputData: { profiledata: Readonly<Signal<null>> | Readonly<Signal<Session>> }) => {
     return (
         <>
-            <div class="card bg-base-100 rounded-box place-items-stretch p-4 space-y-4 h-fit flex-initial w-full min-w-fit card-bordered border-secondary border-4">
+            <div class="card bg-base-100 rounded-box place-items-stretch p-4 space-y-4 h-fit flex-initial w-full min-w-fit card-bordered border-base-300 border-4">
                 <h2 class="card-title">{isAccTypeOrg(useAccountType(inputData.profiledata)) ? "Vereinsaccount" : "Account"}</h2>
                 <div class="w-full flex justify-center">
                     <div class="avatar placeholder w-5/6 justify-center min-w-10 max-w-28">
@@ -146,7 +152,7 @@ const VereinDummy = component$(() => {
                 </svg>
                 <span>Verein verknüpfen, um Projekte anzulegen.</span>
             </div>
-            <div class="card bg-base-200 rounded-box place-items-stretch  p-4 space-y-4 min-h-fit w-full min-w-fit card-bordered border-secondary border-4">
+            <div class="card bg-base-200 rounded-box place-items-stretch  p-4 space-y-4 min-h-fit w-full min-w-fit card-bordered border-base-300 border-4">
                 <div class="flex w-full flex-col gap-4 ">
                     <div class="flex items-center gap-4">
                         <div class="skeleton h-16 w-16 shrink-0 rounded-full opacity-30"></div>
@@ -181,7 +187,7 @@ const VereinInfoProjects = component$((inputData: { projectData: ProfileProjects
             </>
             :
             <>
-                <div class="card bg-base-100 rounded-box place-items-stretch  p-4 space-y-4 min-h-fit w-full min-w-fit card-bordered border-secondary border-4 ">
+                <div class="card bg-base-100 rounded-box place-items-stretch  p-4 space-y-4 min-h-fit w-full min-w-fit card-bordered border-base-300 border-4 ">
                     <h2 class="card-title">Verein <div class="avatar">
                         <div class="w-10 rounded-full">
                             <img
@@ -213,9 +219,10 @@ export const VereinProfile = component$((inputData: { projectdata: ProfileProjec
     const orgaData: OrgaInformationsProps = {
         name: "New Roots",
         description: "New Roots is ...",
-        location: [20, 20],
+        location: { lng: 20, lat: 20 },
         numbPers: 12,
         founding: 2016,
+        logoUrl: "asdf",
         imageUrls: [
             "path/to/image/url.pic"
         ],
@@ -226,9 +233,10 @@ export const VereinProfile = component$((inputData: { projectdata: ProfileProjec
     const orgaDataEmpty: OrgaInformationsProps = {
         name: "",
         description: "",
-        location: [0, 0],
+        location: { lng: 0, lat: 0 },
         numbPers: 0,
         founding: 0,
+        logoUrl: "",
         imageUrls: [""],
         webpageUrl: "",
         donatePageUrl: ""

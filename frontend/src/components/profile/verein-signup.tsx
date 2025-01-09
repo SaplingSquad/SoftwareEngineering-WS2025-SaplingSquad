@@ -1,8 +1,7 @@
 import { component$, Signal, useComputed$, useSignal, useStore } from "@builder.io/qwik";
-import { HiStarOutline, HiNoSymbolOutline, HiChevronRightOutline, HiChevronLeftOutline } from "@qwikest/icons/heroicons";
+import { HiStarOutline, HiNoSymbolOutline, HiChevronRightOutline, HiChevronLeftOutline, HiInformationCircleOutline } from "@qwikest/icons/heroicons";
 import { MapLocationInput } from "./utils";
 import { OrgaInformationsProps } from "./profile";
-import { TextInput } from "./testloginpage";
 
 export type Badge = {
     title: string
@@ -18,52 +17,63 @@ const answerStyles = new Map<boolean, string>([
 const Vereinsdaten = component$((inputData: { orgaInfo: OrgaInformationsProps }) => {
     return (
         <>
-            <p>Vereinsdaten</p>
+            <div class="flex justify-start">
+                <p>Vereinsdaten</p>
+                <div class="text-xs mx-4">(* notwendig)</div>
+            </div>
             <label class="input input-bordered flex items-center gap-2" >
                 Vereinsname*
-                <input type="text w-full" class="grow" placeholder="Mein Verein" value={inputData.orgaInfo.name} id="orgaCname" />
+                <input type="text w-full" class="grow" placeholder="Mein Verein" value={inputData.orgaInfo.name} id="orgaCname" required />
             </label>
             <label class="input input-bordered flex items-center gap-2">
                 Gründungsjahr
-                <input type="text" class="grow" value={inputData.orgaInfo.founding as number} id="orgaCfound" />
+                <input type="text" class="grow" value={inputData.orgaInfo.founding === 0 ? "" : inputData.orgaInfo.founding as number} id="orgaCfound" pattern="[0-9][0-9][0-9][0-9]" required />
             </label>
             <label class="input input-bordered flex items-center gap-2">
                 Mitgliederzahl
-                <input type="text" class="grow" value={inputData.orgaInfo.numbPers as number} id="orgaCpers" />
+                <input type="text" class="grow" value={inputData.orgaInfo.numbPers === 0 ? "" : inputData.orgaInfo.numbPers as number} id="orgaCpers" />
+            </label>
+            <label class="input input-bordered flex items-center gap-2" >
+                Vereinslogo
+                <input type="text w-full" class="grow link link-neutral" value={inputData.orgaInfo.name} id="orgaClogo" required />
+                <div class="tooltip tooltip-warning tooltip-left" data-tip="Weblink zum Bild">
+                    <div class="text-2xl hover:opacity-70 transition-all">
+                        <HiInformationCircleOutline />
+                    </div>
+                </div>
             </label>
             <label class="input input-bordered flex items-center gap-2">
                 Vereinswebsite
-                <input type="text" class="grow" value={inputData.orgaInfo.webpageUrl} id="orgaCurl" />
+                <input type="text" class="grow  link link-neutral" value={inputData.orgaInfo.webpageUrl} id="orgaCurl" />
             </label>
-            <label class="form-control w-full max-w">
-                <label class="input input-bordered flex items-center gap-2">
-                    Spendenseite
-                    <input type="text" class="grow" value={inputData.orgaInfo.donatePageUrl} id="orgaCdonurl" />
-                </label>
+            <label class="input input-bordered flex items-center gap-2">
+                Spendenseite
+                <input type="text" class="grow  link link-neutral" value={inputData.orgaInfo.donatePageUrl} id="orgaCdonurl" />
+            </label>
+            <label class="form-control">
                 <div class="label">
-                    <span class="label-text-alt"></span>
-                    <span class="label-text-alt">*notwendig</span>
+                    <span class="label-text">Vereinsbeschreibung</span>
                 </div>
+                <textarea class="textarea textarea-bordered h-24" placeholder="Beschreibung" value={inputData.orgaInfo.description} id="orgaCdiscr"></textarea>
             </label>
             <label class="form-control">
                 <div class="label">
                     <span class="label-text">Vereinsstandort*</span>
+                    <div class="tooltip tooltip-warning tooltip-left" data-tip="Marker auf Position ziehen">
+                        <div class="text-2xl hover:opacity-70 transition-all">
+                            <HiInformationCircleOutline />
+                        </div>
+                    </div>
                 </div>
                 <div class="rounded">
                     <div class="card card-compact bg-base-100 shadow-xl">
                         <figure>
                             <div id="map"></div>
-                            <MapLocationInput class="h-[30rem] w-[40rem] rounded-2xl" />
+                            <MapLocationInput class="h-[30rem] w-[40rem] rounded-2xl" location={inputData.orgaInfo.location} />
                         </figure>
                     </div>
 
                 </div>
-            </label>
-            <label class="form-control w-full max-w-xs -my-40 ">
-                <div class="label">
-                    <span class="label-text">Vereinslogo</span>
-                </div>
-                <input type="file" class="file-input file-input-bordered file-input-primary w-full max-w-xs" />
             </label>
         </>
     )
@@ -75,6 +85,8 @@ function saveOrgaInformation(orgaInfo: OrgaInformationsProps) {
     orgaInfo.numbPers = (((document.getElementById("orgaCpers") as HTMLInputElement).value as unknown) as number)
     orgaInfo.webpageUrl = (document.getElementById("orgaCurl") as HTMLInputElement).value
     orgaInfo.donatePageUrl = (document.getElementById("orgaCdonurl") as HTMLInputElement).value
+    orgaInfo.description = (document.getElementById("orgaCdiscr") as HTMLInputElement).value
+    orgaInfo.logoUrl = (document.getElementById("orgaClogo") as HTMLInputElement).value
 }
 
 function positionController(pos: Signal<number>, orgaInput: OrgaInformationsProps) {
@@ -111,7 +123,7 @@ const SingleVereinstag = component$((props: { b: Badge }) => {
     )
 })
 
-const Vereinszertifikate = component$(() => {
+const ImageStack = component$(() => {
     return (
         <>
             <p>Vereinszertifikate</p>
@@ -124,9 +136,10 @@ export const Vereinsignup = component$((inputData: { data: Badge[] }) => {
     const orgaData: OrgaInformationsProps = {
         name: "New Roots",
         description: "New Roots is ...",
-        location: [20, 20],
+        location: { lng: 20, lat: 20 },
         numbPers: 12,
         founding: 2016,
+        logoUrl: "asdf",
         imageUrls: [
             "path/to/image/url.pic"
         ],
@@ -137,9 +150,10 @@ export const Vereinsignup = component$((inputData: { data: Badge[] }) => {
     const orgaDataEmpty: OrgaInformationsProps = {
         name: "",
         description: "",
-        location: [0, 0],
+        location: { lng: 0, lat: 0 },
         numbPers: 0,
         founding: 0,
+        logoUrl: "",
         imageUrls: [""],
         webpageUrl: "",
         donatePageUrl: ""
@@ -152,24 +166,15 @@ export const Vereinsignup = component$((inputData: { data: Badge[] }) => {
                 <div class="card bg-base-300 rounded-box place-items-stretch m-8 p-8 space-y-4 [max-height:90dvh] w-1/3 min-w-fit ">
                     <h2 class="card-title">Verein Registrieren</h2>
                     <div class="overflow-y-auto space-y-4 ">
-                        {
-                            position.value === 0
-                                ? <Vereinsdaten orgaInfo={orgaDataStore} />
-                                : position.value === 1
-                                    ? <Vereinstags data={inputData.data} />
-                                    : position.value === 2
-                                        ? <Vereinszertifikate />
-                                        : <Vereinsdaten orgaInfo={orgaDataStore} />
-                        }
+                        {position.value === 0 && <Vereinsdaten orgaInfo={orgaDataStore} />}
+                        {position.value === 1 && <Vereinstags data={inputData.data} />}
+                        {position.value === 2 && <ImageStack />}
+                        {position.value === 3 && <Vereinsdaten orgaInfo={orgaDataStore} />}
                     </div>
                     <div class="inset-x-0 bottom-0 flex flex-col justify-center items-center gap-4">
                         <div class="join">
                             <button class="btn join-item" onClick$={() => (
-                                position.value > 0
-                                    ?
-                                    position.value = position.value - 1
-                                    :
-                                    position.value = position.value
+                                position.value = Math.max(0, position.value - 1)
                             )}><HiChevronLeftOutline /></button>
                             <button class="btn btn-primary join-item" onClick$={() => (
                                 positionController(position, orgaDataStore)

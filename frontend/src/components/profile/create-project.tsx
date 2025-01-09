@@ -6,7 +6,7 @@ import { MapLocationInput } from "./utils";
 /*import { Map } from "~/views/map";*/
 /*import { Map } from "~/components/map";*/
 
-const Vereinsdaten = component$(() => {
+const Projektdaten = component$(() => {
     return (
         <>
             <p>Projektdaten</p>
@@ -60,7 +60,7 @@ export const ProjectCreation = component$(() => {
                 <div class="card bg-base-300 rounded-box place-items-stretch m-8 p-8 space-y-4 [max-height:90dvh] w-1/3 min-w-fit ">
                     <h2 class="card-title">Projekterstellung</h2>
                     <div class="overflow-y-auto space-y-4 ">
-                        <Vereinsdaten />
+                        <Projektdaten />
                     </div>
                     <div class="card-actions justify-between">
                         <button class="btn btn-error">Abbrechen
