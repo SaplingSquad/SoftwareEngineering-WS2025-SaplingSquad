@@ -12,7 +12,7 @@ export type ProfileProjectsProps = {
 };
 
 export type OrgaInformationsProps = {
-    name: string;
+    name: string | null | undefined;
     description: string;
     location: [Number, Number];
     numbPers: Number;

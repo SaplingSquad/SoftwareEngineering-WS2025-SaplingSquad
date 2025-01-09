@@ -1,7 +1,8 @@
-import { component$, useSignal, useStore } from "@builder.io/qwik";
+import { component$, Signal, useComputed$, useSignal, useStore } from "@builder.io/qwik";
 import { HiStarOutline, HiNoSymbolOutline, HiChevronRightOutline, HiChevronLeftOutline } from "@qwikest/icons/heroicons";
 import { MapLocationInput } from "./utils";
 import { OrgaInformationsProps } from "./profile";
+import { TextInput } from "./testloginpage";
 
 export type Badge = {
     title: string
@@ -18,26 +19,26 @@ const Vereinsdaten = component$((inputData: { orgaInfo: OrgaInformationsProps })
     return (
         <>
             <p>Vereinsdaten</p>
-            <label for={inputData.orgaInfo.name} class="input input-bordered flex items-center gap-2">
+            <label class="input input-bordered flex items-center gap-2" >
                 Vereinsname*
-                <input type="text w-full" class="grow" placeholder="Mein Verein" />
+                <input type="text w-full" class="grow" placeholder="Mein Verein" value={inputData.orgaInfo.name} id="orgaCname" />
             </label>
             <label class="input input-bordered flex items-center gap-2">
                 Gründungsjahr
-                <input type="text" class="grow" />
+                <input type="text" class="grow" value={inputData.orgaInfo.founding as number} id="orgaCfound" />
             </label>
             <label class="input input-bordered flex items-center gap-2">
                 Mitgliederzahl
-                <input type="text" class="grow" />
+                <input type="text" class="grow" value={inputData.orgaInfo.numbPers as number} id="orgaCpers" />
             </label>
             <label class="input input-bordered flex items-center gap-2">
                 Vereinswebsite
-                <input type="text" class="grow" />
+                <input type="text" class="grow" value={inputData.orgaInfo.webpageUrl} id="orgaCurl" />
             </label>
             <label class="form-control w-full max-w">
                 <label class="input input-bordered flex items-center gap-2">
                     Spendenseite
-                    <input type="text" class="grow" />
+                    <input type="text" class="grow" value={inputData.orgaInfo.donatePageUrl} id="orgaCdonurl" />
                 </label>
                 <div class="label">
                     <span class="label-text-alt"></span>
@@ -46,7 +47,7 @@ const Vereinsdaten = component$((inputData: { orgaInfo: OrgaInformationsProps })
             </label>
             <label class="form-control">
                 <div class="label">
-                    <span class="label-text">Projektstandort*</span>
+                    <span class="label-text">Vereinsstandort*</span>
                 </div>
                 <div class="rounded">
                     <div class="card card-compact bg-base-100 shadow-xl">
@@ -67,6 +68,26 @@ const Vereinsdaten = component$((inputData: { orgaInfo: OrgaInformationsProps })
         </>
     )
 })
+
+function saveOrgaInformation(orgaInfo: OrgaInformationsProps) {
+    orgaInfo.name = (document.getElementById("orgaCname") as HTMLInputElement).value
+    orgaInfo.founding = (((document.getElementById("orgaCfound") as HTMLInputElement).value as unknown) as number)
+    orgaInfo.numbPers = (((document.getElementById("orgaCpers") as HTMLInputElement).value as unknown) as number)
+    orgaInfo.webpageUrl = (document.getElementById("orgaCurl") as HTMLInputElement).value
+    orgaInfo.donatePageUrl = (document.getElementById("orgaCdonurl") as HTMLInputElement).value
+}
+
+function positionController(pos: Signal<number>, orgaInput: OrgaInformationsProps) {
+    if (pos.value === 0) {
+        pos.value = 1
+        saveOrgaInformation(orgaInput)
+    } else {
+        pos.value === 1 ?
+            pos.value = 2
+            : pos.value = 3
+    }
+    console.log(pos)
+}
 
 const Vereinstags = component$((inputData: { data: Badge[] }) => {
     const store = useStore({ inputData })
@@ -123,6 +144,7 @@ export const Vereinsignup = component$((inputData: { data: Badge[] }) => {
         webpageUrl: "",
         donatePageUrl: ""
     }
+    const orgaDataStore = useStore(orgaDataEmpty)
     const position = useSignal(0);
     return (
         <>
@@ -132,18 +154,26 @@ export const Vereinsignup = component$((inputData: { data: Badge[] }) => {
                     <div class="overflow-y-auto space-y-4 ">
                         {
                             position.value === 0
-                                ? <Vereinsdaten orgaInfo={orgaDataEmpty} />
+                                ? <Vereinsdaten orgaInfo={orgaDataStore} />
                                 : position.value === 1
                                     ? <Vereinstags data={inputData.data} />
                                     : position.value === 2
                                         ? <Vereinszertifikate />
-                                        : <Vereinsdaten orgaInfo={orgaDataEmpty} />
+                                        : <Vereinsdaten orgaInfo={orgaDataStore} />
                         }
                     </div>
                     <div class="inset-x-0 bottom-0 flex flex-col justify-center items-center gap-4">
                         <div class="join">
-                            <button class="btn join-item" onClick$={() => (position.value > 0 ? position.value = position.value - 1 : position.value = position.value)}><HiChevronLeftOutline /></button>
-                            <button class="btn btn-primary join-item" onClick$={() => (position.value < 3 ? position.value = position.value + 1 : position.value = position.value)}><HiChevronRightOutline /></button>
+                            <button class="btn join-item" onClick$={() => (
+                                position.value > 0
+                                    ?
+                                    position.value = position.value - 1
+                                    :
+                                    position.value = position.value
+                            )}><HiChevronLeftOutline /></button>
+                            <button class="btn btn-primary join-item" onClick$={() => (
+                                positionController(position, orgaDataStore)
+                            )}><HiChevronRightOutline /></button>
                         </div>
                         <ul class="steps">
                             <li class="step step-primary step-neutral">Daten</li>
@@ -153,7 +183,7 @@ export const Vereinsignup = component$((inputData: { data: Badge[] }) => {
                         </ul>
                     </div>
                 </div>
-            </div>
+            </div >
         </>
     )
 })
