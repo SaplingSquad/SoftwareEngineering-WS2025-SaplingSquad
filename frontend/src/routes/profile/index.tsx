@@ -1,39 +1,29 @@
 import { component$, useComputed$, useStore, } from "@builder.io/qwik";
 import { UserProfile, VereinProfile } from "~/components/profile/profile";
-import type { ProfileProjectsProps } from "~/components/profile/profile";
+import type { OrgaInformationsProps, ProfileProjectsProps } from "~/components/profile/profile";
 import { useSession } from "../plugin@auth";
 import { getAccountType, isAccTypeOrg, isAccTypeUser, useAccountType } from "~/auth/tools";
 import { LoginOverviewParamsForm } from "~/components/auth/login";
 import { routeLoader$ } from "@builder.io/qwik-city";
 import { api } from "~/api/api_url";
+import { InitialValues } from "@modular-forms/qwik";
 
 const DEMO_IMAGE = "https://picsum.photos/300";
 
-const data: ProfileProjectsProps[] = [
+const projectdata: ProfileProjectsProps[] = [
     { img: DEMO_IMAGE, title: "Bildung für Kinder", text: "benachteiligte Kinder unterstützen und ihnen Zugang zu Bildung ermöglichen?" },
     { img: DEMO_IMAGE, title: "Artenschutz und Biodiversität", text: "dich für den Schutz gefährdeter Tierarten und den Erhalt der Biodiversität einsetzen?" },
     { img: DEMO_IMAGE, title: "Hungerbekämpfung", text: "dazu beitragen, den Welthunger zu bekämpfen und Menschen in Not mit Lebensmitteln zu versorgen?" },
     { img: DEMO_IMAGE, title: "Katastrophenhilfe", text: "Gemeinden in Katastrophengebieten mit Nothilfe und langfristiger Unterstützung beistehen?" },
 ]
 
-export const VereinInformations = routeLoader$(async () => {
-    try {
-        const resp = await fetch(api("/organization"))
-        const json = await resp.json();
-        return (
-            json
-        )
-    } catch (error) {
-        return []
-    }
-})
 
 export default component$(() => {
-    const store = useStore(data);
+    const store = useStore(projectdata);
+
     const session = useSession();
     const accType = getAccountType(session.value)
     const useaccType = useAccountType(session)
-    const vereinData = VereinInformations().value
 
     const ProfileAccountController = useComputed$(() => {
         const isAuthorized = session.value?.user?.email

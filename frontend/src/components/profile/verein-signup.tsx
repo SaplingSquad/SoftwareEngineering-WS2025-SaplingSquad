@@ -1,6 +1,7 @@
 import { component$, useSignal, useStore } from "@builder.io/qwik";
 import { HiStarOutline, HiNoSymbolOutline, HiChevronRightOutline, HiChevronLeftOutline } from "@qwikest/icons/heroicons";
 import { MapLocationInput } from "./utils";
+import { OrgaInformationsProps } from "./profile";
 
 export type Badge = {
     title: string
@@ -13,11 +14,11 @@ const answerStyles = new Map<boolean, string>([
 ])
 
 
-const Vereinsdaten = component$(() => {
+const Vereinsdaten = component$((inputData: { orgaInfo: OrgaInformationsProps }) => {
     return (
         <>
             <p>Vereinsdaten</p>
-            <label class="input input-bordered flex items-center gap-2">
+            <label for={inputData.orgaInfo.name} class="input input-bordered flex items-center gap-2">
                 Vereinsname*
                 <input type="text w-full" class="grow" placeholder="Mein Verein" />
             </label>
@@ -99,6 +100,29 @@ const Vereinszertifikate = component$(() => {
 })
 
 export const Vereinsignup = component$((inputData: { data: Badge[] }) => {
+    const orgaData: OrgaInformationsProps = {
+        name: "New Roots",
+        description: "New Roots is ...",
+        location: [20, 20],
+        numbPers: 12,
+        founding: 2016,
+        imageUrls: [
+            "path/to/image/url.pic"
+        ],
+        webpageUrl: "path/to/new/roots.de",
+        donatePageUrl: "path/to/new/roots/donation/link.de"
+    }
+
+    const orgaDataEmpty: OrgaInformationsProps = {
+        name: "",
+        description: "",
+        location: [0, 0],
+        numbPers: 0,
+        founding: 0,
+        imageUrls: [""],
+        webpageUrl: "",
+        donatePageUrl: ""
+    }
     const position = useSignal(0);
     return (
         <>
@@ -108,12 +132,12 @@ export const Vereinsignup = component$((inputData: { data: Badge[] }) => {
                     <div class="overflow-y-auto space-y-4 ">
                         {
                             position.value === 0
-                                ? <Vereinsdaten />
+                                ? <Vereinsdaten orgaInfo={orgaDataEmpty} />
                                 : position.value === 1
                                     ? <Vereinstags data={inputData.data} />
                                     : position.value === 2
                                         ? <Vereinszertifikate />
-                                        : <Vereinsdaten />
+                                        : <Vereinsdaten orgaInfo={orgaDataEmpty} />
                         }
                     </div>
                     <div class="inset-x-0 bottom-0 flex flex-col justify-center items-center gap-4">
