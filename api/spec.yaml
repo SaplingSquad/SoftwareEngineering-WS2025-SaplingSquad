@@ -132,36 +132,6 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-  /map/organization/descriptions/{orgaId}:
-    get:
-      tags:
-        - map
-      summary: Get organization by Id.
-      operationId: getOrganizationById
-      parameters:
-        - $ref: '#/components/parameters/pathOrgaId'
-      responses:
-        '200':
-          description: Successful operation.
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/OrganizationWithId'
-                  - type: object
-                    properties:
-                       projects:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/ProjectWithId'
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
-        '5XX':
-          $ref: '#/components/responses/5XX'
   /map/search:
     get:
       tags:
@@ -234,7 +204,37 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-  /map/project/descriptions/{projectId}:
+  /map/organizations/{orgaId}:
+    get:
+      tags:
+        - map
+      summary: Get organization by Id.
+      operationId: getOrganizationById
+      parameters:
+        - $ref: '#/components/parameters/pathOrgaId'
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/OrganizationWithId'
+                  - type: object
+                    properties:
+                       projects:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ProjectWithId'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+  /map/projects/{projectId}:
     get:
       tags:
         - map
@@ -252,32 +252,6 @@ paths:
                 allOf:
                   - $ref: '#/components/schemas/ProjectId'
                   - $ref: '#/components/schemas/Project'
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
-        '5XX':
-          $ref: '#/components/responses/5XX'
-  /map/project/descriptions:
-    get:
-      tags:
-        - map
-      summary: Get list of project descriptions.
-      description: ''
-      operationId: getProjects
-      responses:
-        '200':
-          description: Successful operation.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  allOf:
-                    - $ref: '#/components/schemas/ProjectId'
-                    - $ref: '#/components/schemas/Project'
         '400':
           $ref: '#/components/responses/400'
         '401':
