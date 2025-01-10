@@ -8,10 +8,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
 import saplingsquad.api.*
-import saplingsquad.api.models.GetOrganization200Response
-import saplingsquad.api.models.GetProject200Response
-import saplingsquad.api.models.Organization
-import saplingsquad.api.models.Project
+import saplingsquad.api.models.*
 import saplingsquad.persistence.*
 import saplingsquad.persistence.tables.OrganizationEntity
 import saplingsquad.persistence.tables.ProjectEntity
@@ -66,6 +63,8 @@ class OrganizationApiService(
                     memberCount = org.memberCount,
                     webpageUrl = org.websiteUrl,
                     donatePageUrl = org.donationUrl,
+                    regionName = null, //TODO calculate and send region name
+                    iconUrl = "https://picsum.photos/200?x=" + org.orgId, //TODO
                     imageUrls = emptyList(), //TODO maybe implement images sometime
                     coordinates = org.coordinates.toLonLatList(),
                     tags = tags.toList()
@@ -76,9 +75,9 @@ class OrganizationApiService(
 
     override suspend fun updateOrganization(
         orgaToken: JwtAuthenticationToken,
-        getOrganization200Response: GetOrganization200Response?
+        organizationWithId: OrganizationWithId?
     ): ResponseEntity<Unit> {
-        val organization = getOrganization200Response ?: throw ResponseStatusException(
+        val organization = organizationWithId ?: throw ResponseStatusException(
             HttpStatus.BAD_REQUEST, "Missing body"
         )
         val result = organizationsRepository.updateOrganizationOfAccount(
@@ -131,7 +130,7 @@ class OrganizationApiService(
         }
     }
 
-    override fun getProjectForOrga(orgaToken: JwtAuthenticationToken): ResponseEntity<Flow<GetProject200Response>> {
+    override fun getProjectForOrga(orgaToken: JwtAuthenticationToken): ResponseEntity<Flow<GetOrganizationById200ResponseAllOfProjectsInner>> {
         return flowOfList {
             when (val result = projectsRepository.readProjectsByAccount(orgaToken.token.subject)) {
                 is ProjectCrRdResult.OrganizationNotRegisteredYet -> throw ResponseStatusException(
@@ -140,17 +139,20 @@ class OrganizationApiService(
                 )
 
                 is ProjectCrRdResult.Success -> result.value.map { (proj, tags) ->
-                    GetProject200Response(
+                    GetOrganizationById200ResponseAllOfProjectsInner(
                         projectId = proj.projectId,
                         name = proj.title,
                         description = proj.description,
                         dateFrom = proj.dateFrom?.let(::dateToMonthAndYear),
                         dateTo = proj.dateTo?.let(::dateToMonthAndYear),
+                        regionName = null, //TODO calculate and send region name
+                        iconUrl = "https://picsum.photos/200?x=" + proj.orgId, //TODO
                         imageUrls = emptyList(),
                         webpageUrl = proj.websiteUrl,
                         donatePageUrl = proj.donationUrl,
                         coordinates = proj.coordinates.toLonLatList(),
-                        tags = tags.toList()
+                        tags = tags.toList(),
+                        orgaId = proj.orgId
                     )
                 }
             }
@@ -159,10 +161,10 @@ class OrganizationApiService(
 
     override suspend fun updateProject(
         orgaToken: JwtAuthenticationToken,
-        getProject200Response: GetProject200Response
+        projectWithId: ProjectWithId
     ): ResponseEntity<Unit> {
         //noinspection UnnecessaryLocalVariable
-        val proj = getProject200Response
+        val proj = projectWithId
 
         val result = projectsRepository.updateProjectOfAccount(
             orgaToken.token.subject,

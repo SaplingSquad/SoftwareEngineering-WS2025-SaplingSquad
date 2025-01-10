@@ -52,21 +52,26 @@ class MapApiService(
             memberCount = org.memberCount,
             webpageUrl = org.websiteUrl,
             donatePageUrl = org.donationUrl,
+            regionName = null, //TODO calculate and send region name
+            iconUrl = "https://picsum.photos/200?x="+org.orgId, //TODO
             imageUrls = emptyList(), //TODO maybe implement images sometime
             coordinates = org.coordinates.toLonLatList(),
             tags = tags.toList(),
             projects = projects.map { (proj, projTags) ->
-                ProjectWithId(
+                GetOrganizationById200ResponseAllOfProjectsInner(
                     projectId = proj.projectId,
                     name = proj.title,
                     description = proj.description,
                     dateFrom = proj.dateFrom?.let(::dateToMonthAndYear),
                     dateTo = proj.dateTo?.let(::dateToMonthAndYear),
+                    iconUrl = "https://picsum.photos/200?x="+proj.orgId, //TODO
+                    regionName = null, //TODO calculate and send region name
                     imageUrls = emptyList(),
                     webpageUrl = proj.websiteUrl,
                     donatePageUrl = proj.donationUrl,
                     coordinates = proj.coordinates.toLonLatList(),
-                    tags = projTags.toList()
+                    tags = projTags.toList(),
+                    orgaId = proj.orgId
                 )
             }
         ).asHttpOkResponse()
@@ -93,7 +98,7 @@ class MapApiService(
         ).asHttpOkResponse()
     }
 
-    override suspend fun getProjectById(projectId: Int): ResponseEntity<ProjectWithId> {
+    override suspend fun getProjectById(projectId: Int): ResponseEntity<GetOrganizationById200ResponseAllOfProjectsInner> {
         TODO("Not yet implemented")
     }
 
