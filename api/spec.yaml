@@ -9,7 +9,7 @@ info:
   license:
     name: GNU Affero General Public License v3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
-  version: 1.2.0
+  version: 1.2.1
 servers:
   - url: /api
 tags:
@@ -177,7 +177,13 @@ paths:
       summary: Get organization by Id.
       operationId: getOrganizationById
       parameters:
-        - $ref: '#/components/parameters/pathOrgaId'
+        - name: orgaId
+          in: path
+          description: The unique ID from the organization.
+          required: true
+          schema:
+            type: integer
+            example: 1
       responses:
         '200':
           description: Successful operation.
@@ -211,7 +217,13 @@ paths:
       description: ''
       operationId: getProjectById
       parameters:
-        - $ref: '#/components/parameters/pathProjectId'
+        - name: projectId
+          in: path
+          description: The unique ID from the project.
+          required: true
+          schema:
+            type: integer
+            example: 1
       responses:
         '200':
           description: Successful operation.
@@ -1042,22 +1054,6 @@ components:
       name: orgaId
       in: query
       description: The unique ID from the organization.
-      required: true
-      schema:
-        type: integer
-        example: 1
-    pathOrgaId:
-      name: orgaId
-      in: path
-      description: The unique ID from the organization.
-      required: true
-      schema:
-        type: integer
-        example: 1
-    pathProjectId:
-      name: projectId
-      in: path
-      description: The unique ID from the project.
       required: true
       schema:
         type: integer
