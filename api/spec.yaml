@@ -9,7 +9,7 @@ info:
   license:
     name: GNU Affero General Public License v3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
-  version: 1.2.6
+  version: 1.2.7
 servers:
   - url: /api
 tags:
@@ -747,6 +747,8 @@ components:
           type: array
           items:
             type: number
+          minItems: 2
+          maxItems: 2
           description: Longitude and latitude coordinates.
           example: [-76.53063297271729, 39.18174077994108]
       required:
@@ -885,6 +887,8 @@ components:
           type: array
           items:
             type: number
+          minItems: 2
+          maxItems: 2
           description: Longitude and latitude coordinates of the projects
                        location. For displaying on a map use the /map/project/locations 
                        endpoint to get the location as GeoJSON feature
