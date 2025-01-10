@@ -132,36 +132,6 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-  /map/organization/locations:
-    get:
-      tags:
-        - map
-      summary: Get list of the locations from all organizations.
-      description: This returns a List of GeoJSONSources to display the pins on
-                   the map.
-      operationId: getOrganizationsLocations
-      parameters:
-      - in: query
-        style: form
-        explode: false
-        name: answers
-        schema:
-          $ref: '#/components/schemas/Answers'
-      responses:
-        '200':
-          description: Successful operation.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GeoJsonOrganizations'
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
-        '5XX':
-          $ref: '#/components/responses/5XX'
   /map/organization/descriptions/{orgaId}:
     get:
       tags:
@@ -256,36 +226,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/GeoJsonProjects'
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
-        '5XX':
-          $ref: '#/components/responses/5XX'
-  /map/projects/locations:
-    get:
-      tags:
-        - map
-      summary: Get list of all ongoing projects locations.
-      description: This returns a List of GeoJSONSources to display the pins on
-                   the map.
-      operationId: getProjectsLocations
-      parameters:
-      - in: query
-        style: form
-        explode: false
-        name: answers
-        schema:
-          $ref: '#/components/schemas/Answers'
-      responses:
-        '200':
-          description: Successful operation.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GeoJsonProjects'
         '400':
           $ref: '#/components/responses/400'
         '401':
