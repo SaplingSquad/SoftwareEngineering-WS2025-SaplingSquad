@@ -96,7 +96,7 @@ class OrganizationRepositoryTest {
             memberCount = 100,
             websiteUrl = "test-website-url",
             donationUrl = "test-donation-url",
-            coordinates = CoordinatesEmbedded(50.0, 100.0)
+            coordinates = CoordinatesEmbedded(50.0, 10.0)
         )
         val testTags = setOf(1, 2, 4)
         val updateData = OrganizationEntity(
@@ -107,7 +107,7 @@ class OrganizationRepositoryTest {
             memberCount = 99,
             websiteUrl = "test-website-url-updated",
             donationUrl = "test-donation-url-updated",
-            coordinates = CoordinatesEmbedded(60.0, 90.0)
+            coordinates = CoordinatesEmbedded(60.0, 80.0)
         )
         val updateTags = setOf(4, 5, 6)
         val accountId = "testaccount-1"
