@@ -21,6 +21,11 @@ class MapApiService(
     val projectsRepository: ProjectsRepository,
     val regionsRepository: RegionsRepository
 ) : MapApiDelegate {
+
+    override fun getMatches(filter: GetMatchesFilterParameter): ResponseEntity<Flow<GetMatches200ResponseInner>> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun getOrganizationDetails(orgaId: Int): ResponseEntity<GetOrganizationDetails200Response> {
         val result =
             organizationsRepository.readOrganizationAndTagsAndProjectsById(orgaId) ?: throw ResponseStatusException(
@@ -45,9 +50,6 @@ class MapApiService(
         ).asHttpOkResponse()
     }
 
-    override fun getOrganizations(): ResponseEntity<Flow<GetOrganizations200ResponseInner>> {
-        TODO("Not yet implemented")
-    }
 
     override suspend fun getOrganizationsLocations(answers: List<Int>?): ResponseEntity<GeoJsonOrganizations> {
         return GeoJsonOrganizations(

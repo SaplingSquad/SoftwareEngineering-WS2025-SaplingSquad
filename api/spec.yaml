@@ -195,13 +195,44 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-  /map/organization/descriptions:
+  /map/search:
     get:
       tags:
         - map
-      summary: Get list of descriptions for all organizations.
-      description: ''
-      operationId: getOrganizations
+      summary: Get all organizations and projects that match the provided filter
+               parameters.
+      operationId: getMatches
+      parameters:
+        - in: query
+          name: filter
+          required: true
+          description: Parameters to filter organizations and projects.
+          schema:
+            type: object
+            properties:
+              answers:
+                $ref: '#/components/schemas/Answers'
+              maxMembers:
+                type: integer
+                example: 100
+                description: The maximal member count a organization is allowed
+                             to have, to match the parameters.
+              searchText:
+                type: string
+                example: foo
+                description: Manually provided by the user. May contain spaces.
+              continent:
+                type: string
+                example: Europe
+                description: Name of a continent (we include oceans).
+              regionId:
+                type: string
+                example: DE
+                externalDocs:
+                  description: ISO 3166 country code for a region of the world.
+                  url: https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes
+              type: # Not a keyword
+                $ref: '#/components/schemas/ObjectType'
       responses:
         '200':
           description: Successful operation.
@@ -210,9 +241,27 @@ paths:
               schema:
                 type: array
                 items:
-                  allOf:
-                    - $ref: '#/components/schemas/OrganizationId'
-                    - $ref: '#/components/schemas/Organization'
+                  type: object
+                  properties:
+                    type: # Not a keyword
+                      $ref: '#/components/schemas/ObjectType'
+                    content:
+                      oneOf:
+                        - $ref: '#/components/schemas/OrganizationWithId'
+                        - $ref: '#/components/schemas/ProjectWithId'
+                      description: An exhaustive description of either an
+                                   organization or a project, including the ID.
+                    percentageMatch:
+                      type: integer
+                      minimum: 0
+                      maximum: 100
+                      description: Describes how good the match is in
+                                   combination to the given filter parameters.
+                  description: Represents the type, description as well as match
+                               percentage of one organization or project.
+                description: Contains a list of organizations as well as
+                             projects that match the provided filter parameters
+                             to some degree.
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -728,7 +777,6 @@ components:
         description: Unique ID of the question.
     GeoJsonOrganizations:
       type: object
-
       externalDocs:
         description: GepJSONSource specification
         url: https://maplibre.org/maplibre-gl-js/docs/API/classes/GeoJSONSource/
@@ -912,6 +960,10 @@ components:
         - webpageUrl
         - coordinates
         - tags
+    OrganizationWithId:
+      allOf:
+        - $ref: '#/components/schemas/OrganizationId'
+        - $ref: '#/components/schemas/Organization'
     ProjectId:
       type: object
       properties:
@@ -976,6 +1028,10 @@ components:
         - description
         - coordinates
         - tags
+    ProjectWithId:
+      allOf:
+        - $ref: '#/components/schemas/ProjectId'
+        - $ref: '#/components/schemas/Project'
     Region:
       type: object
       properties:
@@ -1007,6 +1063,12 @@ components:
         - name
         - description
         - webpageUrl
+    ObjectType:
+      type: string
+      enum: [Organization, Project]
+      description: Represents the type of the accompanying or requested
+                   object. This can be an Organization or a Project. If it is
+                   an optional parameter and absent both types should be send.
   responses:
     '200':
       description: Successful operation.

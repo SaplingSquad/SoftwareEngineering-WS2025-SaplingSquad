@@ -8,7 +8,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
 import saplingsquad.api.*
-import saplingsquad.api.models.GetOrganizations200ResponseInner
+import saplingsquad.api.models.GetOrganization200Response
 import saplingsquad.api.models.GetProject200Response
 import saplingsquad.api.models.Organization
 import saplingsquad.api.models.Project
@@ -54,11 +54,11 @@ class OrganizationApiService(
         }
     }
 
-    override suspend fun getOrganization(orgaToken: JwtAuthenticationToken): ResponseEntity<GetOrganizations200ResponseInner> {
+    override suspend fun getOrganization(orgaToken: JwtAuthenticationToken): ResponseEntity<GetOrganization200Response> {
         return organizationsRepository
             .readOrganizationAndTagsOfAccount(orgaToken.token.subject)!!
             .let { (org, tags) ->
-                GetOrganizations200ResponseInner(
+                GetOrganization200Response(
                     orgaId = org.orgId,
                     name = org.name,
                     description = org.description,
@@ -76,9 +76,9 @@ class OrganizationApiService(
 
     override suspend fun updateOrganization(
         orgaToken: JwtAuthenticationToken,
-        getOrganizations200ResponseInner: GetOrganizations200ResponseInner?
+        getOrganization200Response: GetOrganization200Response?
     ): ResponseEntity<Unit> {
-        val organization = getOrganizations200ResponseInner ?: throw ResponseStatusException(
+        val organization = getOrganization200Response ?: throw ResponseStatusException(
             HttpStatus.BAD_REQUEST, "Missing body"
         )
         val result = organizationsRepository.updateOrganizationOfAccount(
