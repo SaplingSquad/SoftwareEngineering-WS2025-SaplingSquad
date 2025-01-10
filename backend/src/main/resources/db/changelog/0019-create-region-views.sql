@@ -1,3 +1,5 @@
+--liquibase formatted sql
+--changeset 0019:1
 create function country_continent_id(continent text) returns text
 return case
            when continent = 'Asia' then 'asia'
@@ -7,10 +9,11 @@ return case
            when continent = 'Antarctica' then 'antarctica'
            when continent = 'Africa' then 'africa'
            when continent = 'Europe' then 'europe'
-    -- explicitly assign islands with a Seven seas continent attribute to 'other' instead of ocean
-    -- when continent = 'Seven seas (open ocean)' then 'ocean'
+    /*     when continent = 'Seven seas (open ocean)' then 'ocean' */
+    /* assign islands with a 'Seven seas' continent attribute to group 'other' instead of 'ocean' */
            else 'other' end;
 
+--changeset 0019:2
 create function country_continent_translation(continent text) returns text
 return case
            when continent = 'Asia' then 'Asien'
@@ -20,17 +23,19 @@ return case
            when continent = 'Antarctica' then 'Antarktik'
            when continent = 'Africa' then 'Afrika'
            when continent = 'Europe' then 'Europa'
-    -- explicitly assign islands with a Seven seas continent attribute to 'Sonstige' instead of ocean
-    -- when continent = 'Seven seas (open ocean)' then 'ocean'
+    /*     when continent = 'Seven seas (open ocean)' then 'Ozeane' */
+    /* assign islands with a 'Seven seas' continent attribute to group 'Sonstige' instead of 'Ozeane' */
            else 'Sonstige' end;
 
+--changeset 0019:3
 create function ocean_translation(marine_region ne_50m_geography_marine_polys) returns text
 return case
-    -- custom translations
+    /* custom translations */
            when marine_region.name = 'North Pacific Ocean' then 'Nordpazifischer Ozean'
            when marine_region.name = 'South Pacific Ocean' then 'Südpazifischer Ozean'
            else marine_region.name_de end;
 
+--changeset 0019:4
 create materialized view regions as
 with countries as (select adm0_a3_de                               as region_id,
                           name_de                                  as name,
@@ -52,6 +57,7 @@ union
 (select *
  from marine_regions);
 
+--changeset 0019:5
 create materialized view region_continents as
 select distinct continent_id, continent
 from regions;
