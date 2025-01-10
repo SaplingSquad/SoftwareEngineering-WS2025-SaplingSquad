@@ -220,6 +220,7 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/OrganizationWithId'
+                  - $ref: '#/components/schemas/RegionName'
                   - type: object
                     properties:
                        projects:
@@ -227,7 +228,7 @@ paths:
                         items:
                           allOf:
                             - $ref: '#/components/schemas/ProjectWithId'
-                            - $ref: '#/components/schemas/ProjectRegion'
+                            - $ref: '#/components/schemas/RegionName'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -253,7 +254,7 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/ProjectWithId'
-                  - $ref: '#/components/schemas/ProjectRegion'
+                  - $ref: '#/components/schemas/RegionName'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -465,8 +466,8 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/OrganizationId'
-                  - $ref: '#/components/schemas/Organization'
+                  - $ref: '#/components/schemas/OrganizationWithId'
+                  - $ref: '#/components/schemas/RegionName'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -516,9 +517,7 @@ paths:
         content:
           application/json:
             schema:
-              allOf:
-                - $ref: '#/components/schemas/OrganizationId'
-                - $ref: '#/components/schemas/Organization'
+              $ref: '#/components/schemas/OrganizationWithId'
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -549,7 +548,7 @@ paths:
                 items:
                   allOf:
                     - $ref: '#/components/schemas/ProjectWithId'
-                    - $ref: '#/components/schemas/ProjectRegion'
+                    - $ref: '#/components/schemas/RegionName'
 
         '400':
           $ref: '#/components/responses/400'
@@ -941,7 +940,7 @@ components:
         - description
         - coordinates
         - tags
-    ProjectRegion:
+    RegionName:
       type: object
       properties:
         regionName:
@@ -1004,10 +1003,12 @@ components:
           $ref: '#/components/schemas/ObjectType'
         content:
           oneOf:
-            - $ref: '#/components/schemas/OrganizationWithId'
+            - allOf:
+              - $ref: '#/components/schemas/OrganizationWithId'
+              - $ref: '#/components/schemas/RegionName'
             - allOf:
               - $ref: '#/components/schemas/ProjectWithId'
-              - $ref: '#/components/schemas/ProjectRegion'
+              - $ref: '#/components/schemas/RegionName'
           description: An exhaustive description of either an
                        organization or a project, including the ID.
         percentageMatch:
