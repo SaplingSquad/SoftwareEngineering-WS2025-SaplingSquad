@@ -1,4 +1,4 @@
-import { type Signal, component$, Slot, useSignal } from "@builder.io/qwik";
+import { type Signal, $, component$, Slot, useSignal } from "@builder.io/qwik";
 import {
   HiBookmarkOutline,
   HiChevronDownOutline,
@@ -8,9 +8,16 @@ import {
   HiMagnifyingGlassOutline,
   HiXMarkOutline,
 } from "@qwikest/icons/heroicons";
-import SproutIcon from "/src/images/Sprout_icon.png?jsx";
+import SproutIcon from "/src/images/Sprout_icon.svg?jsx";
 import AllIcon from "/src/images/All_Icon.svg?jsx";
 import { type FilterSettings, Filter } from "./filter";
+import {
+  OrganizationShortInfo,
+  ProjectShortInfo,
+  type Organization,
+  type Project,
+} from "./project-shortinfo";
+import { ProjectLargeInfo } from "./project-largeinfo";
 
 enum ResultTab {
   ALL,
@@ -19,21 +26,19 @@ enum ResultTab {
 }
 
 // prettier-ignore
-const projects = [
-  { isFavourite: false, title: "Lorem ipsum dolor sit amet" },
-  { isFavourite: true, title: "consetetur sadipscing elitr" },
-  { isFavourite: false, title: "sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat" },
-  { isFavourite: false, title: "sed diam voluptua" },
-  { isFavourite: true, title: "At vero eos et accusam et justo duo dolores et ea rebum" },
-  { isFavourite: false, title: "Stet clita kasd gubergren" },
-  { isFavourite: false, title: "no sea takimata sanctus est Lorem ipsum dolor sit amet" },
-  { isFavourite: false, title: "Lorem ipsum dolor sit amet" },
-  { isFavourite: false, title: "consetetur sadipscing elitr" },
-  { isFavourite: false, title: "sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat" },
-  { isFavourite: false, title: "sed diam voluptua" },
-  { isFavourite: false, title: "At vero eos et accusam et justo duo dolores et ea rebum" },
-  { isFavourite: false, title: "Stet clita kasd gubergren" },
-  { isFavourite: false, title: "no sea takimata sanctus est Lorem ipsum dolor sit amet" },
+const projects: Project[] = [
+  { title: "Nebula Kaleidoscope Paradox", orgIcon: "/src/images/Sprout_icon.svg", location: "Kenia, Afrika", tags: ["Umweltschutz", "Tierschutz"], description: "En, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invi" },
+  { title: "Mosaic Elixir Labyrinth", orgIcon: "/src/images/Sprout_icon.svg", location: "Sahara", tags: ["Tierschutz", "Armut", "Wasserzugang", "Bildung"], description: "Unt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing" },
+  { title: "Paradox Aurora Ephemeral", orgIcon: "/src/images/Sprout_icon.svg", location: "Paris, Frankreich", tags: ["Frauenrechte"], description: "St Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et ac" },
+  { title: "Solstice Mosaic Vortex Solstice Mosaic Vortex", orgIcon: "/src/images/Sprout_icon.svg", location: "Shenzen, China", tags: ["Bildung für Kinder"], description: "Diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam" },
+];
+
+// prettier-ignore
+const orgs: Organization[] = [
+  { title: "Nebula Kaleidoscope Paradox", orgIcon: "/src/images/Sprout_icon.svg", memberCount: 100, description: "En, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invi" },
+  { title: "Mosaic Elixir Labyrinth", orgIcon: "/src/images/Sprout_icon.svg", memberCount: 1000, description: "Unt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing" },
+  { title: "Paradox Aurora Ephemeral", orgIcon: "/src/images/Sprout_icon.svg", memberCount: 2000, description: "St Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et ac" },
+  { title: "Solstice Mosaic Vortex Solstice Mosaic Vortex", orgIcon: "/src/images/Sprout_icon.svg", memberCount: 10, description: "Diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam" },
 ];
 
 /**
@@ -44,6 +49,7 @@ export const MapUI = component$((props: { filterSettings: FilterSettings }) => {
   const filterActive = useSignal<boolean>(false);
   const listExpanded = useSignal<boolean>(false);
   const searchText = useSignal<string>("");
+  const selectedProject = useSignal<Project | undefined>(undefined);
 
   const filteredProjects = projects
     .filter((proj) => {
@@ -51,17 +57,25 @@ export const MapUI = component$((props: { filterSettings: FilterSettings }) => {
         case ResultTab.ALL:
           return true;
         case ResultTab.BOOKMARKS:
-          return proj.isFavourite;
+          return proj.tags.includes("Umweltschutz");
         case ResultTab.HISTORY:
           return false;
       }
     })
-    .filter((proj) => proj.title.includes(searchText.value))
-    .map((proj, idx) => (
-      <div key={idx} class="h-32 rounded-box bg-base-200 p-4">
-        {proj.title}
-      </div>
-    ));
+    .filter((proj) => proj.title.includes(searchText.value));
+
+  const filteredOrgs = orgs
+    .filter((org) => {
+      switch (tabSelection.value) {
+        case ResultTab.ALL:
+          return true;
+        case ResultTab.BOOKMARKS:
+          return org.memberCount < 1000;
+        case ResultTab.HISTORY:
+          return false;
+      }
+    })
+    .filter((org) => org.title.includes(searchText.value));
 
   return (
     <>
@@ -74,7 +88,7 @@ export const MapUI = component$((props: { filterSettings: FilterSettings }) => {
               listExpanded={listExpanded}
               searchText={searchText}
             />
-            <div class="w-full border" />
+            <div class="w-full border border-base-200" />
             <div class="flex flex-col overflow-hidden bg-base-100 p-4">
               <Tablist
                 selection={tabSelection}
@@ -82,11 +96,22 @@ export const MapUI = component$((props: { filterSettings: FilterSettings }) => {
               />
               <div
                 class={[
-                  "space-y-2 overflow-y-auto transition-all",
+                  "space-y-2 overflow-y-auto pr-2 transition-all",
                   listExpanded.value ? "h-full" : "h-0",
                 ]}
               >
-                {filteredProjects}
+                {filteredProjects.map((proj, idx) => (
+                  <ProjectShortInfo
+                    key={idx}
+                    project={proj}
+                    onClick={$(() => {
+                      selectedProject.value = proj;
+                    })}
+                  />
+                ))}
+                {filteredOrgs.map((org, idx) => (
+                  <OrganizationShortInfo key={idx} org={org} />
+                ))}
               </div>
             </div>
           </div>
@@ -101,6 +126,14 @@ export const MapUI = component$((props: { filterSettings: FilterSettings }) => {
           <Filter filterSettings={props.filterSettings} />
         </div>
       </div>
+      {selectedProject.value && (
+        <div class="fixed right-0 top-0 h-screen p-4">
+          <ProjectLargeInfo
+            project={selectedProject.value}
+            onClose={$(() => (selectedProject.value = undefined))}
+          />
+        </div>
+      )}
     </>
   );
 });
@@ -119,7 +152,7 @@ const Navbar = component$(
       <div class="navbar w-max space-x-2 bg-base-100">
         <div class="navbar-start">
           <a href="/" class="btn btn-ghost flex items-center text-2xl">
-            <SproutIcon class="h-6 w-6" />
+            <SproutIcon class="size-8" />
             Sprout
           </a>
         </div>
@@ -306,7 +339,7 @@ const Tab = component$(
               ? props.useBtnStyle
                 ? "stroke-primary-content"
                 : "stroke-primary"
-              : "stroke-black"
+              : "stroke-[black]"
           }
         >
           <Slot />
@@ -315,7 +348,9 @@ const Tab = component$(
           class={[
             "mt-2 w-full border",
             props.useBtnStyle ? "hidden" : "",
-            props.selection.value === props.idx ? "border-primary" : "",
+            props.selection.value === props.idx
+              ? "border-primary"
+              : "border-base-200",
           ]}
         ></div>
       </label>

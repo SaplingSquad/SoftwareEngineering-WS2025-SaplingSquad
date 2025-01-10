@@ -5,6 +5,10 @@ export default {
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
   theme: {
     extend: {},
+    colors: {
+      "base-400": "#445361",
+      "base-400-content": "#f1f1f1",
+    }
   },
   plugins: [daisyui],
   daisyui: {
@@ -15,10 +19,10 @@ export default {
           "primary-content": "#ebf6ec",
           "secondary": "#6a994e",
           "secondary-content": "#040802",
-          "accent": "#f2e8cf",
-          "accent-content": "#141310",
-          "neutral": "#a7c957",
-          "neutral-content": "#0a0f03",
+          "accent": "#075985",
+          "accent-content": "#f1f1f1",
+          "neutral": "#f2e8cf",
+          "neutral-content": "#141310",
           "base-100": "#ffffff",
           "base-200": "#dedede",
           "base-300": "#bebebe",
