@@ -226,14 +226,15 @@ paths:
             type: string
             example: foo
         - in: query
-          name: continent
+          name: continentName
           description: Name of a continent (we include oceans).
           schema:
             type: string
             example: Europe
         - in: query
           name: regionId
-          description: ISO 3166 country code for a region of the world.
+          description: ISO 3166 country code for a region of the world. This
+                       parameter should be ignored if continentName is absent.
                        https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes
           schema:
             type: string
