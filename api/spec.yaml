@@ -239,29 +239,23 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    type: # Not a keyword
-                      $ref: '#/components/schemas/ObjectType'
-                    content:
-                      oneOf:
-                        - $ref: '#/components/schemas/OrganizationWithId'
-                        - $ref: '#/components/schemas/ProjectWithId'
-                      description: An exhaustive description of either an
-                                   organization or a project, including the ID.
-                    percentageMatch:
-                      type: integer
-                      minimum: 0
-                      maximum: 100
-                      description: Describes how good the match is in
-                                   combination to the given filter parameters.
-                  description: Represents the type, description as well as match
-                               percentage of one organization or project.
-                description: Contains a list of organizations as well as
-                             projects that match the provided filter parameters
-                             to some degree.
+                type: object
+                properties:
+                  rankings:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Rankings'
+                    description: Contains a list of organizations as well as
+                                 projects that match the provided filter parameters
+                                 to some degree.
+                  organizationLocations:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/GeoJsonOrganizations'
+                  projectLocations:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/GeoJsonProjects'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -1064,6 +1058,25 @@ components:
       description: Represents the type of the accompanying or requested
                    object. This can be an Organization or a Project. If it is
                    an optional parameter and absent both types should be send.
+    Rankings:
+      type: object
+      properties:
+        type: # Not a keyword
+          $ref: '#/components/schemas/ObjectType'
+        content:
+          oneOf:
+            - $ref: '#/components/schemas/OrganizationWithId'
+            - $ref: '#/components/schemas/ProjectWithId'
+          description: An exhaustive description of either an
+                       organization or a project, including the ID.
+        percentageMatch:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description: Describes how good the match is in
+                       combination to the given filter parameters.
+      description: Represents the type, description as well as match
+                   percentage of one organization or project.
   responses:
     '200':
       description: Successful operation.
