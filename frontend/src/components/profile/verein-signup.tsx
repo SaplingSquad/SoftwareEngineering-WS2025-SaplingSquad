@@ -1,7 +1,9 @@
-import { component$, Signal, useComputed$, useSignal, useStore } from "@builder.io/qwik";
+import { component$, createContextId, Signal, useComputed$, useContext, useContextProvider, useSignal, useStore } from "@builder.io/qwik";
 import { HiStarOutline, HiNoSymbolOutline, HiChevronRightOutline, HiChevronLeftOutline, HiInformationCircleOutline } from "@qwikest/icons/heroicons";
 import { MapLocationInput } from "./utils";
 import { OrgaInformationsProps } from "./profile";
+
+const FormDataContext = createContextId<OrgaInformationsProps>("verein-signup-context")
 
 export type Badge = {
     title: string
@@ -14,7 +16,8 @@ const answerStyles = new Map<boolean, string>([
 ])
 
 
-const Vereinsdaten = component$((inputData: { orgaInfo: OrgaInformationsProps }) => {
+const Vereinsdaten = component$(() => {
+    const context = useContext(FormDataContext)
     return (
         <>
             <div class="flex justify-start">
@@ -23,19 +26,19 @@ const Vereinsdaten = component$((inputData: { orgaInfo: OrgaInformationsProps })
             </div>
             <label class="input input-bordered flex items-center gap-2" >
                 Vereinsname*
-                <input type="text w-full" class="grow" placeholder="Mein Verein" value={inputData.orgaInfo.name} id="orgaCname" required />
+                <input type="text w-full" class="grow" placeholder="Mein Verein" required value={context.name} onInput$={(_, e) => context.name = e.value} />
             </label>
             <label class="input input-bordered flex items-center gap-2">
                 Gründungsjahr
-                <input type="text" class="grow" value={inputData.orgaInfo.founding === 0 ? "" : inputData.orgaInfo.founding as number} id="orgaCfound" pattern="[0-9][0-9][0-9][0-9]" required />
+                <input type="text" class="grow" value={context.founding} onInput$={(_, e) => context.founding = parseInt(e.value)} pattern="[0-9][0-9][0-9][0-9]" required />
             </label>
             <label class="input input-bordered flex items-center gap-2">
                 Mitgliederzahl
-                <input type="text" class="grow" value={inputData.orgaInfo.numbPers === 0 ? "" : inputData.orgaInfo.numbPers as number} id="orgaCpers" />
+                <input type="text" class="grow" value={context.numbPers} onInput$={(_, e) => context.numbPers = parseInt(e.value)} />
             </label>
             <label class="input input-bordered flex items-center gap-2" >
                 Vereinslogo
-                <input type="text w-full" class="grow link link-neutral" value={inputData.orgaInfo.name} id="orgaClogo" required />
+                <input type="text w-full" class="grow link link-neutral" value={context.logoUrl} onInput$={(_, e) => context.logoUrl = e.value} required />
                 <div class="tooltip tooltip-warning tooltip-left" data-tip="Weblink zum Bild">
                     <div class="text-2xl hover:opacity-70 transition-all">
                         <HiInformationCircleOutline />
@@ -44,17 +47,17 @@ const Vereinsdaten = component$((inputData: { orgaInfo: OrgaInformationsProps })
             </label>
             <label class="input input-bordered flex items-center gap-2">
                 Vereinswebsite
-                <input type="text" class="grow  link link-neutral" value={inputData.orgaInfo.webpageUrl} id="orgaCurl" />
+                <input type="text" class="grow  link link-neutral" value={context.webpageUrl} onInput$={(_, e) => context.webpageUrl = e.value} />
             </label>
             <label class="input input-bordered flex items-center gap-2">
                 Spendenseite
-                <input type="text" class="grow  link link-neutral" value={inputData.orgaInfo.donatePageUrl} id="orgaCdonurl" />
+                <input type="text" class="grow  link link-neutral" value={context.donatePageUrl} onInput$={(_, e) => context.donatePageUrl = e.value} />
             </label>
             <label class="form-control">
                 <div class="label">
                     <span class="label-text">Vereinsbeschreibung</span>
                 </div>
-                <textarea class="textarea textarea-bordered h-24" placeholder="Beschreibung" value={inputData.orgaInfo.description} id="orgaCdiscr"></textarea>
+                <textarea class="textarea textarea-bordered h-24" placeholder="Beschreibung" value={context.description} onInput$={(_, e) => context.description = e.value}></textarea>
             </label>
             <label class="form-control">
                 <div class="label">
@@ -69,7 +72,7 @@ const Vereinsdaten = component$((inputData: { orgaInfo: OrgaInformationsProps })
                     <div class="card card-compact bg-base-100 shadow-xl">
                         <figure>
                             <div id="map"></div>
-                            <MapLocationInput class="h-[30rem] w-[40rem] rounded-2xl" location={inputData.orgaInfo.location} />
+                            <MapLocationInput class="h-[30rem] w-[40rem] rounded-2xl" location={context.location} />
                         </figure>
                     </div>
 
@@ -78,28 +81,6 @@ const Vereinsdaten = component$((inputData: { orgaInfo: OrgaInformationsProps })
         </>
     )
 })
-
-function saveOrgaInformation(orgaInfo: OrgaInformationsProps) {
-    orgaInfo.name = (document.getElementById("orgaCname") as HTMLInputElement).value
-    orgaInfo.founding = (((document.getElementById("orgaCfound") as HTMLInputElement).value as unknown) as number)
-    orgaInfo.numbPers = (((document.getElementById("orgaCpers") as HTMLInputElement).value as unknown) as number)
-    orgaInfo.webpageUrl = (document.getElementById("orgaCurl") as HTMLInputElement).value
-    orgaInfo.donatePageUrl = (document.getElementById("orgaCdonurl") as HTMLInputElement).value
-    orgaInfo.description = (document.getElementById("orgaCdiscr") as HTMLInputElement).value
-    orgaInfo.logoUrl = (document.getElementById("orgaClogo") as HTMLInputElement).value
-}
-
-function positionController(pos: Signal<number>, orgaInput: OrgaInformationsProps) {
-    if (pos.value === 0) {
-        pos.value = 1
-        saveOrgaInformation(orgaInput)
-    } else {
-        pos.value === 1 ?
-            pos.value = 2
-            : pos.value = 3
-    }
-    console.log(pos)
-}
 
 const Vereinstags = component$((inputData: { data: Badge[] }) => {
     const store = useStore({ inputData })
@@ -158,18 +139,19 @@ export const Vereinsignup = component$((inputData: { data: Badge[] }) => {
         webpageUrl: "",
         donatePageUrl: ""
     }
-    const orgaDataStore = useStore(orgaDataEmpty)
     const position = useSignal(0);
+    const store = useStore<OrgaInformationsProps>(orgaDataEmpty)
+    useContextProvider(FormDataContext, store)
     return (
         <>
             <div class="relative flex justify-center">
                 <div class="card bg-base-300 rounded-box place-items-stretch m-8 p-8 space-y-4 [max-height:90dvh] w-1/3 min-w-fit ">
                     <h2 class="card-title">Verein Registrieren</h2>
                     <div class="overflow-y-auto space-y-4 ">
-                        {position.value === 0 && <Vereinsdaten orgaInfo={orgaDataStore} />}
+                        {position.value === 0 && <Vereinsdaten />}
                         {position.value === 1 && <Vereinstags data={inputData.data} />}
                         {position.value === 2 && <ImageStack />}
-                        {position.value === 3 && <Vereinsdaten orgaInfo={orgaDataStore} />}
+                        {position.value === 3 && <Vereinsdaten />}
                     </div>
                     <div class="inset-x-0 bottom-0 flex flex-col justify-center items-center gap-4">
                         <div class="join">
@@ -177,7 +159,7 @@ export const Vereinsignup = component$((inputData: { data: Badge[] }) => {
                                 position.value = Math.max(0, position.value - 1)
                             )}><HiChevronLeftOutline /></button>
                             <button class="btn btn-primary join-item" onClick$={() => (
-                                positionController(position, orgaDataStore)
+                                position.value = Math.min(3, position.value + 1)
                             )}><HiChevronRightOutline /></button>
                         </div>
                         <ul class="steps">
@@ -192,12 +174,3 @@ export const Vereinsignup = component$((inputData: { data: Badge[] }) => {
         </>
     )
 })
-
-/*<div class="flex justify-center">
-                        <div class="join">
-                            <button class="btn join-item" onClick$={() => (position.value > 0 ? position.value = position.value - 1 : position.value = position.value)}><HiChevronLeftOutline /></button>
-                            <button class="btn join-item" onClick$={() => (position.value < 3 ? position.value = position.value + 1 : position.value = position.value)}><HiChevronRightOutline /></button>
-                        </div>
-                    </div>
-
-                    */

@@ -20,8 +20,8 @@ export type OrgaInformationsProps = {
     name: string | null | undefined;
     description: string;
     location: InputMarkerLocation;
-    numbPers: Number;
-    founding: Number;
+    numbPers: number;
+    founding: number;
     logoUrl: string;
     imageUrls: [string];
     webpageUrl: string;
