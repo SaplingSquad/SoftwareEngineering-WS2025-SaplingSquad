@@ -209,35 +209,39 @@ paths:
       operationId: getMatches
       parameters:
         - in: query
-          name: filter
-          required: true
-          description: Parameters to filter organizations and projects.
+          name: answers
           schema:
-            type: object
-            properties:
-              answers:
-                $ref: '#/components/schemas/Answers'
-              maxMembers:
-                type: integer
-                example: 100
-                description: The maximal member count a organization is allowed
-                             to have, to match the parameters.
-              searchText:
-                type: string
-                example: foo
-                description: Manually provided by the user. May contain spaces.
-              continent:
-                type: string
-                example: Europe
-                description: Name of a continent (we include oceans).
-              regionId:
-                type: string
-                example: DE
-                externalDocs:
-                  description: ISO 3166 country code for a region of the world.
-                  url: https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes
-              type: # Not a keyword
-                $ref: '#/components/schemas/ObjectType'
+            $ref: '#/components/schemas/Answers'
+        - in: query
+          name: maxMembers
+          description: The maximal member count a organization is allowed to
+                       have, to match the parameters.
+          schema:
+            type: integer
+            example: 100
+        - in: query
+          name: searchText
+          description: Manually provided by the user. May contain spaces.
+          schema:
+            type: string
+            example: foo
+        - in: query
+          name: continent
+          description: Name of a continent (we include oceans).
+          schema:
+            type: string
+            example: Europe
+        - in: query
+          name: regionId
+          description: ISO 3166 country code for a region of the world.
+                       https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes
+          schema:
+            type: string
+            example: DE
+        - in: query
+          name: type # Not a keyword
+          schema:
+            $ref: '#/components/schemas/ObjectType'
       responses:
         '200':
           description: Successful operation.

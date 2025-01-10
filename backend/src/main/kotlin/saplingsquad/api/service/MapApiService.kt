@@ -21,8 +21,14 @@ class MapApiService(
     val projectsRepository: ProjectsRepository,
     val regionsRepository: RegionsRepository
 ) : MapApiDelegate {
-
-    override fun getMatches(filter: GetMatchesFilterParameter): ResponseEntity<Flow<GetMatches200ResponseInner>> {
+    override fun getMatches(
+        answers: List<Int>?,
+        maxMembers: Int?,
+        searchText: String?,
+        continent: String?,
+        regionId: String?,
+        type: ObjectType?
+    ): ResponseEntity<Flow<GetMatches200ResponseInner>> {
         TODO("Not yet implemented")
     }
 
