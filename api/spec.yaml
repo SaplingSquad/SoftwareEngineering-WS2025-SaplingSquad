@@ -170,7 +170,12 @@ paths:
       description: ''
       operationId: getOrganizationDetails
       parameters:
-        - $ref: '#/components/parameters/orgaId'
+        - name: orgaId
+          in: path
+          description: The unique ID from the organization.
+          required: true
+          schema:
+            type: integer
       responses:
         '200':
           description: Successful operation.
