@@ -19,7 +19,7 @@ import saplingsquad.utils.flowOfList
 class OrganizationApiService(
     private val organizationsRepository: OrganizationsRepository,
     private val projectsRepository: ProjectsRepository
-) : OrganizationApiDelegate {
+) : OrganizationsApiDelegate {
     override suspend fun registerOrganization(
         orgaToken: JwtAuthenticationToken,
         organization: Organization
