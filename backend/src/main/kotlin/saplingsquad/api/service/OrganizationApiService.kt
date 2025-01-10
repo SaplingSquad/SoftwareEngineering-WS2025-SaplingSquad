@@ -20,7 +20,7 @@ class OrganizationApiService(
     private val organizationsRepository: OrganizationsRepository,
     private val projectsRepository: ProjectsRepository
 ) : OrganizationsApiDelegate {
-    override suspend fun registerOrganization(
+    override suspend fun postOrganization(
         orgaToken: JwtAuthenticationToken,
         organization: Organization
     ): ResponseEntity<Int> {
@@ -32,7 +32,7 @@ class OrganizationApiService(
                 description = organization.description,
                 foundingYear = organization.foundingYear,
                 memberCount = organization.memberCount,
-                websiteUrl = organization.webpageUrl,
+                websiteUrl = organization.webPageUrl,
                 donationUrl = organization.donatePageUrl,
                 coordinates = listToCoordinates(organization.coordinates)
             ),
@@ -61,7 +61,7 @@ class OrganizationApiService(
                     description = org.description,
                     foundingYear = org.foundingYear,
                     memberCount = org.memberCount,
-                    webpageUrl = org.websiteUrl,
+                    webPageUrl = org.websiteUrl,
                     donatePageUrl = org.donationUrl,
                     regionName = null, //TODO calculate and send region name
                     iconUrl = "https://picsum.photos/200?x=" + org.orgId, //TODO
@@ -73,7 +73,7 @@ class OrganizationApiService(
             .asHttpOkResponse()
     }
 
-    override suspend fun updateOrganization(
+    override suspend fun putOrganization(
         orgaToken: JwtAuthenticationToken,
         organizationWithId: OrganizationWithId?
     ): ResponseEntity<Unit> {
@@ -87,7 +87,7 @@ class OrganizationApiService(
                 description = organization.description,
                 foundingYear = organization.foundingYear,
                 memberCount = organization.memberCount,
-                websiteUrl = organization.webpageUrl,
+                websiteUrl = organization.webPageUrl,
                 donationUrl = organization.donatePageUrl,
                 coordinates = listToCoordinates(organization.coordinates),
             ),
@@ -105,7 +105,7 @@ class OrganizationApiService(
         }
     }
 
-    override suspend fun createProject(orgaToken: JwtAuthenticationToken, project: Project): ResponseEntity<Int> {
+    override suspend fun postProject(orgaToken: JwtAuthenticationToken, project: Project): ResponseEntity<Int> {
         val result = projectsRepository.createProjectForAccount(
             orgaToken.token.subject,
             ProjectEntity(
@@ -115,7 +115,7 @@ class OrganizationApiService(
                 description = project.description,
                 dateFrom = project.dateFrom?.let { monthAndYearToDate(it, DateContext.START_DATE) },
                 dateTo = project.dateTo?.let { monthAndYearToDate(it, DateContext.END_DATE) },
-                websiteUrl = project.webpageUrl,
+                websiteUrl = project.webPageUrl,
                 donationUrl = project.donatePageUrl,
                 coordinates = listToCoordinates(project.coordinates)
             ),
@@ -130,7 +130,7 @@ class OrganizationApiService(
         }
     }
 
-    override fun getProjectForOrga(orgaToken: JwtAuthenticationToken): ResponseEntity<Flow<GetOrganizationById200ResponseAllOfProjectsInner>> {
+    override fun getProjectsForOrganization(orgaToken: JwtAuthenticationToken): ResponseEntity<Flow<GetOrganizationById200ResponseAllOfProjectsInner>> {
         return flowOfList {
             when (val result = projectsRepository.readProjectsByAccount(orgaToken.token.subject)) {
                 is ProjectCrRdResult.OrganizationNotRegisteredYet -> throw ResponseStatusException(
@@ -148,7 +148,7 @@ class OrganizationApiService(
                         regionName = null, //TODO calculate and send region name
                         iconUrl = "https://picsum.photos/200?x=" + proj.orgId, //TODO
                         imageUrls = emptyList(),
-                        webpageUrl = proj.websiteUrl,
+                        webPageUrl = proj.websiteUrl,
                         donatePageUrl = proj.donationUrl,
                         coordinates = proj.coordinates.toLonLatList(),
                         tags = tags.toList(),
@@ -159,7 +159,7 @@ class OrganizationApiService(
         }.asHttpOkResponse()
     }
 
-    override suspend fun updateProject(
+    override suspend fun putProject(
         orgaToken: JwtAuthenticationToken,
         projectWithId: ProjectWithId
     ): ResponseEntity<Unit> {
@@ -175,7 +175,7 @@ class OrganizationApiService(
                 description = proj.description,
                 dateFrom = proj.dateFrom?.let { monthAndYearToDate(it, DateContext.START_DATE) },
                 dateTo = proj.dateTo?.let { monthAndYearToDate(it, DateContext.END_DATE) },
-                websiteUrl = proj.webpageUrl,
+                websiteUrl = proj.webPageUrl,
                 donationUrl = proj.donatePageUrl,
                 coordinates = listToCoordinates(proj.coordinates)
             ),

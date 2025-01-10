@@ -9,7 +9,7 @@ info:
   license:
     name: GNU Affero General Public License v3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
-  version: 1.2.4
+  version: 1.2.6
 servers:
   - url: /api
 tags:
@@ -29,7 +29,6 @@ paths:
       tags:
         - questions
       summary: Get a list of all questions.
-      description: ''
       operationId: getQuestions
       responses:
         '200':
@@ -214,7 +213,6 @@ paths:
       tags:
         - map
       summary: Get project by ID.
-      description: ''
       operationId: getProjectById
       parameters:
         - name: projectId
@@ -294,7 +292,6 @@ paths:
       tags:
         - bookmarks
       summary: Get project-bookmarks for the active account.
-      description: Request the stored project-bookmarks for the active account.
       operationId: getProjectBookmarks
       security:
         - userToken: []
@@ -307,7 +304,7 @@ paths:
                 type: array
                 items:
                   type: integer
-                  description: The projectId for a bookmarked project.
+                  description: The ID for a bookmarked project.
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -320,8 +317,7 @@ paths:
       tags:
         - bookmarks
       summary: Save a bookmark for a project. This can only be done by the user.
-      description: ''
-      operationId: bookmarkProject
+      operationId: postProjectBookmark
       security:
         - userToken: []
       parameters:
@@ -363,7 +359,6 @@ paths:
       tags:
         - bookmarks
       summary: Get organization-bookmarks for the active account.
-      description: Request the stored project-bookmarks for the active account.
       operationId: getOrganizationBookmarks
       security:
         - userToken: []
@@ -390,8 +385,7 @@ paths:
         - bookmarks
       summary: Save a bookmark for an organization. This can only be done by the
                user.
-      description: ''
-      operationId: bookmarkOrganization
+      operationId: postOrganizationBookmark
       security:
         - userToken: []
       parameters:
@@ -411,7 +405,6 @@ paths:
       tags:
         - bookmarks
       summary: Delete a bookmark for an organization.
-      description: This can only be done by the user.
       operationId: deleteOrganizationBookmark
       security:
         - userToken: []
@@ -433,7 +426,6 @@ paths:
       tags:
         - organization
       summary: Get organization informations.
-      description: Get informations for the authenticated organization.
       operationId: getOrganization
       security:
         - orgaToken: []
@@ -457,10 +449,9 @@ paths:
     post:
       tags:
         - organization
-      summary: Register an organization.
-      description: Create a visible organization for an existing account of this
-                   type. This can only be done once per account.
-      operationId: registerOrganization
+      summary: Create a visible organization for an existing account of this
+               type. This can only be done once per account.
+      operationId: postOrganization
       security:
         - orgaToken: []
       requestBody:
@@ -484,10 +475,9 @@ paths:
     put:
       tags:
         - organization
-      summary: Update organization. This can only be done by a logged in
-               organization.
-      description: Update informations to a given organization.
-      operationId: updateOrganization
+      summary: Update informations to a given organization. This can only be
+               done by a logged in organization.
+      operationId: putOrganization
       security:
         - orgaToken: []
       requestBody:
@@ -511,9 +501,8 @@ paths:
     get:
       tags:
         - organization
-      summary: Get project informations.
-      description: Get informations for the authenticated organization.
-      operationId: getProjectForOrga
+      summary: Get project informations for the authenticated organization.
+      operationId: getProjectsForOrganization
       security:
         - orgaToken: []
       responses:
@@ -541,8 +530,7 @@ paths:
         - organization
       summary: Create a project for an organization. This can only be done by a
                logged in organization.
-      description: A project always belongs to the logged in organization.
-      operationId: createProject
+      operationId: postProject
       security:
         - orgaToken: []
       requestBody:
@@ -568,12 +556,12 @@ paths:
         - organization
       summary: Update a project. This can only be done by a logged in
                organization.
-      description: Update an existing project of an organization.
-      operationId: updateProject
+      operationId: putProject
       security:
         - orgaToken: []
       requestBody:
-        description: The existing project with the matching projectId is fully overwritten with this.
+        description: The existing project with the matching ID is fully
+                     overwritten with this.
         content:
           application/json:
             schema:
@@ -595,7 +583,6 @@ paths:
         - organization
       summary: Delete a project. This can only be done by a logged in
                organization.
-      description: Delete a given project.
       operationId: deleteProject
       security:
         - orgaToken: []
@@ -806,7 +793,7 @@ components:
             type: string
             example: path/to/image/url.pic
             description: List of images provided by the organization.
-        webpageUrl:
+        webPageUrl:
           type: string
           example: path/to/new/roots.de
           description: URL of the organizations website.
@@ -833,7 +820,7 @@ components:
         - name
         - description
         - iconUrl
-        - webpageUrl
+        - webPageUrl
         - coordinates
         - tags
     OrganizationWithId:
@@ -886,7 +873,7 @@ components:
             type: string
             example: path/to/image/url.pic
             description: List of images provided by the organization.
-        webpageUrl:
+        webPageUrl:
           type: string
           example: path/to/great/green/wall.com
           description: URL of the projects website.
@@ -898,7 +885,7 @@ components:
           type: array
           items:
             type: number
-          description: Longitude and latitude coordinates of the projects's
+          description: Longitude and latitude coordinates of the projects
                        location. For displaying on a map use the /map/project/locations 
                        endpoint to get the location as GeoJSON feature
           example: [-76.53063297271729, 39.18174077994108]

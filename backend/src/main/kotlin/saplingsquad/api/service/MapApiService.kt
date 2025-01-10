@@ -50,7 +50,7 @@ class MapApiService(
             description = org.description,
             foundingYear = org.foundingYear,
             memberCount = org.memberCount,
-            webpageUrl = org.websiteUrl,
+            webPageUrl = org.websiteUrl,
             donatePageUrl = org.donationUrl,
             regionName = null, //TODO calculate and send region name
             iconUrl = "https://picsum.photos/200?x="+org.orgId, //TODO
@@ -67,7 +67,7 @@ class MapApiService(
                     iconUrl = "https://picsum.photos/200?x="+proj.orgId, //TODO
                     regionName = null, //TODO calculate and send region name
                     imageUrls = emptyList(),
-                    webpageUrl = proj.websiteUrl,
+                    webPageUrl = proj.websiteUrl,
                     donatePageUrl = proj.donationUrl,
                     coordinates = proj.coordinates.toLonLatList(),
                     tags = projTags.toList(),
