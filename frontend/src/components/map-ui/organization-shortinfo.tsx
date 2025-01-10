@@ -1,8 +1,8 @@
 import {
   type QRL,
   component$,
-  useOnDocument,
   useSignal,
+  useVisibleTask$,
 } from "@builder.io/qwik";
 import {
   HiBoltOutline,
@@ -30,17 +30,16 @@ export const OrganizationShortInfo = component$(
   (props: { org: Organization; onClick: QRL<() => void> }) => {
     const tagContainerRef = useSignal<HTMLDivElement>({} as HTMLDivElement);
 
-    useOnDocument(
-      "DOMContentLoaded",
-      layoutTags(tagContainerRef, props.org.tags),
-    );
+    // Use visible task because the tags need to be layouted every time the component is re-rendered.
+    // eslint-disable-next-line qwik/no-use-visible-task
+    useVisibleTask$(() => layoutTags(tagContainerRef, props.org.tags));
 
     return (
       <div
         class="group card cursor-pointer space-y-2 bg-base-200 p-4 hover:bg-base-300 active:scale-[0.99]"
         onClick$={props.onClick}
       >
-        <h1 class="text-xl font-bold text-primary">{props.org.title}</h1>
+        <h1 class="text-xl font-bold text-info">{props.org.title}</h1>
         <div class="flex h-min max-w-full justify-between">
           <div class="space-y-0.5">
             <div class="flex items-center space-x-1">
@@ -53,13 +52,18 @@ export const OrganizationShortInfo = component$(
             </div>
             <div class="flex items-center space-x-1">
               <HiUserGroupOutline />
-              <span>{props.org.memberCount} Mitglieder</span>
+              <span>
+                {props.org.memberCount +
+                  " " +
+                  (props.org.memberCount == 1 ? "Mitglied" : "Mitglieder")}
+              </span>
             </div>
             <div class="flex items-center space-x-1">
               <HiBoltOutline />
               <span>
                 {props.org.projects.length +
-                  (props.org.projects.length > 1 ? " Projekte" : " Projekt")}
+                  " " +
+                  (props.org.projects.length == 1 ? "Projekt" : "Projekte")}
               </span>
             </div>
             <div class="flex items-center space-x-1">
@@ -73,8 +77,8 @@ export const OrganizationShortInfo = component$(
           <img
             src={props.org.orgIcon}
             alt="Logo des Vereins"
-            height={130}
-            width={130}
+            height={104}
+            width={104}
           />
         </div>
       </div>

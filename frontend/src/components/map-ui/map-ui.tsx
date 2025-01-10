@@ -35,8 +35,8 @@ const projects: Project[] = [
 // prettier-ignore
 const orgs: Organization[] = [
   { title: "Nebula Kaleidoscope Paradox", orgIcon: "/src/images/Sprout_icon.svg", memberCount: 100, foundingYear: 2005, projects: [1, 2, 3], tags: ["Umweltschutz", "Tierschutz"], description: "En, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invi" },
-  { title: "Mosaic Elixir Labyrinth", orgIcon: "/src/images/Sprout_icon.svg", memberCount: 1000, foundingYear: 1980, projects: [1, 2, 3], tags: ["Tierschutz", "Armut", "Wasserzugang", "Bildung"], description: "Unt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing" },
-  { title: "Paradox Aurora Ephemeral", orgIcon: "/src/images/Sprout_icon.svg", memberCount: 2000, foundingYear: 1888, projects: [1, 2, 3], tags: ["Frauenrechte"], description: "St Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et ac" },
+  { title: "Mosaic Elixir Labyrinth", orgIcon: "/src/images/Sprout_icon.svg", memberCount: 1000, foundingYear: 1980, projects: [], tags: ["Tierschutz", "Armut", "Wasserzugang", "Bildung"], description: "Unt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing" },
+  { title: "Paradox Aurora Ephemeral", orgIcon: "/src/images/Sprout_icon.svg", memberCount: 2000, foundingYear: 1888, projects: [1], tags: ["Frauenrechte"], description: "St Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et ac" },
   { title: "Solstice Mosaic Vortex Solstice Mosaic Vortex", orgIcon: "/src/images/Sprout_icon.svg", memberCount: 10, foundingYear: 1998, projects: [1], tags: ["Bildung für Kinder"], description: "Diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam" },
 ];
 
@@ -294,21 +294,21 @@ const Tablist = component$(
           selection={props.selection}
           idx={0}
         >
-          <AllIcon />
+          <AllIcon class="h-6" />
         </Tab>
         <Tab
           useBtnStyle={props.useBtnStyle}
           selection={props.selection}
           idx={1}
         >
-          <HiBookmarkOutline class="size-6 stroke-inherit" />
+          <HiBookmarkOutline class="stroke-inherit size-6" />
         </Tab>
         <Tab
           useBtnStyle={props.useBtnStyle}
           selection={props.selection}
           idx={2}
         >
-          <HiClockOutline class="size-6 stroke-inherit" />
+          <HiClockOutline class="stroke-inherit size-6" />
         </Tab>
       </div>
     );

@@ -1,8 +1,8 @@
 import {
   type QRL,
   component$,
-  useOnDocument,
   useSignal,
+  useVisibleTask$,
 } from "@builder.io/qwik";
 import {
   HiBuildingOfficeOutline,
@@ -27,10 +27,9 @@ export const ProjectShortInfo = component$(
   (props: { project: Project; onClick: QRL<() => void> }) => {
     const tagContainerRef = useSignal<HTMLDivElement>({} as HTMLDivElement);
 
-    useOnDocument(
-      "DOMContentLoaded",
-      layoutTags(tagContainerRef, props.project.tags),
-    );
+    // Use visible task because the tags need to be layouted every time the component is re-rendered.
+    // eslint-disable-next-line qwik/no-use-visible-task
+    useVisibleTask$(() => layoutTags(tagContainerRef, props.project.tags));
 
     return (
       <div
