@@ -9,7 +9,7 @@ info:
   license:
     name: GNU Affero General Public License v3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
-  version: 1.2.2
+  version: 1.2.3
 servers:
   - url: /api
 tags:
@@ -749,43 +749,6 @@ components:
               description: ID of a project for an organization.
         geometry:
           $ref: '#/components/schemas/GeoGeometry'
-    GeoJsonRegions:
-      type: object
-      externalDocs:
-        description: GepJSONSource specification
-        url: https://maplibre.org/maplibre-gl-js/docs/API/classes/GeoJSONSource/
-      properties:
-        type: # Not a Keyword
-          type: string
-          enum: # Define a constant
-            - FeatureCollection
-        features:
-          type: array
-          items:
-            $ref: '#/components/schemas/GeoFeatureRegion'
-      required:
-        - type
-        - features
-    GeoFeatureRegion:
-      type: object
-      properties:
-        type: # Not a Keyword
-          type: string
-          enum:
-            - Feature
-        properties: # Not a keyword
-          type: object
-          properties:
-            regionId:
-              type: integer
-              example: 1
-              description: ID of a region on the map.
-            name:
-              type: string
-              example: Africa
-              description: Name of the region.
-        geometry:
-          $ref: '#/components/schemas/GeoGeometry'
     GeoGeometry:
       type: object
       properties:
@@ -964,37 +927,6 @@ components:
       allOf:
         - $ref: '#/components/schemas/ProjectId'
         - $ref: '#/components/schemas/Project'
-    Region:
-      type: object
-      properties:
-        id:
-          type: integer
-          example: 1
-          description: The ID of the region.
-        name:
-          type: string
-          example: Tropical Zone
-          description: Name of the region.
-        description:
-          type: string
-          example: The tropical zone is ...
-          description: Stored short description of the region.
-                       Retrieved externally.
-        imageUrls:
-          type: array
-          items:
-            type: string
-            example: path/to/image/url.pic
-            description: List of images for the region
-        webpageUrl:
-          type: string
-          example: path/to/wiki/tropical/zone.com
-          description: Url with descriptions to the region.
-      required:
-        - id
-        - name
-        - description
-        - webpageUrl
     RegionId:
       type: string
       example: DE
