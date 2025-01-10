@@ -9,7 +9,7 @@ info:
   license:
     name: GNU Affero General Public License v3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
-  version: 1.2.7
+  version: 1.2.8
 servers:
   - url: /api
 tags:
@@ -169,14 +169,14 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-  /map/organizations/{orgaId}:
+  /map/organizations/{id}:
     get:
       tags:
         - map
       summary: Get organization by Id.
       operationId: getOrganizationById
       parameters:
-        - name: orgaId
+        - name: id
           in: path
           description: The unique ID from the organization.
           required: true
@@ -208,14 +208,14 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-  /map/projects/{projectId}:
+  /map/projects/{id}:
     get:
       tags:
         - map
       summary: Get project by ID.
       operationId: getProjectById
       parameters:
-        - name: projectId
+        - name: id
           in: path
           description: The unique ID from the project.
           required: true
@@ -371,7 +371,7 @@ paths:
                 type: array
                 items:
                   type: integer
-                  description: The orgaId for a bookmarked organization.
+                  description: The ID for a bookmarked organization.
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -697,7 +697,7 @@ components:
         properties: # Not a keyword
           type: object
           properties:
-            orgaId:
+            id:
               type: integer
               example: 1
               description: ID of the organization for the application.

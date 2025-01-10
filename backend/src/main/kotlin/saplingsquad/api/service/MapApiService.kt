@@ -35,9 +35,9 @@ class MapApiService(
         TODO("Not yet implemented")
     }
 
-    override suspend fun getOrganizationById(orgaId: Int): ResponseEntity<GetOrganizationById200Response> {
+    override suspend fun getOrganizationById(id: Int): ResponseEntity<GetOrganizationById200Response> {
         val result =
-            organizationsRepository.readOrganizationAndTagsAndProjectsById(orgaId) ?: throw ResponseStatusException(
+            organizationsRepository.readOrganizationAndTagsAndProjectsById(id) ?: throw ResponseStatusException(
                 HttpStatus.NOT_FOUND,
                 "ID does not exist"
             )
@@ -86,7 +86,7 @@ class MapApiService(
                     GeoFeatureOrganization(
                         type = GeoFeatureOrganization.Type.Feature,
                         properties = GeoFeatureOrganizationProperties(
-                            orgaId = it.orgId
+                            id = it.orgId
                         ),
                         geometry = GeoGeometry(
                             type = GeoGeometry.Type.Point,
@@ -98,7 +98,7 @@ class MapApiService(
         ).asHttpOkResponse()
     }
 
-    override suspend fun getProjectById(projectId: Int): ResponseEntity<GetOrganizationById200ResponseAllOfProjectsInner> {
+    override suspend fun getProjectById(id: Int): ResponseEntity<GetOrganizationById200ResponseAllOfProjectsInner> {
         TODO("Not yet implemented")
     }
 

@@ -197,8 +197,8 @@ class OrganizationApiService(
         }
     }
 
-    override suspend fun deleteProject(orgaToken: JwtAuthenticationToken, projectId: Int): ResponseEntity<Unit> {
-        val result = projectsRepository.deleteProjectOfAccount(orgaToken.token.subject, projectId)
+    override suspend fun deleteProject(orgaToken: JwtAuthenticationToken, id: Int): ResponseEntity<Unit> {
+        val result = projectsRepository.deleteProjectOfAccount(orgaToken.token.subject, id)
         return when (result) {
             ProjectUpdDelResult.Success -> ResponseEntity.ok().build()
 

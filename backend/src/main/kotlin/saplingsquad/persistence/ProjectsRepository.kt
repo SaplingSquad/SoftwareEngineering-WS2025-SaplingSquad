@@ -1,4 +1,4 @@
-package saplingsquad.persistence;
+package saplingsquad.persistence
 
 import kotlinx.coroutines.flow.Flow
 import org.komapper.core.dsl.Meta
