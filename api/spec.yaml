@@ -167,15 +167,9 @@ paths:
       tags:
         - map
       summary: Get organization by Id.
-      description: ''
-      operationId: getOrganizationDetails
+      operationId: getOrganizationById
       parameters:
-        - name: orgaId
-          in: path
-          description: The unique ID from the organization.
-          required: true
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/pathOrgaId'
       responses:
         '200':
           description: Successful operation.
@@ -183,15 +177,13 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/OrganizationId'
-                  - $ref: '#/components/schemas/Organization'
+                  - $ref: '#/components/schemas/OrganizationWithId'
                   - type: object
                     properties:
-                      projectIds:
+                       projects:
                         type: array
                         items:
-                          type: integer
-                          description: Unique ID of a project from the organization.
+                          $ref: '#/components/schemas/ProjectWithId'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -512,7 +504,7 @@ paths:
       security:
         - userToken: []
       parameters:
-        - $ref: '#/components/parameters/orgaId'
+        - $ref: '#/components/parameters/queryOrgaId'
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -533,7 +525,7 @@ paths:
       security:
         - userToken: []
       parameters:
-        - $ref: '#/components/parameters/orgaId'
+        - $ref: '#/components/parameters/queryOrgaId'
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -1090,13 +1082,22 @@ components:
     '5XX':
       description: Unexpected server error.
   parameters:
-    orgaId:
+    queryOrgaId:
       name: orgaId
       in: query
       description: The unique ID from the organization.
       required: true
       schema:
         type: integer
+        example: 1
+    pathOrgaId:
+      name: orgaId
+      in: path
+      description: The unique ID from the organization.
+      required: true
+      schema:
+        type: integer
+        example: 1
     projectId:
       name: projectId
       in: query
@@ -1104,6 +1105,7 @@ components:
       required: true
       schema:
         type: integer
+        example: 1
   securitySchemes:
     userToken:
       type: http

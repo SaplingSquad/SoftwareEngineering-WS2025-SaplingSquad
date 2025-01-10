@@ -21,7 +21,7 @@ typealias OrganizationEntityAndTags = Pair<OrganizationEntity, Set<TagId>>
 data class OrganizationEntityProjectIdsAndTags(
     val org: OrganizationEntity,
     val tags: Set<TagId>,
-    val projectIds: List<ProjectId>
+    val projects: List<ProjectEntity>
 )
 
 @Repository
@@ -43,11 +43,11 @@ class OrganizationsRepository(private val db: R2dbcDatabase) {
             }.map { it.tagId }.toSet()
 
             val proj = Meta.projectEntity
-            val projectIds = db.flowQuery {
+            val projects = db.flowQuery {
                 QueryDsl.from(proj).where { proj.orgId eq organizationId }
-            }.map { it.projectId }.toList()
+            }.toList()
 
-            return@withTransaction OrganizationEntityProjectIdsAndTags(org, tags, projectIds)
+            return@withTransaction OrganizationEntityProjectIdsAndTags(org, tags, projects)
         }
 
     suspend fun tryRegisterOrganization(

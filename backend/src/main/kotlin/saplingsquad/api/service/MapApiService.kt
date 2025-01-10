@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
 import saplingsquad.api.MapApiDelegate
+import saplingsquad.api.dateToMonthAndYear
 import saplingsquad.api.models.*
 import saplingsquad.api.toLonLatList
 import saplingsquad.persistence.OrganizationsRepository
@@ -25,14 +26,14 @@ class MapApiService(
         answers: List<Int>?,
         maxMembers: Int?,
         searchText: String?,
-        continent: String?,
+        continentName: String?,
         regionId: String?,
         type: ObjectType?
     ): ResponseEntity<Flow<GetMatches200ResponseInner>> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getOrganizationDetails(orgaId: Int): ResponseEntity<GetOrganizationDetails200Response> {
+    override suspend fun getOrganizationById(orgaId: Int): ResponseEntity<GetOrganizationById200Response> {
         val result =
             organizationsRepository.readOrganizationAndTagsAndProjectsById(orgaId) ?: throw ResponseStatusException(
                 HttpStatus.NOT_FOUND,
@@ -40,8 +41,8 @@ class MapApiService(
             )
         val org = result.org
         val tags = result.tags
-        val projectIds = result.projectIds
-        return GetOrganizationDetails200Response(
+        val projects = result.projects
+        return GetOrganizationById200Response(
             orgaId = org.orgId,
             name = org.name,
             description = org.description,
@@ -52,7 +53,20 @@ class MapApiService(
             imageUrls = emptyList(), //TODO maybe implement images sometime
             coordinates = org.coordinates.toLonLatList(),
             tags = tags.toList(),
-            projectIds = projectIds
+            projects = projects.map { proj ->
+                ProjectWithId(
+                    projectId = proj.projectId,
+                    name = proj.title,
+                    description = proj.description,
+                    dateFrom = proj.dateFrom?.let(::dateToMonthAndYear),
+                    dateTo = proj.dateTo?.let(::dateToMonthAndYear),
+                    imageUrls = emptyList(),
+                    webpageUrl = proj.websiteUrl,
+                    donatePageUrl = proj.donationUrl,
+                    coordinates = proj.coordinates.toLonLatList(),
+                    tags = emptyList() //TODO tag list
+                )
+            }
         ).asHttpOkResponse()
     }
 
