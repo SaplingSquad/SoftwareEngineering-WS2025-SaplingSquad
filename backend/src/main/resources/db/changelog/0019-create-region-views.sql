@@ -32,14 +32,14 @@ return case
            else marine_region.name_de end;
 
 create materialized view regions as
-with countries as (select adm0_a3_de                               as id,
+with countries as (select adm0_a3_de                               as region_id,
                           name_de                                  as name,
                           country_continent_id(continent)          as continent_id,
                           country_continent_translation(continent) as continent,
                           geom
                    from ne_50m_admin_0_countries
                    where fclass_de is distinct from 'Unrecognized'),
-     marine_regions as (select concat('mar-', gid)                              as id,
+     marine_regions as (select concat('mar-', gid)                              as region_id,
                                ocean_translation(ne_50m_geography_marine_polys) as name,
                                'ocean'                                          as continent_id,
                                'Ozeane'                                         as continent,
