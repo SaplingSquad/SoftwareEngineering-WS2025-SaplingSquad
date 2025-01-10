@@ -78,7 +78,7 @@ class MapApiService(
     }
 
 
-    private suspend fun converOrgasToGeoJson(orgas: Flow<OrganizationEntity>): ResponseEntity<GeoJsonOrganizations> {
+    private suspend fun convertOrgasToGeoJson(orgas: Flow<OrganizationEntity>): ResponseEntity<GeoJsonOrganizations> {
         return GeoJsonOrganizations(
             type = GeoJsonOrganizations.Type.FeatureCollection,
             features = orgas

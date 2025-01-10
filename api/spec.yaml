@@ -48,31 +48,6 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-    post:
-      tags:
-        - questions
-      summary: Send answers to the questions.
-      description: ''
-      operationId: postAnswers
-      security:
-        - userToken: []
-      parameters:
-        - name: answers
-          in: query
-          description: Answers to the questions.
-          schema:
-            $ref: '#/components/schemas/Answers'
-      responses:
-        '200':
-          $ref: '#/components/responses/200'
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
-        '5XX':
-          $ref: '#/components/responses/5XX'
   /questions/{questionId}:
     get:
       tags:
@@ -104,26 +79,48 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-  /questions/filter:
+  /answers:
     get:
       tags:
         - questions
-      summary: Get filter settings for the active account.
-      description: Request the stored filters for the active account. This
-                   includes manual set filters as well as calculated ones.
-      operationId: getFilters
+      summary: Post answers to questions for the active account.
+      operationId: getAnswers
       security:
         - userToken: []
       responses:
         '200':
-          description: List of the filters to be activated.
+          description: Answers to the questions. Given as a list of positively
+                       answered question IDs.
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: integer
-                  description: The tagId for a tag to be used for the filter.
+                $ref: '#/components/schemas/Answers'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+    post:
+      tags:
+        - questions
+      summary: Post answers to questions for the active account.
+      operationId: postAnswers
+      security:
+        - userToken: []
+      requestBody:
+        description: Answers to the questions. Given as a list of positively
+                     answered question IDs.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Answers'
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
         '400':
           $ref: '#/components/responses/400'
         '401':
