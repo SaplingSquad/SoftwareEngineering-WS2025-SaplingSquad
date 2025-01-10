@@ -14,6 +14,8 @@ import saplingsquad.api.toLonLatList
 import saplingsquad.persistence.OrganizationsRepository
 import saplingsquad.persistence.ProjectsRepository
 import saplingsquad.persistence.RegionsRepository
+import saplingsquad.persistence.tables.OrganizationEntity
+import saplingsquad.persistence.tables.ProjectEntity
 import saplingsquad.utils.asHttpOkResponse
 
 @Service
@@ -71,11 +73,10 @@ class MapApiService(
     }
 
 
-    override suspend fun getOrganizationsLocations(answers: List<Int>?): ResponseEntity<GeoJsonOrganizations> {
+    private suspend fun converOrgasToGeoJson(orgas: Flow<OrganizationEntity>): ResponseEntity<GeoJsonOrganizations> {
         return GeoJsonOrganizations(
             type = GeoJsonOrganizations.Type.FeatureCollection,
-            features = organizationsRepository
-                .readOrganizations(answers ?: emptyList())
+            features = orgas
                 .map {
                     GeoFeatureOrganization(
                         type = GeoFeatureOrganization.Type.Feature,
@@ -96,15 +97,10 @@ class MapApiService(
         TODO("Not yet implemented")
     }
 
-    override fun getProjects(): ResponseEntity<Flow<GetProject200Response>> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getProjectsLocations(answers: List<Int>?): ResponseEntity<GeoJsonProjects> {
+    private suspend fun convertProjectsToGeoJson(projects: Flow<ProjectEntity>): ResponseEntity<GeoJsonProjects> {
         return GeoJsonProjects(
             type = GeoJsonProjects.Type.FeatureCollection,
-            features = projectsRepository
-                .readProjects(answers ?: emptyList())
+            features = projects
                 .map {
                     GeoFeatureProject(
                         type = GeoFeatureProject.Type.Feature,
