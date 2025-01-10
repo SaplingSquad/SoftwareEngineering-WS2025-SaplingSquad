@@ -45,8 +45,7 @@ class QuestionsApiService(
             questionId = this.questionId,
             questionTitle = this.questionTitle,
             questionText = this.question,
-            questionImageUrl = this.imageUrl?.let { appConfig.resourcesUrlPath + it },
-            tagId = this.tagId
+            questionImageUrl = this.imageUrl.let { appConfig.resourcesUrlPath + it }
         )
     }
 

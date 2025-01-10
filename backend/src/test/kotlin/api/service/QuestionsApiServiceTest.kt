@@ -39,16 +39,16 @@ class QuestionsApiServiceTest {
     fun testGetQuestions() = runTest {
         val questionEntities = listOf(
             QuestionEntity(
-                questionId = 1, questionTitle = "Question 1", question = "Content 1", imageUrl = null, tagId = 1
+                questionId = 1, questionTitle = "Question 1", question = "Content 1", imageUrl = "image.png", tagId = 1
             ),
             QuestionEntity(
-                questionId = 2, questionTitle = "Question 2", question = "Content 2", imageUrl = "image.png", tagId = 1
+                questionId = 2, questionTitle = "Question 2", question = "Content 2", imageUrl = "image1.png", tagId = 1
             ),
             QuestionEntity(
-                questionId = 3, questionTitle = "Question 3", question = "Content 3", imageUrl = null, tagId = 2
+                questionId = 3, questionTitle = "Question 3", question = "Content 3", imageUrl = "image2.png", tagId = 2
             ),
             QuestionEntity(
-                questionId = 4, questionTitle = "Question 4", question = "Content 4", imageUrl = "image2.png", tagId = 2
+                questionId = 4, questionTitle = "Question 4", question = "Content 4", imageUrl = "image3.png", tagId = 2
             ),
         )
         wheneverBlocking { repository.readAll() }.thenReturn(questionEntities)
@@ -57,10 +57,10 @@ class QuestionsApiServiceTest {
 
         // @formatter:off
         val expectedBody = listOf(
-            Question(questionId = 1, questionTitle = "Question 1", questionText = "Content 1", questionImageUrl = null, tagId = 1),
-            Question(questionId = 2, questionTitle = "Question 2", questionText = "Content 2", questionImageUrl = "${resourcesUrl}image.png", tagId = 1),
-            Question(questionId = 3, questionTitle = "Question 3", questionText = "Content 3", questionImageUrl = null, tagId = 2),
-            Question(questionId = 4, questionTitle = "Question 4", questionText = "Content 4", questionImageUrl = "${resourcesUrl}image2.png", tagId = 2),
+            Question(questionId = 1, questionTitle = "Question 1", questionText = "Content 1", questionImageUrl = "${resourcesUrl}image.png"),
+            Question(questionId = 2, questionTitle = "Question 2", questionText = "Content 2", questionImageUrl = "${resourcesUrl}image1.png"),
+            Question(questionId = 3, questionTitle = "Question 3", questionText = "Content 3", questionImageUrl = "${resourcesUrl}image2.png"),
+            Question(questionId = 4, questionTitle = "Question 4", questionText = "Content 4", questionImageUrl = "${resourcesUrl}image3.png"),
         )
         // @formatter:on
 

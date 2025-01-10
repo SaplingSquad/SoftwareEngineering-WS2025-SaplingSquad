@@ -627,10 +627,11 @@ components:
           type: string
           example: url/to/question/image.pic
           description: A picture supplementing the text of a question.
-        tagId:
-          type: integer
-          example: 1
-          description: The Id for a tag to be used for the filter.
+      required:
+        - questionId
+        - questionTitle
+        - questionText
+        - questionImageUrl
     Answers:
       type: array
       description: Contains all IDs that have been answered positively.
