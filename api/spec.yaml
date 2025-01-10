@@ -225,7 +225,8 @@ paths:
                        projects:
                         type: array
                         items:
-                          $ref: '#/components/schemas/ProjectWithId'
+                          allOf:
+                            - $ref: '#/components/schemas/ProjectWithId'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -240,9 +241,9 @@ paths:
         - map
       summary: Get project by ID.
       description: ''
-      operationId: getProject
+      operationId: getProjectById
       parameters:
-        - $ref: '#/components/parameters/projectId'
+        - $ref: '#/components/parameters/pathProjectId'
       responses:
         '200':
           description: Successful operation.
@@ -250,8 +251,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ProjectId'
-                  - $ref: '#/components/schemas/Project'
+                  - $ref: '#/components/schemas/ProjectWithId'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -344,7 +344,7 @@ paths:
       security:
         - userToken: []
       parameters:
-        - $ref: '#/components/parameters/projectId'
+        - $ref: '#/components/parameters/queryProjectId'
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -365,7 +365,7 @@ paths:
       security:
         - userToken: []
       parameters:
-        - $ref: '#/components/parameters/projectId'
+        - $ref: '#/components/parameters/queryProjectId'
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -622,7 +622,7 @@ paths:
       security:
         - orgaToken: []
       parameters:
-        - $ref: '#/components/parameters/projectId'
+        - $ref: '#/components/parameters/queryProjectId'
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -980,7 +980,8 @@ components:
         content:
           oneOf:
             - $ref: '#/components/schemas/OrganizationWithId'
-            - $ref: '#/components/schemas/ProjectWithId'
+            - allOf:
+              - $ref: '#/components/schemas/ProjectWithId'
           description: An exhaustive description of either an
                        organization or a project, including the ID.
         percentageMatch:
@@ -1027,7 +1028,15 @@ components:
       schema:
         type: integer
         example: 1
-    projectId:
+    pathProjectId:
+      name: projectId
+      in: path
+      description: The unique ID from the project.
+      required: true
+      schema:
+        type: integer
+        example: 1
+    queryProjectId:
       name: projectId
       in: query
       description: The unique ID from the project.
