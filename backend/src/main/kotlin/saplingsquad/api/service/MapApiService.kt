@@ -107,11 +107,7 @@ class MapApiService(
         ).asHttpOkResponse()
     }
 
-    override suspend fun getRegion(regionId: Int): ResponseEntity<Region> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getRegions(answers: List<Int>?): ResponseEntity<GeoJsonRegions> {
+    override fun getRegions(): ResponseEntity<Flow<GetRegions200ResponseInner>> {
         TODO("Not yet implemented")
     }
 

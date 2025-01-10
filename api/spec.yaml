@@ -233,12 +233,10 @@ paths:
             example: Europe
         - in: query
           name: regionId
-          description: ISO 3166 country code for a region of the world. This
-                       parameter should be ignored if continentName is absent.
-                       https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes
+          description: This parameter should be ignored if continentName is
+                       absent.
           schema:
-            type: string
-            example: DE
+            $ref: '#/components/schemas/RegionId'
         - in: query
           name: type # Not a keyword
           schema:
@@ -362,7 +360,7 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-  /map/region/locations:
+  /map/regions:
     get:
       tags:
         - map
@@ -370,49 +368,36 @@ paths:
       description: This returns a List of GeoJSONSources to display the pins on
                    the map.
       operationId: getRegions
-      parameters:
-      - in: query
-        style: form
-        explode: false
-        name: answers
-        schema:
-          $ref: '#/components/schemas/Answers'
       responses:
         '200':
           description: Successful operation.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GeoJsonRegions'
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
-        '5XX':
-          $ref: '#/components/responses/5XX'
-  /map/region/descriptions/{regionId}:
-    get:
-      tags:
-        - map
-      summary: Get region by ID.
-      description: ''
-      operationId: getRegion
-      parameters:
-        - name: regionId
-          in: path
-          description: The ID of the region to fetch descriptions for.
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Successful operation.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Region'
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      example: Europe
+                      description: The name of a continent or ocean.
+                    regions:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            $ref: '#/components/schemas/RegionId'
+                          name:
+                            type: string
+                            example: Deutschland
+                            description: The name of the region, provided in the
+                                         language of the application.
+                  description: An object containing one continent or ocean and
+                               a list of the regions located in this place. 
+                description: List of all continents as well as oceans and
+                             their regions.
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -1073,6 +1058,12 @@ components:
         - name
         - description
         - webpageUrl
+    RegionId:
+      type: string
+      example: DE
+      externalDocs:
+        description: ISO 3166 country code for a region of the world.
+        url: https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes
     ObjectType:
       type: string
       enum: [Organization, Project]
