@@ -600,6 +600,38 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
+  /tags:
+    get:
+      tags:
+        - questions
+      summary: Get a mapping from tag ID to tag name.
+      operationId: getTags
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                      description: ID of the tag.
+                    name:
+                      type: string
+                      example: Umwelt
+                      description: Human readable name of the tag.
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
 
 components:
   schemas:
