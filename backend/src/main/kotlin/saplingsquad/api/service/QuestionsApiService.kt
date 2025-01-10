@@ -38,16 +38,6 @@ class QuestionsApiService(
             .asHttpOkResponse()
 
     /**
-     * API Endpoint to get a single question
-     */
-    override suspend fun getQuestionById(questionId: Int): ResponseEntity<Question> {
-        val entity = repository.readById(questionId) ?: return ResponseEntity.notFound().build()
-        return entity
-            .tableEntityToApi()
-            .asHttpOkResponse()
-    }
-
-    /**
      * Convert a question table row to an object for the API
      */
     fun QuestionEntity.tableEntityToApi(): Question {
