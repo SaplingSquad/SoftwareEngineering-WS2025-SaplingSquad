@@ -227,6 +227,7 @@ paths:
                         items:
                           allOf:
                             - $ref: '#/components/schemas/ProjectWithId'
+                            - $ref: '#/components/schemas/ProjectRegion'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -252,6 +253,7 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/ProjectWithId'
+                  - $ref: '#/components/schemas/ProjectRegion'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -546,8 +548,9 @@ paths:
                 type: array
                 items:
                   allOf:
-                    - $ref: '#/components/schemas/ProjectId'
-                    - $ref: '#/components/schemas/Project'
+                    - $ref: '#/components/schemas/ProjectWithId'
+                    - $ref: '#/components/schemas/ProjectRegion'
+
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -597,9 +600,7 @@ paths:
         content:
           application/json:
             schema:
-              allOf:
-                - $ref: '#/components/schemas/ProjectId'
-                - $ref: '#/components/schemas/Project'
+              $ref: '#/components/schemas/ProjectWithId'
         required: true
       responses:
         '200':
@@ -940,6 +941,15 @@ components:
         - description
         - coordinates
         - tags
+    ProjectRegion:
+      type: object
+      properties:
+        regionName:
+          type: string
+          example: Deutschland
+          description: Name of the region, where the project takes place. UTF-8
+                       encoded, human readable and in the language of the
+                       application.
     ProjectWithId:
       allOf:
         - $ref: '#/components/schemas/ProjectId'
@@ -997,6 +1007,7 @@ components:
             - $ref: '#/components/schemas/OrganizationWithId'
             - allOf:
               - $ref: '#/components/schemas/ProjectWithId'
+              - $ref: '#/components/schemas/ProjectRegion'
           description: An exhaustive description of either an
                        organization or a project, including the ID.
         percentageMatch:
