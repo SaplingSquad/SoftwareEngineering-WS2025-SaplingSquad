@@ -1,5 +1,5 @@
 import { component$, createContextId, Signal, useComputed$, useContext, useContextProvider, useSignal, useStore } from "@builder.io/qwik";
-import { HiStarOutline, HiNoSymbolOutline, HiChevronRightOutline, HiChevronLeftOutline, HiInformationCircleOutline } from "@qwikest/icons/heroicons";
+import { HiStarOutline, HiNoSymbolOutline, HiChevronRightOutline, HiChevronLeftOutline, HiInformationCircleOutline, HiPlusOutline } from "@qwikest/icons/heroicons";
 import { MapLocationInput } from "./utils";
 import { OrgaInformationsProps } from "./profile";
 
@@ -105,10 +105,46 @@ const SingleVereinstag = component$((props: { b: Badge }) => {
 })
 
 const ImageStack = component$(() => {
+    const context = useContext(FormDataContext)
+    const inputRef = useSignal<HTMLInputElement>()
+    const inputValue = useSignal("")
     return (
         <>
-            <p>Vereinszertifikate</p>
-            <input type="file" class="file-input file-input-bordered file-input-primary w-full max-w-xs" />
+            <p>Bilder</p>
+            <div class="flex justify-between">
+                <label class="input input-bordered flex items-center gap-2 w-full mr-4">
+                    Bildurl
+                    <input type="text" class="grow w-full link link-neutral" value={inputValue.value} ref={inputRef} onInput$={(_, e) => inputValue.value = e.value} />
+                </label>
+                <button class="btn btn-primary" onClick$={() => { if (inputRef.value?.value) { context.imageUrls.push(inputRef.value?.value); inputValue.value = "" } }}>
+                    <div class="text-2xl hover:opacity-70 transition-all">
+                        <HiPlusOutline />
+                    </div>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4">
+                {
+                    context.imageUrls.slice().reverse().map((e, i) =>
+                    (
+                        <ImagePreview imgUrl={e} key={i} />
+                    )
+                    )
+                }
+            </div>
+        </>
+    )
+})
+
+const ImagePreview = component$((inputData: { imgUrl: string, key: number }) => {
+    return (
+        <>
+            <div key={inputData.key + "imageStackOrgaAcc"} class="">
+                <img
+                    class="rounded-xl max-w-60 max-h-60"
+                    src={inputData.imgUrl}
+                />
+            </div>
         </>
     )
 })
@@ -122,7 +158,11 @@ export const Vereinsignup = component$((inputData: { data: Badge[] }) => {
         founding: 2016,
         logoUrl: "asdf",
         imageUrls: [
-            "path/to/image/url.pic"
+            "https://img.daisyui.com/images/stock/photo-1559703248-dcaaec9fab78.webp",
+            "https://img.daisyui.com/images/stock/photo-1565098772267-60af42b81ef2.webp",
+            "https://img.daisyui.com/images/stock/photo-1572635148818-ef6fd45eb394.webp",
+            "https://img.daisyui.com/images/stock/photo-1494253109108-2e30c049369b.webp",
+            "https://img.daisyui.com/images/stock/photo-1550258987-190a2d41a8ba.webp"
         ],
         webpageUrl: "path/to/new/roots.de",
         donatePageUrl: "path/to/new/roots/donation/link.de"
@@ -135,12 +175,12 @@ export const Vereinsignup = component$((inputData: { data: Badge[] }) => {
         numbPers: 0,
         founding: 0,
         logoUrl: "",
-        imageUrls: [""],
+        imageUrls: [],
         webpageUrl: "",
         donatePageUrl: ""
     }
-    const position = useSignal(0);
-    const store = useStore<OrgaInformationsProps>(orgaDataEmpty)
+    const position = useSignal(2);
+    const store = useStore<OrgaInformationsProps>(orgaData)
     useContextProvider(FormDataContext, store)
     return (
         <>
@@ -157,10 +197,18 @@ export const Vereinsignup = component$((inputData: { data: Badge[] }) => {
                         <div class="join">
                             <button class="btn join-item" onClick$={() => (
                                 position.value = Math.max(0, position.value - 1)
-                            )}><HiChevronLeftOutline /></button>
+                            )}>
+                                <div class="text-2xl">
+                                    <HiChevronLeftOutline />
+                                </div>
+                            </button>
                             <button class="btn btn-primary join-item" onClick$={() => (
                                 position.value = Math.min(3, position.value + 1)
-                            )}><HiChevronRightOutline /></button>
+                            )}>
+                                <div class="text-2xl">
+                                    <HiChevronRightOutline />
+                                </div>
+                            </button>
                         </div>
                         <ul class="steps">
                             <li class="step step-primary step-neutral">Daten</li>

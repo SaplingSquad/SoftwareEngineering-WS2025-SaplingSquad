@@ -23,7 +23,7 @@ export type OrgaInformationsProps = {
     numbPers: number;
     founding: number;
     logoUrl: string;
-    imageUrls: [string];
+    imageUrls: string[];
     webpageUrl: string;
     donatePageUrl: string;
 };
