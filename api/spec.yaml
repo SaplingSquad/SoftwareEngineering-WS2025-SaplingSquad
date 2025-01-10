@@ -218,14 +218,14 @@ paths:
             type: string
             example: foo
         - in: query
-          name: continentName
-          description: Name of a continent (we include oceans).
+          name: continentId
+          description: Internal ID of a continent (we include oceans).
           schema:
             type: string
             example: Europe
         - in: query
           name: regionId
-          description: This parameter should be ignored if continentName is
+          description: This parameter should be ignored if continentId is
                        absent.
           schema:
             $ref: '#/components/schemas/RegionId'
@@ -357,8 +357,6 @@ paths:
       tags:
         - map
       summary: Get list of regions on the map.
-      description: This returns a List of GeoJSONSources to display the pins on
-                   the map.
       operationId: getRegions
       responses:
         '200':
@@ -370,9 +368,13 @@ paths:
                 items:
                   type: object
                   properties:
+                    id:
+                      type: string
+                      example: europe
+                      description: The internal ID of a continent or ocean.
                     name:
                       type: string
-                      example: Europe
+                      example: Europa
                       description: The name of a continent or ocean.
                     regions:
                       type: array
