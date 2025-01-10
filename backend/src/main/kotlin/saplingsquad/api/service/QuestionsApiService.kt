@@ -42,10 +42,10 @@ class QuestionsApiService(
      */
     fun QuestionEntity.tableEntityToApi(): Question {
         return Question(
-            questionId = this.questionId,
-            questionTitle = this.questionTitle,
-            questionText = this.question,
-            questionImageUrl = this.imageUrl.let { appConfig.resourcesUrlPath + it }
+            id = this.questionId,
+            title = this.questionTitle,
+            text = this.question,
+            imageUrl = this.imageUrl.let { appConfig.resourcesUrlPath + it }
         )
     }
 

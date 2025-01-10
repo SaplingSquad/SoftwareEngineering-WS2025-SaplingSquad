@@ -45,7 +45,7 @@ class MapApiService(
         val tags = result.tags
         val projects = result.projects
         return GetOrganizationById200Response(
-            orgaId = org.orgId,
+            id = org.orgId,
             name = org.name,
             description = org.description,
             foundingYear = org.foundingYear,
@@ -59,7 +59,7 @@ class MapApiService(
             tags = tags.toList(),
             projects = projects.map { (proj, projTags) ->
                 GetOrganizationById200ResponseAllOfProjectsInner(
-                    projectId = proj.projectId,
+                    id = proj.projectId,
                     name = proj.title,
                     description = proj.description,
                     dateFrom = proj.dateFrom?.let(::dateToMonthAndYear),

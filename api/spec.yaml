@@ -9,7 +9,7 @@ info:
   license:
     name: GNU Affero General Public License v3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
-  version: 1.2.1
+  version: 1.2.2
 servers:
   - url: /api
 tags:
@@ -325,7 +325,7 @@ paths:
       security:
         - userToken: []
       parameters:
-        - $ref: '#/components/parameters/queryProjectId'
+        - $ref: '#/components/parameters/queryId'
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -346,7 +346,7 @@ paths:
       security:
         - userToken: []
       parameters:
-        - $ref: '#/components/parameters/queryProjectId'
+        - $ref: '#/components/parameters/queryId'
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -395,7 +395,7 @@ paths:
       security:
         - userToken: []
       parameters:
-        - $ref: '#/components/parameters/queryOrgaId'
+        - $ref: '#/components/parameters/queryId'
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -416,7 +416,7 @@ paths:
       security:
         - userToken: []
       parameters:
-        - $ref: '#/components/parameters/queryOrgaId'
+        - $ref: '#/components/parameters/queryId'
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -600,7 +600,7 @@ paths:
       security:
         - orgaToken: []
       parameters:
-        - $ref: '#/components/parameters/queryProjectId'
+        - $ref: '#/components/parameters/queryId'
       responses:
         '200':
           $ref: '#/components/responses/200'
@@ -650,11 +650,11 @@ components:
     Question:
       type: object
       properties:
-        questionId:
+        id:
           type: integer
           example: 1
           description: Unique ID of the question.
-        questionTitle:
+        title:
           type: string
           example: Climate Action
           description: A descriptive title for the question.
@@ -662,20 +662,20 @@ components:
             description: Possibly with external context e.g. the WHO
                          sustainability goals.
             url: https://sdgs.un.org/goals
-        questionText:
+        text:
           type: string
           example: Do you want to focus on environment protection?
           description: A pre made question for the user. This may contain
                        further explanations w.r.t. the title.
-        questionImageUrl:
+        imageUrl:
           type: string
           example: url/to/question/image.pic
           description: A picture supplementing the text of a question.
       required:
-        - questionId
-        - questionTitle
-        - questionText
-        - questionImageUrl
+        - id
+        - title
+        - text
+        - imageUrl
     Answers:
       type: array
       description: Contains all IDs that have been answered positively.
@@ -805,12 +805,12 @@ components:
     OrganizationId:
       type: object
       properties:
-        orgaId:
+        id:
           type: integer
           example: 1
           description: The ID of the organization.
       required:
-        - orgaId
+        - id
     Organization:
       type: object
       properties:
@@ -880,12 +880,12 @@ components:
     ProjectId:
       type: object
       properties:
-        projectId:
+        id:
           type: integer
           example: 1
           description: The ID of the project.
       required:
-        - projectId
+        - id
     Project:
       type: object
       properties:
@@ -967,7 +967,7 @@ components:
     Region:
       type: object
       properties:
-        regionId:
+        id:
           type: integer
           example: 1
           description: The ID of the region.
@@ -991,7 +991,7 @@ components:
           example: path/to/wiki/tropical/zone.com
           description: Url with descriptions to the region.
       required:
-        - regionId
+        - id
         - name
         - description
         - webpageUrl
@@ -1050,18 +1050,11 @@ components:
     '5XX':
       description: Unexpected server error.
   parameters:
-    queryOrgaId:
-      name: orgaId
+    queryId:
+      name: id
       in: query
-      description: The unique ID from the organization.
-      required: true
-      schema:
-        type: integer
-        example: 1
-    queryProjectId:
-      name: projectId
-      in: query
-      description: The unique ID from the project.
+      description: The unique ID from the organization or project. This can be
+                   derived from the path.
       required: true
       schema:
         type: integer

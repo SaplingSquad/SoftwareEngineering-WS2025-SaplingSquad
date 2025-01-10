@@ -56,7 +56,7 @@ class OrganizationApiService(
             .readOrganizationAndTagsOfAccount(orgaToken.token.subject)!!
             .let { (org, tags) ->
                 GetOrganization200Response(
-                    orgaId = org.orgId,
+                    id = org.orgId,
                     name = org.name,
                     description = org.description,
                     foundingYear = org.foundingYear,
@@ -82,7 +82,7 @@ class OrganizationApiService(
         )
         val result = organizationsRepository.updateOrganizationOfAccount(
             orgaToken.token.subject, OrganizationEntity(
-                orgId = organization.orgaId,
+                orgId = organization.id,
                 name = organization.name,
                 description = organization.description,
                 foundingYear = organization.foundingYear,
@@ -140,7 +140,7 @@ class OrganizationApiService(
 
                 is ProjectCrRdResult.Success -> result.value.map { (proj, tags) ->
                     GetOrganizationById200ResponseAllOfProjectsInner(
-                        projectId = proj.projectId,
+                        id = proj.projectId,
                         name = proj.title,
                         description = proj.description,
                         dateFrom = proj.dateFrom?.let(::dateToMonthAndYear),
@@ -169,7 +169,7 @@ class OrganizationApiService(
         val result = projectsRepository.updateProjectOfAccount(
             orgaToken.token.subject,
             ProjectEntity(
-                projectId = proj.projectId,
+                projectId = proj.id,
                 orgId = 0, // must be ignored by repository
                 title = proj.name,
                 description = proj.description,

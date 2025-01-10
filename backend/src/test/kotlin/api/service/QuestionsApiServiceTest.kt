@@ -57,10 +57,10 @@ class QuestionsApiServiceTest {
 
         // @formatter:off
         val expectedBody = listOf(
-            Question(questionId = 1, questionTitle = "Question 1", questionText = "Content 1", questionImageUrl = "${resourcesUrl}image.png"),
-            Question(questionId = 2, questionTitle = "Question 2", questionText = "Content 2", questionImageUrl = "${resourcesUrl}image1.png"),
-            Question(questionId = 3, questionTitle = "Question 3", questionText = "Content 3", questionImageUrl = "${resourcesUrl}image2.png"),
-            Question(questionId = 4, questionTitle = "Question 4", questionText = "Content 4", questionImageUrl = "${resourcesUrl}image3.png"),
+            Question(id = 1, title = "Question 1", text = "Content 1", imageUrl = "${resourcesUrl}image.png"),
+            Question(id = 2, title = "Question 2", text = "Content 2", imageUrl = "${resourcesUrl}image1.png"),
+            Question(id = 3, title = "Question 3", text = "Content 3", imageUrl = "${resourcesUrl}image2.png"),
+            Question(id = 4, title = "Question 4", text = "Content 4", imageUrl = "${resourcesUrl}image3.png"),
         )
         // @formatter:on
 
