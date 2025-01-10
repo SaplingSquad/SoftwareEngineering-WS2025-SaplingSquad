@@ -2,7 +2,6 @@ package saplingsquad.persistence
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.flow.toSet
 import org.komapper.core.dsl.Meta
 import org.komapper.core.dsl.QueryDsl
@@ -21,7 +20,7 @@ typealias OrganizationEntityAndTags = Pair<OrganizationEntity, Set<TagId>>
 data class OrganizationEntityProjectIdsAndTags(
     val org: OrganizationEntity,
     val tags: Set<TagId>,
-    val projects: List<ProjectEntity>
+    val projects: List<ProjectEntityAndTags>
 )
 
 @Repository
@@ -43,9 +42,13 @@ class OrganizationsRepository(private val db: R2dbcDatabase) {
             }.map { it.tagId }.toSet()
 
             val proj = Meta.projectEntity
-            val projects = db.flowQuery {
-                QueryDsl.from(proj).where { proj.orgId eq organizationId }
-            }.toList()
+            val projTags = Meta.projectTagsEntity
+            val projects = db.runQuery {
+                QueryDsl.from(proj)
+                    .where { proj.orgId eq organizationId }
+                    .leftJoin(projTags) { proj.projectId eq projTags.projectId }
+                    .includeAll()
+            }.oneToMany(proj, projTags).toProjectEntitiesWithTags()
 
             return@withTransaction OrganizationEntityProjectIdsAndTags(org, tags, projects)
         }

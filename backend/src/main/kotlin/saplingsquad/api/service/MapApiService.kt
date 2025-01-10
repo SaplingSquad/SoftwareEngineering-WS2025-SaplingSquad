@@ -53,7 +53,7 @@ class MapApiService(
             imageUrls = emptyList(), //TODO maybe implement images sometime
             coordinates = org.coordinates.toLonLatList(),
             tags = tags.toList(),
-            projects = projects.map { proj ->
+            projects = projects.map { (proj, projTags) ->
                 ProjectWithId(
                     projectId = proj.projectId,
                     name = proj.title,
@@ -64,7 +64,7 @@ class MapApiService(
                     webpageUrl = proj.websiteUrl,
                     donatePageUrl = proj.donationUrl,
                     coordinates = proj.coordinates.toLonLatList(),
-                    tags = emptyList() //TODO tag list
+                    tags = projTags.toList()
                 )
             }
         ).asHttpOkResponse()

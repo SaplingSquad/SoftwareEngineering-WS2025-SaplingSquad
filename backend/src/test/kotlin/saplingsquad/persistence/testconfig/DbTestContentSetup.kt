@@ -7,8 +7,8 @@ import org.komapper.core.dsl.metamodel.EntityMetamodel
 import org.komapper.core.dsl.metamodel.PropertyMetamodel
 import org.komapper.core.dsl.query.andThen
 import org.komapper.r2dbc.R2dbcDatabase
+import saplingsquad.persistence.ProjectEntityAndTags
 import saplingsquad.persistence.tables.*
-import saplingsquad.persistence.testconfig.ExampleOrgas.orgas
 import java.time.LocalDate
 
 
@@ -168,6 +168,16 @@ object ExampleProjects {
             in 4..5 -> listOf(4 * n, 5 * n)
             else -> listOf(6 * n)
         }
+    }
+
+    private fun projectWithTagForId(id: ProjectId): ProjectEntityAndTags? {
+        return projects.find { it.projectId == id }?.let { p ->
+            Pair(p, tagsOfProject(p).toSet())
+        }
+    }
+
+    fun projectsWithTagsForOrga(orgId: OrganizationId): List<ProjectEntityAndTags> {
+        return projectIdsForOrga(orgId).mapNotNull(::projectWithTagForId)
     }
 
     val projects = List(10) { orgId ->

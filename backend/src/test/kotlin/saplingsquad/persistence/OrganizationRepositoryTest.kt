@@ -39,7 +39,7 @@ class OrganizationRepositoryTest {
             assertNotNull(result)
             assertEquals(org, result.org)
             assertEquals(ExampleOrgas.tagsOfOrga(org).toSet(), result.tags)
-            assertEquals(ExampleProjects.projectIdsForOrga(org.orgId), result.projectIds)
+            assertEquals(ExampleProjects.projectsWithTagsForOrga(org.orgId).toSet(), result.projects.toSet())
         }
         val notExistent = repository.readOrganizationAndTagsAndProjectsById(-1)
         assertNull(notExistent)

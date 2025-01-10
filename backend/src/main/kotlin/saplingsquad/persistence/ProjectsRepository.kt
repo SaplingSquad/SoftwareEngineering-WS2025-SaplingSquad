@@ -71,9 +71,7 @@ class ProjectsRepository(private val db: R2dbcDatabase) {
                     }.includeAll()
             )
             ProjectCrRdResult.Success(
-                projects.oneToMany(p, pTags)
-                    .mapValues { it.value.mapTo(mutableSetOf(), ProjectTagsEntity::tagId) }
-                    .toList()
+                projects.oneToMany(p, pTags).toProjectEntitiesWithTags()
             )
         }
 
@@ -214,3 +212,8 @@ private fun filterByTagsSqlQuery(answers: List<Int>) = QueryDsl
     )
     .bind("answers", answers)
     .selectAsEntity(Meta.projectEntity)
+
+fun Map<ProjectEntity, Set<ProjectTagsEntity>>.toProjectEntitiesWithTags(): List<ProjectEntityAndTags> {
+    return this.mapValues { it.value.mapTo(mutableSetOf(), ProjectTagsEntity::tagId) }
+        .toList()
+}
