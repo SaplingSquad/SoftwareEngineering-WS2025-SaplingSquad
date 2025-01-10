@@ -4,7 +4,7 @@ import {
   type FilterSettings,
   defaultFilterSettings,
 } from "~/components/filter";
-import { MapUI } from "~/components/map-ui";
+import { MapUI } from "~/components/map-ui/map-ui";
 
 export default component$(() => {
   const filterSettings: FilterSettings = useStore(defaultFilterSettings());

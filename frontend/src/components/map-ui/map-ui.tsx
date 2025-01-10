@@ -10,14 +10,13 @@ import {
 } from "@qwikest/icons/heroicons";
 import SproutIcon from "/src/images/Sprout_icon.svg?jsx";
 import AllIcon from "/src/images/All_Icon.svg?jsx";
-import { type FilterSettings, Filter } from "./filter";
-import {
-  OrganizationShortInfo,
-  ProjectShortInfo,
-  type Organization,
-  type Project,
-} from "./project-shortinfo";
+import { type FilterSettings, Filter } from "../filter";
+import { type Project, ProjectShortInfo } from "./project-shortinfo";
 import { ProjectLargeInfo } from "./project-largeinfo";
+import {
+  type Organization,
+  OrganizationShortInfo,
+} from "./organization-shortinfo";
 
 enum ResultTab {
   ALL,
@@ -35,10 +34,10 @@ const projects: Project[] = [
 
 // prettier-ignore
 const orgs: Organization[] = [
-  { title: "Nebula Kaleidoscope Paradox", orgIcon: "/src/images/Sprout_icon.svg", memberCount: 100, description: "En, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invi" },
-  { title: "Mosaic Elixir Labyrinth", orgIcon: "/src/images/Sprout_icon.svg", memberCount: 1000, description: "Unt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing" },
-  { title: "Paradox Aurora Ephemeral", orgIcon: "/src/images/Sprout_icon.svg", memberCount: 2000, description: "St Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et ac" },
-  { title: "Solstice Mosaic Vortex Solstice Mosaic Vortex", orgIcon: "/src/images/Sprout_icon.svg", memberCount: 10, description: "Diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam" },
+  { title: "Nebula Kaleidoscope Paradox", orgIcon: "/src/images/Sprout_icon.svg", memberCount: 100, foundingYear: 2005, projects: [1, 2, 3], tags: ["Umweltschutz", "Tierschutz"], description: "En, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invi" },
+  { title: "Mosaic Elixir Labyrinth", orgIcon: "/src/images/Sprout_icon.svg", memberCount: 1000, foundingYear: 1980, projects: [1, 2, 3], tags: ["Tierschutz", "Armut", "Wasserzugang", "Bildung"], description: "Unt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing" },
+  { title: "Paradox Aurora Ephemeral", orgIcon: "/src/images/Sprout_icon.svg", memberCount: 2000, foundingYear: 1888, projects: [1, 2, 3], tags: ["Frauenrechte"], description: "St Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et ac" },
+  { title: "Solstice Mosaic Vortex Solstice Mosaic Vortex", orgIcon: "/src/images/Sprout_icon.svg", memberCount: 10, foundingYear: 1998, projects: [1], tags: ["Bildung für Kinder"], description: "Diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam" },
 ];
 
 /**
@@ -110,7 +109,13 @@ export const MapUI = component$((props: { filterSettings: FilterSettings }) => {
                   />
                 ))}
                 {filteredOrgs.map((org, idx) => (
-                  <OrganizationShortInfo key={idx} org={org} />
+                  <OrganizationShortInfo
+                    key={idx}
+                    org={org}
+                    onClick={$(() => {
+                      console.log(org);
+                    })}
+                  />
                 ))}
               </div>
             </div>
