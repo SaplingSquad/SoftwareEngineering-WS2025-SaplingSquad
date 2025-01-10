@@ -873,6 +873,10 @@ components:
     Project:
       type: object
       properties:
+        orgaId:
+          type: integer
+          example: 1
+          description: The ID of the organization.
         name:
           type: string
           example: Great Green Wall
@@ -921,6 +925,7 @@ components:
           example: [1, 4, 5]
           description: The tags of this organization
       required:
+        - orgaId
         - name
         - description
         - coordinates
