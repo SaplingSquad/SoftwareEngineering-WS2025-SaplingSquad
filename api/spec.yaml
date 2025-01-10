@@ -822,6 +822,10 @@ components:
           example: 7
           description: Number of persons in the organization. Can be used to
                        find organizations by size.
+        iconUrl:
+          type: string
+          example: path/to/icon/url.pic
+          description: Icon provided by the organization.
         imageUrls:
           type: array
           items:
@@ -854,6 +858,7 @@ components:
       required:
         - name
         - description
+        - iconUrl
         - webpageUrl
         - coordinates
         - tags
@@ -896,6 +901,11 @@ components:
           example: 2025-01
           description: Planned finish date of the project (only month and year).
                        Needs to uphold the format.
+        iconUrl:
+          type: string
+          example: path/to/icon/url.pic
+          description: Icon provided by the organization, defaults to the icon
+                       of the organization.
         imageUrls:
           type: array
           items:
