@@ -185,6 +185,8 @@ paths:
                           allOf:
                             - $ref: '#/components/schemas/ProjectWithId'
                             - $ref: '#/components/schemas/RegionName'
+                    required:
+                      - projects
         '400':
           $ref: '#/components/responses/400'
         '404':
