@@ -623,6 +623,9 @@ paths:
                       type: string
                       example: Umwelt
                       description: Human readable name of the tag.
+                  required:
+                    - id
+                    - name
         '400':
           $ref: '#/components/responses/400'
         '401':
