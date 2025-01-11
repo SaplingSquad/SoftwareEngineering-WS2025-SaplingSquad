@@ -107,6 +107,8 @@ paths:
       parameters:
         - in: query
           name: answers
+          style: form
+          explode: true
           schema:
             $ref: '#/components/schemas/Answers'
         - in: query
