@@ -182,7 +182,6 @@ const Overview = component$(() => {
                             </div>
                         </div>
                     </div>
-
                 </div>
 
                 <div class="stats bg-neutral text-primary shadow">
@@ -256,7 +255,7 @@ export const Vereinsignup = component$((inputData: { data: Badge[] }) => {
         webpageUrl: "",
         donatePageUrl: ""
     }
-    const position = useSignal(3);
+    const position = useSignal(0);
     const store = useStore<OrgaInformationsProps>(orgaData)
     useContextProvider(FormDataContext, store)
     return (

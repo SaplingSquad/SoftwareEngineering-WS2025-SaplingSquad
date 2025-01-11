@@ -5,7 +5,7 @@ import {
     useSignal,
     useStore,
 } from "@builder.io/qwik";
-import { Vereinsignup, Badge } from "~/components/profile/verein-signup";
+import { Vereinsignup, Badge } from "~/components/profile/manage-organisation";
 
 const data: Badge[] = [
     { title: "Kinder", answer: false },

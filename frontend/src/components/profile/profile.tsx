@@ -1,9 +1,11 @@
 import { Session } from "@auth/qwik";
-import { component$, Signal } from "@builder.io/qwik";
-import { HiUserCircleOutline, HiPlusCircleSolid, HiCog6ToothOutline, HiTrashOutline, HiPlusCircleOutline } from "@qwikest/icons/heroicons";
+import { component$, createContextId, Signal, useContext, useContextProvider, useStore } from "@builder.io/qwik";
+import { HiUserCircleOutline, HiPlusCircleSolid, HiCog6ToothOutline, HiTrashOutline, HiPlusCircleOutline, HiLinkOutline, HiBanknotesOutline } from "@qwikest/icons/heroicons";
 import { LogoutParamsForm } from "../auth/logout";
 import { ProfileImage } from "./utils";
 import { isAccTypeOrg, useAccountType } from "~/auth/tools";
+
+const OrgaProfileDataContext = createContextId<OrgaInformationsProps>("verein-profile-context")
 
 export type ProfileProjectsProps = {
     img: string;
@@ -106,22 +108,18 @@ const ProjectManagement = component$((inputData: { data: ProfileProjectsProps[] 
 })
 
 const Vereinsinfo = component$(() => {
+    const context = useContext(OrgaProfileDataContext);
     return (
         <>
             <div class="stats shadow m-4 p-4 space-y-4">
                 <div class="stat place-items-center">
                     <div class="stat-title">Gründungsjahr</div>
-                    <div class="stat-value text-primary">2018</div>
+                    <div class="stat-value text-primary">{context.founding}</div>
                 </div>
 
                 <div class="stat place-items-center">
                     <div class="stat-title">Mitglieder</div>
-                    <div class="stat-value text-primary">16000</div>
-                </div>
-
-                <div class="stat place-items-center">
-                    <div class="stat-title">Aufrufe</div>
-                    <div class="stat-value text-primary">30</div>
+                    <div class="stat-value text-primary">{context.numbPers}</div>
                 </div>
             </div>
             <div class="card-actions justify-end mx-4 py-4">
@@ -178,9 +176,10 @@ const VereinDummy = component$(() => {
     )
 })
 
-const VereinInfoProjects = component$((inputData: { projectData: ProfileProjectsProps[], orgaInfo: OrgaInformationsProps }) => {
+const VereinInfoProjects = component$((inputData: { projectData: ProfileProjectsProps[] }) => {
+    const context = useContext(OrgaProfileDataContext)
     return (
-        inputData.orgaInfo.name === ""
+        context.name === ""
             ?
             <>
                 <VereinDummy />
@@ -188,12 +187,34 @@ const VereinInfoProjects = component$((inputData: { projectData: ProfileProjects
             :
             <>
                 <div class="card bg-base-100 rounded-box place-items-stretch  p-4 space-y-4 min-h-fit w-full min-w-fit card-bordered border-base-300 border-4 ">
-                    <h2 class="card-title">Verein <div class="avatar">
-                        <div class="w-10 rounded-full">
-                            <img
-                                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                    <div class="flex items-center gap-4 border border-primary rounded-3xl border-2 p-4">
+                        <div class="avatar bg-primary rounded-full">
+                            <div class="w-24 rounded-full">
+                                <img src={context.logoUrl} />
+                            </div>
                         </div>
-                    </div></h2>
+                        <div>
+                            <div class="text-2xl">
+                                {context.name}
+                            </div>
+                            <div class="flex gap-2">
+                                <div class="text-xl flex">
+                                    <HiLinkOutline />
+                                </div>
+                                <div class="link">
+                                    {context.webpageUrl}
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <div class="text-xl flex">
+                                    <HiBanknotesOutline />
+                                </div>
+                                <div class="link">
+                                    {context.donatePageUrl}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="flex flex-wrap gap-6">
                         <div class="card bg-base-200 rounded-box place-items-stretch w-full">
                             <Vereinsinfo />
@@ -218,15 +239,19 @@ export const UserProfile = component$((inputData: { profiledata: Readonly<Signal
 export const VereinProfile = component$((inputData: { projectdata: ProfileProjectsProps[], profiledata: Readonly<Signal<null>> | Readonly<Signal<Session>> }) => {
     const orgaData: OrgaInformationsProps = {
         name: "New Roots",
-        description: "New Roots is ...",
+        description: "Der New Roots e.V. ist eine Initiative von Freunden aus München, die sich gemeinsam der Herausforderung verschrieben haben, bedürftigen Menschen zu helfen. Unser gemeinnütziger Verein wurde mit dem klaren Ziel gegründet, Kindern in Kenia ein sicheres Zuhause zu bieten, regelmäßige Mahlzeiten zu gewährleisten und ihnen den Zugang zu Bildung zu ermöglichen.",
         location: { lng: 20, lat: 20 },
         numbPers: 12,
         founding: 2016,
-        logoUrl: "asdf",
+        logoUrl: "https://lirp.cdn-website.com/58002456/dms3rep/multi/opt/Logo_w_150ppi-134w.png",
         imageUrls: [
-            "path/to/image/url.pic"
+            "https://lirp.cdn-website.com/58002456/dms3rep/multi/opt/PHOTO-2024-10-26-15-29-15-600h.jpg",
+            "https://img.daisyui.com/images/stock/photo-1565098772267-60af42b81ef2.webp",
+            "https://img.daisyui.com/images/stock/photo-1572635148818-ef6fd45eb394.webp",
+            "https://img.daisyui.com/images/stock/photo-1494253109108-2e30c049369b.webp",
+            "https://img.daisyui.com/images/stock/photo-1550258987-190a2d41a8ba.webp"
         ],
-        webpageUrl: "path/to/new/roots.de",
+        webpageUrl: "https://www.new-roots.de/#Listen",
         donatePageUrl: "path/to/new/roots/donation/link.de"
     }
 
@@ -241,11 +266,14 @@ export const VereinProfile = component$((inputData: { projectdata: ProfileProjec
         webpageUrl: "",
         donatePageUrl: ""
     }
+
+    const store = useStore<OrgaInformationsProps>(orgaData)
+    useContextProvider(OrgaProfileDataContext, store)
     return (
         <>
             <div class="grid grid-rows-4 grid-cols-10 gap-4 p-5">
                 <div class="row-span-3 col-span-8">
-                    <VereinInfoProjects projectData={inputData.projectdata} orgaInfo={orgaDataEmpty} />
+                    <VereinInfoProjects projectData={inputData.projectdata} />
                 </div>
                 <div class="row-span-auto col-span-2">
                     <ProfileInformation profiledata={inputData.profiledata} />
