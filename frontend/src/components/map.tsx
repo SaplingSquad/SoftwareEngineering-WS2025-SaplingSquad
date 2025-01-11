@@ -232,6 +232,50 @@ export const Map = component$(
 );
 
 /**
+ * Creates a non-interactive map with a marker at the specified coordinates.
+ * Is zoomed to the marker.
+ */
+export const PreviewMap = component$(
+  ({
+    coordinates,
+    color,
+    class: clz,
+  }: {
+    /**
+     * Coordinates to preview
+     */
+    coordinates: [number, number];
+    /**
+     * Color of the marker to display
+     */
+    color?: string;
+    /**
+     * Classes to set
+     */
+    class?: ClassList;
+  }) => {
+    return (
+      <Map
+        additionalConfig={{
+          interactive: false,
+          center: coordinates,
+          zoom: 8,
+          attributionControl: { compact: true },
+        }}
+        class={clz}
+        onInit$={(map) =>
+          new maplibregl.Marker({
+            color: color,
+          })
+            .setLngLat(coordinates)
+            .addTo(map)
+        }
+      />
+    );
+  },
+);
+
+/**
  * Creates a {@link maplibregl.Popup} with JSX contents.
  * Needs to be called on the client (mostly the case, as map is only loaded on client).
  *
