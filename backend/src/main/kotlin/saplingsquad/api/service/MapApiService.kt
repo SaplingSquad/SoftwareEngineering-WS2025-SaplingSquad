@@ -98,7 +98,7 @@ class MapApiService(
         ).asHttpOkResponse()
     }
 
-    override suspend fun getProjectById(id: Int): ResponseEntity<GetOrganizationById200ResponseAllOfProjectsInner> {
+    override suspend fun getProjectById(id: Int): ResponseEntity<GetProjectById200Response> {
         TODO("Not yet implemented")
     }
 

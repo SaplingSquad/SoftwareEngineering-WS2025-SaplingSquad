@@ -9,7 +9,7 @@ info:
   license:
     name: GNU Affero General Public License v3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
-  version: 1.2.13
+  version: 1.2.14
 servers:
   - url: /api
 tags:
@@ -211,6 +211,7 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/ProjectWithId'
+                  - $ref: '#/components/schemas/ProjectOrganizationName'
                   - $ref: '#/components/schemas/RegionName'
         '400':
           $ref: '#/components/responses/400'
@@ -873,6 +874,15 @@ components:
         - description
         - coordinates
         - tags
+    ProjectOrganizationName:
+      type: object
+      properties:
+        orgaName:
+          type: string
+          example: New Roots
+          description: The name of the organization.
+      required:
+        - orgaName
     RegionName:
       type: object
       properties:
@@ -933,6 +943,7 @@ components:
           allOf:
             - $ref: '#/components/schemas/ProjectId'
             - $ref: '#/components/schemas/Project'
+            - $ref: '#/components/schemas/ProjectOrganizationName'
             - $ref: '#/components/schemas/RegionName'
       required:
         - type
