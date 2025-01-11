@@ -6,8 +6,14 @@ import {
   render,
   useOn,
   useSignal,
+  useTask$,
 } from "@builder.io/qwik";
-import type { AddLayerObject, MapLayerEventType } from "maplibre-gl";
+import type {
+  AddLayerObject,
+  GeoJSONSource,
+  GeoJSONSourceSpecification,
+  MapLayerEventType,
+} from "maplibre-gl";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { DistributiveOmit, MaybeArray } from "~/utils";
@@ -17,7 +23,7 @@ import { maybeArray } from "~/utils";
  * Data sources of the map
  */
 export type Sources = {
-  [id: string]: Parameters<InstanceType<typeof maplibregl.Map>["addSource"]>[1];
+  [id: string]: GeoJSONSourceSpecification;
 };
 
 /**
@@ -110,6 +116,9 @@ const createMap = (
 
 /**
  * Component to display a map using MapLibreGL.
+ *
+ * **NOTE:** Only updates to `sources` and `class` are propagated,
+ * and the only values of a `source` that are updated are its `data`, `cluster`, and `clusterMaxZoom`.
  */
 export const Map = component$(
   ({
@@ -157,6 +166,8 @@ export const Map = component$(
       object;
   }) => {
     const map = useSignal<NoSerialize<maplibregl.Map>>();
+    // Currently loaded sources by id
+    const loadedSources = useSignal<string[]>([]);
     const containerRef = useSignal<HTMLElement>();
 
     useOn(
@@ -180,8 +191,37 @@ export const Map = component$(
             onInit$,
           ),
         );
+        loadedSources.value = Object.keys(sources);
       }),
     );
+
+    // Handle updates to
+    useTask$(({ track }) => {
+      const src = track(() => sources);
+      const m = map.value;
+      if (!m?.loaded()) return;
+      // Remove sources that don't exist anymore
+      loadedSources.value
+        .filter((id) => !(id in src))
+        .forEach((id) => m.removeSource(id));
+      // Update sources
+      Object.entries(src).forEach(([id, source]) => {
+        if (loadedSources.value.includes(id)) {
+          // Update existing source
+          (m.getSource(id) as GeoJSONSource)
+            .setData(source.data)
+            .setClusterOptions({
+              cluster: source.cluster,
+              clusterMaxZoom: source.clusterMaxZoom,
+              // clusterRadius: source.clusterRadius // Updating this breaks clustering for some reason
+            });
+        } else {
+          // Create new source
+          m.addSource(id, source);
+        }
+      });
+      loadedSources.value = Object.keys(sources);
+    });
 
     return (
       <div ref={containerRef} class={clz}>
