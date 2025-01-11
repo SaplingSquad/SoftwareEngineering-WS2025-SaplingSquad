@@ -11,7 +11,7 @@ typealias ProjectId = Int
  * Represents a single row in the table.
  */
 @KomapperEntity
-@KomapperTable("project")
+@KomapperTable("project_with_region_name")
 data class ProjectWithRegionEntity(
     /** Duplicate id to make it compile :( */
     @KomapperAutoIncrement

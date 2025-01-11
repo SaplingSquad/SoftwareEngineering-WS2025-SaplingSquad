@@ -9,7 +9,7 @@ typealias OrganizationId = Int;
  * Represents a single row in the table.
  */
 @KomapperEntity
-@KomapperTable("organization")
+@KomapperTable("organization_with_region_name")
 data class OrganizationWithRegionEntity(
     /** Duplicate id to make it compile :( */
     @KomapperAutoIncrement
