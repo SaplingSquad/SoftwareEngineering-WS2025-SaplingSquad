@@ -148,6 +148,8 @@ paths:
                     $ref: '#/components/schemas/GeoJsonOrganizations'
                   projectLocations:
                     $ref: '#/components/schemas/GeoJsonProjects'
+                required:
+                  - rankings
         '400':
           $ref: '#/components/responses/400'
         '5XX':
