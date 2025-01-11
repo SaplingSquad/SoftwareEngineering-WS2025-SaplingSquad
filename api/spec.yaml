@@ -9,7 +9,7 @@ info:
   license:
     name: GNU Affero General Public License v3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
-  version: 1.2.15
+  version: 1.2.16
 servers:
   - url: /api
 tags:
@@ -393,7 +393,7 @@ paths:
       tags:
         - organization
       summary: Get organization informations.
-      operationId: getOrganization
+      operationId: getOrganizationSelf
       security:
         - orgaToken: []
       responses:
@@ -468,7 +468,7 @@ paths:
       tags:
         - organization
       summary: Get project informations for the authenticated organization.
-      operationId: getProjectsForOrganization
+      operationId: getProjectsForOrganizationSelf
       security:
         - orgaToken: []
       responses:

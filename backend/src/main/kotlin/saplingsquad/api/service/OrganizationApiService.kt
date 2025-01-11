@@ -51,11 +51,11 @@ class OrganizationApiService(
         }
     }
 
-    override suspend fun getOrganization(orgaToken: JwtAuthenticationToken): ResponseEntity<GetOrganization200Response> {
+    override suspend fun getOrganizationSelf(orgaToken: JwtAuthenticationToken): ResponseEntity<GetOrganizationSelf200Response> {
         return organizationsRepository
             .readOrganizationAndTagsOfAccount(orgaToken.token.subject)!!
             .let { (org, tags) ->
-                GetOrganization200Response(
+                GetOrganizationSelf200Response(
                     id = org.orgId,
                     name = org.name,
                     description = org.description,
@@ -130,7 +130,7 @@ class OrganizationApiService(
         }
     }
 
-    override fun getProjectsForOrganization(orgaToken: JwtAuthenticationToken): ResponseEntity<Flow<GetOrganizationById200ResponseAllOfProjectsInner>> {
+    override fun getProjectsForOrganizationSelf(orgaToken: JwtAuthenticationToken): ResponseEntity<Flow<GetOrganizationById200ResponseAllOfProjectsInner>> {
         return flowOfList {
             when (val result = projectsRepository.readProjectsByAccount(orgaToken.token.subject)) {
                 is ProjectCrRdResult.OrganizationNotRegisteredYet -> throw ResponseStatusException(
