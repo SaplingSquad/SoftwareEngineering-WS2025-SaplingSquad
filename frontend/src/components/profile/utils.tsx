@@ -47,7 +47,8 @@ export const MapLocationInput = component$(
         layers$ = $([]),
         images = {},
         onClick = [],
-        location
+        location,
+        drgbl = false
     }: {
         /**
          * Classes to set
@@ -74,6 +75,7 @@ export const MapLocationInput = component$(
          */
         onClick?: ClickHandlers;
         location: InputMarkerLocation;
+        drgbl?: boolean;
     }) => {
         const map = useSignal<NoSerialize<maplibregl.Map>>();
         const markSign = useSignal<NoSerialize<maplibregl.Marker>>();
@@ -101,7 +103,7 @@ export const MapLocationInput = component$(
                     onClick,
                 )
                 markSign.value = noSerialize(
-                    new maplibregl.Marker({ draggable: true })
+                    new maplibregl.Marker({ draggable: drgbl })
                         .setLngLat([location.lng, location.lat])
                         .addTo(createdMap)
                 )
