@@ -7,6 +7,7 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.LocalDate
 import java.time.YearMonth
+import java.time.format.DateTimeParseException
 
 fun CoordinatesEmbedded.toLonLatList(precision: Int? = 6): List<BigDecimal> {
     return listOf(
@@ -46,8 +47,18 @@ enum class DateContext {
  * If it is supposed to be a start date, use the first day of the month
  * If it is supposed to be an end date, use the last day of the month
  */
-fun monthAndYearToDate(isoYearAndMonth: String, dateContext: DateContext): LocalDate {
-    val yearMonth = YearMonth.parse(isoYearAndMonth)
+fun monthAndYearToDate(
+    isoYearAndMonth: String,
+    dateContext: DateContext,
+    throwOnError: (input: String, reason: Throwable) -> Throwable = { input, _ ->
+        ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid date format: $input")
+    }
+): LocalDate {
+    val yearMonth = try {
+        YearMonth.parse(isoYearAndMonth)
+    } catch (e: DateTimeParseException) {
+        throw throwOnError(isoYearAndMonth, e)
+    }
     return when (dateContext) {
         DateContext.START_DATE -> yearMonth.atDay(1)
         DateContext.END_DATE -> yearMonth.atEndOfMonth()

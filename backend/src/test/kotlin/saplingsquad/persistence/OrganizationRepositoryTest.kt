@@ -145,9 +145,6 @@ class OrganizationRepositoryTest {
                     repository.updateOrganizationOfAccount("testaccount-2 (non-existent)", updateData, updateTags)
                 assertEquals(OrganizationUpdateResult.NoOrganizationRegistered, nonExistentResult)
 
-                val wrongIdResult = repository.updateOrganizationOfAccount(accountId, updateData, updateTags)
-                assertEquals(OrganizationUpdateResult.WrongOrganizationId, wrongIdResult)
-
                 val result =
                     repository.updateOrganizationOfAccount(accountId, updateData.copy(orgId = newId), updateTags)
                 assertEquals(OrganizationUpdateResult.Success, result)

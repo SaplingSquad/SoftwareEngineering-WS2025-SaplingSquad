@@ -41,36 +41,34 @@ class OrganizationApiService(
         return when (result) {
             is OrganizationRegisterResult.AlreadyRegistered ->
                 throw ResponseStatusException(
-                    HttpStatus.FORBIDDEN,
+                    HttpStatus.CONFLICT,
                     "Already registered an organization with this account"
                 )
 
-            is OrganizationRegisterResult.Success -> ResponseEntity.ok()
+            is OrganizationRegisterResult.Success -> ResponseEntity.status(HttpStatus.CREATED)
                 .contentType(MediaType.TEXT_PLAIN)
                 .body(result.id)
         }
     }
 
     override suspend fun getOrganizationSelf(orgaToken: JwtAuthenticationToken): ResponseEntity<GetOrganizationSelf200Response> {
-        return organizationsRepository
-            .readOrganizationAndTagsOfAccount(orgaToken.token.subject)!!
-            .let { (org, tags) ->
-                GetOrganizationSelf200Response(
-                    id = org.orgId,
-                    name = org.name,
-                    description = org.description,
-                    foundingYear = org.foundingYear,
-                    memberCount = org.memberCount,
-                    webPageUrl = org.websiteUrl,
-                    donatePageUrl = org.donationUrl,
-                    regionName = null, //TODO calculate and send region name
-                    iconUrl = "https://picsum.photos/200?x=" + org.orgId, //TODO
-                    imageUrls = emptyList(), //TODO maybe implement images sometime
-                    coordinates = org.coordinates.toLonLatList(),
-                    tags = tags.toList()
-                )
-            }
-            .asHttpOkResponse()
+        val (org, tags) = organizationsRepository
+            .readOrganizationAndTagsOfAccount(orgaToken.token.subject)
+            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No organization registered yet")
+        return GetOrganizationSelf200Response(
+            id = org.orgId,
+            name = org.name,
+            description = org.description,
+            foundingYear = org.foundingYear,
+            memberCount = org.memberCount,
+            webPageUrl = org.websiteUrl,
+            donatePageUrl = org.donationUrl,
+            regionName = null, //TODO calculate and send region name
+            iconUrl = "https://picsum.photos/200?x=" + org.orgId, //TODO
+            imageUrls = emptyList(), //TODO maybe implement images sometime
+            coordinates = org.coordinates.toLonLatList(),
+            tags = tags.toList()
+        ).asHttpOkResponse()
     }
 
     override suspend fun putOrganization(
@@ -94,13 +92,10 @@ class OrganizationApiService(
             organization.tags.toSet()
         )
         return when (result) {
-            OrganizationUpdateResult.Success -> ResponseEntity.ok().build()
-            OrganizationUpdateResult.NoOrganizationRegistered -> throw ResponseStatusException(
-                HttpStatus.BAD_REQUEST, "No organization registered yet"
-            )
+            OrganizationUpdateResult.Success -> ResponseEntity.noContent().build()
 
-            OrganizationUpdateResult.WrongOrganizationId -> throw ResponseStatusException(
-                HttpStatus.BAD_REQUEST, "Wrong organization ID in body"
+            OrganizationUpdateResult.NoOrganizationRegistered -> throw ResponseStatusException(
+                HttpStatus.NOT_FOUND, "No organization registered yet"
             )
         }
     }
@@ -122,9 +117,12 @@ class OrganizationApiService(
             tags = project.tags.toSet()
         )
         return when (result) {
-            is ProjectCrRdResult.Success -> result.value.asHttpOkResponse()
+            is ProjectCrRdResult.Success -> ResponseEntity.status(HttpStatus.CREATED)
+                .contentType(MediaType.TEXT_PLAIN)
+                .body(result.value)
+
             is ProjectCrRdResult.OrganizationNotRegisteredYet -> throw ResponseStatusException(
-                HttpStatus.FORBIDDEN,
+                HttpStatus.NOT_FOUND,
                 "Organization registration not completed yet"
             )
         }
@@ -134,7 +132,7 @@ class OrganizationApiService(
         return flowOfList {
             when (val result = projectsRepository.readProjectsByAccount(orgaToken.token.subject)) {
                 is ProjectCrRdResult.OrganizationNotRegisteredYet -> throw ResponseStatusException(
-                    HttpStatus.FORBIDDEN,
+                    HttpStatus.NOT_FOUND,
                     "Organization registration not completed yet"
                 )
 
@@ -182,10 +180,10 @@ class OrganizationApiService(
             proj.tags.toSet()
         )
         return when (result) {
-            ProjectUpdDelResult.Success -> ResponseEntity.ok().build()
+            ProjectUpdDelResult.Success -> ResponseEntity.noContent().build()
 
             ProjectUpdDelResult.OrganizationNotRegisteredYet -> throw ResponseStatusException(
-                HttpStatus.FORBIDDEN,
+                HttpStatus.NOT_FOUND,
                 "Organization registration not completed yet"
             )
 
@@ -200,10 +198,10 @@ class OrganizationApiService(
     override suspend fun deleteProject(orgaToken: JwtAuthenticationToken, id: Int): ResponseEntity<Unit> {
         val result = projectsRepository.deleteProjectOfAccount(orgaToken.token.subject, id)
         return when (result) {
-            ProjectUpdDelResult.Success -> ResponseEntity.ok().build()
+            ProjectUpdDelResult.Success -> ResponseEntity.noContent().build()
 
             ProjectUpdDelResult.OrganizationNotRegisteredYet -> throw ResponseStatusException(
-                HttpStatus.FORBIDDEN,
+                HttpStatus.NOT_FOUND,
                 "Organization registration not completed yet"
             )
 

@@ -12,22 +12,22 @@ import saplingsquad.persistence.BookmarksRepository
 class BookmarksApiService(private val bookmarksRepository: BookmarksRepository) : BookmarksApiDelegate {
     override suspend fun postOrganizationBookmark(userToken: JwtAuthenticationToken, id: Int): ResponseEntity<Unit> {
         bookmarksRepository.insertOrganizationBookmark(userToken.token.subject, id)
-        return ResponseEntity.ok().build()
+        return ResponseEntity.noContent().build()
     }
 
     override suspend fun postProjectBookmark(userToken: JwtAuthenticationToken, id: Int): ResponseEntity<Unit> {
         bookmarksRepository.insertProjectBookmark(userToken.token.subject, id)
-        return ResponseEntity.ok().build()
+        return ResponseEntity.noContent().build()
     }
 
     override suspend fun deleteOrganizationBookmark(userToken: JwtAuthenticationToken, id: Int): ResponseEntity<Unit> {
         bookmarksRepository.deleteOrganizationBookmark(userToken.token.subject, id)
-        return ResponseEntity.ok().build()
+        return ResponseEntity.noContent().build()
     }
 
     override suspend fun deleteProjectBookmark(userToken: JwtAuthenticationToken, id: Int): ResponseEntity<Unit> {
         bookmarksRepository.deleteProjectBookmark(userToken.token.subject, id)
-        return ResponseEntity.ok().build()
+        return ResponseEntity.noContent().build()
     }
 
     override fun getOrganizationBookmarks(userToken: JwtAuthenticationToken): ResponseEntity<Flow<Int>> {
