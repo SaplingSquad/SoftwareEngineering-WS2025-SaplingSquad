@@ -733,10 +733,12 @@ components:
         properties: # Not a keyword
           type: object
           properties:
-            projectId:
+            id:
               type: integer
               example: 1
               description: ID of a project for an organization.
+          required:
+            - id
         geometry:
           $ref: '#/components/schemas/GeoGeometry'
     GeoGeometry:

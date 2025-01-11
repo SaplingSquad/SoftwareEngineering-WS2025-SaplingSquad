@@ -110,7 +110,7 @@ class MapApiService(
                     GeoFeatureProject(
                         type = GeoFeatureProject.Type.Feature,
                         properties = GeoFeatureProjectProperties(
-                            projectId = it.projectId
+                            id = it.projectId
                         ),
                         geometry = GeoGeometry(
                             type = GeoGeometry.Type.Point,
