@@ -9,7 +9,7 @@ info:
   license:
     name: GNU Affero General Public License v3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
-  version: 1.2.18
+  version: 1.2.19
 servers:
   - url: /api
 tags:
@@ -358,7 +358,7 @@ paths:
       security:
         - userToken: []
       parameters:
-        - $ref: '#/components/parameters/queryIdProject'
+        - $ref: '#/components/parameters/queryIdOrganization'
       responses:
         '204':
           $ref: '#/components/responses/204'
@@ -547,7 +547,7 @@ paths:
       security:
         - orgaToken: []
       parameters:
-        - $ref: '#/components/parameters/queryIdOrganization'
+        - $ref: '#/components/parameters/queryIdProject'
       responses:
         '204':
           $ref: '#/components/responses/204'
