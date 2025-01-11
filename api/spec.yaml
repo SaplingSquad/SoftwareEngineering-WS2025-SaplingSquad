@@ -154,13 +154,9 @@ paths:
                                  projects that match the provided filter parameters
                                  to some degree.
                   organizationLocations:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/GeoJsonOrganizations'
+                    $ref: '#/components/schemas/GeoJsonOrganizations'
                   projectLocations:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/GeoJsonProjects'
+                    $ref: '#/components/schemas/GeoJsonProjects'
         '400':
           $ref: '#/components/responses/400'
         '401':
