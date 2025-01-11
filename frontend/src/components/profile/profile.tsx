@@ -123,11 +123,11 @@ const Vereinsinfo = component$(() => {
                 </div>
             </div>
             <div class="card-actions justify-end mx-4 py-4">
-                <button class="btn btn-primary">Bearbeiten
+                <a href="./manage-organisation" class="btn btn-primary">Bearbeiten
                     <div class="text-2xl">
                         <HiCog6ToothOutline />
                     </div>
-                </button>
+                </a>
             </div>
         </>
     )
@@ -165,7 +165,7 @@ const VereinDummy = component$(() => {
                     </div>
                 </div>
                 <div class="card-actions justify-end">
-                    <a href="./verein-signup" class="btn btn-primary">Verein verknüpfen
+                    <a href="./manage-organisation" class="btn btn-primary">Verein verknüpfen
                         <div class="text-2xl">
                             <HiPlusCircleOutline />
                         </div>

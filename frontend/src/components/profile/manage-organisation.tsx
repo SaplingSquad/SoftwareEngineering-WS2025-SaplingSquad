@@ -1,7 +1,8 @@
 import { ClassList, component$, createContextId, Signal, useComputed$, useContext, useContextProvider, useSignal, useStore } from "@builder.io/qwik";
-import { HiStarOutline, HiNoSymbolOutline, HiChevronRightOutline, HiChevronLeftOutline, HiInformationCircleOutline, HiPlusOutline, HiCalendarDaysOutline, HiUserGroupOutline, HiCog6ToothOutline, HiLinkOutline, HiBanknotesOutline } from "@qwikest/icons/heroicons";
+import { HiStarOutline, HiNoSymbolOutline, HiChevronRightOutline, HiChevronLeftOutline, HiInformationCircleOutline, HiPlusOutline, HiCalendarDaysOutline, HiUserGroupOutline, HiCog6ToothOutline, HiLinkOutline, HiBanknotesOutline, HiTrashOutline, HiTrashSolid } from "@qwikest/icons/heroicons";
 import { MapLocationInput } from "./utils";
 import { OrgaInformationsProps } from "./profile";
+import { Form } from "@builder.io/qwik-city";
 
 const FormDataContext = createContextId<OrgaInformationsProps>("verein-signup-context")
 
@@ -138,9 +139,13 @@ const ImageStack = component$(() => {
 })
 
 const ImagePreview = component$((inputData: { imgUrl: string, key: number, clz: ClassList }) => {
+    const context = useContext(FormDataContext);
     return (
         <>
-            <div key={inputData.key + "imageStackOrgaAcc"} class={inputData.clz}>
+            <div key={inputData.key + "imageStackOrgaAcc"} class={inputData.clz + " relative"}>
+                <div class="btn btn-circle btn-sm glass absolute top-0 left-0 text-error text-xl" onClick$={() => context.imageUrls = context.imageUrls.filter((e, i) => inputData.imgUrl !== e)}>
+                    <HiTrashSolid />
+                </div>
                 <img
                     class="rounded-xl max-w-60 max-h-60 shadow-xl"
                     src={inputData.imgUrl}
@@ -255,14 +260,14 @@ export const Vereinsignup = component$((inputData: { data: Badge[] }) => {
         webpageUrl: "",
         donatePageUrl: ""
     }
-    const position = useSignal(0);
+    const position = useSignal(2);
     const store = useStore<OrgaInformationsProps>(orgaData)
     useContextProvider(FormDataContext, store)
     return (
         <>
             <div class="relative flex justify-center">
                 <div class="card bg-base-300 rounded-box place-items-stretch m-8 p-8 space-y-4 [max-height:90dvh] w-full lg:w-1/3">
-                    <h2 class="card-title">Verein Registrieren</h2>
+                    <h2 class="card-title">Verein verwalten</h2>
                     <div class="overflow-y-auto space-y-4 ">
                         {position.value === 0 && <Vereinsdaten />}
                         {position.value === 1 && <Vereinstags data={inputData.data} />}
