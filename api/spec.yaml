@@ -9,7 +9,7 @@ info:
   license:
     name: GNU Affero General Public License v3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
-  version: 1.2.9
+  version: 1.2.10
 servers:
   - url: /api
 tags:
@@ -39,12 +39,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Question'
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
   /answers:
@@ -63,12 +57,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Answers'
-        '400':
-          $ref: '#/components/responses/400'
         '401':
           $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
     post:
@@ -87,14 +77,12 @@ paths:
             schema:
               $ref: '#/components/schemas/Answers'
       responses:
-        '200':
-          $ref: '#/components/responses/200'
+        '204':
+          $ref: '#/components/responses/204'
         '400':
           $ref: '#/components/responses/400'
         '401':
           $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
   /map/search:
@@ -162,10 +150,6 @@ paths:
                     $ref: '#/components/schemas/GeoJsonProjects'
         '400':
           $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
   /map/organizations/{id}:
@@ -201,8 +185,6 @@ paths:
                             - $ref: '#/components/schemas/RegionName'
         '400':
           $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
         '404':
           $ref: '#/components/responses/404'
         '5XX':
@@ -232,8 +214,6 @@ paths:
                   - $ref: '#/components/schemas/RegionName'
         '400':
           $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
         '404':
           $ref: '#/components/responses/404'
         '5XX':
@@ -278,12 +258,6 @@ paths:
                                a list of the regions located in this place. 
                 description: List of all continents as well as oceans and
                              their regions.
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
   /bookmarks/projects:
@@ -304,12 +278,8 @@ paths:
                 items:
                   type: integer
                   description: The ID for a bookmarked project.
-        '400':
-          $ref: '#/components/responses/400'
         '401':
           $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
     post:
@@ -322,8 +292,8 @@ paths:
       parameters:
         - $ref: '#/components/parameters/queryId'
       responses:
-        '200':
-          $ref: '#/components/responses/200'
+        '204':
+          $ref: '#/components/responses/204'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -342,14 +312,12 @@ paths:
       parameters:
         - $ref: '#/components/parameters/queryId'
       responses:
-        '200':
-          $ref: '#/components/responses/200'
+        '204':
+          $ref: '#/components/responses/204'
         '400':
           $ref: '#/components/responses/400'
         '401':
           $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
   /bookmarks/organizations:
@@ -370,12 +338,8 @@ paths:
                 items:
                   type: integer
                   description: The ID for a bookmarked organization.
-        '400':
-          $ref: '#/components/responses/400'
         '401':
           $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
     post:
@@ -388,8 +352,8 @@ paths:
       parameters:
         - $ref: '#/components/parameters/queryId'
       responses:
-        '200':
-          $ref: '#/components/responses/200'
+        '204':
+          $ref: '#/components/responses/204'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -408,14 +372,12 @@ paths:
       parameters:
         - $ref: '#/components/parameters/queryId'
       responses:
-        '200':
-          $ref: '#/components/responses/200'
+        '204':
+          $ref: '#/components/responses/204'
         '400':
           $ref: '#/components/responses/400'
         '401':
           $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
   /organizations:
@@ -459,14 +421,14 @@ paths:
               $ref: '#/components/schemas/Organization'
         required: true
       responses:
-        '200':
+        '201':
           $ref: '#/components/responses/ID'
         '400':
           $ref: '#/components/responses/400'
         '401':
           $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
         '5XX':
           $ref: '#/components/responses/5XX'
     put:
@@ -483,8 +445,8 @@ paths:
             schema:
               $ref: '#/components/schemas/OrganizationWithId'
       responses:
-        '200':
-          $ref: '#/components/responses/200'
+        '204':
+          $ref: '#/components/responses/204'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -512,9 +474,6 @@ paths:
                   allOf:
                     - $ref: '#/components/schemas/ProjectWithId'
                     - $ref: '#/components/schemas/RegionName'
-
-        '400':
-          $ref: '#/components/responses/400'
         '401':
           $ref: '#/components/responses/401'
         '404':
@@ -536,7 +495,7 @@ paths:
               $ref: '#/components/schemas/Project'
         required: true
       responses:
-        '200':
+        '201':
           $ref: '#/components/responses/ID'
         '400':
           $ref: '#/components/responses/400'
@@ -562,8 +521,8 @@ paths:
               $ref: '#/components/schemas/ProjectWithId'
         required: true
       responses:
-        '200':
-          $ref: '#/components/responses/200'
+        '204':
+          $ref: '#/components/responses/204'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -582,8 +541,8 @@ paths:
       parameters:
         - $ref: '#/components/parameters/queryId'
       responses:
-        '200':
-          $ref: '#/components/responses/200'
+        '204':
+          $ref: '#/components/responses/204'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -619,12 +578,6 @@ paths:
                   required:
                     - id
                     - name
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
 
@@ -962,8 +915,6 @@ components:
       description: Represents the type, description as well as match
                    percentage of one organization or project.
   responses:
-    '200':
-      description: Successful operation.
     'ID':
       description: Generated ID.
       content:
@@ -972,12 +923,16 @@ components:
             type: integer
             example: 1
             description: Generated ID. Unique w.r.t. the type of ID.
+    '204':
+      description: Successful operation. There is no contend to send.
     '400':
       description: Bad request. Provided request is malformed.
     '401':
       description: ID/ Token is missing or invalid.
     '404':
       description: Requested resource was not found.
+    '409':
+      description: The request conflicts with the current server state.
     '5XX':
       description: Unexpected server error.
   parameters:
