@@ -84,7 +84,9 @@ export default component$(() => {
     const vereintag = useStore(data);
     return (
         <>
-            <Vereinsignup data={vereintag} />
+            <div class="h-3/6">
+                <Vereinsignup data={vereintag} />
+            </div>
         </>
     )
 })

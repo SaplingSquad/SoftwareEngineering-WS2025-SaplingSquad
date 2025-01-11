@@ -94,6 +94,7 @@ export const MapLocationInput = component$(
                 }
                 const createdMap = createMap(
                     {
+                        cooperativeGestures: true,
                         container: containerRef.value,
                         style: style,
                     },
@@ -108,6 +109,12 @@ export const MapLocationInput = component$(
                         .addTo(createdMap)
                 )
 
+                createdMap.on('click', (e) => {
+                    location.lat = e.lngLat.lat
+                    location.lng = e.lngLat.lng
+                    markSign.value?.setLngLat(e.lngLat)
+                })
+
                 markSign.value?.on('dragend', () => {
                     const lngLat = markSign.value?.getLngLat()
                     if (lngLat?.lng) {
@@ -116,10 +123,6 @@ export const MapLocationInput = component$(
                     if (lngLat?.lat) {
                         location.lat = lngLat?.lat
                     }
-                    coordsLng.value = lngLat?.lng
-                    coordsLat.value = lngLat?.lat
-                    console.log(location.lng)
-                    console.log(location.lat)
                 })
             },
             { strategy: 'document-ready' }
@@ -127,10 +130,8 @@ export const MapLocationInput = component$(
 
         return (
             <>
-                <div>
-                    <div ref={containerRef} class={clz}>
-                        Loading map...
-                    </div>
+                <div ref={containerRef} class={clz}>
+                    Loading map...
                 </div>
             </>
         );

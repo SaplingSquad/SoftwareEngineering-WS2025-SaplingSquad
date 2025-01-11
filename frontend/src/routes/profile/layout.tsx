@@ -10,7 +10,7 @@ export default component$(() => {
         <>
             <div class="drawer">
                 <input id="my-drawer" type="checkbox" class="drawer-toggle" />
-                <div class="drawer-content">
+                <div class="drawer-content h-screen">
                     <div class="flex justify-center">
                         <div class="navbar bg-secondary navbar-rounded">
                             <div class="flex-none">
@@ -49,7 +49,7 @@ export default component$(() => {
                             </div>
                         </div>
                     </div>
-                    <Slot />{ }
+                    <Slot />
                 </div>
                 <div class="drawer-side">
                     <label for="my-drawer" aria-label="close sidebar" class="drawer-overlay"></label>

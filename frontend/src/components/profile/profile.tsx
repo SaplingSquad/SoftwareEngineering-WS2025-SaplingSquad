@@ -18,17 +18,34 @@ export type InputMarkerLocation = {
     lat: number
 }
 
+export type ProjectDate = {
+    mnth: number;
+    year: number;
+}
+
 export type OrgaInformationsProps = {
     name: string | null | undefined;
     description: string;
     location: InputMarkerLocation;
-    numbPers: number;
-    founding: number;
+    numbPers: string;
+    founding: string;
     logoUrl: string;
     imageUrls: string[];
     webpageUrl: string;
     donatePageUrl: string;
 };
+
+export type ProjectInformationProps = {
+    name: string | null | undefined;
+    description: string;
+    location: InputMarkerLocation;
+    dateFrom: ProjectDate;
+    datTo: ProjectDate;
+    imageUrls: string[];
+    webpageUrl: string;
+    donatePageUrl: string;
+    tags: number[];
+}
 
 const ProjectCard = component$((props: { p: ProfileProjectsProps }) => {
     return (
@@ -153,15 +170,15 @@ const VereinDummy = component$(() => {
             <div class="card bg-base-200 rounded-box place-items-stretch  p-4 space-y-4 min-h-fit w-full min-w-fit card-bordered border-base-300 border-4">
                 <div class="flex w-full flex-col gap-4 ">
                     <div class="flex items-center gap-4">
-                        <div class="skeleton h-16 w-16 shrink-0 rounded-full opacity-30"></div>
+                        <div class="card bg-base-300 h-16 w-16 shrink-0 rounded-full opacity-30"></div>
                         <div class="flex flex-col gap-4">
-                            <div class="skeleton h-4 w-20 opacity-30"></div>
+                            <div class="card bg-base-300 h-4 w-20 opacity-30"></div>
                         </div>
                     </div>
                     <div class="flex items-center gap-4">
-                        <div class="skeleton h-32 w-full opacity-30"></div>
-                        <div class="skeleton h-32 w-full opacity-30"></div>
-                        <div class="skeleton h-32 w-full opacity-30"></div>
+                        <div class="card bg-base-300 h-32 w-full opacity-30"></div>
+                        <div class="card bg-base-300 h-32 w-full opacity-30"></div>
+                        <div class="card bg-base-300 h-32 w-full opacity-30"></div>
                     </div>
                 </div>
                 <div class="card-actions justify-end">
@@ -241,8 +258,8 @@ export const VereinProfile = component$((inputData: { projectdata: ProfileProjec
         name: "New Roots",
         description: "Der New Roots e.V. ist eine Initiative von Freunden aus München, die sich gemeinsam der Herausforderung verschrieben haben, bedürftigen Menschen zu helfen. Unser gemeinnütziger Verein wurde mit dem klaren Ziel gegründet, Kindern in Kenia ein sicheres Zuhause zu bieten, regelmäßige Mahlzeiten zu gewährleisten und ihnen den Zugang zu Bildung zu ermöglichen.",
         location: { lng: 20, lat: 20 },
-        numbPers: 12,
-        founding: 2016,
+        numbPers: "12",
+        founding: "2016",
         logoUrl: "https://lirp.cdn-website.com/58002456/dms3rep/multi/opt/Logo_w_150ppi-134w.png",
         imageUrls: [
             "https://lirp.cdn-website.com/58002456/dms3rep/multi/opt/PHOTO-2024-10-26-15-29-15-600h.jpg",
@@ -259,13 +276,51 @@ export const VereinProfile = component$((inputData: { projectdata: ProfileProjec
         name: "",
         description: "",
         location: { lng: 0, lat: 0 },
-        numbPers: 0,
-        founding: 0,
+        numbPers: "0",
+        founding: "0",
         logoUrl: "",
         imageUrls: [""],
         webpageUrl: "",
         donatePageUrl: ""
     }
+
+    const orgaProjects: ProjectInformationProps[] =
+        [
+            {
+                name: "Great Green Wall",
+                description: "The Great Green Wall is",
+                location: { lng: 0, lat: 0 },
+                dateFrom: { mnth: 0, year: 0 },
+                datTo: { mnth: 0, year: 0 },
+                imageUrls: [
+                    "https://lirp.cdn-website.com/58002456/dms3rep/multi/opt/PHOTO-2024-10-26-15-29-15-600h.jpg",
+                    "https://img.daisyui.com/images/stock/photo-1565098772267-60af42b81ef2.webp",
+                    "https://img.daisyui.com/images/stock/photo-1572635148818-ef6fd45eb394.webp",
+                    "https://img.daisyui.com/images/stock/photo-1494253109108-2e30c049369b.webp",
+                    "https://img.daisyui.com/images/stock/photo-1550258987-190a2d41a8ba.webp"
+                ],
+                webpageUrl: "https://www.new-roots.de/#Listen",
+                donatePageUrl: "path/to/new/roots/donation/link.de",
+                tags: [1, 2, 3, 4],
+            },
+            {
+                name: "Great Green Wall 2",
+                description: "The Great Green Wall 2 is",
+                location: { lng: 0, lat: 0 },
+                dateFrom: { mnth: 0, year: 0 },
+                datTo: { mnth: 0, year: 0 },
+                imageUrls: [
+                    "https://lirp.cdn-website.com/58002456/dms3rep/multi/opt/PHOTO-2024-10-26-15-29-15-600h.jpg",
+                    "https://img.daisyui.com/images/stock/photo-1565098772267-60af42b81ef2.webp",
+                    "https://img.daisyui.com/images/stock/photo-1572635148818-ef6fd45eb394.webp",
+                    "https://img.daisyui.com/images/stock/photo-1494253109108-2e30c049369b.webp",
+                    "https://img.daisyui.com/images/stock/photo-1550258987-190a2d41a8ba.webp"
+                ],
+                webpageUrl: "https://www.new-roots.de/#Listen",
+                donatePageUrl: "path/to/new/roots/donation/link.de",
+                tags: [1, 2, 3, 4],
+            }
+        ]
 
     const store = useStore<OrgaInformationsProps>(orgaDataEmpty)
     useContextProvider(OrgaProfileDataContext, store)

@@ -31,15 +31,15 @@ const Vereinsdaten = component$(() => {
             </label>
             <label class="input input-bordered flex items-center gap-2">
                 Gründungsjahr
-                <input type="text" class="grow" value={context.founding} onInput$={(_, e) => context.founding = parseInt(e.value)} pattern="[0-9][0-9][0-9][0-9]" required />
+                <input type="text" class="grow" placeholder="2010" value={context.founding} onInput$={(_, e) => context.founding = e.value} pattern="[0-9][0-9][0-9][0-9]" required />
             </label>
             <label class="input input-bordered flex items-center gap-2">
                 Mitgliederzahl
-                <input type="text" class="grow" value={context.numbPers} onInput$={(_, e) => context.numbPers = parseInt(e.value)} />
+                <input type="text" class="grow" value={context.numbPers} onInput$={(_, e) => context.numbPers = e.value} />
             </label>
             <label class="input input-bordered flex items-center gap-2" >
                 Vereinslogo
-                <input type="text w-full" class="grow link link-neutral" value={context.logoUrl} onInput$={(_, e) => context.logoUrl = e.value} required />
+                <input type="text w-full" class="grow link link-neutral" placeholder="www.mein-verein.de/logo.img" value={context.logoUrl} onInput$={(_, e) => context.logoUrl = e.value} required />
                 <div class="tooltip tooltip-warning tooltip-left" data-tip="Weblink zum Bild">
                     <div class="text-2xl hover:opacity-70 transition-all">
                         <HiInformationCircleOutline />
@@ -48,11 +48,11 @@ const Vereinsdaten = component$(() => {
             </label>
             <label class="input input-bordered flex items-center gap-2">
                 Vereinswebsite
-                <input type="text" class="grow  link link-neutral" value={context.webpageUrl} onInput$={(_, e) => context.webpageUrl = e.value} />
+                <input type="text" class="grow link link-neutral" placeholder="www.mein-verein.de" value={context.webpageUrl} onInput$={(_, e) => context.webpageUrl = e.value} />
             </label>
             <label class="input input-bordered flex items-center gap-2">
                 Spendenseite
-                <input type="text" class="grow  link link-neutral" value={context.donatePageUrl} onInput$={(_, e) => context.donatePageUrl = e.value} />
+                <input type="text" class="grow  link link-neutral" placeholder="www.mein-verein.de/donate" value={context.donatePageUrl} onInput$={(_, e) => context.donatePageUrl = e.value} />
             </label>
             <label class="form-control">
                 <div class="label">
@@ -63,16 +63,15 @@ const Vereinsdaten = component$(() => {
             <label class="form-control">
                 <div class="label">
                     <span class="label-text">Vereinsstandort*</span>
-                    <div class="tooltip tooltip-warning tooltip-left" data-tip="Marker auf Position ziehen">
+                    <div class="tooltip tooltip-warning tooltip-left" data-tip="Marker durch ziehen oder klicken positionieren">
                         <div class="text-2xl hover:opacity-70 transition-all">
                             <HiInformationCircleOutline />
                         </div>
                     </div>
                 </div>
-                <div class="card card-compact bg-base-100 shadow-xl">
-                    <figure class="rounded-2xl">
-                        <div id="map"></div>
-                        <MapLocationInput class="h-[30rem] w-[40rem]" location={context.location} drgbl={true} />
+                <div class="card card-compact bg-base-100 shadow-xl w-full">
+                    <figure class="rounded-2xl w-full">
+                        <MapLocationInput class="h-[30rem] w-full test" location={context.location} drgbl={true} />
                     </figure>
                 </div>
             </label>
@@ -111,7 +110,7 @@ const ImageStack = component$(() => {
             <p>Bilder</p>
             <div class="flex justify-between">
                 <label class="input input-bordered flex items-center gap-2 w-full mr-4">
-                    <input type="text" class="grow w-full link link-neutral" value={inputValue.value} ref={inputRef} onInput$={(_, e) => inputValue.value = e.value} />
+                    <input type="text" class="grow w-full link link-neutral" placeholder="www.mein-verein.de/image1.img" value={inputValue.value} ref={inputRef} onInput$={(_, e) => inputValue.value = e.value} />
                     <div class="tooltip tooltip-warning tooltip-left" data-tip="Weblink zum Bild">
                         <div class="text-2xl hover:opacity-70 transition-all">
                             <HiInformationCircleOutline />
@@ -144,7 +143,7 @@ const ImagePreview = component$((inputData: { imgUrl: string, key: number, clz: 
         <>
             <div key={inputData.key + "imageStackOrgaAcc"} class={inputData.clz}>
                 {inputData.delButton &&
-                    <div class="btn btn-circle btn-sm glass absolute top-0 left-0 text-error text-xl" onClick$={() => context.imageUrls = context.imageUrls.filter((e, i) => inputData.imgUrl !== e)}>
+                    <div class="btn btn-sm btn-error absolute -top-2 -left-2 text-error-content text-xl shadow-xl" onClick$={() => context.imageUrls = context.imageUrls.filter((e, i) => inputData.imgUrl !== e)}>
                         <HiTrashSolid />
                     </div>
                 }
@@ -237,8 +236,8 @@ export const Vereinsignup = component$((inputData: { data: Badge[] }) => {
         name: "New Roots",
         description: "Der New Roots e.V. ist eine Initiative von Freunden aus München, die sich gemeinsam der Herausforderung verschrieben haben, bedürftigen Menschen zu helfen. Unser gemeinnütziger Verein wurde mit dem klaren Ziel gegründet, Kindern in Kenia ein sicheres Zuhause zu bieten, regelmäßige Mahlzeiten zu gewährleisten und ihnen den Zugang zu Bildung zu ermöglichen.",
         location: { lng: 20, lat: 20 },
-        numbPers: 12,
-        founding: 2016,
+        numbPers: "12",
+        founding: "2016",
         logoUrl: "https://lirp.cdn-website.com/58002456/dms3rep/multi/opt/Logo_w_150ppi-134w.png",
         imageUrls: [
             "https://lirp.cdn-website.com/58002456/dms3rep/multi/opt/PHOTO-2024-10-26-15-29-15-600h.jpg",
@@ -255,8 +254,8 @@ export const Vereinsignup = component$((inputData: { data: Badge[] }) => {
         name: "",
         description: "",
         location: { lng: 0, lat: 0 },
-        numbPers: 0,
-        founding: 0,
+        numbPers: "",
+        founding: "",
         logoUrl: "",
         imageUrls: [],
         webpageUrl: "",
@@ -268,22 +267,22 @@ export const Vereinsignup = component$((inputData: { data: Badge[] }) => {
     return (
         <>
             <div class="relative flex justify-center">
-                <div class="card bg-base-300 rounded-box place-items-stretch m-8 p-8 space-y-4 [max-height:90dvh] w-full lg:w-1/3">
-                    <h2 class="card-title">Verein verwalten</h2>
-                    <div class="overflow-y-auto space-y-4 ">
+                <div class="card bg-base-300 rounded-box place-items-stretch m-4 px-4 py-8 space-y-4 [max-height:90dvh] w-full lg:w-1/3">
+                    <h2 class="card-title px-4">Verein verwalten</h2>
+                    <div class="overflow-y-auto space-y-4 px-4">
                         {position.value === 0 && <Vereinsdaten />}
                         {position.value === 1 && <Vereinstags data={inputData.data} />}
                         {position.value === 2 && <ImageStack />}
                         {position.value === 3 && <Overview />}
                     </div>
-                    <div class="inset-x-0 bottom-0 flex flex-col justify-center items-center gap-4">
+                    <div class="bottom-0 flex flex-col justify-center items-center gap-4">
                         {
                             position.value === 3 ?
                                 <>
                                     <div class="justify-between space-x-16">
                                         <button class="btn btn-secondary" onClick$={() => (
                                             position.value = 0
-                                        )}>Weiter bearbeiten
+                                        )}>Bearbeiten
                                             <div class="text-2xl">
                                                 <HiCog6ToothOutline />
                                             </div>
@@ -311,10 +310,10 @@ export const Vereinsignup = component$((inputData: { data: Badge[] }) => {
                                 </div>
                         }
                         <ul class="steps">
-                            <li class="step step-primary step-neutral">Daten</li>
-                            <li class={`step step-neutral ${position.value > 0 ? "step-primary " : " "}`} >Tags</li>
-                            <li class={`step step-neutral ${position.value > 1 ? "step-primary " : " "}`} >Bilder</li>
-                            <li class={`step step-neutral ${position.value > 2 ? "step-primary " : " "}`} >Überprüfen</li>
+                            <li class="step step-primary cursor-pointer step-neutral" onClick$={() => position.value = 0}>Daten</li>
+                            <li class={`step step-neutral cursor-pointer ${position.value > 0 ? "step-primary " : " "}`} onClick$={() => position.value = 1} >Tags</li>
+                            <li class={`step step-neutral cursor-pointer ${position.value > 1 ? "step-primary " : " "}`} onClick$={() => position.value = 2}>Bilder</li>
+                            <li class={`step step-neutral cursor-pointer ${position.value > 2 ? "step-primary " : " "}`} onClick$={() => position.value = 3}>Überprüfen</li>
                         </ul>
                     </div>
                 </div>
