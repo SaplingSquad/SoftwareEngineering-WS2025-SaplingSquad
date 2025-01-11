@@ -142,7 +142,8 @@ paths:
             $ref: '#/components/schemas/ObjectType'
       responses:
         '200':
-          description: Successful operation.
+          description: List of organizations and/ or projects that match the
+                       provided filters to a certain degree.
           content:
             application/json:
               schema:
