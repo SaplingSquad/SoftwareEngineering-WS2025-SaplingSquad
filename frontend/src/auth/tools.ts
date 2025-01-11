@@ -2,7 +2,7 @@ import type { Signal } from "@builder.io/qwik";
 import { useComputed$ } from "@builder.io/qwik";
 import type { RequestEventCommon } from "@builder.io/qwik-city";
 import type { Session } from "@auth/qwik";
-import { ORGS_PROVIDER_ID, USERS_PROVIDER_ID } from "~/routes/plugin@auth";
+import { ORGS_PROVIDER_ID, USERS_PROVIDER_ID, useSession } from "~/routes/plugin@auth";
 
 export type AccountType = "user" | "orga"
 
@@ -14,7 +14,13 @@ export function buildAuthHeader(session: Session | null) {
   }
 }
 
-export function useAuthHeader(session: Readonly<Signal<Session | null>>) {
+/**
+ * Get the headers used for authentication/authorization (if the user is logged in).
+ *
+ * @returns a dict containing the headers used for authentication/authorization if the user is logged in, or `undefined` otherwise
+ */
+export function useAuthHeader() {
+  const session = useSession();
   return useComputed$(() => buildAuthHeader(session.value));
 }
 

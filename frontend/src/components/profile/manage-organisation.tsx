@@ -129,7 +129,7 @@ const ImageStack = component$(() => {
                 {
                     context.imageUrls.slice().reverse().map((e, i) =>
                     (
-                        <ImagePreview imgUrl={e} key={i} clz="" />
+                        <ImagePreview imgUrl={e} key={i} clz="relative" delButton={true} />
                     )
                     )
                 }
@@ -138,14 +138,16 @@ const ImageStack = component$(() => {
     )
 })
 
-const ImagePreview = component$((inputData: { imgUrl: string, key: number, clz: ClassList }) => {
+const ImagePreview = component$((inputData: { imgUrl: string, key: number, clz: ClassList, delButton: boolean }) => {
     const context = useContext(FormDataContext);
     return (
         <>
-            <div key={inputData.key + "imageStackOrgaAcc"} class={inputData.clz + " relative"}>
-                <div class="btn btn-circle btn-sm glass absolute top-0 left-0 text-error text-xl" onClick$={() => context.imageUrls = context.imageUrls.filter((e, i) => inputData.imgUrl !== e)}>
-                    <HiTrashSolid />
-                </div>
+            <div key={inputData.key + "imageStackOrgaAcc"} class={inputData.clz}>
+                {inputData.delButton &&
+                    <div class="btn btn-circle btn-sm glass absolute top-0 left-0 text-error text-xl" onClick$={() => context.imageUrls = context.imageUrls.filter((e, i) => inputData.imgUrl !== e)}>
+                        <HiTrashSolid />
+                    </div>
+                }
                 <img
                     class="rounded-xl max-w-60 max-h-60 shadow-xl"
                     src={inputData.imgUrl}
@@ -212,7 +214,7 @@ const Overview = component$(() => {
                     {
                         context.imageUrls.map((e, i) =>
                         (
-                            <ImagePreview imgUrl={e} key={i} clz="carousel-item" />
+                            <ImagePreview imgUrl={e} key={i} clz="carousel-item" delButton={false} />
                         )
                         )
                     }
