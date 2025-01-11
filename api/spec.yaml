@@ -129,7 +129,7 @@ paths:
           description: Internal ID of a continent (we include oceans).
           schema:
             type: string
-            example: Europe
+            example: europe
         - in: query
           name: regionId
           description: This parameter should be ignored if continentId is
