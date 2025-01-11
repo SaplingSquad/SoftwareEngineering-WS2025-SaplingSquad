@@ -70,6 +70,7 @@ export type ClickHandlers = [MaybeArray<string>, MaybeArray<ClickHandler>][];
  * @param layers layers for the map
  * @param images images for the map
  * @param clickHandlers handlers for clicks on layers
+ * @param onInit$ custom initialization function; called after map is created
  * @returns a maplibre map with the passed options and additional properties
  */
 const createMap = (
@@ -78,6 +79,7 @@ const createMap = (
   layers: Layers,
   images: Images,
   clickHandlers: ClickHandlers,
+  onInit$?: QRL<(mavp: maplibregl.Map) => unknown>,
 ) => {
   const map = new maplibregl.Map(options);
   map.on("load", () => {
@@ -95,6 +97,7 @@ const createMap = (
       map.addSource(id, source),
     );
     layers.forEach((layer) => map.addLayer(layer));
+    onInit$?.(map);
   });
 
   clickHandlers.forEach(([targets, handlers]) =>
@@ -116,6 +119,8 @@ export const Map = component$(
     layers$ = $([]),
     images = {},
     onClick = [],
+    onInit$,
+    additionalConfig = {},
   }: {
     /**
      * Classes to set
@@ -141,6 +146,15 @@ export const Map = component$(
      * Handlers for click events on the map
      */
     onClick?: ClickHandlers;
+    /**
+     * Custom initialization function; called after map is created
+     */
+    onInit$?: QRL<(map: maplibregl.Map) => unknown>;
+    /**
+     * Additional configuration for the map
+     */
+    additionalConfig?: Omit<maplibregl.MapOptions, "container" | "style"> &
+      object;
   }) => {
     const map = useSignal<NoSerialize<maplibregl.Map>>();
     const containerRef = useSignal<HTMLElement>();
@@ -155,6 +169,7 @@ export const Map = component$(
         map.value = noSerialize(
           createMap(
             {
+              ...additionalConfig,
               container: containerRef.value,
               style: style,
             },
@@ -162,6 +177,7 @@ export const Map = component$(
             await layers$.resolve(),
             images,
             onClick,
+            onInit$,
           ),
         );
       }),
