@@ -7,10 +7,10 @@ import {
   useOn,
   useSignal,
 } from "@builder.io/qwik";
-import type { MapLayerEventType } from "maplibre-gl";
+import type { AddLayerObject, MapLayerEventType } from "maplibre-gl";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-import type { MaybeArray } from "~/utils";
+import type { DistributiveOmit, MaybeArray } from "~/utils";
 import { maybeArray } from "~/utils";
 
 /**
@@ -23,9 +23,9 @@ export type Sources = {
 /**
  * Layers of the map
  */
-export type Layers = Parameters<
-  InstanceType<typeof maplibregl.Map>["addLayer"]
->[0][];
+export type Layers = (DistributiveOmit<AddLayerObject, "metadata"> & {
+  metadata?: object;
+})[];
 
 /**
  * An image source for the map.
@@ -116,7 +116,7 @@ export const Map = component$(
     class: clz,
     style = "https://tiles.versatiles.org/assets/styles/colorful.json",
     sources = {},
-    layers$ = $([]),
+    layers = [],
     images = {},
     onClick = [],
     onInit$,
@@ -137,7 +137,7 @@ export const Map = component$(
     /**
      * Layers to add to the map
      */
-    layers$?: QRL<Layers>;
+    layers?: Layers;
     /**
      * Images to load into the map
      */
@@ -174,7 +174,7 @@ export const Map = component$(
               style: style,
             },
             sources,
-            await layers$.resolve(),
+            layers,
             images,
             onClick,
             onInit$,

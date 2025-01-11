@@ -111,7 +111,7 @@ export const Map = component$(() => {
           clusteredGeoJSONDatasource(data),
         ]),
       )}
-      layers$={$(Object.keys(sources).flatMap(clusteredLayer))}
+      layers={Object.keys(sources).flatMap(clusteredLayer)}
       onClick={clickHandlers({
         clusterZoom: Object.keys(sources),
         info: Object.fromEntries(
