@@ -9,7 +9,7 @@ info:
   license:
     name: GNU Affero General Public License v3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
-  version: 1.2.12
+  version: 1.2.13
 servers:
   - url: /api
 tags:
@@ -907,7 +907,17 @@ components:
             - Organization
         content:
           allOf:
-            - $ref: '#/components/schemas/OrganizationWithId'
+            - $ref: '#/components/schemas/OrganizationId'
+            - $ref: '#/components/schemas/Organization'
+            - type: object
+              properties:
+                projectCount:
+                  type: integer
+                  example: 4
+                  description: The number of active projects from the
+                               organization.
+              required:
+                - projectCount
             - $ref: '#/components/schemas/RegionName'
       required:
         - type
@@ -921,7 +931,8 @@ components:
             - Project
         content:
           allOf:
-            - $ref: '#/components/schemas/ProjectWithId'
+            - $ref: '#/components/schemas/ProjectId'
+            - $ref: '#/components/schemas/Project'
             - $ref: '#/components/schemas/RegionName'
       required:
         - type
