@@ -856,12 +856,12 @@ components:
           type: string
           example: 2024-12
           description: Starting date of the project (only month and year). 
-                       Needs to uphold the format.
+                       Needs to uphold the ISO 8601 format.
         dateTo:
           type: string
           example: 2025-01
           description: Planned finish date of the project (only month and year).
-                       Needs to uphold the format.
+                       Needs to uphold the ISO 8601 format.
         iconUrl:
           type: string
           example: path/to/icon/url.pic
