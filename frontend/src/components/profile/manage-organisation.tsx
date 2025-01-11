@@ -101,7 +101,7 @@ const SingleVereinstag = component$((props: { b: Badge }) => {
     )
 })
 
-const ImageStack = component$(() => {
+export const ImageStack = component$(() => {
     const context = useContext(FormDataContext)
     const inputRef = useSignal<HTMLInputElement>()
     const inputValue = useSignal("")
@@ -137,13 +137,13 @@ const ImageStack = component$(() => {
     )
 })
 
-const ImagePreview = component$((inputData: { imgUrl: string, key: number, clz: ClassList, delButton: boolean }) => {
+export const ImagePreview = component$((inputData: { imgUrl: string, key: number, clz: ClassList, delButton: boolean }) => {
     const context = useContext(FormDataContext);
     return (
         <>
             <div key={inputData.key + "imageStackOrgaAcc"} class={inputData.clz}>
                 {inputData.delButton &&
-                    <div class="btn btn-sm btn-error absolute -top-2 -left-2 text-error-content text-xl shadow-xl" onClick$={() => context.imageUrls = context.imageUrls.filter((e, i) => inputData.imgUrl !== e)}>
+                    <div class="btn btn-square scale-[0.85] btn-error absolute -top-3 -left-3 text-error-content text-xl shadow-xl" onClick$={() => context.imageUrls = context.imageUrls.filter((e, i) => inputData.imgUrl !== e)}>
                         <HiTrashSolid />
                     </div>
                 }

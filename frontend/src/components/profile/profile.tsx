@@ -40,7 +40,7 @@ export type ProjectInformationProps = {
     description: string;
     location: InputMarkerLocation;
     dateFrom: ProjectDate;
-    datTo: ProjectDate;
+    dateTo: ProjectDate;
     imageUrls: string[];
     webpageUrl: string;
     donatePageUrl: string;
@@ -74,7 +74,7 @@ const ProjectDummy = component$(() => {
                 <div class="card-body">
                     <h2 class="card-title text-primary">Neues Projekt hinzufügen</h2>
                     <div class="flex items-center justify-center">
-                        <a href="/profile/create-project" class="hover:text-secondary" >
+                        <a href="/profile/manage-project" class="hover:text-secondary" >
                             <HiPlusCircleSolid class="text-primary text-6xl text-opacity-80 hover:text-secondary transition-all" />
                         </a>
                     </div>
@@ -291,7 +291,7 @@ export const VereinProfile = component$((inputData: { projectdata: ProfileProjec
                 description: "The Great Green Wall is",
                 location: { lng: 0, lat: 0 },
                 dateFrom: { mnth: 0, year: 0 },
-                datTo: { mnth: 0, year: 0 },
+                dateTo: { mnth: 0, year: 0 },
                 imageUrls: [
                     "https://lirp.cdn-website.com/58002456/dms3rep/multi/opt/PHOTO-2024-10-26-15-29-15-600h.jpg",
                     "https://img.daisyui.com/images/stock/photo-1565098772267-60af42b81ef2.webp",
@@ -308,7 +308,7 @@ export const VereinProfile = component$((inputData: { projectdata: ProfileProjec
                 description: "The Great Green Wall 2 is",
                 location: { lng: 0, lat: 0 },
                 dateFrom: { mnth: 0, year: 0 },
-                datTo: { mnth: 0, year: 0 },
+                dateTo: { mnth: 0, year: 0 },
                 imageUrls: [
                     "https://lirp.cdn-website.com/58002456/dms3rep/multi/opt/PHOTO-2024-10-26-15-29-15-600h.jpg",
                     "https://img.daisyui.com/images/stock/photo-1565098772267-60af42b81ef2.webp",
@@ -322,7 +322,7 @@ export const VereinProfile = component$((inputData: { projectdata: ProfileProjec
             }
         ]
 
-    const store = useStore<OrgaInformationsProps>(orgaDataEmpty)
+    const store = useStore<OrgaInformationsProps>(orgaData)
     useContextProvider(OrgaProfileDataContext, store)
     return (
         <>
