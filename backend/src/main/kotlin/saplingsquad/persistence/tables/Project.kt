@@ -7,7 +7,25 @@ import java.time.LocalDate
 typealias ProjectId = Int
 
 /**
- * The (expected) layout of the "project" table in the DB
+ * The (expected) layout of the "project" table for retrieval
+ * Represents a single row in the table.
+ */
+@KomapperEntity
+@KomapperTable("project")
+data class ProjectWithRegionEntity(
+    /** Duplicate id to make it compile :( */
+    @KomapperAutoIncrement
+    @KomapperId
+    val projectId: ProjectId,
+
+    val regionName: String?,
+
+    @KomapperEmbedded
+    val rest: ProjectEntity
+)
+
+/**
+ * The (expected) layout of the "project" table for insertion access
  * Represents a single row in the table.
  */
 @KomapperEntity

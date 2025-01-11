@@ -5,7 +5,25 @@ import org.komapper.annotation.*
 typealias OrganizationId = Int;
 
 /**
- * The (expected) layout of the "organization" table in the DB
+ * The (expected) layout of the "organization" table for retrieval
+ * Represents a single row in the table.
+ */
+@KomapperEntity
+@KomapperTable("organization")
+data class OrganizationWithRegionEntity(
+    /** Duplicate id to make it compile :( */
+    @KomapperAutoIncrement
+    @KomapperId
+    val orgId: OrganizationId,
+
+    val regionName: String?,
+
+    @KomapperEmbedded
+    val rest: OrganizationEntity
+)
+
+/**
+ * The (expected) layout of the "organization" table for insertion access
  * Represents a single row in the table.
  */
 @KomapperEntity
