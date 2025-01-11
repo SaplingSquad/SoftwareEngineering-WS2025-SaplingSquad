@@ -9,7 +9,7 @@ info:
   license:
     name: GNU Affero General Public License v3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
-  version: 1.2.8
+  version: 1.2.9
 servers:
   - url: /api
 tags:
@@ -697,8 +697,14 @@ components:
               type: integer
               example: 1
               description: ID of the organization for the application.
+          required:
+            - id
         geometry:
           $ref: '#/components/schemas/GeoGeometry'
+      required:
+        - type
+        - properties
+        - geometry
     GeoJsonProjects:
       type: object
       externalDocs:
@@ -734,6 +740,10 @@ components:
             - id
         geometry:
           $ref: '#/components/schemas/GeoGeometry'
+      required:
+        - type
+        - properties
+        - geometry
     GeoGeometry:
       type: object
       properties:
