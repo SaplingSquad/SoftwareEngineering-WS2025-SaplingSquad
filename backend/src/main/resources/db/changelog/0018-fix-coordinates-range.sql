@@ -1,5 +1,11 @@
 --liquibase formatted sql
 
+/* Fix inconsistency in datatype of project coordinates vs organization coordinates */
+--changeset 0018:1
+alter table project
+    alter column coordinates_lon type float4,
+    alter column coordinates_lat type float4;
+
 /*
  Fix the coordinates of organizations and projects, if they are outside of lon [-180, 180] and lat [-90, 90]
  When traveling horizontally around the globe starting from lon 0, normalized longitudes
@@ -31,11 +37,11 @@
  */
 
 /* create helper functions */
---changeset 0018:1
+--changeset 0018:2
 create function __floor_mod(x numeric, y numeric) returns numeric
 return (((x % y) + y) % y);
 
---changeset 0018:2
+--changeset 0018:3
 create function __flip_side(lat numeric) returns integer
 as
 $$
@@ -45,7 +51,7 @@ $$
     language sql;
 
 
---changeset 0018:3
+--changeset 0018:4
 update organization
 /* // if flip side, then add another 180 degrees to the coordinates
    lon = coordinates_lon + (180 * flip_side?)
@@ -66,7 +72,7 @@ set coordinates_lon = __floor_mod(
                       (-2 * __flip_side(coordinates_lat::numeric) + 1) /* 0 -> do nothing, 1 -> invert sign, handles going over the poles */
 where true;
 
---changeset 0018:4
+--changeset 0018:5
 update project
 set coordinates_lon = __floor_mod(
                               coordinates_lon::numeric + (180 * __flip_side(coordinates_lat::numeric)) /* lon */
@@ -77,7 +83,7 @@ set coordinates_lon = __floor_mod(
                       (-2 * __flip_side(coordinates_lat::numeric) + 1) /* 0 -> do nothing, 1 -> invert sign, handles going over the poles */
 where true;
 
---changeset 0018:5
-drop function __flip_side;
 --changeset 0018:6
+drop function __flip_side;
+--changeset 0018:7
 drop function __floor_mod;
