@@ -1,5 +1,5 @@
-import type { JSXOutput, QRL } from "@builder.io/qwik";
-import { component$ } from "@builder.io/qwik";
+import type { JSXOutput, QRL, ResourceReturn } from "@builder.io/qwik";
+import { component$, Resource } from "@builder.io/qwik";
 import type {
   ErrorHttpStatusCode,
   HTTPStatusCode,
@@ -99,5 +99,43 @@ export const ApiResponse = component$(
     return handler !== undefined
       ? handler(body, headers)
       : defaultErrorHandler(status);
+  },
+);
+
+/**
+ * A component that performs an API-Request.
+ * Can be used to conditionally perform API-requests in other components.
+ *
+ * Can be used like {@link ApiResponse},
+ * though a `hook$` and `args` are passed instead of a `response`.
+ */
+export const ApiRequest = component$(
+  <Args extends any[], Response extends GenericRequestResponse>(
+    props: {
+      /**
+       * The API-hook to execute
+       */
+      hook$: QRL<(...args: Args) => ResourceReturn<Response>>;
+      /**
+       * The arguments to pass to the hook
+       */
+      args: Args;
+    } & ApiResponseHandlers<Response>,
+  ) => {
+    const { hook$: useHook, args } = props;
+    const response = useHook(...args).then((x) => x.value);
+    const responseProps = {
+      ...props,
+      hook: undefined,
+      args: undefined,
+    };
+    return (
+      <Resource
+        value={response}
+        onResolved={(response: GenericRequestResponse) => (
+          <ApiResponse {...responseProps} response={response} />
+        )}
+      />
+    );
   },
 );
