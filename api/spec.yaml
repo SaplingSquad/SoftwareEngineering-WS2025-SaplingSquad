@@ -315,7 +315,7 @@ paths:
     post:
       tags:
         - bookmarks
-      summary: Save a bookmark for a project. This can only be done by the user.
+      summary: Save a bookmark for a project.
       operationId: postProjectBookmark
       security:
         - userToken: []
@@ -336,7 +336,6 @@ paths:
       tags:
         - bookmarks
       summary: Delete a bookmark for a project.
-      description: This can only be done by the user.
       operationId: deleteProjectBookmark
       security:
         - userToken: []
@@ -382,8 +381,7 @@ paths:
     post:
       tags:
         - bookmarks
-      summary: Save a bookmark for an organization. This can only be done by the
-               user.
+      summary: Save a bookmark for an organization.
       operationId: postOrganizationBookmark
       security:
         - userToken: []
@@ -474,8 +472,7 @@ paths:
     put:
       tags:
         - organization
-      summary: Update informations to a given organization. This can only be
-               done by a logged in organization.
+      summary: Update informations for the authenticated organization.
       operationId: putOrganization
       security:
         - orgaToken: []
@@ -527,8 +524,7 @@ paths:
     post:
       tags:
         - organization
-      summary: Create a project for an organization. This can only be done by a
-               logged in organization.
+      summary: Create a project for the authenticated organization.
       operationId: postProject
       security:
         - orgaToken: []
@@ -553,8 +549,7 @@ paths:
     put:
       tags:
         - organization
-      summary: Update a project. This can only be done by a logged in
-               organization.
+      summary: Update a project from the authenticated organization.
       operationId: putProject
       security:
         - orgaToken: []
@@ -580,8 +575,7 @@ paths:
     delete:
       tags:
         - organization
-      summary: Delete a project. This can only be done by a logged in
-               organization.
+      summary: Delete a project from the authenticated organization.
       operationId: deleteProject
       security:
         - orgaToken: []
