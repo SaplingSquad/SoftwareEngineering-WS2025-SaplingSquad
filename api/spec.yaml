@@ -132,8 +132,8 @@ paths:
             example: europe
         - in: query
           name: regionId
-          description: This parameter should be ignored if continentId is
-                       absent.
+          description: ISO 3166 country code for a region of the world. This
+                       parameter should be ignored if continentId is absent.
           schema:
             $ref: '#/components/schemas/RegionId'
         - in: query
