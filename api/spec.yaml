@@ -51,7 +51,7 @@ paths:
     get:
       tags:
         - questions
-      summary: Post answers to questions for the active account.
+      summary: Get answers to questions for the active account.
       operationId: getAnswers
       security:
         - userToken: []
