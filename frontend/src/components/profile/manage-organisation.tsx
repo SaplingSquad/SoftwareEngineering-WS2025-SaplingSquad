@@ -260,7 +260,7 @@ export const Vereinsignup = component$((inputData: { data: Badge[] }) => {
         webpageUrl: "",
         donatePageUrl: ""
     }
-    const position = useSignal(2);
+    const position = useSignal(0);
     const store = useStore<OrgaInformationsProps>(orgaData)
     useContextProvider(FormDataContext, store)
     return (

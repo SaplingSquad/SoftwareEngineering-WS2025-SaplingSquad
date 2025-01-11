@@ -1,10 +1,5 @@
-import { $, ClassList, component$, noSerialize, NoSerialize, QRL, useOn, useSignal } from "@builder.io/qwik";
-import { HiUserCircleOutline, HiPlusCircleSolid, HiCog6ToothOutline, HiTrashOutline } from "@qwikest/icons/heroicons";
-import maplibregl from "maplibre-gl";
-import { ClickHandlers, Images, Layers, Sources } from "../map";
+import { component$ } from "@builder.io/qwik";
 import { MapLocationInput } from "./utils";
-/*import { Map } from "~/views/map";*/
-/*import { Map } from "~/components/map";*/
 
 const Projektdaten = component$(() => {
     return (

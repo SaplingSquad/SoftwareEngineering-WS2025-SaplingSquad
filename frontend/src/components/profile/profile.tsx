@@ -267,7 +267,7 @@ export const VereinProfile = component$((inputData: { projectdata: ProfileProjec
         donatePageUrl: ""
     }
 
-    const store = useStore<OrgaInformationsProps>(orgaData)
+    const store = useStore<OrgaInformationsProps>(orgaDataEmpty)
     useContextProvider(OrgaProfileDataContext, store)
     return (
         <>
