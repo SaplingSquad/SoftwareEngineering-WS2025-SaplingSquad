@@ -52,8 +52,8 @@ class MapApiService(
             memberCount = org.memberCount,
             webPageUrl = org.websiteUrl,
             donatePageUrl = org.donationUrl,
-            regionName = "", //TODO calculate and send region name
-            iconUrl = "https://picsum.photos/200?x="+org.orgId, //TODO
+            regionName = org.regionName,
+            iconUrl = "https://picsum.photos/200?x=" + org.orgId, //TODO
             imageUrls = emptyList(), //TODO maybe implement images sometime
             coordinates = org.coordinates.toLonLatList(),
             tags = tags.toList(),
@@ -64,8 +64,8 @@ class MapApiService(
                     description = proj.description,
                     dateFrom = proj.dateFrom?.let(::dateToMonthAndYear),
                     dateTo = proj.dateTo?.let(::dateToMonthAndYear),
-                    iconUrl = "https://picsum.photos/200?x="+proj.orgId, //TODO
-                    regionName = "", //TODO calculate and send region name
+                    iconUrl = "https://picsum.photos/200?x=" + proj.orgId, //TODO
+                    regionName = proj.regionName,
                     imageUrls = emptyList(),
                     webPageUrl = proj.websiteUrl,
                     donatePageUrl = proj.donationUrl,

@@ -7,10 +7,12 @@ import org.komapper.core.dsl.query.bind
 import org.komapper.r2dbc.R2dbcDatabase
 import org.komapper.tx.core.TransactionProperty.IsolationLevel.SERIALIZABLE
 import org.springframework.stereotype.Repository
+import saplingsquad.persistence.commands.RecalculateProjectRegionName
+import saplingsquad.persistence.commands.execute
 import saplingsquad.persistence.tables.*
 import saplingsquad.utils.expectZeroOrOne
 
-typealias ProjectEntityAndTags = Pair<ProjectEntity, Set<TagId>>
+typealias ProjectWithRegionEntityAndTags = Pair<ProjectWithRegionEntity, Set<TagId>>
 
 @Repository
 class ProjectsRepository(private val db: R2dbcDatabase) {
@@ -46,6 +48,10 @@ class ProjectsRepository(private val db: R2dbcDatabase) {
                     .returning(p.projectId)
             } ?: throw IllegalStateException("Insertion did not return a new id")
 
+            db.runQuery {
+                QueryDsl.execute(RecalculateProjectRegionName(projectId))
+            }
+
             insertTagsForProject(projectId, tags)
             ProjectCrRdResult.Success(projectId)
         }
@@ -57,11 +63,11 @@ class ProjectsRepository(private val db: R2dbcDatabase) {
      * if the org-account has never called the POST /organization endpoint to complete the registration
      *  - [Success][ProjectCrRdResult.Success] (containing the list of projects) on success
      */
-    suspend fun readProjectsByAccount(accountId: String): ProjectCrRdResult<List<ProjectEntityAndTags>> =
+    suspend fun readProjectsByAccount(accountId: String): ProjectCrRdResult<List<ProjectWithRegionEntityAndTags>> =
         db.withTransaction(transactionProperty = SERIALIZABLE) {
             val account = readOrgAccount(accountId)
                 ?: return@withTransaction ProjectCrRdResult.OrganizationNotRegisteredYet
-            val p = Meta.projectEntity
+            val p = Meta.projectWithRegionEntity
             val pTags = Meta.projectTagsEntity
             val projects = db.runQuery(
                 QueryDsl.from(p)
@@ -112,6 +118,9 @@ class ProjectsRepository(private val db: R2dbcDatabase) {
         db.runQuery {
             QueryDsl.update(p)
                 .single(project.copy(orgId = account.orgId))
+        }
+        db.runQuery {
+            QueryDsl.execute(RecalculateProjectRegionName(project.projectId))
         }
         insertTagsForProject(project.projectId, tags)
         ProjectUpdDelResult.Success
@@ -213,7 +222,7 @@ private fun filterByTagsSqlQuery(answers: List<Int>) = QueryDsl
     .bind("answers", answers)
     .selectAsEntity(Meta.projectEntity)
 
-fun Map<ProjectEntity, Set<ProjectTagsEntity>>.toProjectEntitiesWithTags(): List<ProjectEntityAndTags> {
+fun Map<ProjectWithRegionEntity, Set<ProjectTagsEntity>>.toProjectEntitiesWithTags(): List<ProjectWithRegionEntityAndTags> {
     return this.mapValues { it.value.mapTo(mutableSetOf(), ProjectTagsEntity::tagId) }
         .toList()
 }

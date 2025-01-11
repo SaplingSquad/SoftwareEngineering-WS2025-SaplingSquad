@@ -1,25 +1,20 @@
 package saplingsquad.persistence.tables
 
 import org.komapper.annotation.*
+import saplingsquad.komapper_ext.annotations.KomapperUnionEntity
+import saplingsquad.komapper_ext.annotations.KomapperUnionTableName
 
 typealias OrganizationId = Int;
 
 /**
- * The (expected) layout of the "organization" table for retrieval
- * Represents a single row in the table.
+ * Copy of [OrganizationEntity] with 1 additional column ([regionName])
+ * Return entity for the `organization_with_region_name` view
  */
-@KomapperEntity
-@KomapperTable("organization_with_region_name")
-data class OrganizationWithRegionEntity(
-    /** Duplicate id to make it compile :( */
-    @KomapperAutoIncrement
-    @KomapperId
-    val orgId: OrganizationId,
-
-    val regionName: String?,
-
-    @KomapperEmbedded
-    val rest: OrganizationEntity
+@Suppress("unused")
+@KomapperUnionTableName("organization_with_region_name")
+@KomapperUnionEntity("OrganizationWithRegionEntity", [OrganizationEntity::class, OrgaWithRegionName::class])
+private data class OrgaWithRegionName(
+    val regionName: String
 )
 
 /**
