@@ -9,7 +9,7 @@ info:
   license:
     name: GNU Affero General Public License v3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
-  version: 1.2.10
+  version: 1.2.11
 servers:
   - url: /api
 tags:
@@ -891,27 +891,41 @@ components:
       description: Represents the type of the accompanying or requested
                    object. This can be an Organization or a Project. If it is
                    an optional parameter and absent both types should be send.
-    Rankings:
+    RankingResultOrganizationWithType:
       type: object
       properties:
         type: # Not a keyword
-          $ref: '#/components/schemas/ObjectType'
+          type: string
+          enum:
+            - Organization
         content:
-          oneOf:
-            - allOf:
-              - $ref: '#/components/schemas/OrganizationWithId'
-              - $ref: '#/components/schemas/RegionName'
-            - allOf:
-              - $ref: '#/components/schemas/ProjectWithId'
-              - $ref: '#/components/schemas/RegionName'
-          description: An exhaustive description of either an
-                       organization or a project, including the ID.
-        percentageMatch:
-          type: integer
-          minimum: 0
-          maximum: 100
-          description: Describes how good the match is in
-                       combination to the given filter parameters.
+          allOf:
+            - $ref: '#/components/schemas/OrganizationWithId'
+            - $ref: '#/components/schemas/RegionName'
+    RankingResultProjectWithType:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - Project
+        content:
+          allOf:
+            - $ref: '#/components/schemas/ProjectWithId'
+            - $ref: '#/components/schemas/RegionName'
+    Rankings:
+      allOf:
+        - oneOf:
+          - $ref: '#/components/schemas/RankingResultOrganizationWithType'
+          - $ref: '#/components/schemas/RankingResultProjectWithType'
+        - type: object
+          properties:
+            percentageMatch:
+              type: integer
+              minimum: 0
+              maximum: 100
+              description: Describes how good the match is in
+                           combination to the given filter parameters.
       description: Represents the type, description as well as match
                    percentage of one organization or project.
   responses:
