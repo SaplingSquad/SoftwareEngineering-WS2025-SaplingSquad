@@ -75,14 +75,14 @@ class OrganizationApiService(
 
     override suspend fun putOrganization(
         orgaToken: JwtAuthenticationToken,
-        organizationWithId: OrganizationWithId?
+        organization: Organization?
     ): ResponseEntity<Unit> {
-        val organization = organizationWithId ?: throw ResponseStatusException(
+        organization ?: throw ResponseStatusException(
             HttpStatus.BAD_REQUEST, "Missing body"
         )
         val result = organizationsRepository.updateOrganizationOfAccount(
             orgaToken.token.subject, OrganizationEntity(
-                orgId = organization.id,
+                orgId = 0, // is going to be set correctly by the repository
                 name = organization.name,
                 description = organization.description,
                 foundingYear = organization.foundingYear,

@@ -9,7 +9,7 @@ info:
   license:
     name: GNU Affero General Public License v3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
-  version: 1.2.17
+  version: 1.2.18
 servers:
   - url: /api
 tags:
@@ -451,7 +451,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/OrganizationWithId'
+              $ref: '#/components/schemas/Organization'
       responses:
         '204':
           $ref: '#/components/responses/204'
