@@ -11,12 +11,10 @@ import {
 import SproutIcon from "/src/images/Sprout_icon.svg?jsx";
 import AllIcon from "/src/images/All_Icon.svg?jsx";
 import { type FilterSettings, Filter } from "../filter";
-import { type Project, ProjectShortInfo } from "./project-shortinfo";
+import { ProjectShortInfo } from "./project-shortinfo";
 import { ProjectLargeInfo } from "./project-largeinfo";
-import {
-  type Organization,
-  OrganizationShortInfo,
-} from "./organization-shortinfo";
+import { OrganizationShortInfo } from "./organization-shortinfo";
+import { mockdata } from "./mockdata";
 
 enum ResultTab {
   ALL,
@@ -24,124 +22,192 @@ enum ResultTab {
   HISTORY,
 }
 
-// prettier-ignore
-const projects: Project[] = [
-  { title: "Nebula Kaleidoscope Paradox", orgIcon: "/src/images/Sprout_icon.svg", location: "Kenia, Afrika", tags: ["Umweltschutz", "Tierschutz"], description: "En, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invi" },
-  { title: "Mosaic Elixir Labyrinth", orgIcon: "/src/images/Sprout_icon.svg", location: "Sahara", tags: ["Tierschutz", "Armut", "Wasserzugang", "Bildung"], description: "Unt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing" },
-  { title: "Paradox Aurora Ephemeral", orgIcon: "/src/images/Sprout_icon.svg", location: "Paris, Frankreich", tags: ["Frauenrechte"], description: "St Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et ac" },
-  { title: "Solstice Mosaic Vortex Solstice Mosaic Vortex", orgIcon: "/src/images/Sprout_icon.svg", location: "Shenzen, China", tags: ["Bildung für Kinder"], description: "Diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam" },
-];
-
-// prettier-ignore
-const orgs: Organization[] = [
-  { title: "Nebula Kaleidoscope Paradox", orgIcon: "/src/images/Sprout_icon.svg", memberCount: 100, foundingYear: 2005, projects: [1, 2, 3], tags: ["Umweltschutz", "Tierschutz"], description: "En, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invi" },
-  { title: "Mosaic Elixir Labyrinth", orgIcon: "/src/images/Sprout_icon.svg", memberCount: 1000, foundingYear: 1980, projects: [], tags: ["Tierschutz", "Armut", "Wasserzugang", "Bildung"], description: "Unt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing" },
-  { title: "Paradox Aurora Ephemeral", orgIcon: "/src/images/Sprout_icon.svg", memberCount: 2000, foundingYear: 1888, projects: [1], tags: ["Frauenrechte"], description: "St Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et ac" },
-  { title: "Solstice Mosaic Vortex Solstice Mosaic Vortex", orgIcon: "/src/images/Sprout_icon.svg", memberCount: 10, foundingYear: 1998, projects: [1], tags: ["Bildung für Kinder"], description: "Diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam" },
-];
-
 /**
  * The UI laid over the map, provides options to control what is shown on the map and displays the results in a list.
  */
-export const MapUI = component$((props: { filterSettings: FilterSettings }) => {
-  const tabSelection = useSignal<ResultTab>(ResultTab.ALL);
-  const filterActive = useSignal<boolean>(false);
-  const listExpanded = useSignal<boolean>(false);
-  const searchText = useSignal<string>("");
-  const selectedProject = useSignal<Project | undefined>(undefined);
+export const MapUI = component$(
+  (props: {
+    filterSettings: FilterSettings;
+    organizationLocations: Signal<GeoJSON.GeoJSON>;
+    projectLocations: Signal<GeoJSON.GeoJSON>;
+  }) => {
+    const tabSelection = useSignal<ResultTab>(ResultTab.ALL);
+    const filterActive = useSignal<boolean>(false);
+    const listExpanded = useSignal<boolean>(false);
+    const searchText = useSignal<string>("");
+    const selectedProject = useSignal<Project | undefined>(undefined);
 
-  const filteredProjects = projects
-    .filter((proj) => {
-      switch (tabSelection.value) {
-        case ResultTab.ALL:
-          return true;
-        case ResultTab.BOOKMARKS:
-          return proj.tags.includes("Umweltschutz");
-        case ResultTab.HISTORY:
-          return false;
-      }
-    })
-    .filter((proj) => proj.title.includes(searchText.value));
+    const searchInput: SearchInput = {
+      answers: undefined,
+      maxMembers:
+        props.filterSettings.filterActive && props.filterSettings.limitOrgSize
+          ? props.filterSettings.maxOrgSize // TODO remove limitOrgSize, use maxOrgSize instead
+          : undefined,
+      searchText: searchText.value,
+      continent: props.filterSettings.filterActive
+        ? props.filterSettings.selectedContinent.toString() // TODO is not a string
+        : undefined,
+      regionId: props.filterSettings.filterActive
+        ? props.filterSettings.selectedContinent.toString() // TODO is not a string
+        : undefined,
+      type: props.filterSettings.filterActive
+        ? undefined // TODO wait for modified ui that directly controls this property
+        : undefined,
+    };
+    const searchResult = search(searchInput);
+    props.organizationLocations.value = searchResult.organizationLocations;
+    props.projectLocations.value = searchResult.projectLocations;
 
-  const filteredOrgs = orgs
-    .filter((org) => {
-      switch (tabSelection.value) {
-        case ResultTab.ALL:
-          return true;
-        case ResultTab.BOOKMARKS:
-          return org.memberCount < 1000;
-        case ResultTab.HISTORY:
-          return false;
-      }
-    })
-    .filter((org) => org.title.includes(searchText.value));
-
-  return (
-    <>
-      <div class="pointer-events-none fixed left-0 top-0 flex h-screen items-start space-x-2 p-4">
-        <div class="flex h-full flex-col items-center">
-          <div class="pointer-events-auto flex max-w-min flex-col overflow-hidden rounded-box bg-base-200">
-            <Navbar
-              filterSettings={props.filterSettings}
-              filterWindowActive={filterActive}
-              listExpanded={listExpanded}
-              searchText={searchText}
-            />
-            <div class="w-full border border-base-200" />
-            <div class="flex flex-col overflow-hidden bg-base-100 p-4">
-              <Tablist
-                selection={tabSelection}
-                useBtnStyle={!listExpanded.value}
+    return (
+      <>
+        <div class="pointer-events-none fixed left-0 top-0 flex h-screen items-start space-x-2 p-4">
+          <div class="flex h-full flex-col items-center">
+            <div class="pointer-events-auto flex max-w-min flex-col overflow-hidden rounded-box bg-base-200">
+              <Navbar
+                filterSettings={props.filterSettings}
+                filterWindowActive={filterActive}
+                listExpanded={listExpanded}
+                searchText={searchText}
               />
-              <div
-                class={[
-                  "space-y-2 overflow-y-auto pr-2 transition-all",
-                  listExpanded.value ? "h-full" : "h-0",
-                ]}
-              >
-                {filteredProjects.map((proj, idx) => (
-                  <ProjectShortInfo
-                    key={idx}
-                    project={proj}
-                    onClick={$(() => {
-                      selectedProject.value = proj;
-                    })}
-                  />
-                ))}
-                {filteredOrgs.map((org, idx) => (
-                  <OrganizationShortInfo
-                    key={idx}
-                    org={org}
-                    onClick={$(() => {
-                      console.log(org);
-                    })}
-                  />
-                ))}
+              <div class="w-full border border-base-200" />
+              <div class="flex flex-col overflow-hidden bg-base-100 p-4">
+                <Tablist
+                  selection={tabSelection}
+                  useBtnStyle={!listExpanded.value}
+                />
+                <div
+                  class={[
+                    "space-y-2 overflow-y-auto pr-2 transition-all",
+                    listExpanded.value ? "h-full" : "h-0",
+                  ]}
+                >
+                  {searchResult.rankings.map(({ type, content }, idx) =>
+                    type == "Project" ? (
+                      <ProjectShortInfo
+                        key={idx}
+                        project={content as Project}
+                        onClick={$(() => {
+                          selectedProject.value = content as Project;
+                        })}
+                      />
+                    ) : (
+                      <OrganizationShortInfo
+                        key={idx}
+                        org={content as Organization}
+                        onClick={$(() => {
+                          console.log(content);
+                        })}
+                      />
+                    ),
+                  )}
+                </div>
               </div>
             </div>
+            <ExpandLatch expandedProperty={listExpanded} />
           </div>
-          <ExpandLatch expandedProperty={listExpanded} />
+          <div
+            class={[
+              "pointer-events-auto w-full",
+              filterActive.value ? "" : "hidden",
+            ]}
+          >
+            <Filter filterSettings={props.filterSettings} />
+          </div>
         </div>
-        <div
-          class={[
-            "pointer-events-auto w-full",
-            filterActive.value ? "" : "hidden",
-          ]}
-        >
-          <Filter filterSettings={props.filterSettings} />
-        </div>
-      </div>
-      {selectedProject.value && (
-        <div class="fixed right-0 top-0 h-screen p-4">
-          <ProjectLargeInfo
-            project={selectedProject.value}
-            onClose={$(() => (selectedProject.value = undefined))}
-          />
-        </div>
-      )}
-    </>
-  );
-});
+        {selectedProject.value && (
+          <div class="fixed right-0 top-0 h-screen p-4">
+            <ProjectLargeInfo
+              project={selectedProject.value}
+              onClose={$(() => (selectedProject.value = undefined))}
+            />
+          </div>
+        )}
+      </>
+    );
+  },
+);
+
+type SearchInput = {
+  answers?: number[];
+  maxMembers?: number;
+  searchText?: string;
+  continent?: string;
+  regionId?: string;
+  type?: "Project" | "Orga";
+};
+
+export type Organization = {
+  id: number;
+  name: string;
+  description: string;
+  foundingYear: number;
+  memberCount: number;
+  iconUrl: string;
+  imageUrls: string[];
+  webPageUrl: string;
+  donatePageUrl: string;
+  coordinates: [number, number];
+  tags: number[];
+  regionName: string;
+  numProjects: number; // TODO not actually present
+};
+
+export type Project = {
+  id: number;
+  orgaId: number;
+  name: string;
+  description: string;
+  dateFrom: string;
+  dateTo: string;
+  iconUrl: string;
+  imageUrls: string[];
+  webPageUrl: string;
+  donatePageUrl: string;
+  coordinates: [number, number];
+  tags: number[];
+  regionName: string;
+  orgaName: string; // TODO not actually present
+};
+
+export type SearchOutput = {
+  rankings: {
+    type: "Organization" | "Project";
+    content: Organization | Project;
+    percentageMatch: number;
+  }[];
+  organizationLocations: {
+    type: "FeatureCollection";
+    features: {
+      type: "Feature";
+      properties: {
+        id: number;
+      };
+      geometry: {
+        type: "Point";
+        coordinates: [number, number];
+      };
+    }[];
+  };
+  projectLocations: {
+    type: "FeatureCollection";
+    features: {
+      type: "Feature";
+      properties: {
+        projectId: number;
+      };
+      geometry: {
+        type: "Point";
+        coordinates: [number, number];
+      };
+    }[];
+  };
+};
+
+function search(searchInput: SearchInput) {
+  console.log(searchInput);
+  // TODO replace with API call
+  return mockdata;
+}
 
 /**
  * The navbar shows the project logo and name, contains the search and allows to configure the filter.

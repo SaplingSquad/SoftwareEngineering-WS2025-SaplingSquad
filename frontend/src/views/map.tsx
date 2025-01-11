@@ -1,8 +1,7 @@
-import { $, component$ } from "@builder.io/qwik";
+import { $, component$, Signal } from "@builder.io/qwik";
 import type { StyleImageMetadata } from "maplibre-gl";
 import { OrganizationInfo } from "~/components/info/organization";
 import { ProjectInfo } from "~/components/info/project";
-import { RegionInfo } from "~/components/info/region";
 import { Map as MapComponent } from "~/components/map";
 import { clickHandlers } from "~/components/map/click_handlers";
 import { clusteredPinLayer } from "~/components/map/clustered_pin_layers";
@@ -57,67 +56,61 @@ const clusteredLayer = (source: string) =>
   });
 
 /**
- * The sources to use and some additional properties
- */
-const sources = {
-  organizations: {
-    info: $(() => <OrganizationInfo />),
-    data: example_geojson(),
-    iconOptions: {
-      marker: markerIconOptions,
-      cluster: clusterIconOptions,
-    },
-  },
-  projects: {
-    info: $(() => <ProjectInfo />),
-    data: example_geojson(),
-    iconOptions: {
-      marker: markerIconOptions,
-      cluster: clusterIconOptions,
-    },
-  },
-  regions: {
-    info: $(() => <RegionInfo />),
-    data: example_geojson(),
-    iconOptions: {
-      marker: markerIconOptions,
-      cluster: clusterIconOptions,
-    },
-  },
-};
-
-/**
  * Creates a full map-view, which displays the entities from the database.
  * Will take the full width and height of the parent.
  */
-export const Map = component$(() => {
-  return (
-    <MapComponent
-      class="h-full w-full"
-      images={Object.fromEntries(
-        Object.entries(sources).flatMap(([source, { iconOptions }]) =>
-          ["marker", "cluster"].map((type) => [
-            `${source}_${type}`,
-            [
-              `/rsc/markers/${source}_${type}.png`,
-              iconOptions[type as keyof typeof iconOptions],
-            ],
+export const Map = component$(
+  (props: {
+    organizationLocations: Signal<GeoJSON.GeoJSON>;
+    projectLocations: Signal<GeoJSON.GeoJSON>;
+  }) => {
+    const sources = {
+      organizations: {
+        info: $(() => <OrganizationInfo />),
+        data: props.organizationLocations.value,
+        iconOptions: {
+          marker: markerIconOptions,
+          cluster: clusterIconOptions,
+        },
+      },
+      projects: {
+        info: $(() => <ProjectInfo />),
+        data: props.projectLocations.value,
+        iconOptions: {
+          marker: markerIconOptions,
+          cluster: clusterIconOptions,
+        },
+      },
+    };
+
+    return (
+      <MapComponent
+        class="h-full w-full"
+        images={Object.fromEntries(
+          Object.entries(sources).flatMap(([source, { iconOptions }]) =>
+            ["marker", "cluster"].map((type) => [
+              `${source}_${type}`,
+              [
+                `/rsc/markers/${source}_${type}.png`,
+                iconOptions[type as keyof typeof iconOptions],
+              ],
+            ]),
+          ),
+        )}
+        sources={Object.fromEntries(
+          Object.entries(sources).map(([source, { data }]) => [
+            source,
+            clusteredGeoJSONDatasource(data),
           ]),
-        ),
-      )}
-      sources={Object.fromEntries(
-        Object.entries(sources).map(([source, { data }]) => [
-          source,
-          clusteredGeoJSONDatasource(data),
-        ]),
-      )}
-      layers={Object.keys(sources).flatMap(clusteredLayer)}
-      onClick={clickHandlers({
-        clusterZoom: Object.keys(sources),
-        info: Object.fromEntries(
-          Object.entries(sources).map(([source, { info }]) => [source, info]),
-        ),
-      })}
-    />
-  );
-});
+        )}
+        layers={Object.keys(sources).flatMap(clusteredLayer)}
+        onClick={clickHandlers({
+          clusterZoom: Object.keys(sources),
+          info: Object.fromEntries(
+            Object.entries(sources).map(([source, { info }]) => [source, info]),
+          ),
+        })}
+      />
+    );
+  },
+);

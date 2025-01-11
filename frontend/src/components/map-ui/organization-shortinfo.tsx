@@ -12,16 +12,7 @@ import {
   HiUserGroupOutline,
 } from "@qwikest/icons/heroicons";
 import { layoutTags } from "./tag-layout";
-
-export type Organization = {
-  title: string;
-  description: string;
-  orgIcon: string;
-  foundingYear: number;
-  memberCount: number;
-  projects: number[];
-  tags: string[];
-};
+import type { Organization } from "./map-ui";
 
 /**
  * A small card for the list view showing the most important information about an organization.
@@ -32,19 +23,24 @@ export const OrganizationShortInfo = component$(
 
     // Use visible task because the tags need to be layouted every time the component is re-rendered.
     // eslint-disable-next-line qwik/no-use-visible-task
-    useVisibleTask$(() => layoutTags(tagContainerRef, props.org.tags));
+    useVisibleTask$(() =>
+      layoutTags(
+        tagContainerRef,
+        props.org.tags.map(() => "Umweltschutz"),
+      ),
+    ); // TODO
 
     return (
       <div
         class="group card cursor-pointer space-y-2 bg-base-200 p-4 hover:bg-base-300 active:scale-[0.99]"
         onClick$={props.onClick}
       >
-        <h1 class="text-xl font-bold text-info">{props.org.title}</h1>
+        <h1 class="text-xl font-bold text-info">{props.org.name}</h1>
         <div class="flex h-min max-w-full justify-between">
           <div class="space-y-0.5">
             <div class="flex items-center space-x-1">
               <HiHomeOutline />
-              <span>München, Deutschland</span>
+              <span>{props.org.regionName}</span>
             </div>
             <div class="flex items-center space-x-1">
               <HiCakeOutline />
@@ -61,9 +57,9 @@ export const OrganizationShortInfo = component$(
             <div class="flex items-center space-x-1">
               <HiBoltOutline />
               <span>
-                {props.org.projects.length +
+                {props.org.numProjects +
                   " " +
-                  (props.org.projects.length == 1 ? "Projekt" : "Projekte")}
+                  (props.org.numProjects == 1 ? "Projekt" : "Projekte")}
               </span>
             </div>
             <div class="flex items-center space-x-1">
@@ -75,7 +71,7 @@ export const OrganizationShortInfo = component$(
             </div>
           </div>
           <img
-            src={props.org.orgIcon}
+            src={props.org.iconUrl}
             alt="Logo des Vereins"
             height={104}
             width={104}
