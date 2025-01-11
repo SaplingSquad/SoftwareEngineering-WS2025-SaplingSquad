@@ -20,6 +20,22 @@ import type { DistributiveOmit, MaybeArray } from "~/utils";
 import { maybeArray } from "~/utils";
 
 /**
+ * Coordinates, as used in the API.
+ */
+export type Coordinates = [number, number];
+
+/**
+ * Type-guard for {@link Coordinates}.
+ *
+ * @param coords thing to check
+ * @returns `true` if `coords` are valid {@link Coordinates}, `false` otherwise
+ */
+export const isCoordinates = (coords: any): coords is Coordinates =>
+  Array.isArray(coords) &&
+  coords.length === 2 &&
+  coords.every((n) => typeof n === "number");
+
+/**
  * Data sources of the map
  */
 export type Sources = {
