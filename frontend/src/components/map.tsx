@@ -69,6 +69,7 @@ export type ClickHandlers = [MaybeArray<string>, MaybeArray<ClickHandler>][];
  * @param sources data sources for the map
  * @param layers layers for the map
  * @param images images for the map
+ * @param clickHandlers handlers for clicks on layers
  * @returns a maplibre map with the passed options and additional properties
  */
 const createMap = (
