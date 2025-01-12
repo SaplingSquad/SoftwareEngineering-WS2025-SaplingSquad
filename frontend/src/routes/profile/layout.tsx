@@ -1,5 +1,5 @@
 import { component$, Slot } from "@builder.io/qwik";
-import { getSession } from "~/auth/tools";
+import { getSession } from "~/auth/useauthheader";
 import { ProfileImage } from "~/components/profile/utils";
 import { useSession } from "../plugin@auth";
 

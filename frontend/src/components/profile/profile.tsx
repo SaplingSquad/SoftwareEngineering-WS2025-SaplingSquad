@@ -3,10 +3,25 @@ import { component$, createContextId, Signal, useContext, useContextProvider, us
 import { HiUserCircleOutline, HiPlusCircleSolid, HiCog6ToothOutline, HiTrashOutline, HiPlusCircleOutline, HiLinkOutline, HiBanknotesOutline } from "@qwikest/icons/heroicons";
 import { LogoutParamsForm } from "../auth/logout";
 import { ProfileImage } from "./utils";
-import { isAccTypeOrg, useAccountType } from "~/auth/tools";
+import { isAccTypeOrg, useAccountType } from "~/auth/useauthheader";
 
 const OrgaProfileDataContext = createContextId<OrgaInformationsProps>("verein-profile-context")
 
+//Api Types
+export type ApiOrganisationInformations = {
+    orgaId: number;
+    description: string;
+    coordinates: number[];
+    name: string;
+    webpageUrl: string;
+    tags: number[];
+    foundingYear?: number | undefined;
+    memberCount?: number | undefined;
+    imageUrls?: string[] | undefined;
+    donatePageUrl?: string | undefined;
+}
+
+//Used Types
 export type ProfileProjectsProps = {
     img: string;
     title: string;

@@ -11,7 +11,7 @@ import {
   buildAuthHeader,
   getSession,
   useAuthHeader,
-} from "~/auth/tools";
+} from "~/auth/useauthheader";
 import { api } from "~/api/api_url";
 
 export const useQuestionFilter = routeLoader$(async (req) => {
