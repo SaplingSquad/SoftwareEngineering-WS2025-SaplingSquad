@@ -1,4 +1,4 @@
-import { ClassList, component$, createContextId, Signal, useComputed$, useContext, useContextProvider, useSignal, useStore } from "@builder.io/qwik";
+import { ClassList, component$, createContextId, JSXOutput, Signal, useComputed$, useContext, useContextProvider, useSignal, useStore } from "@builder.io/qwik";
 import { HiStarOutline, HiNoSymbolOutline, HiChevronRightOutline, HiChevronLeftOutline, HiInformationCircleOutline, HiPlusOutline, HiCalendarDaysOutline, HiUserGroupOutline, HiCog6ToothOutline, HiLinkOutline, HiBanknotesOutline, HiTrashOutline, HiTrashSolid } from "@qwikest/icons/heroicons";
 import { MapLocationInput } from "./utils";
 import { OrgaInformationsProps, ProjectInformationProps } from "./profile";
@@ -16,6 +16,13 @@ const answerStyles = new Map<boolean, string>([
     [true, "btn-primary"],
 ])
 
+const ChooseOption = component$((inputData: { index: number }) => {
+    return (
+        <>
+            <option>{inputData.index}</option>
+        </>
+    )
+})
 
 const Vereinsdaten = component$(() => {
     const context = useContext(FormDataContext)
@@ -37,6 +44,68 @@ const Vereinsdaten = component$(() => {
                 Projektspendenseite
                 <input type="text" class="grow  link link-neutral" placeholder="www.mein-verein.de/donate" value={context.donatePageUrl} onInput$={(_, e) => context.donatePageUrl = e.value} />
             </label>
+            <div class="flex justify-start gap-8">
+                <div>
+                    <label class="form-control w-1/5">
+                        <div class="label">
+                            <span class="label-text">Projektbeginn</span>
+                        </div>
+                        <div class="flex">
+                            <select class="select select-bordered select-sm text-xl" onInput$={(_, e) => { context.dateFrom.mnth = parseInt(e.value) }}>
+                                {context.dateFrom.mnth === 0 ?
+                                    <option disabled selected>Monat</option>
+                                    :
+                                    <option disabled selected>{context.dateFrom.mnth}</option>
+                                }
+                                {Array.from(Array(12).keys()).map((e, i) =>
+                                    <ChooseOption index={e + 1} />)
+                                }
+                            </select>
+                            <p class="text-xl">/</p>
+                            <select class="select select-bordered select-sm text-xl" onInput$={(_, e) => { context.dateFrom.year = parseInt(e.value) }}>
+                                {context.dateFrom.year === 0 ?
+                                    <option disabled selected>Jahr</option>
+                                    :
+                                    <option disabled selected>{context.dateFrom.year}</option>
+                                }
+                                {Array.from(Array(101).keys()).map((e, i) =>
+                                    <ChooseOption index={e + 1975} />)
+                                }
+                            </select>
+                        </div>
+                    </label>
+                </div>
+                <div>
+                    <label class="form-control w-1/5">
+                        <div class="label">
+                            <span class="label-text">Projektende</span>
+                        </div>
+                        <div class="flex">
+                            <select class="select select-bordered select-sm text-xl" onInput$={(_, e) => { context.dateTo.mnth = parseInt(e.value) }}>
+                                {context.dateTo.mnth === 0 ?
+                                    <option disabled selected>Monat</option>
+                                    :
+                                    <option disabled selected>{context.dateTo.mnth}</option>
+                                }
+                                {Array.from(Array(12).keys()).map((e, i) =>
+                                    <ChooseOption index={e + 1} />)
+                                }
+                            </select>
+                            <p class="text-xl">/</p>
+                            <select class="select select-bordered select-sm text-xl" onInput$={(_, e) => { context.dateTo.year = parseInt(e.value) }}>
+                                {context.dateTo.year === 0 ?
+                                    <option disabled selected>Jahr</option>
+                                    :
+                                    <option disabled selected>{context.dateTo.year}</option>
+                                }
+                                {Array.from(Array(101).keys()).map((e, i) =>
+                                    <ChooseOption index={e + 1975} />)
+                                }
+                            </select>
+                        </div>
+                    </label>
+                </div>
+            </div>
             <label class="form-control">
                 <div class="label">
                     <span class="label-text">Projektbeschreibung</span>
@@ -126,7 +195,7 @@ const ImagePreview = component$((inputData: { imgUrl: string, key: number, clz: 
         <>
             <div key={inputData.key + "imageStackOrgaAcc"} class={inputData.clz}>
                 {inputData.delButton &&
-                    <div class="btn btn-square scale-[0.85] btn-error absolute -top-3 -left-3 text-error-content text-xl shadow-xl" onClick$={() => context.imageUrls = context.imageUrls.filter((e, i) => inputData.imgUrl !== e)}>
+                    <div class="btn btn-square scale-[0.75] btn-error absolute -top-3 -left-3 text-error-content text-2xl shadow-xl" onClick$={() => context.imageUrls = context.imageUrls.filter((e, i) => inputData.imgUrl !== e)}>
                         <HiTrashSolid />
                     </div>
                 }
@@ -234,7 +303,7 @@ export const ProjectCreation = component$(() => {
         <>
             <div class="relative flex justify-center">
                 <div class="card bg-base-300 rounded-box place-items-stretch m-4 px-4 py-8 space-y-4 [max-height:90dvh] w-full lg:w-1/3">
-                    <h2 class="card-title px-4">Verein verwalten</h2>
+                    <h2 class="card-title px-4">Projekt verwalten</h2>
                     <div class="overflow-y-auto space-y-4 px-4">
                         {position.value === 0 && <Vereinsdaten />}
                         {/*position.value === 1 && <Vereinstags data={inputData.data} />*/}

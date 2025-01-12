@@ -143,7 +143,7 @@ export const ImagePreview = component$((inputData: { imgUrl: string, key: number
         <>
             <div key={inputData.key + "imageStackOrgaAcc"} class={inputData.clz}>
                 {inputData.delButton &&
-                    <div class="btn btn-square scale-[0.85] btn-error absolute -top-3 -left-3 text-error-content text-xl shadow-xl" onClick$={() => context.imageUrls = context.imageUrls.filter((e, i) => inputData.imgUrl !== e)}>
+                    <div class="btn btn-square scale-[0.75] btn-error absolute -top-3 -left-3 text-error-content text-2xl shadow-xl" onClick$={() => context.imageUrls = context.imageUrls.filter((e, i) => inputData.imgUrl !== e)}>
                         <HiTrashSolid />
                     </div>
                 }
