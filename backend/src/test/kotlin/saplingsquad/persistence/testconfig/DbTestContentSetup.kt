@@ -62,6 +62,11 @@ object ExampleQuestionsAndTags {
     }
 }
 
+/** Mock region names for coordinates
+ * ```kotlin
+ * "lat $lat lon $lon"
+ * ```
+ */
 fun CoordinatesEmbedded.toRegionName(): String {
     return "lon $coordinatesLon lat $coordinatesLat"
 }
@@ -304,6 +309,15 @@ enum class Type(val tableName: String, val idColName: String) {
         "saplingsquad.persistence.testconfig.H2Static.recalculateRegionOf${tableName.replaceFirstChar { it.uppercaseChar() }}"
 }
 
+/**
+ * Create the region_cache table for organization or project (similar to
+ * resources/db/changelog/0020-org-proj-add-regionname.sql)
+ * Create a mock version of the region calculation SQL function.
+ * The "region" of a coordinate is as in [CoordinatesEmbedded.toRegionName] just
+ * ```kotlin
+ * "lat $lat lon $lon"
+ * ```
+ */
 private fun createRegionCacheFunctionsAndTablesSqlStatement(type: Type): String {
     val tab = type.tableName
     val id = type.idColName
@@ -324,6 +338,9 @@ private fun createRegionCacheFunctionsAndTablesSqlStatement(type: Type): String 
     """.trimIndent()
 }
 
+/**
+ * H2 only allows JVM static methods as SQL procedures => create JVM methods which manually execute some SQL code
+ */
 object H2Static {
     @JvmStatic
     fun recalculateRegionOfOrganization(conn: Connection, id: OrganizationId) {
