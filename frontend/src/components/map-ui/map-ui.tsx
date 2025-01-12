@@ -1,4 +1,11 @@
-import { type Signal, $, component$, Slot, useSignal } from "@builder.io/qwik";
+import {
+  type Signal,
+  $,
+  component$,
+  Slot,
+  useSignal,
+  useStore,
+} from "@builder.io/qwik";
 import {
   HiBookmarkOutline,
   HiChevronDownOutline,
@@ -27,32 +34,21 @@ enum ResultTab {
  */
 export const MapUI = component$(
   (props: {
-    filterSettings: FilterSettings;
     organizationLocations: Signal<GeoJSON.GeoJSON>;
     projectLocations: Signal<GeoJSON.GeoJSON>;
   }) => {
+    const filterSettings: FilterSettings = useStore({});
     const tabSelection = useSignal<ResultTab>(ResultTab.ALL);
-    const filterActive = useSignal<boolean>(false);
+    const filterActive = useSignal<boolean>(true);
+    const filterWindowActive = useSignal<boolean>(false);
     const listExpanded = useSignal<boolean>(false);
     const searchText = useSignal<string>("");
     const selectedProject = useSignal<Project | undefined>(undefined);
 
     const searchInput: SearchInput = {
       answers: undefined,
-      maxMembers:
-        props.filterSettings.filterActive && props.filterSettings.limitOrgSize
-          ? props.filterSettings.maxOrgSize // TODO remove limitOrgSize, use maxOrgSize instead
-          : undefined,
-      searchText: searchText.value,
-      continent: props.filterSettings.filterActive
-        ? props.filterSettings.selectedContinent.toString() // TODO is not a string
-        : undefined,
-      regionId: props.filterSettings.filterActive
-        ? props.filterSettings.selectedContinent.toString() // TODO is not a string
-        : undefined,
-      type: props.filterSettings.filterActive
-        ? undefined // TODO wait for modified ui that directly controls this property
-        : undefined,
+      searchText: searchText.value || undefined,
+      ...filterSettings,
     };
     const searchResult = search(searchInput);
     props.organizationLocations.value = searchResult.organizationLocations;
@@ -64,8 +60,8 @@ export const MapUI = component$(
           <div class="flex h-full flex-col items-center">
             <div class="pointer-events-auto flex max-w-min flex-col overflow-hidden rounded-box bg-base-200">
               <Navbar
-                filterSettings={props.filterSettings}
-                filterWindowActive={filterActive}
+                filterActive={filterActive}
+                filterWindowActive={filterWindowActive}
                 listExpanded={listExpanded}
                 searchText={searchText}
               />
@@ -108,10 +104,13 @@ export const MapUI = component$(
           <div
             class={[
               "pointer-events-auto w-full",
-              filterActive.value ? "" : "hidden",
+              filterWindowActive.value ? "" : "hidden",
             ]}
           >
-            <Filter filterSettings={props.filterSettings} />
+            <Filter
+              filterSettings={filterSettings}
+              filterActive={filterActive}
+            />
           </div>
         </div>
         {selectedProject.value && (
@@ -133,7 +132,7 @@ type SearchInput = {
   searchText?: string;
   continent?: string;
   regionId?: string;
-  type?: "Project" | "Orga";
+  type?: "Project" | "Organization";
 };
 
 export type Organization = {
@@ -204,6 +203,7 @@ export type SearchOutput = {
 };
 
 function search(searchInput: SearchInput) {
+  console.log("SearchInput:");
   console.log(searchInput);
   // TODO replace with API call
   return mockdata;
@@ -214,7 +214,7 @@ function search(searchInput: SearchInput) {
  */
 const Navbar = component$(
   (props: {
-    filterSettings: FilterSettings;
+    filterActive: Signal<boolean>;
     filterWindowActive: Signal<boolean>;
     listExpanded: Signal<boolean>;
     searchText: Signal<string>;
@@ -233,7 +233,7 @@ const Navbar = component$(
             searchText={props.searchText}
           />
           <FilterButton
-            filterSettings={props.filterSettings}
+            filterActive={props.filterActive}
             filterWindowActive={props.filterWindowActive}
           />
         </div>
@@ -309,7 +309,7 @@ const Search = component$(
  */
 const FilterButton = component$(
   (props: {
-    filterSettings: FilterSettings;
+    filterActive: Signal<boolean>;
     filterWindowActive: Signal<boolean>;
   }) => {
     return (
@@ -333,7 +333,7 @@ const FilterButton = component$(
             stroke-width="3"
             class={[
               "absolute left-0 top-0 size-8 stroke-error",
-              props.filterSettings.filterActive ? "invisible" : "",
+              props.filterActive.value ? "invisible" : "",
             ]}
           >
             <path
