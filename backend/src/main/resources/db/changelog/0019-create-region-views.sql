@@ -54,8 +54,8 @@ with countries as (select adm0_a3_de                               as region_id,
 select *
 from countries
 union
-(select *
- from marine_regions);
+select *
+from marine_regions;
 
 --changeset 0019:5
 create materialized view region_continents as
