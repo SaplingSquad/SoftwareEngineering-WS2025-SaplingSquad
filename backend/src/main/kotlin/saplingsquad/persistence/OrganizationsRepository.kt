@@ -2,7 +2,6 @@ package saplingsquad.persistence
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.flow.toSet
 import org.komapper.core.dsl.Meta
 import org.komapper.core.dsl.QueryDsl
@@ -21,7 +20,7 @@ typealias OrganizationEntityAndTags = Pair<OrganizationEntity, Set<TagId>>
 data class OrganizationEntityProjectIdsAndTags(
     val org: OrganizationEntity,
     val tags: Set<TagId>,
-    val projectIds: List<ProjectId>
+    val projects: List<ProjectEntityAndTags>
 )
 
 @Repository
@@ -43,11 +42,15 @@ class OrganizationsRepository(private val db: R2dbcDatabase) {
             }.map { it.tagId }.toSet()
 
             val proj = Meta.projectEntity
-            val projectIds = db.flowQuery {
-                QueryDsl.from(proj).where { proj.orgId eq organizationId }
-            }.map { it.projectId }.toList()
+            val projTags = Meta.projectTagsEntity
+            val projects = db.runQuery {
+                QueryDsl.from(proj)
+                    .where { proj.orgId eq organizationId }
+                    .leftJoin(projTags) { proj.projectId eq projTags.projectId }
+                    .includeAll()
+            }.oneToMany(proj, projTags).toProjectEntitiesWithTags()
 
-            return@withTransaction OrganizationEntityProjectIdsAndTags(org, tags, projectIds)
+            return@withTransaction OrganizationEntityProjectIdsAndTags(org, tags, projects)
         }
 
     suspend fun tryRegisterOrganization(
@@ -86,7 +89,7 @@ class OrganizationsRepository(private val db: R2dbcDatabase) {
 
     suspend fun updateOrganizationOfAccount(
         accountId: String,
-        organization: OrganizationEntity,
+        organizationWithoutId: OrganizationEntity,
         tags: Set<TagId>,
     ): OrganizationUpdateResult =
         db.withTransaction(transactionProperty = TransactionProperty.IsolationLevel.SERIALIZABLE) {
@@ -94,9 +97,8 @@ class OrganizationsRepository(private val db: R2dbcDatabase) {
             val orgTags = Meta.organizationTagsEntity
             val existing = readOrganizationOfAccount(accountId)
                 ?: return@withTransaction OrganizationUpdateResult.NoOrganizationRegistered
-            if (existing.orgId != organization.orgId) {
-                return@withTransaction OrganizationUpdateResult.WrongOrganizationId
-            }
+            val organization = organizationWithoutId.copy(orgId = existing.orgId)
+
             db.runQuery {
                 QueryDsl
                     .update(org)
@@ -158,7 +160,6 @@ sealed class OrganizationRegisterResult {
 enum class OrganizationUpdateResult {
     Success,
     NoOrganizationRegistered,
-    WrongOrganizationId
 }
 
 private fun filterByTagsSqlQuery(answers: List<Int>) = QueryDsl

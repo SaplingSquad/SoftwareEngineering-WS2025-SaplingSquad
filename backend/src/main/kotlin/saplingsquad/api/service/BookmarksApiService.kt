@@ -10,28 +10,24 @@ import saplingsquad.persistence.BookmarksRepository
 
 @Service
 class BookmarksApiService(private val bookmarksRepository: BookmarksRepository) : BookmarksApiDelegate {
-    override suspend fun bookmarkOrganization(userToken: JwtAuthenticationToken, orgaId: Int): ResponseEntity<Unit> {
-        bookmarksRepository.insertOrganizationBookmark(userToken.token.subject, orgaId)
-        return ResponseEntity.ok().build()
+    override suspend fun postOrganizationBookmark(userToken: JwtAuthenticationToken, id: Int): ResponseEntity<Unit> {
+        bookmarksRepository.insertOrganizationBookmark(userToken.token.subject, id)
+        return ResponseEntity.noContent().build()
     }
 
-    override suspend fun bookmarkProject(userToken: JwtAuthenticationToken, projectId: Int): ResponseEntity<Unit> {
-        bookmarksRepository.insertProjectBookmark(userToken.token.subject, projectId)
-        return ResponseEntity.ok().build()
+    override suspend fun postProjectBookmark(userToken: JwtAuthenticationToken, id: Int): ResponseEntity<Unit> {
+        bookmarksRepository.insertProjectBookmark(userToken.token.subject, id)
+        return ResponseEntity.noContent().build()
     }
 
-    override suspend fun deleteOrganizationBookmark(
-        userToken: JwtAuthenticationToken, orgaId: Int
-    ): ResponseEntity<Unit> {
-        bookmarksRepository.deleteOrganizationBookmark(userToken.token.subject, orgaId)
-        return ResponseEntity.ok().build()
+    override suspend fun deleteOrganizationBookmark(userToken: JwtAuthenticationToken, id: Int): ResponseEntity<Unit> {
+        bookmarksRepository.deleteOrganizationBookmark(userToken.token.subject, id)
+        return ResponseEntity.noContent().build()
     }
 
-    override suspend fun deleteProjectBookmark(
-        userToken: JwtAuthenticationToken, projectId: Int
-    ): ResponseEntity<Unit> {
-        bookmarksRepository.deleteProjectBookmark(userToken.token.subject, projectId)
-        return ResponseEntity.ok().build()
+    override suspend fun deleteProjectBookmark(userToken: JwtAuthenticationToken, id: Int): ResponseEntity<Unit> {
+        bookmarksRepository.deleteProjectBookmark(userToken.token.subject, id)
+        return ResponseEntity.noContent().build()
     }
 
     override fun getOrganizationBookmarks(userToken: JwtAuthenticationToken): ResponseEntity<Flow<Int>> {

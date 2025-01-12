@@ -5,9 +5,9 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
-import org.mockito.kotlin.*
+import org.mockito.kotlin.whenever
+import org.mockito.kotlin.wheneverBlocking
 import org.springframework.http.HttpStatus
-import org.springframework.http.server.reactive.ServerHttpRequest
 import saplingsquad.api.models.Question
 import saplingsquad.api.service.QuestionsApiService
 import saplingsquad.config.AppConfig
@@ -39,16 +39,16 @@ class QuestionsApiServiceTest {
     fun testGetQuestions() = runTest {
         val questionEntities = listOf(
             QuestionEntity(
-                questionId = 1, questionTitle = "Question 1", question = "Content 1", imageUrl = null, tagId = 1
+                questionId = 1, questionTitle = "Question 1", question = "Content 1", imageUrl = "image.png", tagId = 1
             ),
             QuestionEntity(
-                questionId = 2, questionTitle = "Question 2", question = "Content 2", imageUrl = "image.png", tagId = 1
+                questionId = 2, questionTitle = "Question 2", question = "Content 2", imageUrl = "image1.png", tagId = 1
             ),
             QuestionEntity(
-                questionId = 3, questionTitle = "Question 3", question = "Content 3", imageUrl = null, tagId = 2
+                questionId = 3, questionTitle = "Question 3", question = "Content 3", imageUrl = "image2.png", tagId = 2
             ),
             QuestionEntity(
-                questionId = 4, questionTitle = "Question 4", question = "Content 4", imageUrl = "image2.png", tagId = 2
+                questionId = 4, questionTitle = "Question 4", question = "Content 4", imageUrl = "image3.png", tagId = 2
             ),
         )
         wheneverBlocking { repository.readAll() }.thenReturn(questionEntities)
@@ -57,10 +57,10 @@ class QuestionsApiServiceTest {
 
         // @formatter:off
         val expectedBody = listOf(
-            Question(questionId = 1, questionTitle = "Question 1", questionText = "Content 1", questionImageUrl = null, tagId = 1),
-            Question(questionId = 2, questionTitle = "Question 2", questionText = "Content 2", questionImageUrl = "${resourcesUrl}image.png", tagId = 1),
-            Question(questionId = 3, questionTitle = "Question 3", questionText = "Content 3", questionImageUrl = null, tagId = 2),
-            Question(questionId = 4, questionTitle = "Question 4", questionText = "Content 4", questionImageUrl = "${resourcesUrl}image2.png", tagId = 2),
+            Question(id = 1, title = "Question 1", text = "Content 1", imageUrl = "${resourcesUrl}image.png"),
+            Question(id = 2, title = "Question 2", text = "Content 2", imageUrl = "${resourcesUrl}image1.png"),
+            Question(id = 3, title = "Question 3", text = "Content 3", imageUrl = "${resourcesUrl}image2.png"),
+            Question(id = 4, title = "Question 4", text = "Content 4", imageUrl = "${resourcesUrl}image3.png"),
         )
         // @formatter:on
 
@@ -70,38 +70,4 @@ class QuestionsApiServiceTest {
         assertEquals(response.statusCode, HttpStatus.OK)
         assertEquals(expectedBody, response.body?.toList())
     }
-
-    /**
-     * Test GET /questions/{id}
-     */
-    @Test
-    fun testGetQuestionById() = runTest {
-        val input = QuestionEntity(
-            questionId = 1, questionTitle = "Question 1", question = "Content 1", imageUrl = "image.png", tagId = 1
-        )
-        wheneverBlocking { repository.readById(1) }.thenReturn(input)
-        wheneverBlocking { repository.readById(not(eq(1))) }.thenReturn(null)
-
-        val resourcesUrl = "/testapi2/res/"
-        whenever(appConfig.resourcesUrlPath).thenReturn(resourcesUrl)
-
-        val expectedOutput = Question(
-            questionId = 1,
-            questionTitle = "Question 1",
-            questionText = "Content 1",
-            questionImageUrl = "${resourcesUrl}image.png",
-            tagId = 1
-        )
-
-        val service = QuestionsApiService(repository, appConfig)
-
-        val responseExisting = service.getQuestionById(1)
-
-        assertEquals(responseExisting.statusCode, HttpStatus.OK)
-        assertEquals(expectedOutput, responseExisting.body)
-
-        val responseNonexisting = service.getQuestionById(5)
-        assertEquals(responseNonexisting.statusCode, HttpStatus.NOT_FOUND)
-    }
-
 }

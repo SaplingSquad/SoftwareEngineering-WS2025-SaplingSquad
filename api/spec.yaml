@@ -9,7 +9,7 @@ info:
   license:
     name: GNU Affero General Public License v3.0
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
-  version: 1.1.3
+  version: 1.2.21
 servers:
   - url: /api
 tags:
@@ -29,7 +29,6 @@ paths:
       tags:
         - questions
       summary: Get a list of all questions.
-      description: ''
       operationId: getQuestions
       responses:
         '200':
@@ -40,137 +39,135 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Question'
-        '400':
-          $ref: '#/components/responses/400'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+  /answers:
+    get:
+      tags:
+        - questions
+      summary: Get answers to questions for the active account.
+      operationId: getAnswers
+      security:
+        - userToken: []
+      responses:
+        '200':
+          description: Answers to the questions. Given as a list of positively
+                       answered question IDs.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Answers'
         '401':
           $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
     post:
       tags:
         - questions
-      summary: Send answers to the questions.
-      description: ''
+      summary: Post answers to questions for the active account.
       operationId: postAnswers
       security:
         - userToken: []
-      parameters:
-        - name: answers
-          in: query
-          description: Answers to the questions.
-          schema:
-            $ref: '#/components/schemas/Answers'
+      requestBody:
+        description: Answers to the questions. Given as a list of positively
+                     answered question IDs.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Answers'
       responses:
-        '200':
-          $ref: '#/components/responses/200'
+        '204':
+          $ref: '#/components/responses/204'
         '400':
           $ref: '#/components/responses/400'
         '401':
           $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-  /questions/{questionId}:
-    get:
-      tags:
-        - questions
-      summary: Get a question by ID.
-      description: ''
-      operationId: getQuestionById
-      parameters:
-        - name: questionId
-          in: path
-          description: ID of the question.
-          required: true
-          schema:
-            type: integer
-            example: 1
-            description: Unique ID of the question.
-      responses:
-        '200':
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Question'
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
-        '5XX':
-          $ref: '#/components/responses/5XX'
-  /questions/filter:
-    get:
-      tags:
-        - questions
-      summary: Get filter settings for the active account.
-      description: Request the stored filters for the active account. This
-                   includes manual set filters as well as calculated ones.
-      operationId: getFilters
-      security:
-        - userToken: []
-      responses:
-        '200':
-          description: List of the filters to be activated.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: integer
-                  description: The tagId for a tag to be used for the filter.
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
-        '5XX':
-          $ref: '#/components/responses/5XX'
-  /map/organization/locations:
+  /map/search:
     get:
       tags:
         - map
-      summary: Get list of the locations from all organizations.
-      description: This returns a List of GeoJSONSources to display the pins on
-                   the map.
-      operationId: getOrganizationsLocations
+      summary: Get all organizations and projects that match the provided filter
+               parameters.
+      operationId: getMatches
       parameters:
-      - in: query
-        style: form
-        explode: false
-        name: answers
-        schema:
-          $ref: '#/components/schemas/Answers'
+        - in: query
+          name: answers
+          style: form
+          explode: false
+          schema:
+            $ref: '#/components/schemas/Answers'
+        - in: query
+          name: maxMembers
+          description: The maximal member count a organization is allowed to
+                       have, to match the parameters.
+          schema:
+            type: integer
+            example: 100
+        - in: query
+          name: searchText
+          description: Manually provided by the user. May contain spaces.
+          schema:
+            type: string
+            example: foo
+        - in: query
+          name: continentId
+          description: Internal ID of a continent (we include oceans).
+          schema:
+            type: string
+            example: europe
+        - in: query
+          name: regionId
+          description: ISO 3166 country code for a region of the world. This
+                       parameter should be ignored if continentId is absent.
+          schema:
+            $ref: '#/components/schemas/RegionId'
+        - in: query
+          name: type # Not a keyword
+          schema:
+            $ref: '#/components/schemas/ObjectType'
       responses:
         '200':
-          description: Successful operation.
+          description: List of organizations and/ or projects that match the
+                       provided filters to a certain degree.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GeoJsonOrganizations'
+                type: object
+                properties:
+                  rankings:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Rankings'
+                    description: Contains a list of organizations as well as
+                                 projects that match the provided filter parameters
+                                 to some degree.
+                  organizationLocations:
+                    $ref: '#/components/schemas/GeoJsonOrganizations'
+                  projectLocations:
+                    $ref: '#/components/schemas/GeoJsonProjects'
+                required:
+                  - rankings
         '400':
           $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-  /map/organization/descriptions/{orgaId}:
+  /map/organizations/{id}:
     get:
       tags:
         - map
       summary: Get organization by Id.
-      description: ''
-      operationId: getOrganizationDetails
+      operationId: getOrganizationById
       parameters:
-        - $ref: '#/components/parameters/orgaId'
+        - name: id
+          in: path
+          description: The unique ID from the organization.
+          required: true
+          schema:
+            type: integer
+            example: 1
       responses:
         '200':
           description: Successful operation.
@@ -178,88 +175,38 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/OrganizationId'
-                  - $ref: '#/components/schemas/Organization'
+                  - $ref: '#/components/schemas/OrganizationWithId'
+                  - $ref: '#/components/schemas/RegionName'
                   - type: object
                     properties:
-                      projectIds:
+                       projects:
                         type: array
                         items:
-                          type: integer
-                          description: Unique ID of a project from the organization.
+                          allOf:
+                            - $ref: '#/components/schemas/ProjectWithId'
+                            - $ref: '#/components/schemas/RegionName'
+                    required:
+                      - projects
         '400':
           $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
         '404':
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-  /map/organization/descriptions:
-    get:
-      tags:
-        - map
-      summary: Get list of descriptions for all organizations.
-      description: ''
-      operationId: getOrganizations
-      responses:
-        '200':
-          description: Successful operation.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  allOf:
-                    - $ref: '#/components/schemas/OrganizationId'
-                    - $ref: '#/components/schemas/Organization'
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
-        '5XX':
-          $ref: '#/components/responses/5XX'
-  /map/projects/locations:
-    get:
-      tags:
-        - map
-      summary: Get list of all ongoing projects locations.
-      description: This returns a List of GeoJSONSources to display the pins on
-                   the map.
-      operationId: getProjectsLocations
-      parameters:
-      - in: query
-        style: form
-        explode: false
-        name: answers
-        schema:
-          $ref: '#/components/schemas/Answers'
-      responses:
-        '200':
-          description: Successful operation.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GeoJsonProjects'
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
-        '5XX':
-          $ref: '#/components/responses/5XX'
-  /map/project/descriptions/{projectId}:
+  /map/projects/{id}:
     get:
       tags:
         - map
       summary: Get project by ID.
-      description: ''
-      operationId: getProject
+      operationId: getProjectById
       parameters:
-        - $ref: '#/components/parameters/projectId'
+        - name: id
+          in: path
+          description: The unique ID from the project.
+          required: true
+          schema:
+            type: integer
+            example: 1
       responses:
         '200':
           description: Successful operation.
@@ -267,23 +214,21 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ProjectId'
-                  - $ref: '#/components/schemas/Project'
+                  - $ref: '#/components/schemas/ProjectWithId'
+                  - $ref: '#/components/schemas/ProjectOrganizationName'
+                  - $ref: '#/components/schemas/RegionName'
         '400':
           $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
         '404':
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-  /map/project/descriptions:
+  /map/regions:
     get:
       tags:
         - map
-      summary: Get list of project descriptions.
-      description: ''
-      operationId: getProjects
+      summary: Get list of regions on the map.
+      operationId: getRegions
       responses:
         '200':
           description: Successful operation.
@@ -292,74 +237,39 @@ paths:
               schema:
                 type: array
                 items:
-                  allOf:
-                    - $ref: '#/components/schemas/ProjectId'
-                    - $ref: '#/components/schemas/Project'
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
-        '5XX':
-          $ref: '#/components/responses/5XX'
-  /map/region/locations:
-    get:
-      tags:
-        - map
-      summary: Get list of regions on the map.
-      description: This returns a List of GeoJSONSources to display the pins on
-                   the map.
-      operationId: getRegions
-      parameters:
-      - in: query
-        style: form
-        explode: false
-        name: answers
-        schema:
-          $ref: '#/components/schemas/Answers'
-      responses:
-        '200':
-          description: Successful operation.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GeoJsonRegions'
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
-        '5XX':
-          $ref: '#/components/responses/5XX'
-  /map/region/descriptions/{regionId}:
-    get:
-      tags:
-        - map
-      summary: Get region by ID.
-      description: ''
-      operationId: getRegion
-      parameters:
-        - name: regionId
-          in: path
-          description: The ID of the region to fetch descriptions for.
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Successful operation.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Region'
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: europe
+                      description: The internal ID of a continent or ocean.
+                    name:
+                      type: string
+                      example: Europa
+                      description: The name of a continent or ocean.
+                    regions:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            $ref: '#/components/schemas/RegionId'
+                          name:
+                            type: string
+                            example: Deutschland
+                            description: The name of the region, provided in the
+                                         language of the application.
+                        required:
+                          - id
+                          - name
+                  required:
+                    - id
+                    - name
+                    - regions
+                  description: An object containing one continent or ocean and
+                               a list of the regions located in this place. 
+                description: List of all continents as well as oceans and
+                             their regions.
         '5XX':
           $ref: '#/components/responses/5XX'
   /bookmarks/projects:
@@ -367,7 +277,6 @@ paths:
       tags:
         - bookmarks
       summary: Get project-bookmarks for the active account.
-      description: Request the stored project-bookmarks for the active account.
       operationId: getProjectBookmarks
       security:
         - userToken: []
@@ -380,28 +289,23 @@ paths:
                 type: array
                 items:
                   type: integer
-                  description: The projectId for a bookmarked project.
-        '400':
-          $ref: '#/components/responses/400'
+                  description: The ID for a bookmarked project.
         '401':
           $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
     post:
       tags:
         - bookmarks
-      summary: Save a bookmark for a project. This can only be done by the user.
-      description: ''
-      operationId: bookmarkProject
+      summary: Save a bookmark for a project.
+      operationId: postProjectBookmark
       security:
         - userToken: []
       parameters:
-        - $ref: '#/components/parameters/projectId'
+        - $ref: '#/components/parameters/queryIdProject'
       responses:
-        '200':
-          $ref: '#/components/responses/200'
+        '204':
+          $ref: '#/components/responses/204'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -414,21 +318,18 @@ paths:
       tags:
         - bookmarks
       summary: Delete a bookmark for a project.
-      description: This can only be done by the user.
       operationId: deleteProjectBookmark
       security:
         - userToken: []
       parameters:
-        - $ref: '#/components/parameters/projectId'
+        - $ref: '#/components/parameters/queryIdProject'
       responses:
-        '200':
-          $ref: '#/components/responses/200'
+        '204':
+          $ref: '#/components/responses/204'
         '400':
           $ref: '#/components/responses/400'
         '401':
           $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
   /bookmarks/organizations:
@@ -436,7 +337,6 @@ paths:
       tags:
         - bookmarks
       summary: Get organization-bookmarks for the active account.
-      description: Request the stored project-bookmarks for the active account.
       operationId: getOrganizationBookmarks
       security:
         - userToken: []
@@ -449,29 +349,23 @@ paths:
                 type: array
                 items:
                   type: integer
-                  description: The orgaId for a bookmarked organization.
-        '400':
-          $ref: '#/components/responses/400'
+                  description: The ID for a bookmarked organization.
         '401':
           $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
     post:
       tags:
         - bookmarks
-      summary: Save a bookmark for an organization. This can only be done by the
-               user.
-      description: ''
-      operationId: bookmarkOrganization
+      summary: Save a bookmark for an organization.
+      operationId: postOrganizationBookmark
       security:
         - userToken: []
       parameters:
-        - $ref: '#/components/parameters/orgaId'
+        - $ref: '#/components/parameters/queryIdOrganization'
       responses:
-        '200':
-          $ref: '#/components/responses/200'
+        '204':
+          $ref: '#/components/responses/204'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -484,21 +378,18 @@ paths:
       tags:
         - bookmarks
       summary: Delete a bookmark for an organization.
-      description: This can only be done by the user.
       operationId: deleteOrganizationBookmark
       security:
         - userToken: []
       parameters:
-        - $ref: '#/components/parameters/orgaId'
+        - $ref: '#/components/parameters/queryIdOrganization'
       responses:
-        '200':
-          $ref: '#/components/responses/200'
+        '204':
+          $ref: '#/components/responses/204'
         '400':
           $ref: '#/components/responses/400'
         '401':
           $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
   /organization:
@@ -506,8 +397,7 @@ paths:
       tags:
         - organization
       summary: Get organization informations.
-      description: Get informations for the authenticated organization.
-      operationId: getOrganization
+      operationId: getOrganizationSelf
       security:
         - orgaToken: []
       responses:
@@ -517,8 +407,8 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/OrganizationId'
-                  - $ref: '#/components/schemas/Organization'
+                  - $ref: '#/components/schemas/OrganizationWithId'
+                  - $ref: '#/components/schemas/RegionName'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -530,10 +420,9 @@ paths:
     post:
       tags:
         - organization
-      summary: Register an organization.
-      description: Create a visible organization for an existing account of this
-                   type. This can only be done once per account.
-      operationId: registerOrganization
+      summary: Create a visible organization for an existing account of this
+               type. This can only be done once per account.
+      operationId: postOrganization
       security:
         - orgaToken: []
       requestBody:
@@ -544,23 +433,21 @@ paths:
               $ref: '#/components/schemas/Organization'
         required: true
       responses:
-        '200':
+        '201':
           $ref: '#/components/responses/ID'
         '400':
           $ref: '#/components/responses/400'
         '401':
           $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
         '5XX':
           $ref: '#/components/responses/5XX'
     put:
       tags:
         - organization
-      summary: Update organization. This can only be done by a logged in
-               organization.
-      description: Update informations to a given organization.
-      operationId: updateOrganization
+      summary: Update informations for the authenticated organization.
+      operationId: putOrganization
       security:
         - orgaToken: []
       requestBody:
@@ -568,12 +455,10 @@ paths:
         content:
           application/json:
             schema:
-              allOf:
-                - $ref: '#/components/schemas/OrganizationId'
-                - $ref: '#/components/schemas/Organization'
+              $ref: '#/components/schemas/Organization'
       responses:
-        '200':
-          $ref: '#/components/responses/200'
+        '204':
+          $ref: '#/components/responses/204'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -586,9 +471,8 @@ paths:
     get:
       tags:
         - organization
-      summary: Get project informations.
-      description: Get informations for the authenticated organization.
-      operationId: getProjectForOrga
+      summary: Get project informations for the authenticated organization.
+      operationId: getProjectsForOrganizationSelf
       security:
         - orgaToken: []
       responses:
@@ -600,10 +484,8 @@ paths:
                 type: array
                 items:
                   allOf:
-                    - $ref: '#/components/schemas/ProjectId'
-                    - $ref: '#/components/schemas/Project'
-        '400':
-          $ref: '#/components/responses/400'
+                    - $ref: '#/components/schemas/ProjectWithId'
+                    - $ref: '#/components/schemas/RegionName'
         '401':
           $ref: '#/components/responses/401'
         '404':
@@ -613,10 +495,8 @@ paths:
     post:
       tags:
         - organization
-      summary: Create a project for an organization. This can only be done by a
-               logged in organization.
-      description: A project always belongs to the logged in organization.
-      operationId: createProject
+      summary: Create a project for the authenticated organization.
+      operationId: postProject
       security:
         - orgaToken: []
       requestBody:
@@ -627,7 +507,7 @@ paths:
               $ref: '#/components/schemas/Project'
         required: true
       responses:
-        '200':
+        '201':
           $ref: '#/components/responses/ID'
         '400':
           $ref: '#/components/responses/400'
@@ -640,24 +520,21 @@ paths:
     put:
       tags:
         - organization
-      summary: Update a project. This can only be done by a logged in
-               organization.
-      description: Update an existing project of an organization.
-      operationId: updateProject
+      summary: Update a project from the authenticated organization.
+      operationId: putProject
       security:
         - orgaToken: []
       requestBody:
-        description: The existing project with the matching projectId is fully overwritten with this.
+        description: The existing project with the matching ID is fully
+                     overwritten with this.
         content:
           application/json:
             schema:
-              allOf:
-                - $ref: '#/components/schemas/ProjectId'
-                - $ref: '#/components/schemas/Project'
+              $ref: '#/components/schemas/ProjectWithId'
         required: true
       responses:
-        '200':
-          $ref: '#/components/responses/200'
+        '204':
+          $ref: '#/components/responses/204'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -669,17 +546,15 @@ paths:
     delete:
       tags:
         - organization
-      summary: Delete a project. This can only be done by a logged in
-               organization.
-      description: Delete a given project.
+      summary: Delete a project from the authenticated organization.
       operationId: deleteProject
       security:
         - orgaToken: []
       parameters:
-        - $ref: '#/components/parameters/projectId'
+        - $ref: '#/components/parameters/queryIdProject'
       responses:
-        '200':
-          $ref: '#/components/responses/200'
+        '204':
+          $ref: '#/components/responses/204'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -688,17 +563,46 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
+  /tags:
+    get:
+      tags:
+        - questions
+      summary: Get a mapping from tag ID to tag name.
+      operationId: getTags
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                      description: ID of the tag.
+                    name:
+                      type: string
+                      example: Umwelt
+                      description: Human readable name of the tag.
+                  required:
+                    - id
+                    - name
+        '5XX':
+          $ref: '#/components/responses/5XX'
 
 components:
   schemas:
     Question:
       type: object
       properties:
-        questionId:
+        id:
           type: integer
           example: 1
           description: Unique ID of the question.
-        questionTitle:
+        title:
           type: string
           example: Climate Action
           description: A descriptive title for the question.
@@ -706,19 +610,20 @@ components:
             description: Possibly with external context e.g. the WHO
                          sustainability goals.
             url: https://sdgs.un.org/goals
-        questionText:
+        text:
           type: string
           example: Do you want to focus on environment protection?
           description: A pre made question for the user. This may contain
                        further explanations w.r.t. the title.
-        questionImageUrl:
+        imageUrl:
           type: string
           example: url/to/question/image.pic
           description: A picture supplementing the text of a question.
-        tagId:
-          type: integer
-          example: 1
-          description: The Id for a tag to be used for the filter.
+      required:
+        - id
+        - title
+        - text
+        - imageUrl
     Answers:
       type: array
       description: Contains all IDs that have been answered positively.
@@ -728,7 +633,6 @@ components:
         description: Unique ID of the question.
     GeoJsonOrganizations:
       type: object
-
       externalDocs:
         description: GepJSONSource specification
         url: https://maplibre.org/maplibre-gl-js/docs/API/classes/GeoJSONSource/
@@ -754,12 +658,18 @@ components:
         properties: # Not a keyword
           type: object
           properties:
-            orgaId:
+            id:
               type: integer
               example: 1
               description: ID of the organization for the application.
+          required:
+            - id
         geometry:
           $ref: '#/components/schemas/GeoGeometry'
+      required:
+        - type
+        - properties
+        - geometry
     GeoJsonProjects:
       type: object
       externalDocs:
@@ -787,49 +697,18 @@ components:
         properties: # Not a keyword
           type: object
           properties:
-            projectId:
+            id:
               type: integer
               example: 1
               description: ID of a project for an organization.
+          required:
+            - id
         geometry:
           $ref: '#/components/schemas/GeoGeometry'
-    GeoJsonRegions:
-      type: object
-      externalDocs:
-        description: GepJSONSource specification
-        url: https://maplibre.org/maplibre-gl-js/docs/API/classes/GeoJSONSource/
-      properties:
-        type: # Not a Keyword
-          type: string
-          enum: # Define a constant
-            - FeatureCollection
-        features:
-          type: array
-          items:
-            $ref: '#/components/schemas/GeoFeatureRegion'
       required:
         - type
-        - features
-    GeoFeatureRegion:
-      type: object
-      properties:
-        type: # Not a Keyword
-          type: string
-          enum:
-            - Feature
-        properties: # Not a keyword
-          type: object
-          properties:
-            regionId:
-              type: integer
-              example: 1
-              description: ID of a region on the map.
-            name:
-              type: string
-              example: Africa
-              description: Name of the region.
-        geometry:
-          $ref: '#/components/schemas/GeoGeometry'
+        - properties
+        - geometry
     GeoGeometry:
       type: object
       properties:
@@ -841,6 +720,8 @@ components:
           type: array
           items:
             type: number
+          minItems: 2
+          maxItems: 2
           description: Longitude and latitude coordinates.
           example: [-76.53063297271729, 39.18174077994108]
       required:
@@ -849,12 +730,12 @@ components:
     OrganizationId:
       type: object
       properties:
-        orgaId:
+        id:
           type: integer
           example: 1
           description: The ID of the organization.
       required:
-        - orgaId
+        - id
     Organization:
       type: object
       properties:
@@ -877,13 +758,17 @@ components:
           example: 7
           description: Number of persons in the organization. Can be used to
                        find organizations by size.
+        iconUrl:
+          type: string
+          example: path/to/icon/url.pic
+          description: Icon provided by the organization.
         imageUrls:
           type: array
           items:
             type: string
             example: path/to/image/url.pic
             description: List of images provided by the organization.
-        webpageUrl:
+        webPageUrl:
           type: string
           example: path/to/new/roots.de
           description: URL of the organizations website.
@@ -909,21 +794,30 @@ components:
       required:
         - name
         - description
-        - webpageUrl
+        - iconUrl
+        - webPageUrl
         - coordinates
         - tags
+    OrganizationWithId:
+      allOf:
+        - $ref: '#/components/schemas/OrganizationId'
+        - $ref: '#/components/schemas/Organization'
     ProjectId:
       type: object
       properties:
-        projectId:
+        id:
           type: integer
           example: 1
           description: The ID of the project.
       required:
-        - projectId
+        - id
     Project:
       type: object
       properties:
+        orgaId:
+          type: integer
+          example: 1
+          description: The ID of the organization.
         name:
           type: string
           example: Great Green Wall
@@ -937,19 +831,24 @@ components:
           type: string
           example: 2024-12
           description: Starting date of the project (only month and year). 
-                       Needs to uphold the format.
+                       Needs to uphold the ISO 8601 format.
         dateTo:
           type: string
           example: 2025-01
           description: Planned finish date of the project (only month and year).
-                       Needs to uphold the format.
+                       Needs to uphold the ISO 8601 format.
+        iconUrl:
+          type: string
+          example: path/to/icon/url.pic
+          description: Icon provided by the organization, defaults to the icon
+                       of the organization.
         imageUrls:
           type: array
           items:
             type: string
             example: path/to/image/url.pic
             description: List of images provided by the organization.
-        webpageUrl:
+        webPageUrl:
           type: string
           example: path/to/great/green/wall.com
           description: URL of the projects website.
@@ -961,7 +860,9 @@ components:
           type: array
           items:
             type: number
-          description: Longitude and latitude coordinates of the projects's
+          minItems: 2
+          maxItems: 2
+          description: Longitude and latitude coordinates of the projects
                        location. For displaying on a map use the /map/project/locations 
                        endpoint to get the location as GeoJSON feature
           example: [-76.53063297271729, 39.18174077994108]
@@ -972,44 +873,106 @@ components:
           example: [1, 4, 5]
           description: The tags of this organization
       required:
+        - orgaId
         - name
         - description
+        - iconUrl
         - coordinates
         - tags
-    Region:
+    ProjectOrganizationName:
       type: object
       properties:
-        regionId:
-          type: integer
-          example: 1
-          description: The ID of the region.
-        name:
+        orgaName:
           type: string
-          example: Tropical Zone
-          description: Name of the region.
-        description:
-          type: string
-          example: The tropical zone is ...
-          description: Stored short description of the region.
-                       Retrieved externally.
-        imageUrls:
-          type: array
-          items:
-            type: string
-            example: path/to/image/url.pic
-            description: List of images for the region
-        webpageUrl:
-          type: string
-          example: path/to/wiki/tropical/zone.com
-          description: Url with descriptions to the region.
+          example: New Roots
+          description: The name of the organization.
       required:
-        - regionId
-        - name
-        - description
-        - webpageUrl
+        - orgaName
+    RegionName:
+      type: object
+      properties:
+        regionName:
+          type: string
+          example: Deutschland
+          description: Name of the region, where the project takes place. UTF-8
+                       encoded, human readable and in the language of the
+                       application.
+      required:
+        - regionName
+    ProjectWithId:
+      allOf:
+        - $ref: '#/components/schemas/ProjectId'
+        - $ref: '#/components/schemas/Project'
+    RegionId:
+      type: string
+      example: DE
+      externalDocs:
+        description: ISO 3166 country code for a region of the world.
+        url: https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes
+    ObjectType:
+      type: string
+      enum: [Organization, Project]
+      description: Represents the type of the accompanying or requested
+                   object. This can be an Organization or a Project. If it is
+                   an optional parameter and absent both types should be send.
+    RankingResultOrganizationWithType:
+      type: object
+      properties:
+        type: # Not a keyword
+          type: string
+          enum:
+            - Organization
+        content:
+          allOf:
+            - $ref: '#/components/schemas/OrganizationId'
+            - $ref: '#/components/schemas/Organization'
+            - type: object
+              properties:
+                projectCount:
+                  type: integer
+                  example: 4
+                  description: The number of active projects from the
+                               organization.
+              required:
+                - projectCount
+            - $ref: '#/components/schemas/RegionName'
+      required:
+        - type
+        - content
+    RankingResultProjectWithType:
+      type: object
+      properties:
+        type: # Not a keyword
+          type: string
+          enum:
+            - Project
+        content:
+          allOf:
+            - $ref: '#/components/schemas/ProjectId'
+            - $ref: '#/components/schemas/Project'
+            - $ref: '#/components/schemas/ProjectOrganizationName'
+            - $ref: '#/components/schemas/RegionName'
+      required:
+        - type
+        - content
+    Rankings:
+      allOf:
+        - oneOf:
+          - $ref: '#/components/schemas/RankingResultOrganizationWithType'
+          - $ref: '#/components/schemas/RankingResultProjectWithType'
+        - type: object
+          properties:
+            percentageMatch:
+              type: integer
+              minimum: 0
+              maximum: 100
+              description: Describes how good the match is in
+                           combination to the given filter parameters.
+          required:
+            - percentageMatch
+      description: Represents the type, description as well as match
+                   percentage of one organization or project.
   responses:
-    '200':
-      description: Successful operation.
     'ID':
       description: Generated ID.
       content:
@@ -1018,29 +981,35 @@ components:
             type: integer
             example: 1
             description: Generated ID. Unique w.r.t. the type of ID.
+    '204':
+      description: Successful operation. There is no content to send.
     '400':
       description: Bad request. Provided request is malformed.
     '401':
       description: ID/ Token is missing or invalid.
     '404':
       description: Requested resource was not found.
+    '409':
+      description: The request conflicts with the current server state.
     '5XX':
       description: Unexpected server error.
   parameters:
-    orgaId:
-      name: orgaId
+    queryIdProject:
+      name: id
       in: query
-      description: The unique ID from the organization.
+      description: Unique ID of the project.
       required: true
       schema:
         type: integer
-    projectId:
-      name: projectId
+        example: 1
+    queryIdOrganization:
+      name: id
       in: query
-      description: The unique ID from the project.
+      description: Unique ID of the organization.
       required: true
       schema:
         type: integer
+        example: 1
   securitySchemes:
     userToken:
       type: http

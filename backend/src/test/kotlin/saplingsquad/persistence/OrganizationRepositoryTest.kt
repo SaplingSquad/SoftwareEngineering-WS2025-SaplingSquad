@@ -39,7 +39,7 @@ class OrganizationRepositoryTest {
             assertNotNull(result)
             assertEquals(org, result.org)
             assertEquals(ExampleOrgas.tagsOfOrga(org).toSet(), result.tags)
-            assertEquals(ExampleProjects.projectIdsForOrga(org.orgId), result.projectIds)
+            assertEquals(ExampleProjects.projectsWithTagsForOrga(org.orgId).toSet(), result.projects.toSet())
         }
         val notExistent = repository.readOrganizationAndTagsAndProjectsById(-1)
         assertNull(notExistent)
@@ -144,9 +144,6 @@ class OrganizationRepositoryTest {
                 val nonExistentResult =
                     repository.updateOrganizationOfAccount("testaccount-2 (non-existent)", updateData, updateTags)
                 assertEquals(OrganizationUpdateResult.NoOrganizationRegistered, nonExistentResult)
-
-                val wrongIdResult = repository.updateOrganizationOfAccount(accountId, updateData, updateTags)
-                assertEquals(OrganizationUpdateResult.WrongOrganizationId, wrongIdResult)
 
                 val result =
                     repository.updateOrganizationOfAccount(accountId, updateData.copy(orgId = newId), updateTags)

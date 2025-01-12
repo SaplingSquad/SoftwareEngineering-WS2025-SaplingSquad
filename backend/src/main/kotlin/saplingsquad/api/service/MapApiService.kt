@@ -8,11 +8,14 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
 import saplingsquad.api.MapApiDelegate
+import saplingsquad.api.dateToMonthAndYear
 import saplingsquad.api.models.*
 import saplingsquad.api.toLonLatList
 import saplingsquad.persistence.OrganizationsRepository
 import saplingsquad.persistence.ProjectsRepository
 import saplingsquad.persistence.RegionsRepository
+import saplingsquad.persistence.tables.OrganizationEntity
+import saplingsquad.persistence.tables.ProjectEntity
 import saplingsquad.utils.asHttpOkResponse
 
 @Service
@@ -21,44 +24,69 @@ class MapApiService(
     val projectsRepository: ProjectsRepository,
     val regionsRepository: RegionsRepository
 ) : MapApiDelegate {
-    override suspend fun getOrganizationDetails(orgaId: Int): ResponseEntity<GetOrganizationDetails200Response> {
+    override suspend fun getMatches(
+        answers: List<Int>?,
+        maxMembers: Int?,
+        searchText: String?,
+        continentId: String?,
+        regionId: String?,
+        type: ObjectType?
+    ): ResponseEntity<GetMatches200Response> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getOrganizationById(id: Int): ResponseEntity<GetOrganizationById200Response> {
         val result =
-            organizationsRepository.readOrganizationAndTagsAndProjectsById(orgaId) ?: throw ResponseStatusException(
+            organizationsRepository.readOrganizationAndTagsAndProjectsById(id) ?: throw ResponseStatusException(
                 HttpStatus.NOT_FOUND,
                 "ID does not exist"
             )
         val org = result.org
         val tags = result.tags
-        val projectIds = result.projectIds
-        return GetOrganizationDetails200Response(
-            orgaId = org.orgId,
+        val projects = result.projects
+        return GetOrganizationById200Response(
+            id = org.orgId,
             name = org.name,
             description = org.description,
             foundingYear = org.foundingYear,
             memberCount = org.memberCount,
-            webpageUrl = org.websiteUrl,
+            webPageUrl = org.websiteUrl,
             donatePageUrl = org.donationUrl,
+            regionName = "", //TODO calculate and send region name
+            iconUrl = "https://picsum.photos/200?x="+org.orgId, //TODO
             imageUrls = emptyList(), //TODO maybe implement images sometime
             coordinates = org.coordinates.toLonLatList(),
             tags = tags.toList(),
-            projectIds = projectIds
+            projects = projects.map { (proj, projTags) ->
+                GetOrganizationById200ResponseAllOfProjectsInner(
+                    id = proj.projectId,
+                    name = proj.title,
+                    description = proj.description,
+                    dateFrom = proj.dateFrom?.let(::dateToMonthAndYear),
+                    dateTo = proj.dateTo?.let(::dateToMonthAndYear),
+                    iconUrl = "https://picsum.photos/200?x="+proj.orgId, //TODO
+                    regionName = "", //TODO calculate and send region name
+                    imageUrls = emptyList(),
+                    webPageUrl = proj.websiteUrl,
+                    donatePageUrl = proj.donationUrl,
+                    coordinates = proj.coordinates.toLonLatList(),
+                    tags = projTags.toList(),
+                    orgaId = proj.orgId
+                )
+            }
         ).asHttpOkResponse()
     }
 
-    override fun getOrganizations(): ResponseEntity<Flow<GetOrganizations200ResponseInner>> {
-        TODO("Not yet implemented")
-    }
 
-    override suspend fun getOrganizationsLocations(answers: List<Int>?): ResponseEntity<GeoJsonOrganizations> {
+    private suspend fun convertOrgasToGeoJson(orgas: Flow<OrganizationEntity>): ResponseEntity<GeoJsonOrganizations> {
         return GeoJsonOrganizations(
             type = GeoJsonOrganizations.Type.FeatureCollection,
-            features = organizationsRepository
-                .readOrganizations(answers ?: emptyList())
+            features = orgas
                 .map {
                     GeoFeatureOrganization(
                         type = GeoFeatureOrganization.Type.Feature,
                         properties = GeoFeatureOrganizationProperties(
-                            orgaId = it.orgId
+                            id = it.orgId
                         ),
                         geometry = GeoGeometry(
                             type = GeoGeometry.Type.Point,
@@ -70,24 +98,19 @@ class MapApiService(
         ).asHttpOkResponse()
     }
 
-    override suspend fun getProject(projectId: Int): ResponseEntity<GetProject200Response> {
+    override suspend fun getProjectById(id: Int): ResponseEntity<GetProjectById200Response> {
         TODO("Not yet implemented")
     }
 
-    override fun getProjects(): ResponseEntity<Flow<GetProject200Response>> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getProjectsLocations(answers: List<Int>?): ResponseEntity<GeoJsonProjects> {
+    private suspend fun convertProjectsToGeoJson(projects: Flow<ProjectEntity>): ResponseEntity<GeoJsonProjects> {
         return GeoJsonProjects(
             type = GeoJsonProjects.Type.FeatureCollection,
-            features = projectsRepository
-                .readProjects(answers ?: emptyList())
+            features = projects
                 .map {
                     GeoFeatureProject(
                         type = GeoFeatureProject.Type.Feature,
                         properties = GeoFeatureProjectProperties(
-                            projectId = it.projectId
+                            id = it.projectId
                         ),
                         geometry = GeoGeometry(
                             type = GeoGeometry.Type.Point,
@@ -99,11 +122,7 @@ class MapApiService(
         ).asHttpOkResponse()
     }
 
-    override suspend fun getRegion(regionId: Int): ResponseEntity<Region> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getRegions(answers: List<Int>?): ResponseEntity<GeoJsonRegions> {
+    override fun getRegions(): ResponseEntity<Flow<GetRegions200ResponseInner>> {
         TODO("Not yet implemented")
     }
 
