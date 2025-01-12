@@ -326,13 +326,13 @@ private fun createRegionCacheFunctionsAndTablesSqlStatement(type: Type): String 
         create table ${tab}_region_cache
         (
             $id integer primary key references $tab on delete cascade,
-            region_name text
+            region_id text
         );
         
         create alias recalculate_region_of_${tab} for "${type.functionName}";
         
-        create view ${tab}_with_region_name as 
-        select $tab.*, c.region_name
+        create view ${tab}_with_region as 
+        select $tab.*, c.region_id, c.region_id as region_name --use id as id and name
         from $tab
                 left join ${tab}_region_cache as c using ($id);
     """.trimIndent()
@@ -363,14 +363,14 @@ object H2Static {
         //language=H2
         return """ 
             merge into ${tab}_region_cache as target
-            using (select t.$id, 'lon ' || t.coordinates_lon || ' lat ' || t.coordinates_lat as region_name
+            using (select t.$id, 'lon ' || t.coordinates_lon || ' lat ' || t.coordinates_lat as region_id
                     from $tab as t
                     where t.$id = ?) as incoming
             on (target.$id = incoming.$id)
             when matched then
-                update set target.region_name = incoming.region_name
+                update set target.region_id = incoming.region_id
             when not matched then
-                insert ($id, region_name) values (incoming.$id, incoming.region_name)
+                insert ($id, region_id) values (incoming.$id, incoming.region_id)
         """
     }
 }
