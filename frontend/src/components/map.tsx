@@ -101,7 +101,7 @@ const createMap = (
   layers: Layers,
   images: Images,
   clickHandlers: ClickHandlers,
-  onInit$?: QRL<(mavp: maplibregl.Map) => unknown>,
+  onInit$?: QRL<(map: maplibregl.Map) => unknown>,
 ) => {
   const map = new maplibregl.Map(options);
   map.on("load", () => {
