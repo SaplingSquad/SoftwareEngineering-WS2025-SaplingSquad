@@ -38,3 +38,13 @@ export const distance = (a: number[], b: number[]): number =>
       .map(([a, b]) => Math.pow(a - b, 2))
       .reduce((acc, val) => acc + val, 0),
   );
+
+/**
+ * Distribute an `Omit` over a union.
+ *
+ * See  https://stackoverflow.com/a/57103940
+ *
+ */
+export type DistributiveOmit<T, K extends keyof any> = T extends any
+  ? Omit<T, K>
+  : never;

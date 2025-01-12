@@ -4,11 +4,7 @@
 import type { ClientInferRequest } from "@ts-rest/core";
 import { client } from "./api";
 import type { contract } from "./api_client.gen";
-
-// https://stackoverflow.com/a/57103940
-type DistributiveOmit<T, K extends keyof any> = T extends any
-  ? Omit<T, K>
-  : never;
+import type { DistributiveOmit } from "~/utils";
 
 type ReplaceBlobBodies<T> = T extends any
 	? T extends { body: Blob }
