@@ -70,7 +70,7 @@ from project;
 --changeset 0020:8
 create view organization_with_region
 as
-select organization.*, r.region_id, r.name as region_name
+select organization.*, r.region_id, r.name as region_name, r.continent_id, r.continent as continent_name
 from organization
          left join organization_region_cache as orc using (org_id)
          left join regions as r using (region_id);
@@ -78,7 +78,7 @@ from organization
 --changeset 0020:9
 create view project_with_region
 as
-select project.*, r.region_id, r.name as region_name
+select project.*, r.region_id, r.name as region_name, r.continent_id, r.continent as continent_name
 from project
          left join project_region_cache as prc using (project_id)
          left join regions as r using (region_id);
