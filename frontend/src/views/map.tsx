@@ -1,4 +1,4 @@
-import { $, component$, Signal } from "@builder.io/qwik";
+import { type Signal, $, component$ } from "@builder.io/qwik";
 import type { StyleImageMetadata } from "maplibre-gl";
 import { OrganizationInfo } from "~/components/info/organization";
 import { ProjectInfo } from "~/components/info/project";
@@ -6,24 +6,6 @@ import { Map as MapComponent } from "~/components/map";
 import { clickHandlers } from "~/components/map/click_handlers";
 import { clusteredPinLayer } from "~/components/map/clustered_pin_layers";
 import { clusteredGeoJSONDatasource } from "~/components/map/datasources";
-
-/**
- * Generate 10k random points
- * @returns A GeoJSON of 10k random points
- */
-const example_geojson = (): GeoJSON.GeoJSON => ({
-  type: "FeatureCollection",
-  features: [...new Array(10_000).keys()].map(() => ({
-    type: "Feature",
-    properties: {
-      assocId: Math.floor(Math.random() * 100_000),
-    },
-    geometry: {
-      type: "Point",
-      coordinates: [Math.random() * 360 - 180, Math.random() * 360 - 180],
-    },
-  })),
-});
 
 /**
  * Options for the cluster icons

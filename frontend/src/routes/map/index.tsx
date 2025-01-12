@@ -1,4 +1,4 @@
-import { component$, Signal, useSignal, useStore } from "@builder.io/qwik";
+import { type Signal, component$, useSignal } from "@builder.io/qwik";
 import { Map } from "~/views/map";
 import { MapUI } from "~/components/map-ui/map-ui";
 
