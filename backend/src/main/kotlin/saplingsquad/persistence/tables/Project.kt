@@ -12,10 +12,11 @@ typealias ProjectId = Int
  * Copy of [ProjectEntity] with 1 additional column ([regionName])
  * Return entity for the `project_with_region_name` view
  */
+@Suppress("unused")
 @KomapperUnionTableName("project_with_region_name")
 @KomapperUnionEntity("ProjectWithRegionEntity", [ProjectEntity::class, ProjectWithRegionName::class])
 private data class ProjectWithRegionName(
-    val regionName: String?,
+    val regionName: String,
 )
 
 /**
