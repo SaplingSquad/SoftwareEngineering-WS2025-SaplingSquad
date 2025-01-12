@@ -63,7 +63,7 @@ class OrganizationApiService(
             memberCount = org.memberCount,
             webPageUrl = org.websiteUrl,
             donatePageUrl = org.donationUrl,
-            regionName = null, //TODO calculate and send region name
+            regionName = "", //TODO calculate and send region name
             iconUrl = "https://picsum.photos/200?x=" + org.orgId, //TODO
             imageUrls = emptyList(), //TODO maybe implement images sometime
             coordinates = org.coordinates.toLonLatList(),
@@ -143,7 +143,7 @@ class OrganizationApiService(
                         description = proj.description,
                         dateFrom = proj.dateFrom?.let(::dateToMonthAndYear),
                         dateTo = proj.dateTo?.let(::dateToMonthAndYear),
-                        regionName = null, //TODO calculate and send region name
+                        regionName = "", //TODO calculate and send region name
                         iconUrl = "https://picsum.photos/200?x=" + proj.orgId, //TODO
                         imageUrls = emptyList(),
                         webPageUrl = proj.websiteUrl,
