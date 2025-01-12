@@ -3,6 +3,7 @@ package saplingsquad.api
 import org.springframework.http.HttpStatus
 import org.springframework.web.server.ResponseStatusException
 import saplingsquad.persistence.tables.CoordinatesEmbedded
+import saplingsquad.persistence.tables.OrganizationId
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.LocalDate
@@ -89,4 +90,8 @@ fun monthAndYearToDate(
  */
 fun dateToMonthAndYear(date: LocalDate): String {
     return YearMonth.from(date).toString()
+}
+
+fun placeholderIconUrl(orgId: OrganizationId): String {
+    return "https://picsum.photos/200?x=$orgId"
 }

@@ -1,8 +1,6 @@
 package saplingsquad.api.service
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
@@ -10,19 +8,22 @@ import org.springframework.web.server.ResponseStatusException
 import saplingsquad.api.MapApiDelegate
 import saplingsquad.api.dateToMonthAndYear
 import saplingsquad.api.models.*
+import saplingsquad.api.placeholderIconUrl
 import saplingsquad.api.toLonLatList
 import saplingsquad.persistence.OrganizationsRepository
 import saplingsquad.persistence.ProjectsRepository
 import saplingsquad.persistence.RegionsRepository
-import saplingsquad.persistence.tables.OrganizationEntity
-import saplingsquad.persistence.tables.ProjectEntity
+import saplingsquad.persistence.SearchRepository
+import saplingsquad.persistence.commands.SearchResultEntity
+import saplingsquad.persistence.commands.SearchTypeFilter
 import saplingsquad.utils.asHttpOkResponse
 
 @Service
 class MapApiService(
     val organizationsRepository: OrganizationsRepository,
     val projectsRepository: ProjectsRepository,
-    val regionsRepository: RegionsRepository
+    val regionsRepository: RegionsRepository,
+    val searchRepository: SearchRepository,
 ) : MapApiDelegate {
     override suspend fun getMatches(
         answers: List<Int>?,
@@ -32,7 +33,33 @@ class MapApiService(
         regionId: String?,
         type: ObjectType?
     ): ResponseEntity<GetMatches200Response> {
-        TODO("Not yet implemented")
+        val typeFilter = when (type) {
+            ObjectType.Organization -> SearchTypeFilter.Organizations
+            ObjectType.Project -> SearchTypeFilter.Projects
+            null -> SearchTypeFilter.All
+        }
+        val results = searchRepository.search(
+            answers = answers ?: emptyList(),
+            maxMembers = maxMembers,
+            searchText = searchText,
+            continentId = continentId,
+            regionId = regionId,
+            type = typeFilter
+        ).map {
+            Rankings(
+                entry = toRankingEntry(it),
+                percentageMatch = (it.score * 100).toInt()
+            )
+        }
+        return GetMatches200Response(
+            rankings = results,
+            organizationLocations = if (typeFilter.loadOrganizations)
+                convertSearchResultToOrgasGeoJson(results.asSequence())
+            else null,
+            projectLocations = if (typeFilter.loadProjects)
+                convertSearchResultToProjectsJson(results.asSequence())
+            else null
+        ).asHttpOkResponse()
     }
 
     override suspend fun getOrganizationById(id: Int): ResponseEntity<GetOrganizationById200Response> {
@@ -53,7 +80,7 @@ class MapApiService(
             webPageUrl = org.websiteUrl,
             donatePageUrl = org.donationUrl,
             regionName = org.regionName,
-            iconUrl = "https://picsum.photos/200?x=" + org.orgId, //TODO
+            iconUrl = placeholderIconUrl(org.orgId),//TODO
             imageUrls = emptyList(), //TODO maybe implement images sometime
             coordinates = org.coordinates.toLonLatList(),
             tags = tags.toList(),
@@ -64,7 +91,7 @@ class MapApiService(
                     description = proj.description,
                     dateFrom = proj.dateFrom?.let(::dateToMonthAndYear),
                     dateTo = proj.dateTo?.let(::dateToMonthAndYear),
-                    iconUrl = "https://picsum.photos/200?x=" + proj.orgId, //TODO
+                    iconUrl = placeholderIconUrl(org.orgId),//TODO
                     regionName = proj.regionName,
                     imageUrls = emptyList(),
                     webPageUrl = proj.websiteUrl,
@@ -78,52 +105,111 @@ class MapApiService(
     }
 
 
-    private suspend fun convertOrgasToGeoJson(orgas: Flow<OrganizationEntity>): ResponseEntity<GeoJsonOrganizations> {
+    private suspend fun convertSearchResultToOrgasGeoJson(orgas: Sequence<Rankings>): GeoJsonOrganizations {
         return GeoJsonOrganizations(
             type = GeoJsonOrganizations.Type.FeatureCollection,
             features = orgas
+                .map { it.entry }
+                .filterIsInstance<RankingsEntry.RankingResultOrganizationWithTypeWrapper>()
                 .map {
                     GeoFeatureOrganization(
                         type = GeoFeatureOrganization.Type.Feature,
                         properties = GeoFeatureOrganizationProperties(
-                            id = it.orgId
+                            id = it.wrapped.content.id
                         ),
                         geometry = GeoGeometry(
                             type = GeoGeometry.Type.Point,
-                            coordinates = it.coordinates.toLonLatList()
+                            coordinates = it.wrapped.content.coordinates
                         )
                     )
                 }
                 .toList()
-        ).asHttpOkResponse()
+        )
     }
 
     override suspend fun getProjectById(id: Int): ResponseEntity<GetProjectById200Response> {
         TODO("Not yet implemented")
     }
 
-    private suspend fun convertProjectsToGeoJson(projects: Flow<ProjectEntity>): ResponseEntity<GeoJsonProjects> {
+    private suspend fun convertSearchResultToProjectsJson(projects: Sequence<Rankings>): GeoJsonProjects {
         return GeoJsonProjects(
             type = GeoJsonProjects.Type.FeatureCollection,
             features = projects
+                .map { it.entry }
+                .filterIsInstance<RankingsEntry.RankingResultOrganizationWithTypeWrapper>()
                 .map {
                     GeoFeatureProject(
                         type = GeoFeatureProject.Type.Feature,
                         properties = GeoFeatureProjectProperties(
-                            id = it.projectId
+                            id = it.wrapped.content.id
                         ),
                         geometry = GeoGeometry(
                             type = GeoGeometry.Type.Point,
-                            coordinates = it.coordinates.toLonLatList()
+                            coordinates = it.wrapped.content.coordinates
                         )
                     )
                 }
                 .toList()
-        ).asHttpOkResponse()
+        )
     }
 
     override fun getRegions(): ResponseEntity<Flow<GetRegions200ResponseInner>> {
         TODO("Not yet implemented")
     }
 
+}
+
+private fun toRankingEntry(searchResultEntity: SearchResultEntity): RankingsEntry {
+    return when (searchResultEntity.type) {
+        SearchResultEntity.Type.Organization -> {
+            val e = searchResultEntity.toOrganizationEntity()!!
+            val org = e.org
+            RankingsEntry.RankingResultOrganizationWithTypeWrapper(
+                RankingResultOrganizationWithType(
+                    type = RankingResultOrganizationWithType.Type.Organization,
+                    content = RankingResultOrganizationWithTypeContent(
+                        id = org.orgId,
+                        name = org.name,
+                        description = org.description,
+                        iconUrl = placeholderIconUrl(org.orgId),//TODO
+                        foundingYear = org.foundingYear,
+                        memberCount = org.memberCount,
+                        webPageUrl = org.websiteUrl,
+                        donatePageUrl = org.donationUrl,
+                        imageUrls = emptyList(), //TODO maybe implement images sometime
+                        coordinates = org.coordinates.toLonLatList(),
+                        regionName = org.regionName,
+                        projectCount = e.projectCount,
+                        tags = e.tags
+                    )
+                )
+            )
+        }
+
+        SearchResultEntity.Type.Project -> {
+            val e = searchResultEntity.toProjectEntity()!!
+            val proj = e.proj
+            RankingsEntry.RankingResultProjectWithTypeWrapper(
+                RankingResultProjectWithType(
+                    type = RankingResultProjectWithType.Type.Project,
+                    content = RankingResultProjectWithTypeContent(
+                        id = proj.projectId,
+                        orgaId = proj.orgId,
+                        name = proj.title,
+                        description = proj.description,
+                        iconUrl = placeholderIconUrl(proj.orgId),//TODO
+                        dateFrom = proj.dateFrom?.let { dateToMonthAndYear(it) },
+                        dateTo = proj.dateTo?.let { dateToMonthAndYear(it) },
+                        webPageUrl = proj.websiteUrl,
+                        donatePageUrl = proj.donationUrl,
+                        imageUrls = emptyList(), //TODO maybe implement images sometime
+                        coordinates = proj.coordinates.toLonLatList(),
+                        regionName = proj.regionName,
+                        orgaName = e.orgName,
+                        tags = e.tags
+                    )
+                )
+            )
+        }
+    }
 }

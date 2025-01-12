@@ -1,3 +1,4 @@
+import com.fasterxml.jackson.annotation.JsonUnwrapped
 /**
 * {{{description}}}
 {{#vars}}
@@ -11,7 +12,8 @@
 {{#vendorExtensions.x-class-extra-annotation}}
     {{{.}}}
 {{/vendorExtensions.x-class-extra-annotation}}
-{{#discriminator}}interface {{classname}}{{/discriminator}}{{^discriminator}}{{#hasVars}}data {{/hasVars}}class {{classname}}(
+{{! add "sealed" to discriminator interface }}
+{{#discriminator}}sealed interface {{classname}}{{/discriminator}}{{^discriminator}}{{#hasVars}}data {{/hasVars}}class {{classname}}(
 {{#requiredVars}}
     {{>dataClassReqVar}}{{^-last}},
     {{/-last}}{{/requiredVars}}{{#hasRequired}}{{#hasOptional}},
@@ -19,12 +21,17 @@
 {{/-last}}{{/optionalVars}}
 ) {{/discriminator}}{{#parent}}: {{{.}}}{{#serializableModel}}, Serializable{{/serializableModel}}{{/parent}}{{^parent}}{{#serializableModel}}: Serializable{{/serializableModel}}{{/parent}}{
 {{#discriminator}}
-    {{#requiredVars}}
-        {{>interfaceReqVar}}
-    {{/requiredVars}}
-    {{#optionalVars}}
-        {{>interfaceOptVar}}
-    {{/optionalVars}}
+
+{{! remove default interface generation }}
+
+{{! replace with subclassing for buggy discriminator interfaces }}
+    {{#mappedModels}}
+        data class {{modelName}}Wrapper (
+            @JsonUnwrapped
+            val wrapped: {{modelName}}
+        ): {{classname}}
+    {{/mappedModels}}
+
 {{/discriminator}}
 {{#hasEnums}}{{#vars}}{{#isEnum}}
     /**

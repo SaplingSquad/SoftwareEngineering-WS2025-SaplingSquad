@@ -956,20 +956,26 @@ components:
         - type
         - content
     Rankings:
-      allOf:
-        - oneOf:
-          - $ref: '#/components/schemas/RankingResultOrganizationWithType'
-          - $ref: '#/components/schemas/RankingResultProjectWithType'
-        - type: object
-          properties:
-            percentageMatch:
-              type: integer
-              minimum: 0
-              maximum: 100
-              description: Describes how good the match is in
-                           combination to the given filter parameters.
-          required:
-            - percentageMatch
+      type: object
+      properties:
+        entry:
+          oneOf:
+            - $ref: '#/components/schemas/RankingResultOrganizationWithType'
+            - $ref: '#/components/schemas/RankingResultProjectWithType'
+          discriminator:
+            propertyName: type
+            mapping:
+              'Organization': '#/components/schemas/RankingResultOrganizationWithType'
+              'Project': '#/components/schemas/RankingResultProjectWithType'
+        percentageMatch:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description: Describes how good the match is in
+                       combination to the given filter parameters.
+      required:
+        - entry
+        - percentageMatch
       description: Represents the type, description as well as match
                    percentage of one organization or project.
   responses:
