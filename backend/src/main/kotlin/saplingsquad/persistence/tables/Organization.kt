@@ -11,7 +11,7 @@ typealias OrganizationId = Int;
  * Return entity for the `organization_with_region_name` view
  */
 @Suppress("unused")
-@KomapperUnionTableName("organization_with_region_name")
+@KomapperUnionTableName("organization_with_region")
 @KomapperUnionEntity("OrganizationWithRegionEntity", [OrganizationEntity::class, OrgaWithRegionName::class])
 private data class OrgaWithRegionName(
     val regionName: String
