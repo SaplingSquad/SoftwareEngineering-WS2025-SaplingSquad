@@ -1,10 +1,11 @@
-import type { JSXOutput, QRL, ResourceReturn } from "@builder.io/qwik";
+import type { JSXOutput, PropsOf, QRL, ResourceReturn } from "@builder.io/qwik";
 import { component$, Resource } from "@builder.io/qwik";
 import type {
   ErrorHttpStatusCode,
   HTTPStatusCode,
   SuccessfulHttpStatusCode,
 } from "@ts-rest/core";
+import { FromQrl } from "./from_qrl";
 
 /**
  * Headers of a request
@@ -120,14 +121,24 @@ export const ApiRequest = component$(
        * The arguments to pass to the hook
        */
       args: Args;
+      /**
+       * Error to render when the request failed
+       */
+      onRejected$?: QRL<NonNullable<PropsOf<typeof Resource>["onRejected"]>>;
+      /**
+       * Loading-screen to render while waiting for a response
+       */
+      onPending$?: QRL<NonNullable<PropsOf<typeof Resource>["onPending"]>>;
     } & ApiResponseHandlers<Response>,
   ) => {
-    const { hook$: useHook, args } = props;
+    const { hook$: useHook, args, onRejected$, onPending$ } = props;
     const response = useHook(...args).then((x) => x.value);
     const responseProps = {
       ...props,
       hook: undefined,
       args: undefined,
+      onRejected$: undefined,
+      onPending$: undefined,
     };
     return (
       <Resource
@@ -135,6 +146,10 @@ export const ApiRequest = component$(
         onResolved={(response: GenericRequestResponse) => (
           <ApiResponse {...responseProps} response={response} />
         )}
+        onRejected={
+          onRejected$ && ((e) => <FromQrl fn$={onRejected$} args={[e]} />)
+        }
+        onPending={onPending$ && (() => <FromQrl fn$={onPending$} args={[]} />)}
       />
     );
   },
