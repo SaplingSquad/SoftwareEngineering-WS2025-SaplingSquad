@@ -22,18 +22,14 @@ class KomapperExtendProcessor(private val codeGenerator: CodeGenerator, private 
         val groupedByFile = annotated.groupBy { it.containingFile!! }
 
 
-        logger.warn("${groupedByFile.size}")
-
         groupedByFile.forEach {
-            logger.warn("$it")
             PrintStream(
                 codeGenerator.createNewFile(
                     dependencies = Dependencies(true, it.key),
                     packageName = it.key.packageName.asString(),
-                    fileName = "KomapperUnion" + it.key.fileName.removeSuffix(".kt")
+                    fileName = it.key.fileName.removeSuffix(".kt")
                 )
             ).use { file ->
-                logger.warn("$it")
                 file.println("package ${it.key.packageName.asString()}\n")
 
                 it.value.forEach { cl ->
@@ -73,7 +69,7 @@ class KomapperExtendProcessor(private val codeGenerator: CodeGenerator, private 
                     throw IllegalArgumentException("${it.simpleName.asString()} is not a data class")
             }
 
-            val properties = classesToMerge.flatMap { it.primaryConstructor!!.parameters }
+            val properties = classesToMerge.map { it to it.primaryConstructor!!.parameters }
             val generator = ClassGenerator(data, outputClassName, tableNameAnnotation.tableName, properties)
             generator.generate()
         }
@@ -87,7 +83,7 @@ class KomapperExtendProcessor(private val codeGenerator: CodeGenerator, private 
         private val file: PrintStream,
         private val className: String,
         private val tableName: String,
-        private val properties: List<KSValueParameter>
+        private val properties: List<Pair<KSClassDeclaration, List<KSValueParameter>>>,
     ) {
         fun generate() {
             annotations()
@@ -108,7 +104,7 @@ class KomapperExtendProcessor(private val codeGenerator: CodeGenerator, private 
 
         private fun properties() {
             file.println("(")
-            for (prop in properties) {
+            for (prop in properties.flatMap { it.second }) {
                 for (annotation in prop.annotations) {
                     file.print("    @${annotation.annotationType.resolve().declaration.qualifiedName!!.asString()}(")
                     annotationArguments(annotation.arguments)
@@ -116,11 +112,27 @@ class KomapperExtendProcessor(private val codeGenerator: CodeGenerator, private 
                 }
                 property(prop)
             }
-            file.println(")")
+            file.println(") {")
+            for ((cl, props) in properties) {
+                val privateModifiers = listOf(Modifier.PRIVATE, Modifier.PROTECTED)
+                if (cl.modifiers.none { it in privateModifiers }) {
+                    if (Modifier.INTERNAL in cl.modifiers) {
+                        file.print("    internal ")
+                    }
+                    file.println("    fun to${cl.simpleName.asString()}(): ${cl.qualifiedName!!.asString()} =")
+                    file.println("        ${cl.qualifiedName!!.asString()}(")
+                    for (prop in props) {
+                        val propName = prop.name!!.asString()
+                        file.println("            $propName = this.$propName,")
+                    }
+                    file.println("        )")
+                }
+            }
+            file.println("}")
         }
 
         private fun property(prop: KSValueParameter) {
-            file.print("    val ${prop.name?.asString()}:")
+            file.print("    val ${prop.name!!.asString()}:")
             type(prop.type)
             file.println(",")
         }
