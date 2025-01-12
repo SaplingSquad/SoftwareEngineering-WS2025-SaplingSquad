@@ -1,11 +1,12 @@
 import type { JSXOutput, PropsOf, QRL, ResourceReturn } from "@builder.io/qwik";
-import { component$, Resource } from "@builder.io/qwik";
+import { $, component$, Resource } from "@builder.io/qwik";
 import type {
   ErrorHttpStatusCode,
   HTTPStatusCode,
   SuccessfulHttpStatusCode,
 } from "@ts-rest/core";
 import { FromQrl } from "./from_qrl";
+import { HiExclamationCircleOutline } from "@qwikest/icons/heroicons";
 
 /**
  * Headers of a request
@@ -131,7 +132,12 @@ export const ApiRequest = component$(
       onPending$?: QRL<NonNullable<PropsOf<typeof Resource>["onPending"]>>;
     } & ApiResponseHandlers<Response>,
   ) => {
-    const { hook$: useHook, args, onRejected$, onPending$ } = props;
+    const {
+      hook$: useHook,
+      args,
+      onRejected$ = $((e) => <ApiUnreachable error={e} />),
+      onPending$,
+    } = props;
     const response = useHook(...args).then((x) => x.value);
     const responseProps = {
       ...props,
@@ -146,11 +152,38 @@ export const ApiRequest = component$(
         onResolved={(response: GenericRequestResponse) => (
           <ApiResponse {...responseProps} response={response} />
         )}
-        onRejected={
-          onRejected$ && ((e) => <FromQrl fn$={onRejected$} args={[e]} />)
-        }
+        onRejected={(e) => <FromQrl fn$={onRejected$} args={[e]} />}
         onPending={onPending$ && (() => <FromQrl fn$={onPending$} args={[]} />)}
       />
     );
   },
 );
+
+/**
+ * A component to display a default error-message for when the backend is unreachable.
+ *
+ * Will log the error, but not render it in the HTML.
+ * This prevents accidental information leakage by exposing errors originating from the server
+ * (and the user can't fix any connectivity-issues on the server anyway).
+ */
+const ApiUnreachable = component$(({ error }: { error: Error }) => {
+  console.error("Failed to reach API", error);
+  return (
+    <div role="alert" class="alert alert-error h-max w-max">
+      <HiExclamationCircleOutline class="h-10 w-10" />
+      <span>
+        <h5 class="text-lg font-semibold">
+          Daten konnten nicht geladen werden.
+        </h5>
+        <p class="mb-2">
+          Bitte stelle sicher, dass du mit dem Internet verbunden bist.
+        </p>
+        <p>
+          Wenn du andere Webseiten noch erreichen kannst, könnte Sprout gerade
+          eine Störung haben. Versuche es in diesem Fall bitte zu einem späterem
+          Zeitpunkt erneut.
+        </p>
+      </span>
+    </div>
+  );
+});
