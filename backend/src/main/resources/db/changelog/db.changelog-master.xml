@@ -30,5 +30,8 @@
     <include file="classpath:db/changelog/0015-autoincrement-offset.sql"/>
     <include file="classpath:db/changelog/0016-create-orga-account-table.sql"/>
     <include file="classpath:db/changelog/0017-create-bookmark-tables.sql"/>
+    <include file="classpath:db/changelog/0018-fix-coordinates-range.sql"/>
+    <include file="classpath:db/changelog/0019-create-region-views.sql"/>
+    <include file="classpath:db/changelog/0020-org-proj-add-regionname.sql"/>
 
 </databaseChangeLog>

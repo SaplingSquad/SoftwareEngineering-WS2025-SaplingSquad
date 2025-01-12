@@ -1,1 +1,21 @@
+import org.gradle.api.initialization.resolve.RepositoriesMode
+pluginManagement {
+    plugins {
+        id 'org.jetbrains.kotlin.jvm' version '2.1.0'
+        id 'com.google.devtools.ksp' version '2.1.0-1.0.29'
+    }
+    repositories {
+        gradlePluginPortal()
+        google()
+    }
+}
 rootProject.name = "backend"
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        mavenCentral()
+    }
+}
+
+include(":custom-ksp-processors")

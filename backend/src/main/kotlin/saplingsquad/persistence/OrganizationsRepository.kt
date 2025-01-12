@@ -12,15 +12,17 @@ import org.komapper.core.dsl.query.on
 import org.komapper.r2dbc.R2dbcDatabase
 import org.komapper.tx.core.TransactionProperty
 import org.springframework.stereotype.Repository
+import saplingsquad.persistence.commands.RecalculateOrgaRegionName
+import saplingsquad.persistence.commands.execute
 import saplingsquad.persistence.tables.*
 import saplingsquad.utils.expectZeroOrOne
 
-typealias OrganizationEntityAndTags = Pair<OrganizationEntity, Set<TagId>>
+typealias OrganizationEntityAndTags = Pair<OrganizationWithRegionEntity, Set<TagId>>
 
 data class OrganizationEntityProjectIdsAndTags(
-    val org: OrganizationEntity,
+    val org: OrganizationWithRegionEntity,
     val tags: Set<TagId>,
-    val projects: List<ProjectEntityAndTags>
+    val projects: List<ProjectWithRegionEntityAndTags>
 )
 
 @Repository
@@ -33,7 +35,7 @@ class OrganizationsRepository(private val db: R2dbcDatabase) {
 
     suspend fun readOrganizationAndTagsAndProjectsById(organizationId: OrganizationId): OrganizationEntityProjectIdsAndTags? =
         db.withTransaction {
-            val org = readOrganizationById(organizationId) ?: return@withTransaction null
+            val org = readOrganizationWithRegionById(organizationId) ?: return@withTransaction null
 
             val orgTags = Meta.organizationTagsEntity
 
@@ -41,7 +43,7 @@ class OrganizationsRepository(private val db: R2dbcDatabase) {
                 QueryDsl.from(orgTags).where { orgTags.orgId eq organizationId }
             }.map { it.tagId }.toSet()
 
-            val proj = Meta.projectEntity
+            val proj = Meta.projectWithRegionEntity
             val projTags = Meta.projectTagsEntity
             val projects = db.runQuery {
                 QueryDsl.from(proj)
@@ -78,6 +80,10 @@ class OrganizationsRepository(private val db: R2dbcDatabase) {
             } ?: throw IllegalStateException("Insertion did not return a new id")
 
             db.runQuery {
+                QueryDsl.execute(RecalculateOrgaRegionName(orgId))
+            }
+
+            db.runQuery {
                 QueryDsl.insert(orgAcc)
                     .single(OrganizationAccountEntity(accountId = accountId, orgId = orgId, verified = false))
             }
@@ -105,6 +111,9 @@ class OrganizationsRepository(private val db: R2dbcDatabase) {
                     .single(organization)
             }
             db.runQuery {
+                QueryDsl.execute(RecalculateOrgaRegionName(existing.orgId))
+            }
+            db.runQuery {
                 QueryDsl.delete(orgTags).where { orgTags.orgId eq existing.orgId }
             }
             insertTagsForOrganization(existing.orgId, tags)
@@ -125,8 +134,8 @@ class OrganizationsRepository(private val db: R2dbcDatabase) {
             return@withTransaction organization to tags
         }
 
-    private suspend fun readOrganizationOfAccount(accountId: String): OrganizationEntity? {
-        val org = Meta.organizationEntity
+    private suspend fun readOrganizationOfAccount(accountId: String): OrganizationWithRegionEntity? {
+        val org = Meta.organizationWithRegionEntity
         val orgAcc = Meta.organizationAccountEntity
         return db.flowQuery {
             QueryDsl.from(org)
@@ -135,8 +144,8 @@ class OrganizationsRepository(private val db: R2dbcDatabase) {
         }.expectZeroOrOne()
     }
 
-    private suspend fun readOrganizationById(organizationId: OrganizationId): OrganizationEntity? {
-        val org = Meta.organizationEntity
+    private suspend fun readOrganizationWithRegionById(organizationId: OrganizationId): OrganizationWithRegionEntity? {
+        val org = Meta.organizationWithRegionEntity
         return db.flowQuery {
             QueryDsl.from(org)
                 .where { org.orgId eq organizationId }

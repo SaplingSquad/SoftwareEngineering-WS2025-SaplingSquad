@@ -1,8 +1,8 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '2.1.0'
+    id 'org.jetbrains.kotlin.jvm'
     id 'org.jetbrains.kotlin.plugin.serialization' version '2.1.0'
     id 'org.jetbrains.kotlin.plugin.spring' version '2.1.0'
-    id 'com.google.devtools.ksp' version '2.1.0-1.0.29'
+    id 'com.google.devtools.ksp'
 
     id 'org.springframework.boot' version '3.4.0'
     id 'io.spring.dependency-management' version '1.1.6'
@@ -19,14 +19,13 @@ def postgres_version = project.property("postgres_version")
 def kotlin_version = project.property("kotlin_version")
 def komapper_version = project.property("komapper_version")
 
-repositories {
-    mavenCentral()
-}
-
 configurations.create("mockitoAgent") {
     transitive = false
 }
 dependencies {
+    implementation(project(":custom-ksp-processors"))
+    ksp(project(":custom-ksp-processors"))
+
     implementation "org.postgresql:postgresql:$postgres_version"
     implementation "com.h2database:h2:$h2_version"
     implementation 'org.liquibase:liquibase-core:4.30.0'
@@ -62,7 +61,7 @@ dependencies {
     implementation("jakarta.validation:jakarta.validation-api")
     implementation("jakarta.annotation:jakarta.annotation-api:2.1.0")
     def kotlinxCoroutinesVersion = "1.9.0"
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
@@ -151,7 +150,7 @@ springBoot {
 
 bootRun {
     //allow passing jvm args to bootRun command
-    if (project.hasProperty('jvmArgs') ) {
+    if (project.hasProperty('jvmArgs')) {
         jvmArgs = (project.jvmArgs.split("\\s+") as List)
     }
 }

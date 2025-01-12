@@ -13,6 +13,7 @@ import saplingsquad.persistence.tables.OrganizationId
 import saplingsquad.persistence.tables.ProjectEntity
 import saplingsquad.persistence.testconfig.ExampleProjects
 import saplingsquad.persistence.testconfig.PersistenceTestConfiguration
+import saplingsquad.persistence.testconfig.toRegionName
 import java.time.LocalDate
 import kotlin.test.Test
 import kotlin.test.assertContains
@@ -46,7 +47,7 @@ class ProjectRepositoryTest {
     fun testNoFilterReadAll() = runTest {
         val result = repository.readProjects(emptyList()).toList()
         assertEquals(ExampleProjects.projects.size, result.size)
-        assert(result.containsAll(ExampleProjects.projects))
+        assert(result.containsAll(ExampleProjects.projects.map { it.toProjectEntity() }))
     }
 
     /**
@@ -84,7 +85,6 @@ class ProjectRepositoryTest {
     fun testCreateReadUpdateDeleteProject() = runTest {
         val placeholderProjectId = 200
         val placeholderProjectOrgId = 300
-
         val testOrg = OrganizationEntity(
             orgId = 0, // must be ignored
             name = "test-orga",
@@ -93,7 +93,7 @@ class ProjectRepositoryTest {
             memberCount = 100,
             websiteUrl = "test-website-url",
             donationUrl = "test-donation-url",
-            coordinates = CoordinatesEmbedded(50.0, 100.0)
+            coordinates = CoordinatesEmbedded(50.0, 20.0)
         )
         val testTags = setOf(1, 2, 4)
         fun dateFromIdx(i: Int, end: Boolean) = when (i) {
@@ -151,7 +151,7 @@ class ProjectRepositoryTest {
             // Test retrieval
             run {
                 val result = repository.readProjectsByAccount(accountId)
-                val projects = assertIs<ProjectCrRdResult.Success<List<ProjectEntityAndTags>>>(result).value
+                val projects = assertIs<ProjectCrRdResult.Success<List<ProjectWithRegionEntityAndTags>>>(result).value
                 assertEquals(testProjects.size, projects.size)
 
                 // Check all ids match with created
@@ -161,17 +161,22 @@ class ProjectRepositoryTest {
                     assertEquals(orgaId, project.first.orgId)
                 }
 
-                //Check all match with test data
+                //Check all match with test data (excluding regionName)
                 assertEquals(
                     testProjects.toSet(),
                     projects.map {
                         Pair(
                             // Replace projectid and orgid in result set
-                            it.first.copy(projectId = placeholderProjectId, orgId = placeholderProjectOrgId),
+                            it.first.copy(projectId = placeholderProjectId, orgId = placeholderProjectOrgId)
+                                .toProjectEntity(),
                             it.second
                         )
                     }.toSet()
                 )
+                //Check region name computed correctly
+                for (p in projects) {
+                    assertEquals(p.first.coordinates.toRegionName(), p.first.regionName)
+                }
 
                 val nonExistentResult = repository.readProjectsByAccount(nonExistentAccountId)
                 assertIs<ProjectCrRdResult.OrganizationNotRegisteredYet>(nonExistentResult)
@@ -189,11 +194,18 @@ class ProjectRepositoryTest {
                     dateTo = LocalDate.of(2024, 10, 10),
                     websiteUrl = "test-website-url-updated",
                     donationUrl = "test-donation-url-updated",
-                    coordinates = CoordinatesEmbedded(60.0, 90.0)
+                    coordinates = CoordinatesEmbedded(60.0, -10.0)
                 )
                 val updateTags = setOf(2, 4, 5)
                 val result = repository.updateProjectOfAccount(accountId, updateData, updateTags)
                 assertEquals(ProjectUpdDelResult.Success, result)
+
+                val retrieveUpdated = repository.readProjectsByAccount(accountId).assertSuccess()
+                    .single { it.first.projectId == toUpdateProjectId }
+                // Check values were updated
+                assertEquals(updateData.copy(orgId = orgaId), retrieveUpdated.first.toProjectEntity())
+                // Check region name was updated
+                assertEquals(retrieveUpdated.first.coordinates.toRegionName(), retrieveUpdated.first.regionName)
 
                 val wrongAccountResult =
                     repository.updateProjectOfAccount(accountId, updateData.copy(projectId = 10), updateTags)

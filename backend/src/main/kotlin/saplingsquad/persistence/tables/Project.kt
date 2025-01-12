@@ -1,13 +1,26 @@
 package saplingsquad.persistence.tables
 
 import org.komapper.annotation.*
+import saplingsquad.komapper_ext.annotations.KomapperUnionEntity
+import saplingsquad.komapper_ext.annotations.KomapperUnionTableName
 import java.time.LocalDate
 
 
 typealias ProjectId = Int
 
 /**
- * The (expected) layout of the "project" table in the DB
+ * Copy of [ProjectEntity] with 1 additional column ([regionName])
+ * Return entity for the `project_with_region_name` view
+ */
+@Suppress("unused")
+@KomapperUnionTableName("project_with_region")
+@KomapperUnionEntity("ProjectWithRegionEntity", [ProjectEntity::class, ProjectWithRegionName::class])
+private data class ProjectWithRegionName(
+    val regionName: String,
+)
+
+/**
+ * The (expected) layout of the "project" table for insertion access
  * Represents a single row in the table.
  */
 @KomapperEntity

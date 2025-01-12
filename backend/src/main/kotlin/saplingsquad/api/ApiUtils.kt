@@ -16,14 +16,33 @@ fun CoordinatesEmbedded.toLonLatList(precision: Int? = 6): List<BigDecimal> {
     )
 }
 
+enum class ListToCoordinatesErrorType {
+    WRONG_SIZE,
+    OUT_OF_RANGE
+}
+
 fun listToCoordinates(
     list: List<BigDecimal>,
-    throwOnError: (size: Int) -> Throwable = { size ->
-        ResponseStatusException(HttpStatus.BAD_REQUEST, "Coordinates array has wrong size (${size})")
+    throwOnError: (input: List<BigDecimal>, error: ListToCoordinatesErrorType) -> Throwable = { input, error ->
+        when (error) {
+            ListToCoordinatesErrorType.WRONG_SIZE -> ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Coordinates array has wrong size (${list.size})"
+            )
+
+            ListToCoordinatesErrorType.OUT_OF_RANGE -> ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Lon/Lat values are out of range $list"
+            )
+        }
     }
 ): CoordinatesEmbedded {
-    if (list.size != 2) throw throwOnError(list.size)
-    return CoordinatesEmbedded(list[0].toDouble(), list[1].toDouble())
+    if (list.size != 2) throw throwOnError(list, ListToCoordinatesErrorType.WRONG_SIZE)
+    val coordinates = CoordinatesEmbedded(list[0].toDouble(), list[1].toDouble())
+    if (coordinates.coordinatesLon !in -180.0..180.0 || coordinates.coordinatesLat !in -90.0..90.0) {
+        throw throwOnError(list, ListToCoordinatesErrorType.OUT_OF_RANGE)
+    }
+    return coordinates
 }
 
 private fun BigDecimal.withPrecision(precision: Int?): BigDecimal {

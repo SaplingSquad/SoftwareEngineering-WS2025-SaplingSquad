@@ -16,6 +16,7 @@ import saplingsquad.persistence.tables.organizationEntity
 import saplingsquad.persistence.testconfig.ExampleOrgas
 import saplingsquad.persistence.testconfig.ExampleProjects
 import saplingsquad.persistence.testconfig.PersistenceTestConfiguration
+import saplingsquad.persistence.testconfig.toRegionName
 import kotlin.test.*
 
 /**
@@ -52,7 +53,7 @@ class OrganizationRepositoryTest {
     fun testNoFilterReadAll() = runTest {
         val result = repository.readOrganizations(emptyList()).toList()
         assertEquals(ExampleOrgas.orgas.size, result.size)
-        assert(result.containsAll(ExampleOrgas.orgas))
+        assert(result.containsAll(ExampleOrgas.orgas.map { it.toOrganizationEntity() }))
     }
 
     /**
@@ -96,7 +97,7 @@ class OrganizationRepositoryTest {
             memberCount = 100,
             websiteUrl = "test-website-url",
             donationUrl = "test-donation-url",
-            coordinates = CoordinatesEmbedded(50.0, 100.0)
+            coordinates = CoordinatesEmbedded(50.0, 10.0)
         )
         val testTags = setOf(1, 2, 4)
         val updateData = OrganizationEntity(
@@ -107,7 +108,7 @@ class OrganizationRepositoryTest {
             memberCount = 99,
             websiteUrl = "test-website-url-updated",
             donationUrl = "test-donation-url-updated",
-            coordinates = CoordinatesEmbedded(60.0, 90.0)
+            coordinates = CoordinatesEmbedded(60.0, 80.0)
         )
         val updateTags = setOf(4, 5, 6)
         val accountId = "testaccount-1"
@@ -132,7 +133,8 @@ class OrganizationRepositoryTest {
             // Test retrieval
             run {
                 val result = repository.readOrganizationAndTagsOfAccount(accountId)
-                assertEquals(testOrg.copy(orgId = newId), result?.first)
+                assertEquals(testOrg.copy(orgId = newId), result?.first?.toOrganizationEntity())
+                assertEquals(testOrg.coordinates.toRegionName(), result?.first?.regionName)
                 assertEquals(testTags, result?.second)
 
                 val nonExistentResult = repository.readOrganizationAndTagsOfAccount("testaccount-2 (non-existent)")
@@ -150,7 +152,8 @@ class OrganizationRepositoryTest {
                 assertEquals(OrganizationUpdateResult.Success, result)
 
                 val updatedResult = repository.readOrganizationAndTagsOfAccount(accountId)
-                assertEquals(updateData.copy(orgId = newId), updatedResult?.first)
+                assertEquals(updateData.copy(orgId = newId), updatedResult?.first?.toOrganizationEntity())
+                assertEquals(updateData.coordinates.toRegionName(), updatedResult?.first?.regionName)
                 assertEquals(updateTags, updatedResult?.second)
             }
 
