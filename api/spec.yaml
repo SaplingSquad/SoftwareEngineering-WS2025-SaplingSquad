@@ -979,7 +979,7 @@ components:
             example: 1
             description: Generated ID. Unique w.r.t. the type of ID.
     '204':
-      description: Successful operation. There is no contend to send.
+      description: Successful operation. There is no content to send.
     '400':
       description: Bad request. Provided request is malformed.
     '401':
