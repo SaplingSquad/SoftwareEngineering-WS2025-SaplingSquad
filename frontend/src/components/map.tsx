@@ -254,6 +254,7 @@ export const Map = component$(
 export const PreviewMap = component$(
   ({
     coordinates,
+    zoom = 8,
     color,
     class: clz,
   }: {
@@ -261,6 +262,10 @@ export const PreviewMap = component$(
      * Coordinates to preview
      */
     coordinates: [number, number];
+    /**
+     * The zoom-level to display the map at. Defaults to `8`.
+     */
+    zoom: number;
     /**
      * Color of the marker to display
      */
@@ -275,7 +280,7 @@ export const PreviewMap = component$(
         additionalConfig={{
           interactive: false,
           center: coordinates,
-          zoom: 8,
+          zoom: zoom,
           attributionControl: { compact: true },
         }}
         class={clz}
