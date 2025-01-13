@@ -48,7 +48,12 @@ export const Map = component$(
   }) => {
     const sources = {
       organizations: {
-        info: $(() => <OrganizationInfo />),
+        info: $(
+          (props: any) =>
+            typeof props.id === "number" && (
+              <OrganizationInfo load={props.id} />
+            ),
+        ),
         data: props.organizationLocations.value,
         iconOptions: {
           marker: markerIconOptions,
