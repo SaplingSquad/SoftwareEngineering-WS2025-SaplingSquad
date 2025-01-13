@@ -1,12 +1,15 @@
 package saplingsquad.persistence
 
+import kotlinx.coroutines.flow.Flow
 import org.komapper.core.dsl.Meta
 import org.komapper.core.dsl.QueryDsl
 import org.komapper.r2dbc.R2dbcDatabase
 import org.springframework.stereotype.Repository
-import saplingsquad.utils.expectZeroOrOne
+import saplingsquad.persistence.tables.FilterTagEntity
 import saplingsquad.persistence.tables.QuestionEntity
+import saplingsquad.persistence.tables.filterTagEntity
 import saplingsquad.persistence.tables.questionEntity
+import saplingsquad.utils.expectZeroOrOne
 
 /**
  * Persistence layer for everything concerning Fragenkatalog
@@ -32,5 +35,10 @@ class QuestionsRepository(private val db: R2dbcDatabase) {
             .collect { flow ->
                 flow.expectZeroOrOne()
             }
+    }
+
+    fun readAllTags(): Flow<FilterTagEntity> = db.flowQuery {
+        QueryDsl
+            .from(Meta.filterTagEntity)
     }
 }
