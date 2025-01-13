@@ -161,6 +161,7 @@ export const ApiRequest = component$(
 
 /**
  * A component to display a default error-message for when the backend is unreachable.
+ * Will be centered as good as possible (may overflow to make the message readable).
  *
  * Will log the error, but not render it in the HTML.
  * This prevents accidental information leakage by exposing errors originating from the server
@@ -169,21 +170,26 @@ export const ApiRequest = component$(
 const ApiUnreachable = component$(({ error }: { error: Error }) => {
   console.error("Failed to reach API", error);
   return (
-    <div role="alert" class="alert alert-error h-max w-max">
-      <HiExclamationCircleOutline class="h-10 w-10" />
-      <span>
-        <h5 class="text-lg font-semibold">
-          Daten konnten nicht geladen werden.
-        </h5>
-        <p class="mb-2">
-          Bitte stelle sicher, dass du mit dem Internet verbunden bist.
-        </p>
-        <p>
-          Wenn du andere Webseiten noch erreichen kannst, könnte Sprout gerade
-          eine Störung haben. Versuche es in diesem Fall bitte zu einem späterem
-          Zeitpunkt erneut.
-        </p>
-      </span>
+    <div class="flex h-full min-h-min w-full min-w-min flex-col items-center justify-center">
+      <div
+        role="alert"
+        class="alert alert-error max-h-max min-h-min min-w-min max-w-max overflow-hidden"
+      >
+        <HiExclamationCircleOutline class="h-10 w-10" />
+        <span class="max-h-full min-h-min min-w-min max-w-full overflow-y-auto ">
+          <h5 class="text-lg font-semibold">
+            Daten konnten nicht geladen werden.
+          </h5>
+          <p class="mb-2">
+            Bitte stelle sicher, dass du mit dem Internet verbunden bist.
+          </p>
+          <p>
+            Wenn du andere Webseiten noch erreichen kannst, könnte Sprout gerade
+            eine Störung haben. Versuche es in diesem Fall bitte zu einem
+            späterem Zeitpunkt erneut.
+          </p>
+        </span>
+      </div>
     </div>
   );
 });
