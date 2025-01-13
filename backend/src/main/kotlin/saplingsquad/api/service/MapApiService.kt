@@ -17,6 +17,7 @@ import saplingsquad.persistence.RegionsRepository
 import saplingsquad.persistence.tables.OrganizationEntity
 import saplingsquad.persistence.tables.ProjectEntity
 import saplingsquad.utils.asHttpOkResponse
+import saplingsquad.utils.flowOfList
 
 @Service
 class MapApiService(
@@ -123,7 +124,19 @@ class MapApiService(
     }
 
     override fun getRegions(): ResponseEntity<Flow<GetRegions200ResponseInner>> {
-        TODO("Not yet implemented")
+        return flowOfList {
+            regionsRepository.readRegions().map { (continent, regions) ->
+                GetRegions200ResponseInner(
+                    id = continent.continentId,
+                    name = continent.continent,
+                    regions = regions.map {
+                        GetRegions200ResponseInnerRegionsInner(
+                            id = it.regionId,
+                            name = it.name
+                        )
+                    })
+            }
+        }.asHttpOkResponse()
     }
 
 }
