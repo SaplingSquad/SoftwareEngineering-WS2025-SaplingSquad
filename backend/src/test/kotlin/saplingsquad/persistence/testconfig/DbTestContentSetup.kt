@@ -30,6 +30,8 @@ object ExampleQuestionsAndTags {
 
     val questions = List(10) { idx -> createQuestionI(idx) }
 
+    val tags = tagsFromQuestions(questions)
+
     private fun tagsFromQuestions(list: List<QuestionEntity>): List<FilterTagEntity> {
         return list
             .map { it.tagId }
@@ -47,7 +49,7 @@ object ExampleQuestionsAndTags {
             QueryDsl.create(Meta.filterTagEntity)
                 .andThen(
                     QueryDsl.insert(Meta.filterTagEntity).multiple(
-                        tagsFromQuestions(questions)
+                        tags
                     )
                 )
         }

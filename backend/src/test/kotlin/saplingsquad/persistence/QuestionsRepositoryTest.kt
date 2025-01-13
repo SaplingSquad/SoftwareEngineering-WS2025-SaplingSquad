@@ -1,5 +1,6 @@
 package saplingsquad.persistence
 
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -43,5 +44,11 @@ class QuestionsRepositoryTest {
         }
     }
 
+    @Test
+    fun testReadAllTags() = runTest {
+        val result = repository.readAllTags().toList()
+        assertEquals(ExampleQuestionsAndTags.tags.size, result.size)
+        assert(result.containsAll(ExampleQuestionsAndTags.tags))
+    }
 
 }
