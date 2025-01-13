@@ -1,4 +1,4 @@
-import type { Organization, Project, SearchOutput } from "./types";
+import type { SearchOutput } from "./types";
 
 /**
  * Temporary mockdata until the backend is integrated.

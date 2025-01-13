@@ -26,9 +26,9 @@ export const OrganizationShortInfo = component$(
     useVisibleTask$(() =>
       layoutTags(
         tagContainerRef,
-        props.org.tags.map(() => "Umweltschutz"),
+        props.org.tags.map(() => "Umweltschutz"), // TODO replace with value from API
       ),
-    ); // TODO
+    );
 
     return (
       <div

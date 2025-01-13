@@ -1,10 +1,8 @@
 import {
   type Signal,
-  type QRL,
   $,
   component$,
   Slot,
-  useComputed$,
   useOnWindow,
   useSignal,
   useStore,
@@ -22,7 +20,6 @@ import {
 import SproutIcon from "/src/images/Sprout_icon.svg?jsx";
 import AllIcon from "/src/images/All_Icon.svg?jsx";
 import { type FilterSettings, Filter } from "../filter";
-import { ProjectShortInfo } from "./project-shortinfo";
 import { ProjectLargeInfo } from "./project-largeinfo";
 import { OrganizationShortInfo } from "./organization-shortinfo";
 import {
@@ -30,16 +27,10 @@ import {
   projectBookmarksMockData,
   searchOutputMockdata,
 } from "./mockdata";
-import type {
-  Feature,
-  FeatureCollection,
-  Ranking,
-  SearchInput,
-  SearchOutput,
-} from "./types";
+import type { Ranking, SearchInput, SearchOutput } from "./types";
 import { getAnswersFromLocalStorage } from "~/utils";
-import { isServer } from "@builder.io/qwik/build";
 import { OrganizationLargeInfo } from "./organization-largeinfo";
+import { ProjectShortInfo } from "./project-shortinfo";
 
 enum ResultTab {
   ALL,
@@ -47,14 +38,23 @@ enum ResultTab {
   HISTORY,
 }
 
-const emptyFeatureCollection: FeatureCollection = {
-  type: "FeatureCollection",
-  features: [],
-};
-
-type HistoryStore = SearchOutput & {
-  add: QRL<(this: HistoryStore, ranking: Ranking) => void>;
-};
+/**
+ * Create an SearchOutput object that does not contain any `rankings`, `organizationLocations` or `projectLocations` but has all properties set to avoid access to undefined.
+ * @returns The empty SearchOutput object.
+ */
+function createEmptySearchOutput(): SearchOutput {
+  return {
+    rankings: [],
+    organizationLocations: {
+      type: "FeatureCollection",
+      features: [],
+    },
+    projectLocations: {
+      type: "FeatureCollection",
+      features: [],
+    },
+  };
+}
 
 /**
  * The UI laid over the map, provides options to control what is shown on the map and displays the results in a list.
@@ -71,69 +71,32 @@ export const MapUI = component$(
     const listExpanded = useSignal<boolean>(false);
     const searchText = useSignal<string>("");
     const selectedRanking = useSignal<Ranking | undefined>(undefined);
-    const rawResult = useSignal<SearchOutput>({
-      rankings: [],
-    });
-    const history = useStore<HistoryStore>({
-      rankings: [],
-      organizationLocations: emptyFeatureCollection,
-      projectLocations: emptyFeatureCollection,
-      add: $(function (this: HistoryStore, ranking: Ranking) {
-        const idx = this.rankings.findIndex(
-          (r) => r.type === ranking.type && r.content.id === ranking.content.id,
-        );
+    const rawResult = useSignal<SearchOutput>(createEmptySearchOutput());
+    const history = useStore<SearchOutput>(createEmptySearchOutput());
+    const result = useSignal<SearchOutput>({ rankings: [] });
 
-        if (idx === -1) {
-          this.rankings.unshift(ranking);
-          (ranking.type === "Organization"
-            ? this.organizationLocations
-            : this.projectLocations
-          )?.features.push(
-            (ranking.type === "Organization"
-              ? result.value.organizationLocations
-              : result.value.projectLocations)!.features.find(
-              (f) => f.properties.id === ranking.content.id,
-            )!,
-          );
-        } else {
-          this.rankings.splice(idx, 1);
-          this.rankings.unshift(ranking);
-        }
-      }),
-    });
+    const update = $((performSearch: boolean) => {
+      if (performSearch) {
+        const searchInput: SearchInput = {
+          answers: getAnswersFromLocalStorage(),
+          searchText: searchText.value || undefined,
+          ...filterSettings,
+        };
 
-    useTask$(({ track }) => {
-      track(selectedRanking) && history.add(selectedRanking.value!);
-    });
+        // TODO replace with API call
+        searchInput;
+        rawResult.value = searchOutputMockdata;
+      }
 
-    const search = $(() => {
-      if (isServer) return;
-
-      const searchInput: SearchInput = {
-        answers: getAnswersFromLocalStorage(),
-        searchText: searchText.value || undefined,
-        ...filterSettings,
-      };
-
-      // TODO replace with API call
-      searchInput;
-      rawResult.value = searchOutputMockdata;
-    });
-    useOnWindow("load", search);
-    useTask$(({ track }) => {
-      track(filterSettings);
-      track(searchText);
-      search();
-    });
-
-    const result: Signal<SearchOutput> = useComputed$(() => {
       switch (tabSelection.value) {
         case ResultTab.ALL:
-          return rawResult.value;
+          result.value = rawResult.value;
+          break;
         case ResultTab.HISTORY:
-          return history;
+          result.value = history;
+          break;
         case ResultTab.BOOKMARKS:
-          return {
+          result.value = {
             rankings: rawResult.value.rankings.filter((ranking) =>
               (ranking.type === "Organization"
                 ? organizationBookmarksMockData
@@ -158,15 +121,51 @@ export const MapUI = component$(
                 ) || [],
             },
           };
+          break;
       }
+
+      props.organizationLocations.value = result.value.organizationLocations!;
+      props.projectLocations.value = result.value.projectLocations!;
+    });
+    useOnWindow(
+      "load",
+      $(() => update(true)),
+    );
+    useTask$(({ track }) => {
+      track(filterSettings);
+      track(searchText);
+      update(true);
+    });
+    useTask$(({ track }) => {
+      track(tabSelection);
+      update(false);
     });
 
     useTask$(({ track }) => {
-      const res = track(result);
-      props.organizationLocations.value =
-        res.organizationLocations ?? emptyFeatureCollection;
-      props.projectLocations.value =
-        res.projectLocations ?? emptyFeatureCollection;
+      const selection = track(selectedRanking);
+      if (!selection || tabSelection.value === ResultTab.HISTORY) return;
+
+      const idx = history.rankings.findIndex(
+        (r) =>
+          r.type === selection.type && r.content.id === selection.content.id,
+      );
+
+      if (idx === -1) {
+        history.rankings.unshift(selection);
+        (selection.type === "Organization"
+          ? history.organizationLocations
+          : history.projectLocations
+        )?.features.push(
+          (selection.type === "Organization"
+            ? result.value.organizationLocations
+            : result.value.projectLocations)!.features.find(
+            (f) => f.properties.id === selection.content.id,
+          )!,
+        );
+      } else {
+        history.rankings.splice(idx, 1);
+        history.rankings.unshift(selection);
+      }
     });
 
     return (
@@ -192,10 +191,10 @@ export const MapUI = component$(
                     listExpanded.value ? "h-full" : "h-0",
                   ]}
                 >
-                  {result.value.rankings.map((ranking, idx) =>
+                  {result.value.rankings.map((ranking) =>
                     ranking.type === "Project" ? (
                       <ProjectShortInfo
-                        key={idx}
+                        key={"Project_" + ranking.content.id}
                         project={ranking.content}
                         onClick={$(() => {
                           selectedRanking.value = ranking;
@@ -203,7 +202,7 @@ export const MapUI = component$(
                       />
                     ) : (
                       <OrganizationShortInfo
-                        key={idx}
+                        key={"Organization_" + ranking.content.id}
                         org={ranking.content}
                         onClick={$(() => {
                           selectedRanking.value = ranking;
@@ -406,14 +405,14 @@ const Tablist = component$(
           selection={props.selection}
           idx={1}
         >
-          <HiBookmarkOutline class="size-6 stroke-inherit" />
+          <HiBookmarkOutline class="stroke-inherit size-6" />
         </Tab>
         <Tab
           useBtnStyle={props.useBtnStyle}
           selection={props.selection}
           idx={2}
         >
-          <HiClockOutline class="size-6 stroke-inherit" />
+          <HiClockOutline class="stroke-inherit size-6" />
         </Tab>
       </div>
     );
