@@ -1,6 +1,13 @@
-import type { Organization, Project, SearchOutput } from "./map-ui";
+import type { Organization, Project, SearchOutput } from "./types";
 
-export const mockdata: SearchOutput = {
+/**
+ * Temporary mockdata until the backend is integrated.
+ */
+
+export const projectBookmarksMockData = [1];
+export const organizationBookmarksMockData = [2];
+
+export const searchOutputMockdata: SearchOutput = {
   rankings: [
     {
       type: "Organization",
@@ -95,7 +102,7 @@ export const mockdata: SearchOutput = {
         },
         geometry: {
           type: "Point",
-          coordinates: [49.26350515893683, -123.09904770986309],
+          coordinates: [-123.09904770986309, 49.26350515893683],
         },
       },
       {
@@ -105,7 +112,7 @@ export const mockdata: SearchOutput = {
         },
         geometry: {
           type: "Point",
-          coordinates: [48.14056965960426, 11.570039231261898],
+          coordinates: [11.570039231261898, 48.14056965960426],
         },
       },
     ],
@@ -116,21 +123,21 @@ export const mockdata: SearchOutput = {
       {
         type: "Feature",
         properties: {
-          projectId: 1,
+          id: 1,
         },
         geometry: {
           type: "Point",
-          coordinates: [-4.60641653008784, -62.63905488319139],
+          coordinates: [-62.63905488319139, -4.60641653008784],
         },
       },
       {
         type: "Feature",
         properties: {
-          projectId: 2,
+          id: 2,
         },
         geometry: {
           type: "Point",
-          coordinates: [-3.3422123425374335, 40.02489139415981],
+          coordinates: [40.02489139415981, -3.3422123425374335],
         },
       },
     ],

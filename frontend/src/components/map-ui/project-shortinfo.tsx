@@ -11,7 +11,7 @@ import {
   HiTagOutline,
 } from "@qwikest/icons/heroicons";
 import { layoutTags } from "./tag-layout";
-import type { Project } from "./map-ui";
+import type { Project } from "./types";
 
 /**
  * A small card for the list view showing the most important information about a project.
@@ -25,9 +25,9 @@ export const ProjectShortInfo = component$(
     useVisibleTask$(() =>
       layoutTags(
         tagContainerRef,
-        props.project.tags.map(() => "Umweltschutz"),
+        props.project.tags.map(() => "Umweltschutz"), // TODO replace with value from API
       ),
-    ); // TODO
+    );
 
     return (
       <div

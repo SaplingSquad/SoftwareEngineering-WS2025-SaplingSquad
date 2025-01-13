@@ -1,6 +1,6 @@
 import { type QRL, component$ } from "@builder.io/qwik";
 import { HiXMarkOutline } from "@qwikest/icons/heroicons";
-import type { Project } from "./map-ui";
+import type { Project } from "./types";
 
 export const ProjectLargeInfo = component$(
   (props: { project: Project; onClose: QRL<() => void> }) => {

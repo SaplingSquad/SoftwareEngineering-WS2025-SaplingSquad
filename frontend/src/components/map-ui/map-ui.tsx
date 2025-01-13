@@ -3,8 +3,11 @@ import {
   $,
   component$,
   Slot,
+  useComputed$,
+  useOnWindow,
   useSignal,
   useStore,
+  useTask$,
 } from "@builder.io/qwik";
 import {
   HiBookmarkOutline,
@@ -21,13 +24,31 @@ import { type FilterSettings, Filter } from "../filter";
 import { ProjectShortInfo } from "./project-shortinfo";
 import { ProjectLargeInfo } from "./project-largeinfo";
 import { OrganizationShortInfo } from "./organization-shortinfo";
-import { mockdata } from "./mockdata";
+import {
+  organizationBookmarksMockData,
+  projectBookmarksMockData,
+  searchOutputMockdata,
+} from "./mockdata";
+import type {
+  FeatureCollection,
+  Organization,
+  Project,
+  SearchInput,
+  SearchOutput,
+} from "./types";
+import { getAnswersFromLocalStorage } from "~/utils";
+import { isServer } from "@builder.io/qwik/build";
 
 enum ResultTab {
   ALL,
   BOOKMARKS,
   HISTORY,
 }
+
+const emptyFeatureCollection: FeatureCollection = {
+  type: "FeatureCollection",
+  features: [],
+};
 
 /**
  * The UI laid over the map, provides options to control what is shown on the map and displays the results in a list.
@@ -44,15 +65,73 @@ export const MapUI = component$(
     const listExpanded = useSignal<boolean>(false);
     const searchText = useSignal<string>("");
     const selectedProject = useSignal<Project | undefined>(undefined);
+    const rawResult = useSignal<SearchOutput>({
+      rankings: [],
+    });
+    const history = useStore<SearchOutput>({ rankings: [] });
 
-    const searchInput: SearchInput = {
-      answers: undefined,
-      searchText: searchText.value || undefined,
-      ...filterSettings,
-    };
-    const searchResult = search(searchInput);
-    props.organizationLocations.value = searchResult.organizationLocations;
-    props.projectLocations.value = searchResult.projectLocations;
+    const search = $(() => {
+      if (isServer) return;
+
+      const searchInput: SearchInput = {
+        answers: getAnswersFromLocalStorage(),
+        searchText: searchText.value || undefined,
+        ...filterSettings,
+      };
+
+      // TODO replace with API call
+      searchInput;
+      rawResult.value = searchOutputMockdata;
+    });
+    useOnWindow("load", search);
+    useTask$(({ track }) => {
+      track(filterSettings);
+      track(searchText);
+      search();
+    });
+
+    const result: Signal<SearchOutput> = useComputed$(() => {
+      switch (tabSelection.value) {
+        case ResultTab.ALL:
+          return rawResult.value;
+        case ResultTab.HISTORY:
+          return history;
+        case ResultTab.BOOKMARKS:
+          return {
+            rankings: rawResult.value.rankings.filter((ranking) =>
+              (ranking.type === "Organization"
+                ? organizationBookmarksMockData
+                : projectBookmarksMockData
+              ).includes(ranking.content.id),
+            ),
+            organizationLocations: {
+              type: "FeatureCollection",
+              features:
+                rawResult.value.organizationLocations?.features.filter(
+                  (feature) =>
+                    organizationBookmarksMockData.includes(
+                      feature.properties.id,
+                    ),
+                ) || [],
+            },
+            projectLocations: {
+              type: "FeatureCollection",
+              features:
+                rawResult.value.projectLocations?.features.filter((feature) =>
+                  projectBookmarksMockData.includes(feature.properties.id),
+                ) || [],
+            },
+          };
+      }
+    });
+
+    useTask$(({ track }) => {
+      const res = track(result);
+      props.organizationLocations.value =
+        res.organizationLocations ?? emptyFeatureCollection;
+      props.projectLocations.value =
+        res.projectLocations ?? emptyFeatureCollection;
+    });
 
     return (
       <>
@@ -77,7 +156,7 @@ export const MapUI = component$(
                     listExpanded.value ? "h-full" : "h-0",
                   ]}
                 >
-                  {searchResult.rankings.map(({ type, content }, idx) =>
+                  {result.value.rankings.map(({ type, content }, idx) =>
                     type == "Project" ? (
                       <ProjectShortInfo
                         key={idx}
@@ -125,89 +204,6 @@ export const MapUI = component$(
     );
   },
 );
-
-type SearchInput = {
-  answers?: number[];
-  maxMembers?: number;
-  searchText?: string;
-  continent?: string;
-  regionId?: string;
-  type?: "Project" | "Organization";
-};
-
-export type Organization = {
-  id: number;
-  name: string;
-  description: string;
-  foundingYear: number;
-  memberCount: number;
-  iconUrl: string;
-  imageUrls: string[];
-  webPageUrl: string;
-  donatePageUrl: string;
-  coordinates: [number, number];
-  tags: number[];
-  regionName: string;
-  numProjects: number; // TODO not actually present
-};
-
-export type Project = {
-  id: number;
-  orgaId: number;
-  name: string;
-  description: string;
-  dateFrom: string;
-  dateTo: string;
-  iconUrl: string;
-  imageUrls: string[];
-  webPageUrl: string;
-  donatePageUrl: string;
-  coordinates: [number, number];
-  tags: number[];
-  regionName: string;
-  orgaName: string; // TODO not actually present
-};
-
-export type SearchOutput = {
-  rankings: {
-    type: "Organization" | "Project";
-    content: Organization | Project;
-    percentageMatch: number;
-  }[];
-  organizationLocations: {
-    type: "FeatureCollection";
-    features: {
-      type: "Feature";
-      properties: {
-        id: number;
-      };
-      geometry: {
-        type: "Point";
-        coordinates: [number, number];
-      };
-    }[];
-  };
-  projectLocations: {
-    type: "FeatureCollection";
-    features: {
-      type: "Feature";
-      properties: {
-        projectId: number;
-      };
-      geometry: {
-        type: "Point";
-        coordinates: [number, number];
-      };
-    }[];
-  };
-};
-
-function search(searchInput: SearchInput) {
-  console.log("SearchInput:");
-  console.log(searchInput);
-  // TODO replace with API call
-  return mockdata;
-}
 
 /**
  * The navbar shows the project logo and name, contains the search and allows to configure the filter.
@@ -305,7 +301,7 @@ const Search = component$(
 );
 
 /**
- * A button to open the filter pane, which also communicates whether the filter is active.
+ * A button to open the filter pane, which also displays whether the filter is active.
  */
 const FilterButton = component$(
   (props: {
@@ -367,14 +363,14 @@ const Tablist = component$(
           selection={props.selection}
           idx={1}
         >
-          <HiBookmarkOutline class="stroke-inherit size-6" />
+          <HiBookmarkOutline class="size-6 stroke-inherit" />
         </Tab>
         <Tab
           useBtnStyle={props.useBtnStyle}
           selection={props.selection}
           idx={2}
         >
-          <HiClockOutline class="stroke-inherit size-6" />
+          <HiClockOutline class="size-6 stroke-inherit" />
         </Tab>
       </div>
     );

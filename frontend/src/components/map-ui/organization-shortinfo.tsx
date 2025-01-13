@@ -12,7 +12,7 @@ import {
   HiUserGroupOutline,
 } from "@qwikest/icons/heroicons";
 import { layoutTags } from "./tag-layout";
-import type { Organization } from "./map-ui";
+import type { Organization } from "./types";
 
 /**
  * A small card for the list view showing the most important information about an organization.
