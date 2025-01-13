@@ -48,6 +48,7 @@ export type OrgaInformationsProps = {
     imageUrls: string[];
     webpageUrl: string;
     donatePageUrl: string;
+    tags: number[];
 };
 
 export type ProjectInformationProps = {
@@ -278,7 +279,8 @@ export function convertAPITypeToInternalType(apiOut: ApiRelevantOrganisationInfo
         logoUrl: apiOut.iconUrl,
         imageUrls: apiOut.imageUrls ? apiOut.imageUrls : ["test_image.jpg"],
         webpageUrl: apiOut.webPageUrl,
-        donatePageUrl: apiOut.donatePageUrl ? apiOut.donatePageUrl : ''
+        donatePageUrl: apiOut.donatePageUrl ? apiOut.donatePageUrl : '',
+        tags: apiOut.tags
     }
 }
 
@@ -299,7 +301,8 @@ export const VereinProfile = component$((inputData: { orgaData: ApiRelevantOrgan
             "https://img.daisyui.com/images/stock/photo-1550258987-190a2d41a8ba.webp"
         ],
         webpageUrl: "https://www.new-roots.de/#Listen",
-        donatePageUrl: "path/to/new/roots/donation/link.de"
+        donatePageUrl: "path/to/new/roots/donation/link.de",
+        tags: [1, 2, 3, 4]
     }
 
     const orgaDataEmpty: OrgaInformationsProps = {
@@ -311,7 +314,8 @@ export const VereinProfile = component$((inputData: { orgaData: ApiRelevantOrgan
         logoUrl: "",
         imageUrls: [""],
         webpageUrl: "",
-        donatePageUrl: ""
+        donatePageUrl: "",
+        tags: []
     }
 
     const orgaDataTransfer: OrgaInformationsProps = convertAPITypeToInternalType(inputData.orgaData);

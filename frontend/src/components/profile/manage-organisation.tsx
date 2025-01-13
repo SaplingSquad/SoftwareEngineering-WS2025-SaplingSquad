@@ -81,24 +81,30 @@ const Vereinsdaten = component$(() => {
     )
 })
 
-const Vereinstags = component$((inputData: { data: Badge[] }) => {
-    const store = useStore({ inputData })
+const Vereinstags = component$((inputData: { tags: { id: number, name: string }[] }) => {
+    const context = useContext(FormDataContext)
     return (
         <>
             <p>Vereinstags</p>
             <div class="flex flex-wrap justify-around grid-cols-3 grid gap-4  mb-6">
-                {store.inputData.data.map((item, idx: number) => (
-                    <SingleVereinstag key={idx} b={item} />
+                {inputData.tags.map((item, idx: number) => (
+                    <SingleVereinstag key={idx} tag={item} />
                 ))}
             </div>
         </>
     )
 })
 
-const SingleVereinstag = component$((props: { b: Badge }) => {
+const SingleVereinstag = component$((prop: { tag: { id: number, name: string } }) => {
+    const context = useContext(FormDataContext)
+    const isCurrSel = context.tags.includes(prop.tag.id)
     return (
         <>
-            <div class={"btn btn-sm " + answerStyles.get(props.b.answer)!} onClick$={() => (props.b.answer = !props.b.answer)}>{props.b.title}</div>
+            <div class={"btn btn-sm " + answerStyles.get(isCurrSel)} onClick$={() => {
+                { isCurrSel && (context.tags = context.tags.filter((e, i) => e !== prop.tag.id)) };
+                { !isCurrSel && (context.tags.push(prop.tag.id)) }
+            }
+            }>{prop.tag.name}</div>
         </>
     )
 })
@@ -246,7 +252,7 @@ function convertInternalTypeToAPIType(interalOut: OrgaInformationsProps): ApiRel
         webPageUrl: interalOut.webpageUrl,
         //donatePageUrl: interalOut.donatePageUrl === '' ? undefined : interalOut.donatePageUrl,
         donatePageUrl: interalOut.donatePageUrl,
-        tags: []
+        tags: interalOut.tags
     }
 }
 
@@ -344,7 +350,8 @@ export const Vereinsignup = component$((inputData: { orgaData: ApiRelevantOrgani
             "https://img.daisyui.com/images/stock/photo-1550258987-190a2d41a8ba.webp"
         ],
         webpageUrl: "https://www.new-roots.de/#Listen",
-        donatePageUrl: "path/to/new/roots/donation/link.de"
+        donatePageUrl: "path/to/new/roots/donation/link.de",
+        tags: [1, 2, 3, 4]
     }
 
     const isNew = inputData.orgaData.name === ""
@@ -353,6 +360,16 @@ export const Vereinsignup = component$((inputData: { orgaData: ApiRelevantOrgani
 
     const position = useSignal(0);
     const store = useStore<OrgaInformationsProps>(orgaDataTransfer)
+
+    const tagsNameMapping = [
+        { id: 1, name: "Kinder" },
+        { id: 2, name: "Frauen" },
+        { id: 3, name: "Umwelt" },
+        { id: 4, name: "Meere" },
+        { id: 5, name: "Wirtschaft" },
+        { id: 6, name: "Armut" },
+        { id: 7, name: "Hunger" },
+    ]
 
     useContextProvider(FormDataContext, store)
 
@@ -363,7 +380,7 @@ export const Vereinsignup = component$((inputData: { orgaData: ApiRelevantOrgani
                     <h2 class="card-title px-4">{isNew ? "Verein erstellen" : "Verein verwalten"}</h2>
                     <div class="overflow-y-auto space-y-4 px-4">
                         {position.value === 0 && <Vereinsdaten />}
-                        {position.value === 1 && <Vereinstags data={inputData.data} />}
+                        {position.value === 1 && <Vereinstags tags={tagsNameMapping} />}
                         {position.value === 2 && <ImageStack />}
                         {position.value === 3 && <Overview />}
                         {position.value === 4 && isNew && <SendFormAsNew />}
