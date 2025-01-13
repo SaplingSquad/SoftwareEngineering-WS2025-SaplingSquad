@@ -1,15 +1,15 @@
 import { component$, createContextId, Resource, Signal, useComputed$, useContext, useContextProvider, useSignal, useStore, } from "@builder.io/qwik";
 import { UserProfile, VereinProfile } from "~/components/profile/profile";
-import type { ApiOrganisationInformations, OrgaInformationsProps, ProfileProjectsProps } from "~/components/profile/profile";
+import type { ApiRelevantOrganisationInformations, OrgaInformationsProps, ProfileProjectsProps } from "~/components/profile/profile";
 import { useSession } from "../plugin@auth";
 import { getAccountType, isAccTypeOrg, isAccTypeUser, useAccountType } from "~/auth/useauthheader";
 import { LoginOverviewParamsForm } from "~/components/auth/login";
 import { routeLoader$ } from "@builder.io/qwik-city";
 import { api } from "~/api/api_url";
-import { useGetOrganization, useGetQuestionById } from "~/api/api_hooks.gen";
 import { ApiResponse } from "~/components/api";
 import { TestContext } from "node:test";
 import { objectOutputType } from "zod";
+import { useGetOrganizationSelf } from "~/api/api_hooks.gen";
 
 const DEMO_IMAGE = "https://picsum.photos/300";
 
@@ -28,23 +28,22 @@ export default component$(() => {
 
     const numbiii = useSignal(1);
 
-    const questionRequest = useGetQuestionById({ questionId: numbiii })
-    const orgaRequest = useGetOrganization()
 
-    const emptyOrga: ApiOrganisationInformations =
+
+    //const questionRequest = useGetQuestionById({ questionId: numbiii })
+    const orgaRequest = useGetOrganizationSelf();
+
+    const emptyOrga: ApiRelevantOrganisationInformations =
     {
-        orgaId: -1,
         name: "",
         description: "",
         foundingYear: 0,
         memberCount: 0,
+        iconUrl: "",
         imageUrls: [],
-        webpageUrl: "",
+        webPageUrl: "",
         donatePageUrl: "",
-        coordinates: [
-            0,
-            0
-        ],
+        coordinates: [0, 0],
         tags: []
     }
 
@@ -82,10 +81,10 @@ export default component$(() => {
                             onResolved={(response) => (
                                 <ApiResponse
                                     response={response}
-                                    on200$={(r) => "Success"}
-                                    on401$={() => <VereinProfile orgaData={emptyOrga} projectdata={store} profiledata={session} />}
-                                    on404$={() => "404"}
-                                    on500$={() => <VereinProfile orgaData={emptyOrga} projectdata={store} profiledata={session} />}
+                                    on200$={(r) => <div><p>Success {JSON.stringify(r)}</p><VereinProfile orgaData={r} projectdata={store} profiledata={session} /></div>}
+                                    on401$={() => <div><p>401</p><VereinProfile orgaData={emptyOrga} projectdata={store} profiledata={session} /></div>}
+                                    on404$={() => <div><p>404</p><VereinProfile orgaData={emptyOrga} projectdata={store} profiledata={session} /></div>}
+                                    on500$={() => <div><p>500</p><VereinProfile orgaData={emptyOrga} projectdata={store} profiledata={session} /></div>}
                                     defaultError$={(r) => r}
                                 />
                             )}

@@ -8,12 +8,12 @@ import { isAccTypeOrg, useAccountType } from "~/auth/useauthheader";
 const OrgaProfileDataContext = createContextId<OrgaInformationsProps>("verein-profile-context")
 
 //Api Types
-export type ApiOrganisationInformations = {
-    orgaId: number;
-    description: string;
-    coordinates: number[];
+export type ApiRelevantOrganisationInformations = {
     name: string;
-    webpageUrl: string;
+    description: string;
+    iconUrl: string;
+    webPageUrl: string;
+    coordinates: number[];
     tags: number[];
     foundingYear?: number | undefined;
     memberCount?: number | undefined;
@@ -39,7 +39,7 @@ export type ProjectDate = {
 }
 
 export type OrgaInformationsProps = {
-    name: string | null | undefined;
+    name: string;
     description: string;
     location: InputMarkerLocation;
     numbPers: string;
@@ -268,7 +268,22 @@ export const UserProfile = component$((inputData: { profiledata: Readonly<Signal
     )
 })
 
-export const VereinProfile = component$((inputData: { projectdata: ProfileProjectsProps[], profiledata: Readonly<Signal<null>> | Readonly<Signal<Session>> }) => {
+export function convertAPITypeToInternalType(apiOut: ApiRelevantOrganisationInformations): OrgaInformationsProps {
+    return {
+        name: apiOut.name,
+        description: apiOut.description,
+        location: { lng: apiOut.coordinates[0], lat: apiOut.coordinates[1] },
+        numbPers: apiOut.memberCount ? apiOut.memberCount.toString() : '',
+        founding: apiOut.foundingYear ? apiOut.foundingYear.toString() : '',
+        logoUrl: apiOut.iconUrl,
+        imageUrls: apiOut.imageUrls ? apiOut.imageUrls : [],
+        webpageUrl: apiOut.webPageUrl,
+        donatePageUrl: apiOut.donatePageUrl ? apiOut.donatePageUrl : ''
+    }
+}
+
+
+export const VereinProfile = component$((inputData: { orgaData: ApiRelevantOrganisationInformations, projectdata: ProfileProjectsProps[], profiledata: Readonly<Signal<null>> | Readonly<Signal<Session>> }) => {
     const orgaData: OrgaInformationsProps = {
         name: "New Roots",
         description: "Der New Roots e.V. ist eine Initiative von Freunden aus München, die sich gemeinsam der Herausforderung verschrieben haben, bedürftigen Menschen zu helfen. Unser gemeinnütziger Verein wurde mit dem klaren Ziel gegründet, Kindern in Kenia ein sicheres Zuhause zu bieten, regelmäßige Mahlzeiten zu gewährleisten und ihnen den Zugang zu Bildung zu ermöglichen.",
@@ -291,13 +306,15 @@ export const VereinProfile = component$((inputData: { projectdata: ProfileProjec
         name: "",
         description: "",
         location: { lng: 0, lat: 0 },
-        numbPers: "0",
-        founding: "0",
+        numbPers: "",
+        founding: "",
         logoUrl: "",
         imageUrls: [""],
         webpageUrl: "",
         donatePageUrl: ""
     }
+
+    const orgaDataTransfer: OrgaInformationsProps = convertAPITypeToInternalType(inputData.orgaData);
 
     const orgaProjects: ProjectInformationProps[] =
         [
@@ -337,7 +354,7 @@ export const VereinProfile = component$((inputData: { projectdata: ProfileProjec
             }
         ]
 
-    const store = useStore<OrgaInformationsProps>(orgaData)
+    const store = useStore<OrgaInformationsProps>(orgaDataTransfer)
     useContextProvider(OrgaProfileDataContext, store)
     return (
         <>

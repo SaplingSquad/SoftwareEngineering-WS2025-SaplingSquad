@@ -1,8 +1,9 @@
-import { ClassList, component$, createContextId, Signal, useComputed$, useContext, useContextProvider, useSignal, useStore } from "@builder.io/qwik";
+import { ClassList, component$, createContextId, Resource, Signal, useComputed$, useContext, useContextProvider, useSignal, useStore } from "@builder.io/qwik";
 import { HiStarOutline, HiNoSymbolOutline, HiChevronRightOutline, HiChevronLeftOutline, HiInformationCircleOutline, HiPlusOutline, HiCalendarDaysOutline, HiUserGroupOutline, HiCog6ToothOutline, HiLinkOutline, HiBanknotesOutline, HiTrashOutline, HiTrashSolid } from "@qwikest/icons/heroicons";
 import { MapLocationInput } from "./utils";
-import { OrgaInformationsProps } from "./profile";
+import { ApiRelevantOrganisationInformations, convertAPITypeToInternalType, OrgaInformationsProps } from "./profile";
 import { Form } from "@builder.io/qwik-city";
+import { usePostOrganization, usePutOrganization } from "~/api/api_hooks.gen";
 
 const FormDataContext = createContextId<OrgaInformationsProps>("verein-signup-context")
 
@@ -231,7 +232,35 @@ const Overview = component$(() => {
 
 )
 
-export const Vereinsignup = component$((inputData: { data: Badge[] }) => {
+function convertInternalTypeToAPIType(interalOut: OrgaInformationsProps): ApiRelevantOrganisationInformations {
+    return {
+        name: interalOut.name,
+        description: interalOut.description,
+        coordinates: [interalOut.location.lng, interalOut.location.lat],
+        memberCount: interalOut.numbPers === '' ? undefined : parseInt(interalOut.numbPers),
+        foundingYear: interalOut.founding === '' ? undefined : parseInt(interalOut.founding),
+        iconUrl: interalOut.logoUrl,
+        imageUrls: interalOut.imageUrls.length === 0 ? undefined : interalOut.imageUrls,
+        webPageUrl: interalOut.webpageUrl,
+        //donatePageUrl: interalOut.donatePageUrl === '' ? undefined : interalOut.donatePageUrl,
+        donatePageUrl: interalOut.donatePageUrl,
+        tags: []
+    }
+}
+
+const SendForm = component$((inputData: { isNew: boolean }) => {
+    const context = useContext(FormDataContext)
+    //const updateOrgApiCall = inputData.isNew ? usePostOrganization(convertInternalTypeToAPIType(context)) : usePutOrganization(convertInternalTypeToAPIType(context));
+    const updateOrgApiCall = usePostOrganization(convertInternalTypeToAPIType(context))
+    return (
+        <>
+            <Resource value={updateOrgApiCall}
+                onResolved={(response) => <></>} />
+        </>
+    )
+})
+
+export const Vereinsignup = component$((inputData: { orgaData: ApiRelevantOrganisationInformations, data: Badge[] }) => {
     const orgaData: OrgaInformationsProps = {
         name: "New Roots",
         description: "Der New Roots e.V. ist eine Initiative von Freunden aus München, die sich gemeinsam der Herausforderung verschrieben haben, bedürftigen Menschen zu helfen. Unser gemeinnütziger Verein wurde mit dem klaren Ziel gegründet, Kindern in Kenia ein sicheres Zuhause zu bieten, regelmäßige Mahlzeiten zu gewährleisten und ihnen den Zugang zu Bildung zu ermöglichen.",
@@ -250,30 +279,26 @@ export const Vereinsignup = component$((inputData: { data: Badge[] }) => {
         donatePageUrl: "path/to/new/roots/donation/link.de"
     }
 
-    const orgaDataEmpty: OrgaInformationsProps = {
-        name: "",
-        description: "",
-        location: { lng: 0, lat: 0 },
-        numbPers: "",
-        founding: "",
-        logoUrl: "",
-        imageUrls: [],
-        webpageUrl: "",
-        donatePageUrl: ""
-    }
+    const isNew = inputData.orgaData.name === ""
+
+    const orgaDataTransfer: OrgaInformationsProps = convertAPITypeToInternalType(inputData.orgaData);
+
     const position = useSignal(0);
-    const store = useStore<OrgaInformationsProps>(orgaData)
+    const store = useStore<OrgaInformationsProps>(orgaDataTransfer)
+
     useContextProvider(FormDataContext, store)
+
     return (
         <>
             <div class="relative flex justify-center">
                 <div class="card bg-base-300 rounded-box place-items-stretch m-4 px-4 py-8 space-y-4 [max-height:90dvh] w-full lg:w-1/3">
-                    <h2 class="card-title px-4">Verein verwalten</h2>
+                    <h2 class="card-title px-4">{isNew ? "Verein erstellen" : "Verein verwalten"}</h2>
                     <div class="overflow-y-auto space-y-4 px-4">
                         {position.value === 0 && <Vereinsdaten />}
                         {position.value === 1 && <Vereinstags data={inputData.data} />}
                         {position.value === 2 && <ImageStack />}
                         {position.value === 3 && <Overview />}
+                        {position.value === 4 && <SendForm isNew={isNew} />}
                     </div>
                     <div class="bottom-0 flex flex-col justify-center items-center gap-4">
                         {
@@ -287,8 +312,10 @@ export const Vereinsignup = component$((inputData: { data: Badge[] }) => {
                                                 <HiCog6ToothOutline />
                                             </div>
                                         </button>
-                                        <a href="../" class="btn btn-primary">Absenden
-                                        </a>
+                                        <button class="btn btn-primary" onClick$={() => {
+                                            position.value = 4
+                                        }}>Absenden
+                                        </button>
                                     </div>
                                 </>
                                 :
