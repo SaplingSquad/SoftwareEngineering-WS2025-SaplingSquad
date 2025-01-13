@@ -386,7 +386,7 @@ function convertInternalTypeToAPIProjectType(interalOut: ProjectInformationProps
     }
 }
 
-export const ProjectCreation = component$((inputData: { selProject: number, projects: ApiRelevantProjectInformations[] }) => {
+export const ProjectCreation = component$((inputData: { selProject: number, projects: ApiRelevantProjectInformations[], tags: { id: number, name: string }[] }) => {
     /*const projectData = {
         name: "Great Green Wall",
         description: "The Great Green Wall is",
@@ -424,15 +424,7 @@ export const ProjectCreation = component$((inputData: { selProject: number, proj
         logoUrl: ""
     }
 
-    const tagsNameMapping = [ //Replace with API Call in Projekttags call 
-        { id: 1, name: "Kinder" },
-        { id: 2, name: "Frauen" },
-        { id: 3, name: "Umwelt" },
-        { id: 4, name: "Meere" },
-        { id: 5, name: "Wirtschaft" },
-        { id: 6, name: "Armut" },
-        { id: 7, name: "Hunger" },
-    ]
+    const tagsNameMapping = inputData.tags
 
     const isNew = inputData.selProject === -1
 

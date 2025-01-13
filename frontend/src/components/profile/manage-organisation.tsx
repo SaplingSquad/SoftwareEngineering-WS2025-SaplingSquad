@@ -3,7 +3,7 @@ import { HiStarOutline, HiNoSymbolOutline, HiChevronRightOutline, HiChevronLeftO
 import { MapLocationInput } from "./utils";
 import { ApiRelevantOrganisationInformations, convertAPITypeToInternalType, OrgaInformationsProps } from "./profile";
 import { Form } from "@builder.io/qwik-city";
-import { usePostOrganization, usePutOrganization } from "~/api/api_hooks.gen";
+import { useGetTags, usePostOrganization, usePutOrganization } from "~/api/api_hooks.gen";
 import { ApiResponse } from "../api";
 
 const FormDataContext = createContextId<OrgaInformationsProps>("verein-signup-context")
@@ -334,7 +334,7 @@ const SendFormAsEdit = component$(() => {
     )
 })
 
-export const Vereinsignup = component$((inputData: { orgaData: ApiRelevantOrganisationInformations }) => {
+export const Vereinsignup = component$((inputData: { orgaData: ApiRelevantOrganisationInformations, tags: { id: number, name: string }[] }) => {
 
     const isNew = inputData.orgaData.name === ""
 
@@ -343,15 +343,7 @@ export const Vereinsignup = component$((inputData: { orgaData: ApiRelevantOrgani
     const position = useSignal(0);
     const store = useStore<OrgaInformationsProps>(orgaDataTransfer)
 
-    const tagsNameMapping = [ //Replace with API Call in Vereinstags call 
-        { id: 1, name: "Kinder" },
-        { id: 2, name: "Frauen" },
-        { id: 3, name: "Umwelt" },
-        { id: 4, name: "Meere" },
-        { id: 5, name: "Wirtschaft" },
-        { id: 6, name: "Armut" },
-        { id: 7, name: "Hunger" },
-    ]
+    const tagsNameMapping = inputData.tags
 
     useContextProvider(FormDataContext, store)
 

@@ -7,7 +7,7 @@ import {
     useSignal,
     useStore,
 } from "@builder.io/qwik";
-import { useGetOrganizationSelf } from "~/api/api_hooks.gen";
+import { useGetOrganizationSelf, useGetTags } from "~/api/api_hooks.gen";
 import { useAccountType, isAccTypeUser, isAccTypeOrg } from "~/auth/useauthheader";
 import { ApiResponse } from "~/components/api";
 import { LoginOverviewParamsForm } from "~/components/auth/login";
@@ -22,6 +22,8 @@ export default component$(() => {
     const useaccType = useAccountType(session);
 
     const orgaRequest = useGetOrganizationSelf();
+
+    const getTag = useGetTags();
 
     const emptyOrga: ApiRelevantOrganisationInformations =
     {
@@ -42,14 +44,25 @@ export default component$(() => {
             <>
                 <div>
                     <Resource
-                        value={orgaRequest}
+                        value={getTag}
                         onResolved={(response) => (
                             <ApiResponse
                                 response={response}
-                                on200$={(r) => <div class="h-3/6"><p>200</p><Vereinsignup orgaData={r} /></div>}
-                                on401$={() => <div class="h-3/6"><p>401</p><Vereinsignup orgaData={emptyOrga} /></div>}
-                                on404$={() => <div class="h-3/6"><p>404</p><Vereinsignup orgaData={emptyOrga} /></div>}
-                                on500$={() => <div class="h-3/6"><p>500</p><Vereinsignup orgaData={emptyOrga} /></div>}
+                                on200$={(tagsResponse) =>
+                                    <Resource
+                                        value={orgaRequest}
+                                        onResolved={(response) => (
+                                            <ApiResponse
+                                                response={response}
+                                                on200$={(r) => <div class="h-3/6"><p>200</p><Vereinsignup orgaData={r} tags={tagsResponse} /></div>}
+                                                on401$={() => <div class="h-3/6"><p>401</p><Vereinsignup orgaData={emptyOrga} tags={tagsResponse} /></div>}
+                                                on404$={() => <div class="h-3/6"><p>404</p><Vereinsignup orgaData={emptyOrga} tags={tagsResponse} /></div>}
+                                                on500$={() => <div class="h-3/6"><p>500</p><Vereinsignup orgaData={emptyOrga} tags={tagsResponse} /></div>}
+                                                defaultError$={(r) => r}
+                                            />
+                                        )}
+                                    />
+                                }
                                 defaultError$={(r) => r}
                             />
                         )}

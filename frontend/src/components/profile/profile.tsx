@@ -1,10 +1,11 @@
 import { Session } from "@auth/qwik";
-import { component$, createContextId, Signal, useContext, useContextProvider, useStore } from "@builder.io/qwik";
-import { HiUserCircleOutline, HiPlusCircleSolid, HiCog6ToothOutline, HiTrashOutline, HiPlusCircleOutline, HiLinkOutline, HiBanknotesOutline } from "@qwikest/icons/heroicons";
+import { component$, createContextId, Resource, Signal, useContext, useContextProvider, useSignal, useStore } from "@builder.io/qwik";
+import { HiUserCircleOutline, HiPlusCircleSolid, HiCog6ToothOutline, HiTrashOutline, HiPlusCircleOutline, HiLinkOutline, HiBanknotesOutline, HiTrashSolid, HiEllipsisVerticalOutline } from "@qwikest/icons/heroicons";
 import { LogoutParamsForm } from "../auth/logout";
 import { ProfileImage } from "./utils";
 import { isAccTypeOrg, useAccountType } from "~/auth/useauthheader";
 import { getProjectsForOrganizationSelf } from "~/api/api_methods.gen";
+import { useDeleteProject } from "~/api/api_hooks.gen";
 
 const OrgaProfileDataContext = createContextId<OrgaInformationsProps>("verein-profile-context")
 
@@ -85,6 +86,8 @@ export type ProjectInformationProps = {
 
 const ProjectCard = component$((props: { p: ProjectInformationProps }) => {
     const refURL = './manage-project?selproj=' + props.p.id.toString()
+    const remProjId = useSignal<number>(props.p.id)
+    const removeProjectCall = useDeleteProject({ id: remProjId })
     return (
         <>
             <div class="card bg-base-100 w-96 shadow-xl">
@@ -92,7 +95,22 @@ const ProjectCard = component$((props: { p: ProjectInformationProps }) => {
                     <h2 class="card-title">{props.p.name}</h2>
                     <p>{props.p.description}</p>
                     <div class="card-actions justify-end">
-                        <a href={refURL} class="btn btn-primary">Bearbeiten
+                        <div class="absolute top-0 right-0 dropdown dropdown-end">
+                            <div tabIndex={0} role="button" class="btn btn-ghost btn-circle">
+                                <div class="text-2xl">
+                                    <HiEllipsisVerticalOutline />
+                                </div>
+                            </div>
+                            <ul
+                                tabIndex={0}
+                                class="menu menu-sm menu-neutral dropdown-content bg-base-100 rounded-box w-24 p-2 shadow">
+                                <li>
+                                    <a >Löschen</a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <a href={refURL} class="btn btn-primary join-item">Bearbeiten
                             <div class="text-2xl">
                                 <HiCog6ToothOutline />
                             </div>
@@ -150,7 +168,7 @@ const ProjectManagement = component$((inputData: { data: ProjectInformationProps
                 <div class="card-title text-xl font-medium pb-4">Projekte</div>
                 <div class="flex flex-wrap gap-6">
                     {
-                        inputData.data.map((item, idx: number) => (
+                        inputData.data.slice().reverse().map((item, idx: number) => (
                             <ProjectCard key={idx} p={item} />
                         ))
                     }
@@ -230,7 +248,7 @@ const VereinDummy = component$(() => {
     )
 })
 
-const VereinInfoProjects = component$((inputData: { projectData: ProfileProjectsProps[] }) => {
+const VereinInfoProjects = component$(() => {
     const context = useContext(OrgaProfileDataContext)
     const contextProject = useContext(OrgaProjectDataContext)
     return (
@@ -325,7 +343,6 @@ export function convertAPITypeToInternalProjectType(apiOut: ApiRelevantProjectIn
 export const VereinProfile = component$((inputData: {
     orgaData: ApiRelevantOrganisationInformations,
     projectsData: ApiRelevantProjectInformations[],
-    projectdata: ProfileProjectsProps[],
     profiledata: Readonly<Signal<null>> | Readonly<Signal<Session>>
 }) => {
 
@@ -383,7 +400,7 @@ export const VereinProfile = component$((inputData: {
         <>
             <div class="grid grid-rows-4 grid-cols-10 gap-4 p-5">
                 <div class="row-span-3 col-span-8">
-                    <VereinInfoProjects projectData={inputData.projectdata} />
+                    <VereinInfoProjects />
                 </div>
                 <div class="row-span-auto col-span-2">
                     <ProfileInformation profiledata={inputData.profiledata} />
