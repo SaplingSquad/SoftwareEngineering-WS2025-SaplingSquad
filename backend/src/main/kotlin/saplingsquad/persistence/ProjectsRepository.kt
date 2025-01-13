@@ -1,6 +1,8 @@
 package saplingsquad.persistence
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toSet
 import org.komapper.core.dsl.Meta
 import org.komapper.core.dsl.QueryDsl
 import org.komapper.core.dsl.query.bind
@@ -79,6 +81,26 @@ class ProjectsRepository(private val db: R2dbcDatabase) {
             ProjectCrRdResult.Success(
                 projects.oneToMany(p, pTags).toProjectEntitiesWithTags()
             )
+        }
+
+    /**
+     * Read a project with region and tags by id.
+     * @return
+     *  - null if a project with this id does not exist
+     *  - [ProjectWithRegionEntityAndTags] (containing the project) on success
+     */
+    suspend fun readProjectWithRegionAndTagsById(projectId: ProjectId): ProjectWithRegionEntityAndTags? =
+        db.withTransaction {
+            val project =
+                readProjectWithRegionById(projectId) ?: return@withTransaction null
+
+            val pTags = Meta.projectTagsEntity
+
+            val tags = db.flowQuery {
+                QueryDsl.from(pTags).where { pTags.projectId eq projectId }
+            }.map { it.tagId }.toSet()
+
+            return@withTransaction ProjectWithRegionEntityAndTags(project, tags)
         }
 
     /**
@@ -175,6 +197,14 @@ class ProjectsRepository(private val db: R2dbcDatabase) {
             QueryDsl.from(orgAcc).where { orgAcc.accountId eq accountId }
         }.expectZeroOrOne()
         return account
+    }
+
+    private suspend fun readProjectWithRegionById(projectId: ProjectId): ProjectWithRegionEntity? {
+        val p = Meta.projectWithRegionEntity
+        return db.flowQuery {
+            QueryDsl.from(p)
+                .where { p.projectId eq projectId }
+        }.expectZeroOrOne()
     }
 
 }
