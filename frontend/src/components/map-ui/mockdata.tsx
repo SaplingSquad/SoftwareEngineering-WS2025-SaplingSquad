@@ -26,7 +26,7 @@ export const searchOutputMockdata: SearchOutput = {
         tags: [1, 2, 3],
         regionName: "Kanada",
         numProjects: 5,
-      } as Organization,
+      },
       percentageMatch: 100,
     },
     {
@@ -47,7 +47,7 @@ export const searchOutputMockdata: SearchOutput = {
         tags: [1, 2, 3],
         regionName: "Brasilien",
         orgaName: "Greenpeace",
-      } as Project,
+      },
       percentageMatch: 90,
     },
     {
@@ -67,7 +67,7 @@ export const searchOutputMockdata: SearchOutput = {
         tags: [4, 5, 6],
         regionName: "Deutschland",
         numProjects: 5,
-      } as Organization,
+      },
       percentageMatch: 80,
     },
     {
@@ -88,7 +88,7 @@ export const searchOutputMockdata: SearchOutput = {
         tags: [4, 5, 6],
         regionName: "Kenia",
         orgaName: "New Roots",
-      } as Project,
+      },
       percentageMatch: 70,
     },
   ],

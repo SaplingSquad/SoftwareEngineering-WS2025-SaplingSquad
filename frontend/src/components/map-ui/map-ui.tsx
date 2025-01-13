@@ -1,5 +1,6 @@
 import {
   type Signal,
+  type QRL,
   $,
   component$,
   Slot,
@@ -30,14 +31,15 @@ import {
   searchOutputMockdata,
 } from "./mockdata";
 import type {
+  Feature,
   FeatureCollection,
-  Organization,
-  Project,
+  Ranking,
   SearchInput,
   SearchOutput,
 } from "./types";
 import { getAnswersFromLocalStorage } from "~/utils";
 import { isServer } from "@builder.io/qwik/build";
+import { OrganizationLargeInfo } from "./organization-largeinfo";
 
 enum ResultTab {
   ALL,
@@ -48,6 +50,10 @@ enum ResultTab {
 const emptyFeatureCollection: FeatureCollection = {
   type: "FeatureCollection",
   features: [],
+};
+
+type HistoryStore = SearchOutput & {
+  add: QRL<(this: HistoryStore, ranking: Ranking) => void>;
 };
 
 /**
@@ -64,11 +70,41 @@ export const MapUI = component$(
     const filterWindowActive = useSignal<boolean>(false);
     const listExpanded = useSignal<boolean>(false);
     const searchText = useSignal<string>("");
-    const selectedProject = useSignal<Project | undefined>(undefined);
+    const selectedRanking = useSignal<Ranking | undefined>(undefined);
     const rawResult = useSignal<SearchOutput>({
       rankings: [],
     });
-    const history = useStore<SearchOutput>({ rankings: [] });
+    const history = useStore<HistoryStore>({
+      rankings: [],
+      organizationLocations: emptyFeatureCollection,
+      projectLocations: emptyFeatureCollection,
+      add: $(function (this: HistoryStore, ranking: Ranking) {
+        const idx = this.rankings.findIndex(
+          (r) => r.type === ranking.type && r.content.id === ranking.content.id,
+        );
+
+        if (idx === -1) {
+          this.rankings.unshift(ranking);
+          (ranking.type === "Organization"
+            ? this.organizationLocations
+            : this.projectLocations
+          )?.features.push(
+            (ranking.type === "Organization"
+              ? result.value.organizationLocations
+              : result.value.projectLocations)!.features.find(
+              (f) => f.properties.id === ranking.content.id,
+            )!,
+          );
+        } else {
+          this.rankings.splice(idx, 1);
+          this.rankings.unshift(ranking);
+        }
+      }),
+    });
+
+    useTask$(({ track }) => {
+      track(selectedRanking) && history.add(selectedRanking.value!);
+    });
 
     const search = $(() => {
       if (isServer) return;
@@ -156,21 +192,21 @@ export const MapUI = component$(
                     listExpanded.value ? "h-full" : "h-0",
                   ]}
                 >
-                  {result.value.rankings.map(({ type, content }, idx) =>
-                    type == "Project" ? (
+                  {result.value.rankings.map((ranking, idx) =>
+                    ranking.type === "Project" ? (
                       <ProjectShortInfo
                         key={idx}
-                        project={content as Project}
+                        project={ranking.content}
                         onClick={$(() => {
-                          selectedProject.value = content as Project;
+                          selectedRanking.value = ranking;
                         })}
                       />
                     ) : (
                       <OrganizationShortInfo
                         key={idx}
-                        org={content as Organization}
+                        org={ranking.content}
                         onClick={$(() => {
-                          console.log(content);
+                          selectedRanking.value = ranking;
                         })}
                       />
                     ),
@@ -192,12 +228,19 @@ export const MapUI = component$(
             />
           </div>
         </div>
-        {selectedProject.value && (
+        {selectedRanking.value && (
           <div class="fixed right-0 top-0 h-screen p-4">
-            <ProjectLargeInfo
-              project={selectedProject.value}
-              onClose={$(() => (selectedProject.value = undefined))}
-            />
+            {selectedRanking.value.type === "Organization" ? (
+              <OrganizationLargeInfo
+                org={selectedRanking.value.content}
+                onClose={$(() => (selectedRanking.value = undefined))}
+              />
+            ) : (
+              <ProjectLargeInfo
+                project={selectedRanking.value.content}
+                onClose={$(() => (selectedRanking.value = undefined))}
+              />
+            )}
           </div>
         )}
       </>
@@ -256,7 +299,7 @@ const Search = component$(
             class="rounded-full border border-primary py-2 pl-4 pr-10 outline-secondary"
             onKeyDown$={(event, elem) => {
               const searchText = elem.value.trim();
-              if (searchText && event.key == "Enter") {
+              if (searchText && event.key === "Enter") {
                 elem.blur();
                 props.listExpanded.value = true;
                 props.searchText.value = searchText;
@@ -387,7 +430,7 @@ const Tab = component$(
         class={[
           "grow cursor-pointer justify-items-center",
           props.useBtnStyle ? "btn join-item" : "w-full",
-          props.useBtnStyle && props.selection.value == props.idx
+          props.useBtnStyle && props.selection.value === props.idx
             ? "btn-primary"
             : "",
         ]}

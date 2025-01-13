@@ -44,18 +44,20 @@ export type SearchInput = {
   type?: "Project" | "Organization";
 };
 
+export type Feature = {
+  type: "Feature";
+  properties: {
+    id: number;
+  };
+  geometry: {
+    type: "Point";
+    coordinates: [number, number];
+  };
+};
+
 export type FeatureCollection = {
   type: "FeatureCollection";
-  features: {
-    type: "Feature";
-    properties: {
-      id: number;
-    };
-    geometry: {
-      type: "Point";
-      coordinates: [number, number];
-    };
-  }[];
+  features: Feature[];
 };
 
 export type Ranking = (
