@@ -186,7 +186,7 @@ object ExampleProjects {
     }
 
     // Create unique projectIds with 1 to 3 projects per organization
-    fun projectIdsForOrga(orgId: OrganizationId): List<ProjectId> {
+    private fun projectIdsForOrga(orgId: OrganizationId): List<ProjectId> {
         val n = orgId + 10
         return when (orgId) {
             in 0..3 -> listOf(n, 2 * n, 3 * n)
@@ -216,7 +216,7 @@ object ExampleProjects {
             else -> listOf(p.orgId)
         }
 
-    val projectTags = projects
+    private val projectTags = projects
         .flatMap { project ->
             tagsOfProject(project).map { tagId ->
                 ProjectTagsEntity(

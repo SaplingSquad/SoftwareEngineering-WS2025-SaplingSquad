@@ -122,7 +122,7 @@ class MapApiService(
             regionName = project.regionName,
             dateFrom = project.dateFrom?.let(::dateToMonthAndYear),
             dateTo = project.dateTo?.let(::dateToMonthAndYear),
-            imageUrls = emptyList(),
+            imageUrls = emptyList(), //TODO
             webPageUrl = project.websiteUrl,
             donatePageUrl = project.donationUrl
         ).asHttpOkResponse()
