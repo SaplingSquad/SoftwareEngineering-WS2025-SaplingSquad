@@ -25,6 +25,13 @@ import { maybeArray } from "~/utils";
 export type Coordinates = [number, number];
 
 /**
+ * {@link Coordinates} as returned by the api.
+ * The api correctly validates that all coordinates are of type {@link Coordinates},
+ * but the type is not set to a tuple: https://zod.dev/?id=minmaxlength
+ */
+export type ApiCoordinates = number[];
+
+/**
  * Type-guard for {@link Coordinates}.
  *
  * @param coords thing to check

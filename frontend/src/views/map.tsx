@@ -56,7 +56,10 @@ export const Map = component$(
         },
       },
       projects: {
-        info: $(() => <ProjectInfo />),
+        info: $(
+          (props: any) =>
+            typeof props.id === "number" && <ProjectInfo load={props.id} />,
+        ),
         data: props.projectLocations.value,
         iconOptions: {
           marker: markerIconOptions,
