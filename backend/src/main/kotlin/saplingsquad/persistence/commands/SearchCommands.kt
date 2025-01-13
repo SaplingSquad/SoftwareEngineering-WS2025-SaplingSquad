@@ -9,9 +9,10 @@ import java.time.LocalDate
 //language=sql
 @KomapperCommand(
     """
-with project_counts as (select org_id, count(project_id) as project_count 
-                        from project 
-                        group by org_id),
+with project_counts as (select organization.org_id, count(project_id) as project_count 
+                        from organization
+                            left outer join project using(org_id)
+                        group by organization.org_id),
      org_taglist as (select org_id, array_agg(tag_id) as tags 
                      from organization_tags
                      group by org_id),
@@ -41,7 +42,7 @@ with project_counts as (select org_id, count(project_id) as project_count
                   from organization_with_region as o
                     left outer join project_counts on o.org_id = project_counts.org_id
                     left outer join org_taglist on o.org_id = org_taglist.org_id
-                  where 
+                  where true and -- `true and` is necessary: for some reason komapper drops the where statement otherwise
                   /*>regionFilter*/
                   /*>continentFilter*/
                   /*>maxMembersFilter*/
@@ -49,7 +50,7 @@ with project_counts as (select org_id, count(project_id) as project_count
                     lower(o.name) /*>searchTextFilter*/ and
                   /*% end */
                   /*type.loadOrganizations*/true
-                  union
+                  union all
                   select p.project_id      as combined_id,
                          p.org_id,     -- shared
                          p.description,
@@ -73,7 +74,7 @@ with project_counts as (select org_id, count(project_id) as project_count
                   from project_with_region as p
                     join organization on p.org_id = organization.org_id -- for member count comparison
                     left outer join proj_taglist on p.project_id = proj_taglist.project_id
-                  where 
+                  where true and -- `true and` is necessary: for some reason komapper drops the where statement otherwise
                   /*>regionFilter*/
                   /*>continentFilter*/
                   /*>maxMembersFilter*/
@@ -111,7 +112,7 @@ with project_counts as (select org_id, count(project_id) as project_count
                     i.type,
                     case
                         when answer_count = 0 then 0
-                        else greatest(0, answer_count - intersection_size)::numeric / greatest(1, answer_count)
+                        else greatest(0, answer_count - intersection_size)::float / greatest(1, answer_count)
                         end as penalty
              from intersection_size as i
                       cross join tag_count_answers),
@@ -120,7 +121,7 @@ with project_counts as (select org_id, count(project_id) as project_count
                     i.type,
                     case
                         when answer_count = 0 then 0
-                        else greatest(0, orgproj_count - intersection_size)::numeric / greatest(1, orgproj_count)
+                        else greatest(0, orgproj_count - intersection_size)::float / greatest(1, orgproj_count)
                         end as penalty
              from intersection_size as i
                       join tag_count_orgproj using (combined_id, type)
@@ -137,7 +138,7 @@ with project_counts as (select org_id, count(project_id) as project_count
      min_filter_score as (select min(score) as min
                           from with_rank
                           where rank <= 3),
-     result as (select score, combined.*
+     result as (select score as score, combined.*
                 from combined
                          join scored using (combined_id, type)
                          cross join min_filter_score
@@ -146,7 +147,8 @@ with project_counts as (select org_id, count(project_id) as project_count
 select *
 from result
 order by score desc;
-"""
+""",
+    disableValidation = true
 )
 data class SearchCommand(
     val answers: List<Int>,

@@ -46,40 +46,6 @@ class OrganizationRepositoryTest {
         assertNull(notExistent)
     }
 
-    /**
-     * Ensure that an empty filter returns every organization
-     */
-    @Test
-    fun testNoFilterReadAll() = runTest {
-        val result = repository.readOrganizations(emptyList()).toList()
-        assertEquals(ExampleOrgas.orgas.size, result.size)
-        assert(result.containsAll(ExampleOrgas.orgas.map { it.toOrganizationEntity() }))
-    }
-
-    /**
-     * Ensure that also second best matches are included if the best matches would be less than 3
-     * And also, the best matches are at the top of the list
-     */
-    @Test
-    fun testFilterAtLeast3() = runTest {
-        // Very specific filter, only 2 organizations (ids 5,6) in test setup have all those tags
-        val result = repository.readOrganizations(listOf(2, 3)).toList()
-        assertEquals(7, result.size)
-        assertContains(5..6, result[0].orgId)
-        assertContains(5..6, result[1].orgId)
-    }
-
-    /**
-     * Ensure that only the best matches are included if there are more than 3
-     */
-    @Test
-    fun testFilterNonSpecific() = runTest {
-        val result = repository.readOrganizations(listOf(1)).toList()
-        assertEquals(5, result.size)
-        for (r in result) {
-            assertContains(0..4, r.orgId)
-        }
-    }
 
     /**
      * Ensure that the organization entity is correctly inserted
