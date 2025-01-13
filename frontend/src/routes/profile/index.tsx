@@ -11,6 +11,7 @@ import { TestContext } from "node:test";
 import { objectOutputType } from "zod";
 import { useGetOrganizationSelf, useGetProjectsForOrganizationSelf } from "~/api/api_hooks.gen";
 import { Session } from "@auth/qwik";
+import { getProjectsForOrganizationSelf } from "~/api/api_methods.gen";
 
 const DEMO_IMAGE = "https://picsum.photos/300";
 
@@ -27,6 +28,8 @@ const VereinProfilePage = component$((inputData: { profiledata: Readonly<Signal<
     const session = inputData.profiledata
 
     const orgaProjectsRequest = useGetProjectsForOrganizationSelf();
+
+
     const emptyOrga: ApiRelevantOrganisationInformations =
     {
         name: "",
@@ -59,11 +62,18 @@ const VereinProfilePage = component$((inputData: { profiledata: Readonly<Signal<
                                         <ApiResponse
                                             response={projResponse}
                                             on200$={(projR) => <div><p>Success {JSON.stringify(projR)}</p><VereinProfile orgaData={r} projectsData={projR} profiledata={session} /></div>}
-                                            on401$={() => "Token Expired. Please login again."}
+                                            on401$={() => <>Bitte neu anmelden <LoginOverviewParamsForm redirectTo={"/profile"}>
+                                                <button class="btn btn-primary">Hier einloggen!</button>
+                                            </LoginOverviewParamsForm></>}
                                             on404$={() => <div><p>404</p><VereinProfile orgaData={r} projectsData={[]} profiledata={session} /></div>}
                                             defaultError$={(r) => r}
                                         />
                                     )}
+                                    onPending={() =>
+                                        <>
+                                            Pending
+                                        </>
+                                    }
                                 />
                             </div>
                         }
@@ -77,6 +87,27 @@ const VereinProfilePage = component$((inputData: { profiledata: Readonly<Signal<
                 )}
             />
         </div>
+    )
+
+    return (
+        <Resource
+            value={orgaProjectsRequest}
+            onResolved={(projResponse) => (
+                <ApiResponse
+                    response={projResponse}
+                    on200$={(projR) => <div><p>Success {JSON.stringify(projR)}</p><VereinProfile orgaData={emptyOrga} projectsData={projR} profiledata={session} /></div>}
+                    on401$={() => <>Bitte neu anmelden <LoginOverviewParamsForm redirectTo={"/profile"}>
+                        <button class="btn btn-primary">Hier einloggen!</button>
+                    </LoginOverviewParamsForm></>}
+                    defaultError$={(r) => r}
+                />
+            )}
+            onPending={() =>
+                <>
+                    Pending
+                </>
+            }
+        />
     )
 })
 

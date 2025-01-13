@@ -87,7 +87,7 @@ export type ProjectInformationProps = {
 const ProjectCard = component$((props: { p: ProjectInformationProps }) => {
     const refURL = './manage-project?selproj=' + props.p.id.toString()
     const remProjId = useSignal<number>(props.p.id)
-    const removeProjectCall = useDeleteProject({ id: remProjId })
+    //const removeProjectCall = useDeleteProject({ id: remProjId })
     return (
         <>
             <div class="card bg-base-100 w-96 shadow-xl">
@@ -105,7 +105,7 @@ const ProjectCard = component$((props: { p: ProjectInformationProps }) => {
                                 tabIndex={0}
                                 class="menu menu-sm menu-neutral dropdown-content bg-base-100 rounded-box w-24 p-2 shadow">
                                 <li>
-                                    <a >Löschen</a>
+                                    <a>Löschen</a>
                                 </li>
                             </ul>
                         </div>
