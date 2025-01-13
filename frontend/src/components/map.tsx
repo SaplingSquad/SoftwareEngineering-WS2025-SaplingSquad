@@ -239,11 +239,7 @@ export const Map = component$(
       loadedSources.value = Object.keys(sources);
     });
 
-    return (
-      <div ref={containerRef} class={clz}>
-        Loading map...
-      </div>
-    );
+    return <div ref={containerRef} class={clz}></div>;
   },
 );
 
