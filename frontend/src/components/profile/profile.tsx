@@ -276,7 +276,7 @@ export function convertAPITypeToInternalType(apiOut: ApiRelevantOrganisationInfo
         numbPers: apiOut.memberCount ? apiOut.memberCount.toString() : '',
         founding: apiOut.foundingYear ? apiOut.foundingYear.toString() : '',
         logoUrl: apiOut.iconUrl,
-        imageUrls: apiOut.imageUrls ? apiOut.imageUrls : [],
+        imageUrls: apiOut.imageUrls ? apiOut.imageUrls : ["test_image.jpg"],
         webpageUrl: apiOut.webPageUrl,
         donatePageUrl: apiOut.donatePageUrl ? apiOut.donatePageUrl : ''
     }

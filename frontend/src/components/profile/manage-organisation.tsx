@@ -4,6 +4,7 @@ import { MapLocationInput } from "./utils";
 import { ApiRelevantOrganisationInformations, convertAPITypeToInternalType, OrgaInformationsProps } from "./profile";
 import { Form } from "@builder.io/qwik-city";
 import { usePostOrganization, usePutOrganization } from "~/api/api_hooks.gen";
+import { ApiResponse } from "../api";
 
 const FormDataContext = createContextId<OrgaInformationsProps>("verein-signup-context")
 
@@ -233,6 +234,7 @@ const Overview = component$(() => {
 )
 
 function convertInternalTypeToAPIType(interalOut: OrgaInformationsProps): ApiRelevantOrganisationInformations {
+    console.log(interalOut.logoUrl)
     return {
         name: interalOut.name,
         description: interalOut.description,
@@ -240,7 +242,7 @@ function convertInternalTypeToAPIType(interalOut: OrgaInformationsProps): ApiRel
         memberCount: interalOut.numbPers === '' ? undefined : parseInt(interalOut.numbPers),
         foundingYear: interalOut.founding === '' ? undefined : parseInt(interalOut.founding),
         iconUrl: interalOut.logoUrl,
-        imageUrls: interalOut.imageUrls.length === 0 ? undefined : interalOut.imageUrls,
+        imageUrls: interalOut.imageUrls,
         webPageUrl: interalOut.webpageUrl,
         //donatePageUrl: interalOut.donatePageUrl === '' ? undefined : interalOut.donatePageUrl,
         donatePageUrl: interalOut.donatePageUrl,
@@ -248,14 +250,80 @@ function convertInternalTypeToAPIType(interalOut: OrgaInformationsProps): ApiRel
     }
 }
 
-const SendForm = component$((inputData: { isNew: boolean }) => {
+const SendFormAsNew = component$(() => {
     const context = useContext(FormDataContext)
-    //const updateOrgApiCall = inputData.isNew ? usePostOrganization(convertInternalTypeToAPIType(context)) : usePutOrganization(convertInternalTypeToAPIType(context));
     const updateOrgApiCall = usePostOrganization(convertInternalTypeToAPIType(context))
     return (
         <>
             <Resource value={updateOrgApiCall}
-                onResolved={(response) => <></>} />
+                onResolved={(response) => <ApiResponse
+                    response={response}
+                    on201$={(r) =>
+                        <div class="flex justify-center p-32">
+                            <div class="card bg-base-100 w-96 shadow-xl">
+                                <div class="card-body items-center text-center">
+                                    <h2 class="card-title">Erfolgreich abgesendet!</h2>
+                                    <div class="card-actions">
+                                        <a href="/profile" class="btn btn-primary">Zurück zum Profil</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    defaultError$={(r) =>
+                        <div class="flex justify-center p-32">
+                            <div class="card bg-base-100 w-96 shadow-xl">
+                                <div class="card-body items-center text-center">
+                                    <h2 class="card-title">Ein unerwarteter Fehler ist aufgetreten!</h2>
+                                    <p>Bitte später erneut versuchen.</p>
+                                    <p>Fehlercode: {r}</p>
+                                    <div class="card-actions">
+                                        <a href="/profile" class="btn btn-primary">Zurück zum Profil</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                />} />
+        </>
+    )
+})
+
+const SendFormAsEdit = component$(() => {
+    const context = useContext(FormDataContext)
+    const updateOrgApiCall = usePutOrganization(convertInternalTypeToAPIType(context))
+    return (
+        <>
+            <Resource value={updateOrgApiCall}
+                onResolved={(response) => <ApiResponse
+                    response={response}
+                    on204$={(r) =>
+                        <div class="flex justify-center p-32">
+                            <div class="card bg-base-100 w-96 shadow-xl">
+                                <div class="card-body items-center text-center">
+                                    <h2 class="card-title">Erfolgreich editiert!</h2>
+                                    <div class="card-actions">
+                                        <a href="/profile" class="btn btn-primary">Zurück zum Profil</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    defaultError$={(r) =>
+                        <div class="flex justify-center p-32">
+                            <div class="card bg-base-100 w-96 shadow-xl">
+                                <div class="card-body items-center text-center">
+                                    <h2 class="card-title">Ein unerwarteter Fehler ist aufgetreten!</h2>
+                                    <p>Bitte versuchen Sie es später erneut.</p>
+                                    <p>Fehlercode: {r}</p>
+                                    <div class="card-actions">
+                                        <a href="/profile" class="btn btn-primary">Zurück zum Profil</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                />} />
         </>
     )
 })
@@ -298,7 +366,8 @@ export const Vereinsignup = component$((inputData: { orgaData: ApiRelevantOrgani
                         {position.value === 1 && <Vereinstags data={inputData.data} />}
                         {position.value === 2 && <ImageStack />}
                         {position.value === 3 && <Overview />}
-                        {position.value === 4 && <SendForm isNew={isNew} />}
+                        {position.value === 4 && isNew && <SendFormAsNew />}
+                        {position.value === 4 && !isNew && <SendFormAsEdit />}
                     </div>
                     <div class="bottom-0 flex flex-col justify-center items-center gap-4">
                         {

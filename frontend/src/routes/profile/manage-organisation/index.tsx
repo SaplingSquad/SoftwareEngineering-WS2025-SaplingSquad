@@ -120,7 +120,7 @@ export default component$(() => {
                         onResolved={(response) => (
                             <ApiResponse
                                 response={response}
-                                on200$={(r) => <div><p>200</p><Vereinsignup orgaData={emptyOrga} data={vereintag} /></div>}
+                                on200$={(r) => <div><p>200</p><Vereinsignup orgaData={r} data={vereintag} /></div>}
                                 on401$={() => <div><p>401</p><Vereinsignup orgaData={emptyOrga} data={vereintag} /></div>}
                                 on404$={() => <div><p>404</p><Vereinsignup orgaData={emptyOrga} data={vereintag} /></div>}
                                 on500$={() => <div><p>500</p><Vereinsignup orgaData={emptyOrga} data={vereintag} /></div>}
