@@ -281,7 +281,7 @@ const Overview = component$(() => {
                 </div>
                 <div>
                     {JSON.stringify(context)}
-                    {JSON.stringify(convertInternalTypeToAPIProjectType(1, context))}
+                    {JSON.stringify(convertInternalTypeToAPIProjectType(context))}
                 </div>
             </div>
         </>
@@ -290,31 +290,9 @@ const Overview = component$(() => {
 
 )
 
-const SendFormAsNew = component$((inputData: { orgaId: number }) => {
+const SendFormAsNew = component$(() => {
     const context = useContext(FormDataContext)
-    const noId = (({ id, ...o }) => o)(convertInternalTypeToAPIProjectType(inputData.orgaId, context))
-    const inputTest = {
-        "orgaId": 1,
-        "name": "Great Green Wall",
-        "description": "The Great Green Wall is ...",
-        "dateFrom": "2024-12",
-        "dateTo": "2025-01",
-        "iconUrl": "path/to/icon/url.pic",
-        "imageUrls": [
-            "path/to/image/url.pic"
-        ],
-        "webPageUrl": "path/to/great/green/wall.com",
-        "donatePageUrl": "path/to/great/green/wall/donation/link.com",
-        "coordinates": [
-            -76.53063297271729,
-            39.18174077994108
-        ],
-        "tags": [
-            1,
-            4,
-            5
-        ]
-    }
+    const noId = (({ id, ...o }) => o)(convertInternalTypeToAPIProjectType(context))
     const updateProjectApiCall = usePostProject(noId)
     return (
         <>
@@ -352,9 +330,9 @@ const SendFormAsNew = component$((inputData: { orgaId: number }) => {
     )
 })
 
-const SendFormAsEdit = component$((inputData: { orgaId: number }) => {
+const SendFormAsEdit = component$(() => {
     const context = useContext(FormDataContext)
-    const updateProjectApiCall = usePutProject(convertInternalTypeToAPIProjectType(inputData.orgaId, context))
+    const updateProjectApiCall = usePutProject(convertInternalTypeToAPIProjectType(context))
     return (
         <>
             <Resource value={updateProjectApiCall}
@@ -391,11 +369,11 @@ const SendFormAsEdit = component$((inputData: { orgaId: number }) => {
     )
 })
 
-function convertInternalTypeToAPIProjectType(orgaId: number, interalOut: ProjectInformationProps): ApiRelevantProjectInformations {
+function convertInternalTypeToAPIProjectType(interalOut: ProjectInformationProps): ApiRelevantProjectInformations {
     return {
         name: interalOut.name,
         id: interalOut.id,
-        orgaId: orgaId,
+        orgaId: 1, //will be set by backend
         description: interalOut.description,
         coordinates: [interalOut.location.lng, interalOut.location.lat],
         iconUrl: interalOut.logoUrl,
@@ -408,7 +386,7 @@ function convertInternalTypeToAPIProjectType(orgaId: number, interalOut: Project
     }
 }
 
-export const ProjectCreation = component$((inputData: { orga: { id: number }, selProject: number, projects: ApiRelevantProjectInformations[] }) => {
+export const ProjectCreation = component$((inputData: { selProject: number, projects: ApiRelevantProjectInformations[] }) => {
     /*const projectData = {
         name: "Great Green Wall",
         description: "The Great Green Wall is",
@@ -431,7 +409,6 @@ export const ProjectCreation = component$((inputData: { orga: { id: number }, se
 
     //Api call gives all Projects. We are only interested in the selected one
 
-    const orgaId = inputData.orga.id
 
     const emptyProject: ProjectInformationProps = {
         name: "",
@@ -475,8 +452,8 @@ export const ProjectCreation = component$((inputData: { orga: { id: number }, se
                         {position.value === 1 && <Projekttags tags={tagsNameMapping} />}
                         {position.value === 2 && <ImageStack />}
                         {position.value === 3 && <Overview />}
-                        {position.value === 4 && isNew && <SendFormAsNew orgaId={orgaId} />}
-                        {position.value === 4 && !isNew && <SendFormAsEdit orgaId={orgaId} />}
+                        {position.value === 4 && isNew && <SendFormAsNew />}
+                        {position.value === 4 && !isNew && <SendFormAsEdit />}
                     </div>
                     <div class="bottom-0 flex flex-col justify-center items-center gap-4">
                         {

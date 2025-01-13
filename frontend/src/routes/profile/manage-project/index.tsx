@@ -23,28 +23,20 @@ export default component$(() => {
             </div>
             <div>
                 <Resource
-                    value={orgaRequest}
-                    onResolved={(response) => (
+                    value={orgaProjectsRequest}
+                    onResolved={(projResponse) => (
                         <ApiResponse
-                            response={response}
-                            on200$={(r) =>
-                                <Resource
-                                    value={orgaProjectsRequest}
-                                    onResolved={(projResponse) => (
-                                        <ApiResponse
-                                            response={projResponse}
-                                            on200$={(projR) => <ProjectCreation orga={r} selProject={selectedProject} projects={projR} />}
-                                            on401$={() => "Token Expired. Please login again."}
-                                            on404$={() => <ProjectCreation orga={r} selProject={selectedProject} projects={[]} />}
-                                            defaultError$={(r) => r}
-                                        />
-                                    )}
-                                />
-                            }
+                            response={projResponse}
+                            on200$={(projR) => <ProjectCreation selProject={selectedProject} projects={projR} />}
+                            on401$={() => "Token Expired. Please login again."}
+                            on404$={() => <ProjectCreation selProject={selectedProject} projects={[]} />}
                             defaultError$={(r) => r}
                         />
                     )}
                 />
+
+
+
             </div>
         </>
     )
