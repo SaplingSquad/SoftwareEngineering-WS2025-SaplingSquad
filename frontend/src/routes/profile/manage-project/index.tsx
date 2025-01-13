@@ -1,11 +1,51 @@
-import { component$, useStore, } from "@builder.io/qwik";
+import { component$, Resource, useStore, } from "@builder.io/qwik";
+import { routeLoader$ } from "@builder.io/qwik-city";
+import { requestHandler } from "@builder.io/qwik-city/middleware/request-handler";
+import { useGetOrganizationSelf, useGetProjectsForOrganizationSelf } from "~/api/api_hooks.gen";
+import { ApiResponse } from "~/components/api";
 import { ProjectCreation } from "~/components/profile/manage-project";
 import type { ProfileProjectsProps } from "~/components/profile/profile";
 
+export const getUrlParams = routeLoader$((requestEvent) => {
+    return requestEvent.url.toString()
+});
+
 export default component$(() => {
+    const url = getUrlParams();
+    const urlparam = (new URL(url.value)).searchParams.get('selproj');
+    const selectedProject = urlparam ? parseInt(urlparam) : -1;
+    const orgaProjectsRequest = useGetProjectsForOrganizationSelf();
+    const orgaRequest = useGetOrganizationSelf();
     return (
         <>
-            <ProjectCreation />
+            <div>
+                {selectedProject}
+            </div>
+            <div>
+                <Resource
+                    value={orgaRequest}
+                    onResolved={(response) => (
+                        <ApiResponse
+                            response={response}
+                            on200$={(r) =>
+                                <Resource
+                                    value={orgaProjectsRequest}
+                                    onResolved={(projResponse) => (
+                                        <ApiResponse
+                                            response={projResponse}
+                                            on200$={(projR) => <ProjectCreation orga={r} selProject={selectedProject} projects={projR} />}
+                                            on401$={() => "Token Expired. Please login again."}
+                                            on404$={() => <ProjectCreation orga={r} selProject={selectedProject} projects={[]} />}
+                                            defaultError$={(r) => r}
+                                        />
+                                    )}
+                                />
+                            }
+                            defaultError$={(r) => r}
+                        />
+                    )}
+                />
+            </div>
         </>
     )
 })

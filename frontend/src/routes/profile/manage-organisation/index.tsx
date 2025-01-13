@@ -15,78 +15,6 @@ import { Vereinsignup, Badge } from "~/components/profile/manage-organisation";
 import { ApiRelevantOrganisationInformations, UserProfile, VereinProfile } from "~/components/profile/profile";
 import { useSession } from "~/routes/plugin@auth";
 
-const data: Badge[] = [
-    { title: "Kinder", answer: false },
-    { title: "Natur", answer: false },
-    { title: "Wilderei", answer: false },
-    { title: "Pandas", answer: false },
-    { title: "Löwen", answer: false },
-    { title: "Kinder", answer: false },
-    { title: "Natur", answer: false },
-    { title: "Wilderei", answer: false },
-    { title: "Pandas", answer: false },
-    { title: "Löwen", answer: false },
-    { title: "Kinder", answer: false },
-    { title: "Natur", answer: false },
-    { title: "Wilderei", answer: false },
-    { title: "Pandas", answer: false },
-    { title: "Löwen", answer: false },
-    { title: "Kinder", answer: false },
-    { title: "Natur", answer: false },
-    { title: "Wilderei", answer: false },
-    { title: "Pandas", answer: false },
-    { title: "Löwen", answer: false },
-    { title: "Kinder", answer: false },
-    { title: "Natur", answer: false },
-    { title: "Wilderei", answer: false },
-    { title: "Pandas", answer: false },
-    { title: "Löwen", answer: false },
-    { title: "Kinder", answer: false },
-    { title: "Natur", answer: false },
-    { title: "Wilderei", answer: false },
-    { title: "Pandas", answer: false },
-    { title: "Löwen", answer: false },
-    { title: "Kinder", answer: false },
-    { title: "Natur", answer: false },
-    { title: "Wilderei", answer: false },
-    { title: "Pandas", answer: false },
-    { title: "Löwen", answer: false },
-    { title: "Kinder", answer: false },
-    { title: "Natur", answer: false },
-    { title: "Wilderei", answer: false },
-    { title: "Pandas", answer: false },
-    { title: "Löwen", answer: false },
-    { title: "Kinder", answer: false },
-    { title: "Natur", answer: false },
-    { title: "Wilderei", answer: false },
-    { title: "Pandas", answer: false },
-    { title: "Löwen", answer: false },
-    { title: "Kinder", answer: false },
-    { title: "Natur", answer: false },
-    { title: "Wilderei", answer: false },
-    { title: "Pandas", answer: false },
-    { title: "Löwen", answer: false },
-    { title: "Kinder", answer: false },
-    { title: "Natur", answer: false },
-    { title: "Wilderei", answer: false },
-    { title: "Pandas", answer: false },
-    { title: "Löwen", answer: false },
-    { title: "Kinder", answer: false },
-    { title: "Natur", answer: false },
-    { title: "Wilderei", answer: false },
-    { title: "Pandas", answer: false },
-    { title: "Löwen", answer: false },
-    { title: "Kinder", answer: false },
-    { title: "Natur", answer: false },
-    { title: "Wilderei", answer: false },
-    { title: "Pandas", answer: false },
-    { title: "Löwen", answer: false },
-    { title: "Kinder", answer: false },
-    { title: "Natur", answer: false },
-    { title: "Wilderei", answer: false },
-    { title: "Pandas", answer: false },
-    { title: "Löwen", answer: false },
-]
 
 export default component$(() => {
 
@@ -94,8 +22,6 @@ export default component$(() => {
     const useaccType = useAccountType(session);
 
     const orgaRequest = useGetOrganizationSelf();
-
-    const vereintag = useStore(data);
 
     const emptyOrga: ApiRelevantOrganisationInformations =
     {
@@ -120,10 +46,10 @@ export default component$(() => {
                         onResolved={(response) => (
                             <ApiResponse
                                 response={response}
-                                on200$={(r) => <div><p>200</p><Vereinsignup orgaData={r} data={vereintag} /></div>}
-                                on401$={() => <div><p>401</p><Vereinsignup orgaData={emptyOrga} data={vereintag} /></div>}
-                                on404$={() => <div><p>404</p><Vereinsignup orgaData={emptyOrga} data={vereintag} /></div>}
-                                on500$={() => <div><p>500</p><Vereinsignup orgaData={emptyOrga} data={vereintag} /></div>}
+                                on200$={(r) => <div class="h-3/6"><p>200</p><Vereinsignup orgaData={r} /></div>}
+                                on401$={() => <div class="h-3/6"><p>401</p><Vereinsignup orgaData={emptyOrga} /></div>}
+                                on404$={() => <div class="h-3/6"><p>404</p><Vereinsignup orgaData={emptyOrga} /></div>}
+                                on500$={() => <div class="h-3/6"><p>500</p><Vereinsignup orgaData={emptyOrga} /></div>}
                                 defaultError$={(r) => r}
                             />
                         )}
@@ -143,16 +69,5 @@ export default component$(() => {
                     </div>
                 </div>
             </>
-    )
-})
-
-export const old = component$(() => {
-    const vereintag = useStore(data);
-    return (
-        <>
-            <div class="h-3/6">
-                {/*<Vereinsignup orgaData={emptyOrga} data={vereintag} />*/}
-            </div>
-        </>
     )
 })

@@ -4,8 +4,11 @@ import { HiUserCircleOutline, HiPlusCircleSolid, HiCog6ToothOutline, HiTrashOutl
 import { LogoutParamsForm } from "../auth/logout";
 import { ProfileImage } from "./utils";
 import { isAccTypeOrg, useAccountType } from "~/auth/useauthheader";
+import { getProjectsForOrganizationSelf } from "~/api/api_methods.gen";
 
 const OrgaProfileDataContext = createContextId<OrgaInformationsProps>("verein-profile-context")
+
+const OrgaProjectDataContext = createContextId<ProjectInformationProps[]>("verein-project-context")
 
 //Api Types
 export type ApiRelevantOrganisationInformations = {
@@ -19,6 +22,21 @@ export type ApiRelevantOrganisationInformations = {
     memberCount?: number | undefined;
     imageUrls?: string[] | undefined;
     donatePageUrl?: string | undefined;
+}
+
+export type ApiRelevantProjectInformations = {
+    name: string;
+    id: number;
+    tags: number[];
+    description: string;
+    iconUrl: string;
+    coordinates: number[];
+    orgaId: number;
+    imageUrls?: string[] | undefined;
+    webPageUrl?: string | undefined;
+    donatePageUrl?: string | undefined;
+    dateFrom?: string | undefined;
+    dateTo?: string | undefined;
 }
 
 //Used Types
@@ -52,9 +70,11 @@ export type OrgaInformationsProps = {
 };
 
 export type ProjectInformationProps = {
-    name: string | null | undefined;
+    name: string;
+    id: number;
     description: string;
     location: InputMarkerLocation;
+    logoUrl: string;
     dateFrom: ProjectDate;
     dateTo: ProjectDate;
     imageUrls: string[];
@@ -63,19 +83,20 @@ export type ProjectInformationProps = {
     tags: number[];
 }
 
-const ProjectCard = component$((props: { p: ProfileProjectsProps }) => {
+const ProjectCard = component$((props: { p: ProjectInformationProps }) => {
+    const refURL = './manage-project?selproj=' + props.p.id.toString()
     return (
         <>
             <div class="card bg-base-100 w-96 shadow-xl">
                 <div class="card-body">
-                    <h2 class="card-title">{props.p.title}</h2>
-                    <p>{props.p.text}</p>
+                    <h2 class="card-title">{props.p.name}</h2>
+                    <p>{props.p.description}</p>
                     <div class="card-actions justify-end">
-                        <button class="btn btn-primary">Bearbeiten
+                        <a href={refURL} class="btn btn-primary">Bearbeiten
                             <div class="text-2xl">
                                 <HiCog6ToothOutline />
                             </div>
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -122,7 +143,7 @@ const ProfileInformation = component$((inputData: { profiledata: Readonly<Signal
     )
 })
 
-const ProjectManagement = component$((inputData: { data: ProfileProjectsProps[] }) => {
+const ProjectManagement = component$((inputData: { data: ProjectInformationProps[] }) => {
     return (
         <>
             <div class="card bg-base-200 p-4">
@@ -211,6 +232,7 @@ const VereinDummy = component$(() => {
 
 const VereinInfoProjects = component$((inputData: { projectData: ProfileProjectsProps[] }) => {
     const context = useContext(OrgaProfileDataContext)
+    const contextProject = useContext(OrgaProjectDataContext)
     return (
         context.name === ""
             ?
@@ -252,7 +274,7 @@ const VereinInfoProjects = component$((inputData: { projectData: ProfileProjects
                         <div class="card bg-base-200 rounded-box place-items-stretch w-full">
                             <Vereinsinfo />
                         </div>
-                        <ProjectManagement data={inputData.projectData} />
+                        <ProjectManagement data={contextProject} />
                     </div>
                 </div>
             </>
@@ -277,48 +299,39 @@ export function convertAPITypeToInternalType(apiOut: ApiRelevantOrganisationInfo
         numbPers: apiOut.memberCount ? apiOut.memberCount.toString() : '',
         founding: apiOut.foundingYear ? apiOut.foundingYear.toString() : '',
         logoUrl: apiOut.iconUrl,
-        imageUrls: apiOut.imageUrls ? apiOut.imageUrls : ["test_image.jpg"],
+        imageUrls: apiOut.imageUrls ? apiOut.imageUrls : [],
         webpageUrl: apiOut.webPageUrl,
         donatePageUrl: apiOut.donatePageUrl ? apiOut.donatePageUrl : '',
         tags: apiOut.tags
     }
 }
 
-
-export const VereinProfile = component$((inputData: { orgaData: ApiRelevantOrganisationInformations, projectdata: ProfileProjectsProps[], profiledata: Readonly<Signal<null>> | Readonly<Signal<Session>> }) => {
-    const orgaData: OrgaInformationsProps = {
-        name: "New Roots",
-        description: "Der New Roots e.V. ist eine Initiative von Freunden aus München, die sich gemeinsam der Herausforderung verschrieben haben, bedürftigen Menschen zu helfen. Unser gemeinnütziger Verein wurde mit dem klaren Ziel gegründet, Kindern in Kenia ein sicheres Zuhause zu bieten, regelmäßige Mahlzeiten zu gewährleisten und ihnen den Zugang zu Bildung zu ermöglichen.",
-        location: { lng: 20, lat: 20 },
-        numbPers: "12",
-        founding: "2016",
-        logoUrl: "https://lirp.cdn-website.com/58002456/dms3rep/multi/opt/Logo_w_150ppi-134w.png",
-        imageUrls: [
-            "https://lirp.cdn-website.com/58002456/dms3rep/multi/opt/PHOTO-2024-10-26-15-29-15-600h.jpg",
-            "https://img.daisyui.com/images/stock/photo-1565098772267-60af42b81ef2.webp",
-            "https://img.daisyui.com/images/stock/photo-1572635148818-ef6fd45eb394.webp",
-            "https://img.daisyui.com/images/stock/photo-1494253109108-2e30c049369b.webp",
-            "https://img.daisyui.com/images/stock/photo-1550258987-190a2d41a8ba.webp"
-        ],
-        webpageUrl: "https://www.new-roots.de/#Listen",
-        donatePageUrl: "path/to/new/roots/donation/link.de",
-        tags: [1, 2, 3, 4]
+export function convertAPITypeToInternalProjectType(apiOut: ApiRelevantProjectInformations): ProjectInformationProps {
+    return {
+        name: apiOut.name,
+        description: apiOut.description,
+        location: { lng: apiOut.coordinates[0], lat: apiOut.coordinates[1] },
+        logoUrl: apiOut.iconUrl,
+        dateFrom: apiOut.dateFrom ? { mnth: parseInt(apiOut.dateFrom.slice(5, 7)), year: parseInt(apiOut.dateFrom.slice(0, 4)) } : { mnth: 0, year: 0 },
+        dateTo: apiOut.dateTo ? { mnth: parseInt(apiOut.dateTo.slice(5, 7)), year: parseInt(apiOut.dateTo.slice(0, 4)) } : { mnth: 0, year: 0 },
+        imageUrls: apiOut.imageUrls ? apiOut.imageUrls : [],
+        webpageUrl: apiOut.webPageUrl ? apiOut.webPageUrl : '',
+        donatePageUrl: apiOut.donatePageUrl ? apiOut.donatePageUrl : '',
+        tags: apiOut.tags,
+        id: apiOut.id
     }
+}
 
-    const orgaDataEmpty: OrgaInformationsProps = {
-        name: "",
-        description: "",
-        location: { lng: 0, lat: 0 },
-        numbPers: "",
-        founding: "",
-        logoUrl: "",
-        imageUrls: [""],
-        webpageUrl: "",
-        donatePageUrl: "",
-        tags: []
-    }
+export const VereinProfile = component$((inputData: {
+    orgaData: ApiRelevantOrganisationInformations,
+    projectsData: ApiRelevantProjectInformations[],
+    projectdata: ProfileProjectsProps[],
+    profiledata: Readonly<Signal<null>> | Readonly<Signal<Session>>
+}) => {
 
     const orgaDataTransfer: OrgaInformationsProps = convertAPITypeToInternalType(inputData.orgaData);
+
+    const orgaProjectDataTransfer: ProjectInformationProps[] = inputData.projectsData.map((e, i) => convertAPITypeToInternalProjectType(e))
 
     const orgaProjects: ProjectInformationProps[] =
         [
@@ -338,6 +351,8 @@ export const VereinProfile = component$((inputData: { orgaData: ApiRelevantOrgan
                 webpageUrl: "https://www.new-roots.de/#Listen",
                 donatePageUrl: "path/to/new/roots/donation/link.de",
                 tags: [1, 2, 3, 4],
+                logoUrl: "",
+                id: 1
             },
             {
                 name: "Great Green Wall 2",
@@ -355,11 +370,15 @@ export const VereinProfile = component$((inputData: { orgaData: ApiRelevantOrgan
                 webpageUrl: "https://www.new-roots.de/#Listen",
                 donatePageUrl: "path/to/new/roots/donation/link.de",
                 tags: [1, 2, 3, 4],
+                logoUrl: "",
+                id: 2
             }
         ]
 
-    const store = useStore<OrgaInformationsProps>(orgaDataTransfer)
-    useContextProvider(OrgaProfileDataContext, store)
+    const orgaStore = useStore<OrgaInformationsProps>(orgaDataTransfer)
+    useContextProvider(OrgaProfileDataContext, orgaStore)
+    const projectsStore = useStore<ProjectInformationProps[]>(orgaProjectDataTransfer)
+    useContextProvider(OrgaProjectDataContext, projectsStore)
     return (
         <>
             <div class="grid grid-rows-4 grid-cols-10 gap-4 p-5">

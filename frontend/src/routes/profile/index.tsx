@@ -2,14 +2,14 @@ import { component$, createContextId, Resource, Signal, useComputed$, useContext
 import { UserProfile, VereinProfile } from "~/components/profile/profile";
 import type { ApiRelevantOrganisationInformations, OrgaInformationsProps, ProfileProjectsProps } from "~/components/profile/profile";
 import { useSession } from "../plugin@auth";
-import { getAccountType, isAccTypeOrg, isAccTypeUser, useAccountType } from "~/auth/useauthheader";
+import { getAccountType, isAccTypeOrg, isAccTypeUser, useAccountType, useAuthHeader } from "~/auth/useauthheader";
 import { LoginOverviewParamsForm } from "~/components/auth/login";
 import { routeLoader$ } from "@builder.io/qwik-city";
 import { api } from "~/api/api_url";
 import { ApiResponse } from "~/components/api";
 import { TestContext } from "node:test";
 import { objectOutputType } from "zod";
-import { useGetOrganizationSelf } from "~/api/api_hooks.gen";
+import { useGetOrganizationSelf, useGetProjectsForOrganizationSelf } from "~/api/api_hooks.gen";
 
 const DEMO_IMAGE = "https://picsum.photos/300";
 
@@ -32,6 +32,8 @@ export default component$(() => {
 
     //const questionRequest = useGetQuestionById({ questionId: numbiii })
     const orgaRequest = useGetOrganizationSelf();
+
+    const orgaProjectsRequest = useGetProjectsForOrganizationSelf();
 
     const emptyOrga: ApiRelevantOrganisationInformations =
     {
@@ -81,10 +83,28 @@ export default component$(() => {
                             onResolved={(response) => (
                                 <ApiResponse
                                     response={response}
-                                    on200$={(r) => <div><p>Success {JSON.stringify(r)}</p><VereinProfile orgaData={r} projectdata={store} profiledata={session} /></div>}
-                                    on401$={() => <div><p>401</p><VereinProfile orgaData={emptyOrga} projectdata={store} profiledata={session} /></div>}
-                                    on404$={() => <div><p>404</p><VereinProfile orgaData={emptyOrga} projectdata={store} profiledata={session} /></div>}
-                                    on500$={() => <div><p>500</p><VereinProfile orgaData={emptyOrga} projectdata={store} profiledata={session} /></div>}
+                                    on200$={(r) =>
+                                        <div>
+                                            <p>
+                                                Success {JSON.stringify(r)}
+                                            </p>
+                                            <Resource
+                                                value={orgaProjectsRequest}
+                                                onResolved={(projResponse) => (
+                                                    <ApiResponse
+                                                        response={projResponse}
+                                                        on200$={(projR) => <div><p>Success {JSON.stringify(projR)}</p><VereinProfile orgaData={r} projectsData={projR} projectdata={store} profiledata={session} /></div>}
+                                                        on401$={() => "Token Expired. Please login again."}
+                                                        on404$={() => <div><p>404</p><VereinProfile orgaData={r} projectsData={[]} projectdata={store} profiledata={session} /></div>}
+                                                        defaultError$={(r) => r}
+                                                    />
+                                                )}
+                                            />
+                                        </div>
+                                    }
+                                    on401$={() => <div><p>401</p><VereinProfile orgaData={emptyOrga} projectsData={[]} projectdata={store} profiledata={session} /></div>}
+                                    on404$={() => <div><p>404</p><VereinProfile orgaData={emptyOrga} projectsData={[]} projectdata={store} profiledata={session} /></div>}
+                                    on500$={() => <div><p>500</p><VereinProfile orgaData={emptyOrga} projectsData={[]} projectdata={store} profiledata={session} /></div>}
                                     defaultError$={(r) => r}
                                 />
                             )}

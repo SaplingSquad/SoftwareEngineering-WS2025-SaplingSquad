@@ -334,25 +334,7 @@ const SendFormAsEdit = component$(() => {
     )
 })
 
-export const Vereinsignup = component$((inputData: { orgaData: ApiRelevantOrganisationInformations, data: Badge[] }) => {
-    const orgaData: OrgaInformationsProps = {
-        name: "New Roots",
-        description: "Der New Roots e.V. ist eine Initiative von Freunden aus München, die sich gemeinsam der Herausforderung verschrieben haben, bedürftigen Menschen zu helfen. Unser gemeinnütziger Verein wurde mit dem klaren Ziel gegründet, Kindern in Kenia ein sicheres Zuhause zu bieten, regelmäßige Mahlzeiten zu gewährleisten und ihnen den Zugang zu Bildung zu ermöglichen.",
-        location: { lng: 20, lat: 20 },
-        numbPers: "12",
-        founding: "2016",
-        logoUrl: "https://lirp.cdn-website.com/58002456/dms3rep/multi/opt/Logo_w_150ppi-134w.png",
-        imageUrls: [
-            "https://lirp.cdn-website.com/58002456/dms3rep/multi/opt/PHOTO-2024-10-26-15-29-15-600h.jpg",
-            "https://img.daisyui.com/images/stock/photo-1565098772267-60af42b81ef2.webp",
-            "https://img.daisyui.com/images/stock/photo-1572635148818-ef6fd45eb394.webp",
-            "https://img.daisyui.com/images/stock/photo-1494253109108-2e30c049369b.webp",
-            "https://img.daisyui.com/images/stock/photo-1550258987-190a2d41a8ba.webp"
-        ],
-        webpageUrl: "https://www.new-roots.de/#Listen",
-        donatePageUrl: "path/to/new/roots/donation/link.de",
-        tags: [1, 2, 3, 4]
-    }
+export const Vereinsignup = component$((inputData: { orgaData: ApiRelevantOrganisationInformations }) => {
 
     const isNew = inputData.orgaData.name === ""
 
@@ -361,7 +343,7 @@ export const Vereinsignup = component$((inputData: { orgaData: ApiRelevantOrgani
     const position = useSignal(0);
     const store = useStore<OrgaInformationsProps>(orgaDataTransfer)
 
-    const tagsNameMapping = [
+    const tagsNameMapping = [ //Replace with API Call in Vereinstags call 
         { id: 1, name: "Kinder" },
         { id: 2, name: "Frauen" },
         { id: 3, name: "Umwelt" },

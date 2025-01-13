@@ -1,8 +1,10 @@
-import { ClassList, component$, createContextId, JSXOutput, Signal, useComputed$, useContext, useContextProvider, useSignal, useStore } from "@builder.io/qwik";
+import { ClassList, component$, createContextId, JSXOutput, Resource, Signal, useComputed$, useContext, useContextProvider, useSignal, useStore } from "@builder.io/qwik";
 import { HiStarOutline, HiNoSymbolOutline, HiChevronRightOutline, HiChevronLeftOutline, HiInformationCircleOutline, HiPlusOutline, HiCalendarDaysOutline, HiUserGroupOutline, HiCog6ToothOutline, HiLinkOutline, HiBanknotesOutline, HiTrashOutline, HiTrashSolid } from "@qwikest/icons/heroicons";
 import { MapLocationInput } from "./utils";
-import { OrgaInformationsProps, ProjectInformationProps } from "./profile";
+import { ApiRelevantOrganisationInformations, ApiRelevantProjectInformations, convertAPITypeToInternalProjectType, OrgaInformationsProps, ProjectInformationProps } from "./profile";
 import { Form } from "@builder.io/qwik-city";
+import { ApiResponse } from "../api";
+import { usePostOrganization, usePostProject, usePutProject } from "~/api/api_hooks.gen";
 
 const FormDataContext = createContextId<ProjectInformationProps>("project-context")
 
@@ -24,7 +26,7 @@ const ChooseOption = component$((inputData: { index: number }) => {
     )
 })
 
-const Vereinsdaten = component$(() => {
+const Projektdaten = component$(() => {
     const context = useContext(FormDataContext)
     return (
         <>
@@ -131,24 +133,30 @@ const Vereinsdaten = component$(() => {
     )
 })
 
-const Vereinstags = component$((inputData: { data: Badge[] }) => {
-    const store = useStore({ inputData })
+const Projekttags = component$((inputData: { tags: { id: number, name: string }[] }) => {
+    const context = useContext(FormDataContext)
     return (
         <>
-            <p>Vereinstags</p>
+            <p>Projekttags</p>
             <div class="flex flex-wrap justify-around grid-cols-3 grid gap-4  mb-6">
-                {store.inputData.data.map((item, idx: number) => (
-                    <SingleVereinstag key={idx} b={item} />
+                {inputData.tags.map((item, idx: number) => (
+                    <SingleProjekttag key={idx} tag={item} />
                 ))}
             </div>
         </>
     )
 })
 
-const SingleVereinstag = component$((props: { b: Badge }) => {
+const SingleProjekttag = component$((prop: { tag: { id: number, name: string } }) => {
+    const context = useContext(FormDataContext)
+    const isCurrSel = context.tags.includes(prop.tag.id)
     return (
         <>
-            <div class={"btn btn-sm " + answerStyles.get(props.b.answer)!} onClick$={() => (props.b.answer = !props.b.answer)}>{props.b.title}</div>
+            <div class={"btn btn-sm " + answerStyles.get(isCurrSel)} onClick$={() => {
+                { isCurrSel && (context.tags = context.tags.filter((e, i) => e !== prop.tag.id)) };
+                { !isCurrSel && (context.tags.push(prop.tag.id)) }
+            }
+            }>{prop.tag.name}</div>
         </>
     )
 })
@@ -271,6 +279,10 @@ const Overview = component$(() => {
                         <MapLocationInput class="h-[30rem] w-[40rem]" location={context.location} />
                     </figure>
                 </div>
+                <div>
+                    {JSON.stringify(context)}
+                    {JSON.stringify(convertInternalTypeToAPIProjectType(1, context))}
+                </div>
             </div>
         </>
     )
@@ -278,8 +290,126 @@ const Overview = component$(() => {
 
 )
 
-export const ProjectCreation = component$(() => {
-    const projectData = {
+const SendFormAsNew = component$((inputData: { orgaId: number }) => {
+    const context = useContext(FormDataContext)
+    const noId = (({ id, ...o }) => o)(convertInternalTypeToAPIProjectType(inputData.orgaId, context))
+    const inputTest = {
+        "orgaId": 1,
+        "name": "Great Green Wall",
+        "description": "The Great Green Wall is ...",
+        "dateFrom": "2024-12",
+        "dateTo": "2025-01",
+        "iconUrl": "path/to/icon/url.pic",
+        "imageUrls": [
+            "path/to/image/url.pic"
+        ],
+        "webPageUrl": "path/to/great/green/wall.com",
+        "donatePageUrl": "path/to/great/green/wall/donation/link.com",
+        "coordinates": [
+            -76.53063297271729,
+            39.18174077994108
+        ],
+        "tags": [
+            1,
+            4,
+            5
+        ]
+    }
+    const updateProjectApiCall = usePostProject(noId)
+    return (
+        <>
+            <Resource value={updateProjectApiCall}
+                onResolved={(response) => <ApiResponse
+                    response={response}
+                    on201$={(r) =>
+                        <div class="flex justify-center p-32">
+                            <div class="card bg-base-100 w-96 shadow-xl">
+                                <div class="card-body items-center text-center">
+                                    <h2 class="card-title">Erfolgreich abgesendet!</h2>
+                                    <div class="card-actions">
+                                        <a href="/profile" class="btn btn-primary">Zurück zum Profil</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    defaultError$={(r) =>
+                        <div class="flex justify-center p-32">
+                            <div class="card bg-base-100 w-96 shadow-xl">
+                                <div class="card-body items-center text-center">
+                                    <h2 class="card-title">Ein unerwarteter Fehler ist aufgetreten!</h2>
+                                    <p>Bitte später erneut versuchen.</p>
+                                    <p>Fehlercode: {r}</p>
+                                    <div class="card-actions">
+                                        <a href="/profile" class="btn btn-primary">Zurück zum Profil</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                />} />
+        </>
+    )
+})
+
+const SendFormAsEdit = component$((inputData: { orgaId: number }) => {
+    const context = useContext(FormDataContext)
+    const updateProjectApiCall = usePutProject(convertInternalTypeToAPIProjectType(inputData.orgaId, context))
+    return (
+        <>
+            <Resource value={updateProjectApiCall}
+                onResolved={(response) => <ApiResponse
+                    response={response}
+                    on204$={(r) =>
+                        <div class="flex justify-center p-32">
+                            <div class="card bg-base-100 w-96 shadow-xl">
+                                <div class="card-body items-center text-center">
+                                    <h2 class="card-title">Erfolgreich abgesendet!</h2>
+                                    <div class="card-actions">
+                                        <a href="/profile" class="btn btn-primary">Zurück zum Profil</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    defaultError$={(r) =>
+                        <div class="flex justify-center p-32">
+                            <div class="card bg-base-100 w-96 shadow-xl">
+                                <div class="card-body items-center text-center">
+                                    <h2 class="card-title">Ein unerwarteter Fehler ist aufgetreten!</h2>
+                                    <p>Bitte später erneut versuchen.</p>
+                                    <p>Fehlercode: {r}</p>
+                                    <div class="card-actions">
+                                        <a href="/profile" class="btn btn-primary">Zurück zum Profil</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                />} />
+        </>
+    )
+})
+
+function convertInternalTypeToAPIProjectType(orgaId: number, interalOut: ProjectInformationProps): ApiRelevantProjectInformations {
+    return {
+        name: interalOut.name,
+        id: interalOut.id,
+        orgaId: orgaId,
+        description: interalOut.description,
+        coordinates: [interalOut.location.lng, interalOut.location.lat],
+        iconUrl: interalOut.logoUrl,
+        imageUrls: interalOut.imageUrls,
+        webPageUrl: interalOut.webpageUrl,
+        donatePageUrl: interalOut.donatePageUrl,
+        tags: interalOut.tags,
+        dateFrom: interalOut.dateFrom.year + "-" + String(interalOut.dateFrom.mnth).padStart(2, '0'),
+        dateTo: interalOut.dateTo.year + "-" + String(interalOut.dateTo.mnth).padStart(2, '0'),
+    }
+}
+
+export const ProjectCreation = component$((inputData: { orga: { id: number }, selProject: number, projects: ApiRelevantProjectInformations[] }) => {
+    /*const projectData = {
         name: "Great Green Wall",
         description: "The Great Green Wall is",
         location: { lng: 0, lat: 0 },
@@ -295,20 +425,58 @@ export const ProjectCreation = component$(() => {
         webpageUrl: "https://www.new-roots.de/#Listen",
         donatePageUrl: "path/to/new/roots/donation/link.de",
         tags: [1, 2, 3, 4],
+        id: 2,
+        logoUrl: ""
+    }*/
+
+    //Api call gives all Projects. We are only interested in the selected one
+
+    const orgaId = inputData.orga.id
+
+    const emptyProject: ProjectInformationProps = {
+        name: "",
+        description: "",
+        location: { lng: 0, lat: 0 },
+        dateFrom: { mnth: 0, year: 0 },
+        dateTo: { mnth: 0, year: 0 },
+        imageUrls: [],
+        webpageUrl: "",
+        donatePageUrl: "",
+        tags: [],
+        id: -1,
+        logoUrl: ""
     }
+
+    const tagsNameMapping = [ //Replace with API Call in Projekttags call 
+        { id: 1, name: "Kinder" },
+        { id: 2, name: "Frauen" },
+        { id: 3, name: "Umwelt" },
+        { id: 4, name: "Meere" },
+        { id: 5, name: "Wirtschaft" },
+        { id: 6, name: "Armut" },
+        { id: 7, name: "Hunger" },
+    ]
+
+    const isNew = inputData.selProject === -1
+
+    const projectData = isNew ? emptyProject : convertAPITypeToInternalProjectType(inputData.projects.filter((e, i) => e.id === inputData.selProject)[0])
+
     const position = useSignal(0);
-    const store = useStore<ProjectInformationProps>(projectData)
+    const store = useStore<ProjectInformationProps>(projectData);
     useContextProvider(FormDataContext, store)
     return (
         <>
             <div class="relative flex justify-center">
                 <div class="card bg-base-300 rounded-box place-items-stretch m-4 px-4 py-8 space-y-4 [max-height:90dvh] w-full lg:w-1/3">
-                    <h2 class="card-title px-4">Projekt verwalten</h2>
+                    <h2 class="card-title px-4">{isNew ? "Projekt erstellen" : "Projekt bearbeiten"}</h2>
                     <div class="overflow-y-auto space-y-4 px-4">
-                        {position.value === 0 && <Vereinsdaten />}
-                        {/*position.value === 1 && <Vereinstags data={inputData.data} />*/}
+
+                        {position.value === 0 && <Projektdaten />}
+                        {position.value === 1 && <Projekttags tags={tagsNameMapping} />}
                         {position.value === 2 && <ImageStack />}
                         {position.value === 3 && <Overview />}
+                        {position.value === 4 && isNew && <SendFormAsNew orgaId={orgaId} />}
+                        {position.value === 4 && !isNew && <SendFormAsEdit orgaId={orgaId} />}
                     </div>
                     <div class="bottom-0 flex flex-col justify-center items-center gap-4">
                         {
@@ -322,8 +490,10 @@ export const ProjectCreation = component$(() => {
                                                 <HiCog6ToothOutline />
                                             </div>
                                         </button>
-                                        <a href="../" class="btn btn-primary">Absenden
-                                        </a>
+                                        <button class="btn btn-primary" onClick$={() => {
+                                            position.value = 4
+                                        }}>Absenden
+                                        </button>
                                     </div>
                                 </>
                                 :
