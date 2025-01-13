@@ -11,6 +11,8 @@ const OrgaProfileDataContext = createContextId<OrgaInformationsProps>("verein-pr
 
 const OrgaProjectDataContext = createContextId<ProjectInformationProps[]>("verein-project-context")
 
+const OrgaProjektCurrDel = createContextId<{ currDel: number, currDelAct: boolean }>("verein-project-changed")
+
 //Api Types
 export type ApiRelevantOrganisationInformations = {
     name: string;
@@ -91,39 +93,74 @@ export type ProjectInformationProps = {
 const ProjectCard = component$((props: { p: ProjectInformationProps }) => {
     const refURL = './manage-project?selproj=' + props.p.id.toString()
     const remProjId = useSignal<number>(props.p.id)
+    const projDel = useSignal(true)
     //const removeProjectCall = useDeleteProject({ id: remProjId })
     return (
         <>
             <div class="card bg-base-100 w-96 shadow-xl">
                 <div class="card-body">
                     <h2 class="card-title">{props.p.name}</h2>
+                    <div class="absolute top-0 right-0 dropdown dropdown-left dropdown-end">
+                        <div tabIndex={0} role="button" class="btn btn-ghost btn-circle">
+                            <div class="text-2xl">
+                                <HiEllipsisVerticalOutline />
+                            </div>
+                        </div>
+                        <ul
+                            tabIndex={0}
+                            class="menu menu-sm menu-neutral dropdown-content bg-base-100 rounded-box w-24 p-2 shadow">
+                            <li>
+                                <a onClick$={() => { projDel.value = !projDel.value; console.log(projDel.value) }}>{projDel.value && <ProjectLoeschen />}{!projDel.value && <ProjectZurueck />}</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <ProjectContent del={projDel.value} p={props.p} />
+                </div>
+            </div>
+        </>
+    )
+})
+
+const ProjectZurueck = component$(() => {
+    return (
+        <p>
+            Zurück
+        </p>
+    )
+})
+
+const ProjectLoeschen = component$(() => {
+    return (
+        <p>
+            Löschen
+        </p>
+    )
+})
+
+const ProjectContent = component$((inputData: { del: boolean, p: ProjectInformationProps }) => {
+    const refURL = './manage-project?selproj=' + inputData.p.id.toString()
+    const acceptedDel = useSignal(false)
+    const context = useContext(OrgaProjektCurrDel)
+    if (acceptedDel.value) {
+        useDeleteProject({ id: inputData.p.id });
+    }
+    return (
+        <>
+            {inputData.del &&
+                <>
                     <div class="flex text-lg">
                         <div class="text-2xl">
                             <HiMapPinOutline />
                         </div>
-                        {props.p.regionName}
+                        {inputData.p.regionName}
                     </div>
                     <div class="flex text-lg">
                         <div class="text-2xl">
                             <HiCalendarOutline />
                         </div>
-                        {props.p.dateFrom.mnth}/{props.p.dateFrom.year} - {props.p.dateTo.mnth}/{props.p.dateTo.year}
+                        {inputData.p.dateFrom.mnth}/{inputData.p.dateFrom.year} - {inputData.p.dateTo.mnth}/{inputData.p.dateTo.year}
                     </div>
                     <div class="card-actions justify-end">
-                        <div class="absolute top-0 right-0 dropdown dropdown-end">
-                            <div tabIndex={0} role="button" class="btn btn-ghost btn-circle">
-                                <div class="text-2xl">
-                                    <HiEllipsisVerticalOutline />
-                                </div>
-                            </div>
-                            <ul
-                                tabIndex={0}
-                                class="menu menu-sm menu-neutral dropdown-content bg-base-100 rounded-box w-24 p-2 shadow">
-                                <li>
-                                    <a>Löschen</a>
-                                </li>
-                            </ul>
-                        </div>
 
                         <a href={refURL} class="btn btn-primary join-item">Bearbeiten
                             <div class="text-2xl">
@@ -131,8 +168,22 @@ const ProjectCard = component$((props: { p: ProjectInformationProps }) => {
                             </div>
                         </a>
                     </div>
-                </div>
-            </div>
+                </>
+            }
+            {!inputData.del &&
+                <>
+                    <p class="text-lg">
+                        Wirklich entfernen? Dies kann nicht rückgängig gemacht werden.
+                    </p>
+                    <div class="card-actions justify-end">
+                        <button onClick$={() => { acceptedDel.value = true; context.currDel = inputData.p.id; context.currDelAct = true }} class="btn btn-error">Entfernen
+                            <div class="text-2xl">
+                                <HiTrashSolid />
+                            </div>
+                        </button>
+                    </div>
+                </>
+            }
         </>
     )
 })
@@ -177,6 +228,11 @@ const ProfileInformation = component$((inputData: { profiledata: Readonly<Signal
 })
 
 const ProjectManagement = component$((inputData: { data: ProjectInformationProps[] }) => {
+    const context = useContext(OrgaProjektCurrDel)
+    if (context.currDelAct) {
+        inputData.data = inputData.data.filter((e, i) => e.id !== context.currDel)
+        context.currDelAct = false
+    }
     return (
         <>
             <div class="card bg-base-200 p-4">
@@ -198,17 +254,15 @@ const Vereinsinfo = component$(() => {
     const context = useContext(OrgaProfileDataContext);
     return (
         <>
-            <div class="stats shadow m-4 p-4 space-y-4">
+            <div class="stats shadow m-4 p-4">
                 <div class="stat place-items-center">
                     <div class="stat-title">Gründungsjahr</div>
                     <div class="stat-value text-primary">{context.founding}</div>
                 </div>
-
                 <div class="stat place-items-center">
                     <div class="stat-title">Mitglieder</div>
                     <div class="stat-value text-primary">{context.numbPers}</div>
                 </div>
-
                 <div class="stat place-items-center">
                     <div class="stat-title">Vereinsstandort</div>
                     <div class="stat-value text-primary">{context.regionName}</div>
@@ -268,7 +322,7 @@ const VereinDummy = component$(() => {
     )
 })
 
-const VereinInfoProjects = component$(() => {
+const VereinInfoProjects = component$((inputData: { projectData: ProjectInformationProps[] }) => {
     const context = useContext(OrgaProfileDataContext)
     const contextProject = useContext(OrgaProjectDataContext)
     return (
@@ -312,7 +366,7 @@ const VereinInfoProjects = component$(() => {
                         <div class="card bg-base-200 rounded-box place-items-stretch w-full">
                             <Vereinsinfo />
                         </div>
-                        <ProjectManagement data={contextProject} />
+                        <ProjectManagement data={inputData.projectData} />
                     </div>
                 </div>
             </>
@@ -376,11 +430,12 @@ export const VereinProfile = component$((inputData: {
     useContextProvider(OrgaProfileDataContext, orgaStore)
     const projectsStore = useStore<ProjectInformationProps[]>(orgaProjectDataTransfer)
     useContextProvider(OrgaProjectDataContext, projectsStore)
+    useContextProvider(OrgaProjektCurrDel, { currDelAct: false, currDel: 0 })
     return (
         <>
             <div class="grid grid-rows-4 grid-cols-10 gap-4 p-5">
                 <div class="row-span-3 col-span-8">
-                    <VereinInfoProjects />
+                    <VereinInfoProjects projectData={projectsStore} />
                 </div>
                 <div class="row-span-auto col-span-2">
                     <ProfileInformation profiledata={inputData.profiledata} />
