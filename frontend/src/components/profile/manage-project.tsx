@@ -383,6 +383,7 @@ function convertInternalTypeToAPIProjectType(interalOut: ProjectInformationProps
         tags: interalOut.tags,
         dateFrom: interalOut.dateFrom.year + "-" + String(interalOut.dateFrom.mnth).padStart(2, '0'),
         dateTo: interalOut.dateTo.year + "-" + String(interalOut.dateTo.mnth).padStart(2, '0'),
+        regionName: "" //Will be set by backend
     }
 }
 
@@ -421,7 +422,8 @@ export const ProjectCreation = component$((inputData: { selProject: number, proj
         donatePageUrl: "",
         tags: [],
         id: -1,
-        logoUrl: ""
+        logoUrl: "",
+        regionName: ""
     }
 
     const tagsNameMapping = inputData.tags

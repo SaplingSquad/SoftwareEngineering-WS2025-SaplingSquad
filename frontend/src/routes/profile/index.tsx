@@ -41,7 +41,8 @@ const VereinProfilePage = component$((inputData: { profiledata: Readonly<Signal<
         webPageUrl: "",
         donatePageUrl: "",
         coordinates: [0, 0],
-        tags: []
+        tags: [],
+        regionName: ""
     }
 
     return (

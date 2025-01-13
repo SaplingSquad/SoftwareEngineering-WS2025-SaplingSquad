@@ -1,6 +1,6 @@
 import { Session } from "@auth/qwik";
 import { component$, createContextId, Resource, Signal, useContext, useContextProvider, useSignal, useStore } from "@builder.io/qwik";
-import { HiUserCircleOutline, HiPlusCircleSolid, HiCog6ToothOutline, HiTrashOutline, HiPlusCircleOutline, HiLinkOutline, HiBanknotesOutline, HiTrashSolid, HiEllipsisVerticalOutline } from "@qwikest/icons/heroicons";
+import { HiUserCircleOutline, HiPlusCircleSolid, HiCog6ToothOutline, HiTrashOutline, HiPlusCircleOutline, HiLinkOutline, HiBanknotesOutline, HiTrashSolid, HiEllipsisVerticalOutline, HiMapPinOutline, HiMapOutline, HiCalendarOutline } from "@qwikest/icons/heroicons";
 import { LogoutParamsForm } from "../auth/logout";
 import { ProfileImage } from "./utils";
 import { isAccTypeOrg, useAccountType } from "~/auth/useauthheader";
@@ -23,6 +23,7 @@ export type ApiRelevantOrganisationInformations = {
     memberCount?: number | undefined;
     imageUrls?: string[] | undefined;
     donatePageUrl?: string | undefined;
+    regionName: string;
 }
 
 export type ApiRelevantProjectInformations = {
@@ -38,6 +39,7 @@ export type ApiRelevantProjectInformations = {
     donatePageUrl?: string | undefined;
     dateFrom?: string | undefined;
     dateTo?: string | undefined;
+    regionName: string;
 }
 
 //Used Types
@@ -68,6 +70,7 @@ export type OrgaInformationsProps = {
     webpageUrl: string;
     donatePageUrl: string;
     tags: number[];
+    regionName: string;
 };
 
 export type ProjectInformationProps = {
@@ -82,6 +85,7 @@ export type ProjectInformationProps = {
     webpageUrl: string;
     donatePageUrl: string;
     tags: number[];
+    regionName: string;
 }
 
 const ProjectCard = component$((props: { p: ProjectInformationProps }) => {
@@ -93,7 +97,18 @@ const ProjectCard = component$((props: { p: ProjectInformationProps }) => {
             <div class="card bg-base-100 w-96 shadow-xl">
                 <div class="card-body">
                     <h2 class="card-title">{props.p.name}</h2>
-                    <p>{props.p.description}</p>
+                    <div class="flex text-lg">
+                        <div class="text-2xl">
+                            <HiMapPinOutline />
+                        </div>
+                        {props.p.regionName}
+                    </div>
+                    <div class="flex text-lg">
+                        <div class="text-2xl">
+                            <HiCalendarOutline />
+                        </div>
+                        {props.p.dateFrom.mnth}/{props.p.dateFrom.year} - {props.p.dateTo.mnth}/{props.p.dateTo.year}
+                    </div>
                     <div class="card-actions justify-end">
                         <div class="absolute top-0 right-0 dropdown dropdown-end">
                             <div tabIndex={0} role="button" class="btn btn-ghost btn-circle">
@@ -192,6 +207,11 @@ const Vereinsinfo = component$(() => {
                 <div class="stat place-items-center">
                     <div class="stat-title">Mitglieder</div>
                     <div class="stat-value text-primary">{context.numbPers}</div>
+                </div>
+
+                <div class="stat place-items-center">
+                    <div class="stat-title">Vereinsstandort</div>
+                    <div class="stat-value text-primary">{context.regionName}</div>
                 </div>
             </div>
             <div class="card-actions justify-end mx-4 py-4">
@@ -320,7 +340,8 @@ export function convertAPITypeToInternalType(apiOut: ApiRelevantOrganisationInfo
         imageUrls: apiOut.imageUrls ? apiOut.imageUrls : [],
         webpageUrl: apiOut.webPageUrl,
         donatePageUrl: apiOut.donatePageUrl ? apiOut.donatePageUrl : '',
-        tags: apiOut.tags
+        tags: apiOut.tags,
+        regionName: apiOut.regionName
     }
 }
 
@@ -336,7 +357,8 @@ export function convertAPITypeToInternalProjectType(apiOut: ApiRelevantProjectIn
         webpageUrl: apiOut.webPageUrl ? apiOut.webPageUrl : '',
         donatePageUrl: apiOut.donatePageUrl ? apiOut.donatePageUrl : '',
         tags: apiOut.tags,
-        id: apiOut.id
+        id: apiOut.id,
+        regionName: apiOut.regionName
     }
 }
 
@@ -349,48 +371,6 @@ export const VereinProfile = component$((inputData: {
     const orgaDataTransfer: OrgaInformationsProps = convertAPITypeToInternalType(inputData.orgaData);
 
     const orgaProjectDataTransfer: ProjectInformationProps[] = inputData.projectsData.map((e, i) => convertAPITypeToInternalProjectType(e))
-
-    const orgaProjects: ProjectInformationProps[] =
-        [
-            {
-                name: "Great Green Wall",
-                description: "The Great Green Wall is",
-                location: { lng: 0, lat: 0 },
-                dateFrom: { mnth: 0, year: 0 },
-                dateTo: { mnth: 0, year: 0 },
-                imageUrls: [
-                    "https://lirp.cdn-website.com/58002456/dms3rep/multi/opt/PHOTO-2024-10-26-15-29-15-600h.jpg",
-                    "https://img.daisyui.com/images/stock/photo-1565098772267-60af42b81ef2.webp",
-                    "https://img.daisyui.com/images/stock/photo-1572635148818-ef6fd45eb394.webp",
-                    "https://img.daisyui.com/images/stock/photo-1494253109108-2e30c049369b.webp",
-                    "https://img.daisyui.com/images/stock/photo-1550258987-190a2d41a8ba.webp"
-                ],
-                webpageUrl: "https://www.new-roots.de/#Listen",
-                donatePageUrl: "path/to/new/roots/donation/link.de",
-                tags: [1, 2, 3, 4],
-                logoUrl: "",
-                id: 1
-            },
-            {
-                name: "Great Green Wall 2",
-                description: "The Great Green Wall 2 is",
-                location: { lng: 0, lat: 0 },
-                dateFrom: { mnth: 0, year: 0 },
-                dateTo: { mnth: 0, year: 0 },
-                imageUrls: [
-                    "https://lirp.cdn-website.com/58002456/dms3rep/multi/opt/PHOTO-2024-10-26-15-29-15-600h.jpg",
-                    "https://img.daisyui.com/images/stock/photo-1565098772267-60af42b81ef2.webp",
-                    "https://img.daisyui.com/images/stock/photo-1572635148818-ef6fd45eb394.webp",
-                    "https://img.daisyui.com/images/stock/photo-1494253109108-2e30c049369b.webp",
-                    "https://img.daisyui.com/images/stock/photo-1550258987-190a2d41a8ba.webp"
-                ],
-                webpageUrl: "https://www.new-roots.de/#Listen",
-                donatePageUrl: "path/to/new/roots/donation/link.de",
-                tags: [1, 2, 3, 4],
-                logoUrl: "",
-                id: 2
-            }
-        ]
 
     const orgaStore = useStore<OrgaInformationsProps>(orgaDataTransfer)
     useContextProvider(OrgaProfileDataContext, orgaStore)

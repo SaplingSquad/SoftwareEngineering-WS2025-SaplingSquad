@@ -36,7 +36,8 @@ export default component$(() => {
         webPageUrl: "",
         donatePageUrl: "",
         coordinates: [0, 0],
-        tags: []
+        tags: [],
+        regionName: ''
     }
 
     return (

@@ -252,7 +252,8 @@ function convertInternalTypeToAPIType(interalOut: OrgaInformationsProps): ApiRel
         webPageUrl: interalOut.webpageUrl,
         //donatePageUrl: interalOut.donatePageUrl === '' ? undefined : interalOut.donatePageUrl,
         donatePageUrl: interalOut.donatePageUrl,
-        tags: interalOut.tags
+        tags: interalOut.tags,
+        regionName: ''
     }
 }
 
