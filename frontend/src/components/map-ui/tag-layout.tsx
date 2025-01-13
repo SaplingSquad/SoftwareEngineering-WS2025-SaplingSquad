@@ -11,7 +11,7 @@ export const layoutTags = function (
 ) {
   const elem = tagContainerRef.value!;
   const classes =
-    "rounded-full border border-primary bg-primary-content px-2 text-primary group-hover:brightness-90".split(
+    "rounded-full border border-primary bg-primary-content px-2 text-primary".split(
       " ",
     );
 

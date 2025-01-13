@@ -21,7 +21,6 @@ import SproutIcon from "/src/images/Sprout_icon.svg?jsx";
 import AllIcon from "/src/images/All_Icon.svg?jsx";
 import { type FilterSettings, Filter } from "../filter";
 import { ProjectLargeInfo } from "./project-largeinfo";
-import { OrganizationShortInfo } from "./organization-shortinfo";
 import {
   organizationBookmarksMockData,
   projectBookmarksMockData,
@@ -30,7 +29,7 @@ import {
 import type { Ranking, SearchInput, SearchOutput } from "./types";
 import { getAnswersFromLocalStorage } from "~/utils";
 import { OrganizationLargeInfo } from "./organization-largeinfo";
-import { ProjectShortInfo } from "./project-shortinfo";
+import { ShortInfo } from "./shortinfo";
 
 enum ResultTab {
   ALL,
@@ -191,25 +190,15 @@ export const MapUI = component$(
                     listExpanded.value ? "h-full" : "h-0",
                   ]}
                 >
-                  {result.value.rankings.map((ranking) =>
-                    ranking.type === "Project" ? (
-                      <ProjectShortInfo
-                        key={"Project_" + ranking.content.id}
-                        project={ranking.content}
-                        onClick={$(() => {
-                          selectedRanking.value = ranking;
-                        })}
-                      />
-                    ) : (
-                      <OrganizationShortInfo
-                        key={"Organization_" + ranking.content.id}
-                        org={ranking.content}
-                        onClick={$(() => {
-                          selectedRanking.value = ranking;
-                        })}
-                      />
-                    ),
-                  )}
+                  {result.value.rankings.map((ranking) => (
+                    <ShortInfo
+                      key={ranking.type + "_" + ranking.content.id}
+                      ranking={ranking}
+                      onClick={$(() => {
+                        selectedRanking.value = ranking;
+                      })}
+                    />
+                  ))}
                 </div>
               </div>
             </div>

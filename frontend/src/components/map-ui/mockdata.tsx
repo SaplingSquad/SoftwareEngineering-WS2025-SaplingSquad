@@ -59,7 +59,7 @@ export const searchOutputMockdata: SearchOutput = {
         foundingYear: 2022,
         memberCount: 7,
         iconUrl:
-          "https://lirp.cdn-website.com/58002456/dms3rep/multi/opt/Logo_w_150ppi-134w.png",
+          "https://lirp.cdn-website.com/58002456/dms3rep/multi/opt/IMG_6945-1920w.jpg",
         imageUrls: ["path/to/image/url.pic"],
         webPageUrl: "path/to/new/roots.de",
         donatePageUrl: "path/to/new/roots/donation/link.de",
@@ -80,7 +80,7 @@ export const searchOutputMockdata: SearchOutput = {
         dateFrom: "2022",
         dateTo: "2026",
         iconUrl:
-          "https://lirp.cdn-website.com/58002456/dms3rep/multi/opt/Logo_w_150ppi-134w.png",
+          "https://lirp.cdn-website.com/58002456/dms3rep/multi/opt/IMG_6945-1920w.jpg",
         imageUrls: [],
         webPageUrl: "",
         donatePageUrl: "",
