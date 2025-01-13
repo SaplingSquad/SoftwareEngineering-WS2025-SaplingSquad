@@ -58,11 +58,16 @@ export type FeatureCollection = {
   }[];
 };
 
-export type Ranking = {
-  type: "Organization" | "Project";
-  content: Organization | Project;
-  percentageMatch: number;
-};
+export type Ranking = (
+  | {
+      type: "Organization";
+      content: Organization;
+    }
+  | {
+      type: "Project";
+      content: Project;
+    }
+) & { percentageMatch: number };
 
 export type SearchOutput = {
   rankings: Ranking[];
