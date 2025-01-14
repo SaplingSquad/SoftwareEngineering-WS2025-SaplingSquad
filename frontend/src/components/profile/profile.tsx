@@ -57,8 +57,8 @@ export type InputMarkerLocation = {
 }
 
 export type ProjectDate = {
-    mnth: number;
-    year: number;
+    mnth: string;
+    year: string;
 }
 
 export type OrgaInformationsProps = {
@@ -159,7 +159,7 @@ const ProjectContent = component$((inputData: { del: boolean, p: ProjectInformat
                         <div class="text-2xl">
                             <HiCalendarOutline />
                         </div>
-                        {inputData.p.dateFrom.mnth}/{inputData.p.dateFrom.year} - {inputData.p.dateTo.mnth}/{inputData.p.dateTo.year}
+                        {inputData.p.dateFrom ? inputData.p.dateFrom.mnth : "--"}/{inputData.p.dateFrom ? inputData.p.dateFrom.year : "--"} - {inputData.p.dateTo ? inputData.p.dateTo.mnth : "--"}/{inputData.p.dateTo ? inputData.p.dateTo.year : "--"}
                     </div>
                     <div class="card-actions justify-end">
 
@@ -402,8 +402,8 @@ export function convertAPITypeToInternalProjectType(apiOut: ApiRelevantProjectIn
         description: apiOut.description,
         location: { lng: apiOut.coordinates[0], lat: apiOut.coordinates[1] },
         logoUrl: apiOut.iconUrl,
-        dateFrom: apiOut.dateFrom ? { mnth: parseInt(apiOut.dateFrom.slice(5, 7)), year: parseInt(apiOut.dateFrom.slice(0, 4)) } : { mnth: 0, year: 0 },
-        dateTo: apiOut.dateTo ? { mnth: parseInt(apiOut.dateTo.slice(5, 7)), year: parseInt(apiOut.dateTo.slice(0, 4)) } : { mnth: 0, year: 0 },
+        dateFrom: apiOut.dateFrom ? { mnth: apiOut.dateFrom.slice(5, 7), year: apiOut.dateFrom.slice(0, 4) } : { mnth: "--", year: "--" },
+        dateTo: apiOut.dateTo ? { mnth: apiOut.dateTo.slice(5, 7), year: apiOut.dateTo.slice(0, 4) } : { mnth: "--", year: "--" },
         imageUrls: apiOut.imageUrls ? apiOut.imageUrls : [],
         webpageUrl: apiOut.webPageUrl ? apiOut.webPageUrl : '',
         donatePageUrl: apiOut.donatePageUrl ? apiOut.donatePageUrl : '',

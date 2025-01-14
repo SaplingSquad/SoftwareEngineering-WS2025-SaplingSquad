@@ -53,23 +53,25 @@ const Projektdaten = component$(() => {
                             <span class="label-text">Projektbeginn</span>
                         </div>
                         <div class="flex">
-                            <select class="select select-bordered select-sm text-xl" onInput$={(_, e) => { context.dateFrom.mnth = parseInt(e.value) }}>
-                                {context.dateFrom.mnth === 0 ?
+                            <select class="select select-bordered select-sm text-xl" onInput$={(_, e) => { context.dateFrom.mnth = e.value }}>
+                                {context.dateFrom.mnth === '--' ?
                                     <option disabled selected>Monat</option>
                                     :
                                     <option disabled selected>{context.dateFrom.mnth}</option>
                                 }
+                                <option>--</option>
                                 {Array.from(Array(12).keys()).map((e, i) =>
                                     <ChooseOption index={e + 1} />)
                                 }
                             </select>
                             <p class="text-xl">/</p>
-                            <select class="select select-bordered select-sm text-xl" onInput$={(_, e) => { context.dateFrom.year = parseInt(e.value) }}>
-                                {context.dateFrom.year === 0 ?
+                            <select class="select select-bordered select-sm text-xl" onInput$={(_, e) => { context.dateFrom.year = e.value }}>
+                                {context.dateFrom.year === '--' ?
                                     <option disabled selected>Jahr</option>
                                     :
                                     <option disabled selected>{context.dateFrom.year}</option>
                                 }
+                                <option>--</option>
                                 {Array.from(Array(101).keys()).map((e, i) =>
                                     <ChooseOption index={e + 1975} />)
                                 }
@@ -83,23 +85,25 @@ const Projektdaten = component$(() => {
                             <span class="label-text">Projektende</span>
                         </div>
                         <div class="flex">
-                            <select class="select select-bordered select-sm text-xl" onInput$={(_, e) => { context.dateTo.mnth = parseInt(e.value) }}>
-                                {context.dateTo.mnth === 0 ?
+                            <select class="select select-bordered select-sm text-xl" onInput$={(_, e) => { context.dateTo.mnth = e.value }}>
+                                {context.dateTo.mnth === '--' ?
                                     <option disabled selected>Monat</option>
                                     :
                                     <option disabled selected>{context.dateTo.mnth}</option>
                                 }
+                                <option>--</option>
                                 {Array.from(Array(12).keys()).map((e, i) =>
                                     <ChooseOption index={e + 1} />)
                                 }
                             </select>
                             <p class="text-xl">/</p>
-                            <select class="select select-bordered select-sm text-xl" onInput$={(_, e) => { context.dateTo.year = parseInt(e.value) }}>
-                                {context.dateTo.year === 0 ?
+                            <select class="select select-bordered select-sm text-xl" onInput$={(_, e) => { context.dateTo.year = e.value }}>
+                                {context.dateTo.year === '--' ?
                                     <option disabled selected>Jahr</option>
                                     :
                                     <option disabled selected>{context.dateTo.year}</option>
                                 }
+                                <option>--</option>
                                 {Array.from(Array(101).keys()).map((e, i) =>
                                     <ChooseOption index={e + 1975} />)
                                 }
@@ -251,14 +255,14 @@ const Overview = component$(() => {
                             <HiCalendarDaysOutline />
                         </div>
                         <div class="stat-title">Seit</div>
-                        <div class="stat-value">{context.dateFrom.mnth}-{context.dateFrom.year}</div>
+                        <div class="stat-value">{context.dateFrom.mnth}/{context.dateFrom.year}</div>
                     </div>
                     <div class="stat">
                         <div class="stat-figure text-secondary text-3xl">
                             <HiUserGroupOutline />
                         </div>
                         <div class="stat-title">Geplant bis</div>
-                        <div class="stat-value">{context.dateTo.mnth}-{context.dateTo.year}</div>
+                        <div class="stat-value">{context.dateTo.mnth}/{context.dateTo.year}</div>
                     </div>
                 </div>
                 <div class="card bg-neutral text-neutral-content w-full p-4">
@@ -381,8 +385,8 @@ function convertInternalTypeToAPIProjectType(interalOut: ProjectInformationProps
         webPageUrl: interalOut.webpageUrl,
         donatePageUrl: interalOut.donatePageUrl,
         tags: interalOut.tags,
-        dateFrom: interalOut.dateFrom.year + "-" + String(interalOut.dateFrom.mnth).padStart(2, '0'),
-        dateTo: interalOut.dateTo.year + "-" + String(interalOut.dateTo.mnth).padStart(2, '0'),
+        dateFrom: (interalOut.dateFrom.year !== '--' && interalOut.dateFrom.mnth !== '--') ? interalOut.dateFrom.year + "-" + String(interalOut.dateFrom.mnth).padStart(2, '0') : undefined,
+        dateTo: (interalOut.dateTo.year !== '--' && interalOut.dateTo.mnth !== '--') ? interalOut.dateTo.year + "-" + String(interalOut.dateTo.mnth).padStart(2, '0') : undefined,
         regionName: "" //Will be set by backend
     }
 }
@@ -415,8 +419,8 @@ export const ProjectCreation = component$((inputData: { selProject: number, proj
         name: "",
         description: "",
         location: { lng: 0, lat: 0 },
-        dateFrom: { mnth: 0, year: 0 },
-        dateTo: { mnth: 0, year: 0 },
+        dateFrom: { mnth: "--", year: "--" },
+        dateTo: { mnth: "--", year: "--" },
         imageUrls: [],
         webpageUrl: "",
         donatePageUrl: "",
