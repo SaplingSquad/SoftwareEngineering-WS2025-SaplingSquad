@@ -185,6 +185,8 @@ export const Map = component$(
     // Currently loaded sources by id
     const loadedSources = useSignal<string[]>([]);
     const containerRef = useSignal<HTMLElement>();
+    const mapLoaded = useSignal(false);
+    const mapStyleLoaded = useSignal(false);
 
     useOn(
       "qvisible",
@@ -204,33 +206,44 @@ export const Map = component$(
             layers,
             images,
             onClick,
-            onInit$,
+            $((map) => {
+              loadedSources.value = Object.keys(sources);
+              // Load
+              mapLoaded.value = true;
+              onInit$?.(map);
+            }),
           ),
-        );
-        loadedSources.value = Object.keys(sources);
+        )?.on("styledata", () => (mapStyleLoaded.value = true));
       }),
     );
 
     // Handle updates to
-    useTask$(({ track }) => {
+    useTask$(async ({ track }) => {
+      const loaded = track(mapLoaded);
       const src = track(() => sources);
-      const m = map.value;
-      if (!m?.loaded()) return;
+      const m = track(map);
+      const styleLoaded = track(mapStyleLoaded);
+
+      if (!m || !loaded || !styleLoaded) {
+        // Map does not exist, is not loaded, or the style is not loaded
+        return;
+      }
+
       // Remove sources that don't exist anymore
       loadedSources.value
         .filter((id) => !(id in src))
         .forEach((id) => m.removeSource(id));
+
       // Update sources
       Object.entries(src).forEach(([id, source]) => {
-        if (loadedSources.value.includes(id)) {
+        const map_source = m.getSource(id);
+        if (map_source) {
           // Update existing source
-          (m.getSource(id) as GeoJSONSource)
-            .setData(source.data)
-            .setClusterOptions({
-              cluster: source.cluster,
-              clusterMaxZoom: source.clusterMaxZoom,
-              // clusterRadius: source.clusterRadius // Updating this breaks clustering for some reason
-            });
+          (map_source as GeoJSONSource).setData(source.data).setClusterOptions({
+            cluster: source.cluster,
+            clusterMaxZoom: source.clusterMaxZoom,
+            // clusterRadius: source.clusterRadius // Updating this breaks clustering for some reason
+          });
         } else {
           // Create new source
           m.addSource(id, source);
@@ -240,8 +253,16 @@ export const Map = component$(
     });
 
     return (
-      <div ref={containerRef} class={clz}>
-        Loading map...
+      <div
+        ref={containerRef}
+        class={["flex items-center justify-center bg-base-100", clz]}
+      >
+        <span
+          class={[
+            "loading loading-dots loading-lg text-primary",
+            mapLoaded.value && "hidden",
+          ]}
+        />
       </div>
     );
   },
@@ -265,7 +286,7 @@ export const PreviewMap = component$(
     /**
      * The zoom-level to display the map at. Defaults to `8`.
      */
-    zoom: number;
+    zoom?: number;
     /**
      * Color of the marker to display
      */
