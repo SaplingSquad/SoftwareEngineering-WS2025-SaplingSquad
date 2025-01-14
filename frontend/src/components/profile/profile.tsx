@@ -11,7 +11,7 @@ const OrgaProfileDataContext = createContextId<OrgaInformationsProps>("verein-pr
 
 const OrgaProjectDataContext = createContextId<ProjectInformationProps[]>("verein-project-context")
 
-const OrgaProjektCurrDel = createContextId<{ currDel: number, currDelAct: boolean }>("verein-project-changed")
+const OrgaProjektDelA = createContextId<number[]>("verein-project-del")
 
 //Api Types
 export type ApiRelevantOrganisationInformations = {
@@ -140,9 +140,10 @@ const ProjectLoeschen = component$(() => {
 const ProjectContent = component$((inputData: { del: boolean, p: ProjectInformationProps }) => {
     const refURL = './manage-project?selproj=' + inputData.p.id.toString()
     const acceptedDel = useSignal(false)
-    const context = useContext(OrgaProjektCurrDel)
+    const contextDelA = useContext(OrgaProjektDelA)
     if (acceptedDel.value) {
         useDeleteProject({ id: inputData.p.id });
+        contextDelA.push(inputData.p.id)
     }
     return (
         <>
@@ -176,7 +177,7 @@ const ProjectContent = component$((inputData: { del: boolean, p: ProjectInformat
                         Wirklich entfernen? Dies kann nicht rückgängig gemacht werden.
                     </p>
                     <div class="card-actions justify-end">
-                        <button onClick$={() => { acceptedDel.value = true; context.currDel = inputData.p.id; context.currDelAct = true }} class="btn btn-error">Entfernen
+                        <button onClick$={() => { acceptedDel.value = true }} class="btn btn-error">Entfernen
                             <div class="text-2xl">
                                 <HiTrashSolid />
                             </div>
@@ -228,18 +229,14 @@ const ProfileInformation = component$((inputData: { profiledata: Readonly<Signal
 })
 
 const ProjectManagement = component$((inputData: { data: ProjectInformationProps[] }) => {
-    const context = useContext(OrgaProjektCurrDel)
-    if (context.currDelAct) {
-        inputData.data = inputData.data.filter((e, i) => e.id !== context.currDel)
-        context.currDelAct = false
-    }
+    const contextDelA = useContext(OrgaProjektDelA)
     return (
         <>
             <div class="card bg-base-200 p-4">
                 <div class="card-title text-xl font-medium pb-4">Projekte</div>
                 <div class="flex flex-wrap gap-6">
                     {
-                        inputData.data.slice().reverse().map((item, idx: number) => (
+                        inputData.data.slice().reverse().filter((e, i) => !contextDelA.includes(e.id)).map((item, idx: number) => (
                             <ProjectCard key={idx} p={item} />
                         ))
                     }
@@ -430,7 +427,8 @@ export const VereinProfile = component$((inputData: {
     useContextProvider(OrgaProfileDataContext, orgaStore)
     const projectsStore = useStore<ProjectInformationProps[]>(orgaProjectDataTransfer)
     useContextProvider(OrgaProjectDataContext, projectsStore)
-    useContextProvider(OrgaProjektCurrDel, { currDelAct: false, currDel: 0 })
+    const projectDel = useStore<number[]>([])
+    useContextProvider(OrgaProjektDelA, projectDel)
     return (
         <>
             <div class="grid grid-rows-4 grid-cols-10 gap-4 p-5">
