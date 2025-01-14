@@ -185,7 +185,8 @@ export const Map = component$(
     // Currently loaded sources by id
     const loadedSources = useSignal<string[]>([]);
     const containerRef = useSignal<HTMLElement>();
-    const hideLoading = useSignal(false);
+    const mapLoaded = useSignal(false);
+    const mapStyleLoaded = useSignal(false);
 
     useOn(
       "qvisible",
@@ -205,48 +206,44 @@ export const Map = component$(
             layers,
             images,
             onClick,
-            onInit$,
-          ).on("load", () => (hideLoading.value = true)),
-        );
-        loadedSources.value = Object.keys(sources);
+            $((map) => {
+              loadedSources.value = Object.keys(sources);
+              // Load
+              mapLoaded.value = true;
+              onInit$?.(map);
+            }),
+          ),
+        )?.on("styledata", () => (mapStyleLoaded.value = true));
       }),
     );
 
     // Handle updates to
     useTask$(async ({ track }) => {
+      const loaded = track(mapLoaded);
       const src = track(() => sources);
-      const m = map.value;
+      const m = track(map);
+      const styleLoaded = track(mapStyleLoaded);
 
-      if (!m) {
-        // Map was not yet created.
-        // Listen for when map was changed and re-execute this task then.
-        track(map);
+      if (!m || !loaded || !styleLoaded) {
+        // Map does not exist, is not loaded, or the style is not loaded
         return;
       }
-
-      // Ensure that the map was loaded.
-      // If the map was not yet loaded, wait for the load event.
-      // Construct the promise before checking, as this event is not fired for loaded maps.
-      const waitForLoad = new Promise<void>((resolve) =>
-        m.on("load", () => resolve()),
-      );
-      if (!m.loaded()) await waitForLoad;
 
       // Remove sources that don't exist anymore
       loadedSources.value
         .filter((id) => !(id in src))
         .forEach((id) => m.removeSource(id));
+
       // Update sources
       Object.entries(src).forEach(([id, source]) => {
-        if (loadedSources.value.includes(id)) {
+        const map_source = m.getSource(id);
+        if (map_source) {
           // Update existing source
-          (m.getSource(id) as GeoJSONSource)
-            .setData(source.data)
-            .setClusterOptions({
-              cluster: source.cluster,
-              clusterMaxZoom: source.clusterMaxZoom,
-              // clusterRadius: source.clusterRadius // Updating this breaks clustering for some reason
-            });
+          (map_source as GeoJSONSource).setData(source.data).setClusterOptions({
+            cluster: source.cluster,
+            clusterMaxZoom: source.clusterMaxZoom,
+            // clusterRadius: source.clusterRadius // Updating this breaks clustering for some reason
+          });
         } else {
           // Create new source
           m.addSource(id, source);
@@ -263,7 +260,7 @@ export const Map = component$(
         <span
           class={[
             "loading loading-dots loading-lg text-primary",
-            hideLoading.value && "hidden",
+            mapLoaded.value && "hidden",
           ]}
         />
       </div>
