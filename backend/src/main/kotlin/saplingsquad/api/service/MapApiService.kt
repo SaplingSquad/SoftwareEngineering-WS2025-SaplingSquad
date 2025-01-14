@@ -5,11 +5,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
-import saplingsquad.api.MapApiDelegate
-import saplingsquad.api.dateToMonthAndYear
+import saplingsquad.api.*
 import saplingsquad.api.models.*
-import saplingsquad.api.placeholderIconUrl
-import saplingsquad.api.toLonLatList
 import saplingsquad.persistence.OrganizationsRepository
 import saplingsquad.persistence.ProjectsRepository
 import saplingsquad.persistence.RegionsRepository
@@ -82,7 +79,7 @@ class MapApiService(
             donatePageUrl = org.donationUrl,
             regionName = org.regionName,
             iconUrl = placeholderIconUrl(org.orgId),
-            imageUrls = emptyList(), //TODO maybe implement images sometime
+            imageUrls = placeholderImageUrls(org.orgId),
             coordinates = org.coordinates.toLonLatList(),
             tags = tags.toList(),
             projects = projects.map { (proj, projTags) ->
@@ -94,7 +91,7 @@ class MapApiService(
                     dateTo = proj.dateTo?.let(::dateToMonthAndYear),
                     iconUrl = placeholderIconUrl(org.orgId),
                     regionName = proj.regionName,
-                    imageUrls = emptyList(),
+                    imageUrls = placeholderImageUrls(proj.projectId),
                     webPageUrl = proj.websiteUrl,
                     donatePageUrl = proj.donationUrl,
                     coordinates = proj.coordinates.toLonLatList(),
@@ -144,14 +141,14 @@ class MapApiService(
             orgaId = org.orgId,
             name = project.title,
             description = project.description,
-            iconUrl = "https://picsum.photos/200?x=" + project.orgId, //TODO
+            iconUrl = placeholderIconUrl(project.orgId),
             coordinates = project.coordinates.toLonLatList(),
             tags = tags.toList(),
             orgaName = org.name,
             regionName = project.regionName,
             dateFrom = project.dateFrom?.let(::dateToMonthAndYear),
             dateTo = project.dateTo?.let(::dateToMonthAndYear),
-            imageUrls = emptyList(), //TODO
+            imageUrls = placeholderImageUrls(project.projectId),
             webPageUrl = project.websiteUrl,
             donatePageUrl = project.donationUrl
         ).asHttpOkResponse()
@@ -214,7 +211,7 @@ private fun toRankingEntry(searchResultEntity: SearchResultEntity): RankingsEntr
                         memberCount = org.memberCount,
                         webPageUrl = org.websiteUrl,
                         donatePageUrl = org.donationUrl,
-                        imageUrls = emptyList(), //TODO maybe implement images sometime
+                        imageUrls = placeholderImageUrls(org.orgId),
                         coordinates = org.coordinates.toLonLatList(),
                         regionName = org.regionName,
                         projectCount = e.projectCount,
@@ -240,7 +237,7 @@ private fun toRankingEntry(searchResultEntity: SearchResultEntity): RankingsEntr
                         dateTo = proj.dateTo?.let { dateToMonthAndYear(it) },
                         webPageUrl = proj.websiteUrl,
                         donatePageUrl = proj.donationUrl,
-                        imageUrls = emptyList(), //TODO maybe implement images sometime
+                        imageUrls = placeholderImageUrls(proj.projectId),
                         coordinates = proj.coordinates.toLonLatList(),
                         regionName = proj.regionName,
                         orgaName = e.orgName,

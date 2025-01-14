@@ -9,6 +9,9 @@ import java.math.RoundingMode
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeParseException
+import kotlin.math.absoluteValue
+import kotlin.random.Random
+import kotlin.random.nextInt
 
 fun CoordinatesEmbedded.toLonLatList(precision: Int? = 6): List<BigDecimal> {
     return listOf(
@@ -16,6 +19,7 @@ fun CoordinatesEmbedded.toLonLatList(precision: Int? = 6): List<BigDecimal> {
         coordinatesLat.toBigDecimal().withPrecision(precision)
     )
 }
+
 
 enum class ListToCoordinatesErrorType {
     WRONG_SIZE,
@@ -96,5 +100,21 @@ fun dateToMonthAndYear(date: LocalDate): String {
  * TODO implement support for icon upload in the future
  */
 fun placeholderIconUrl(orgId: OrganizationId): String {
-    return "https://picsum.photos/200?x=$orgId"
+    return "https://picsum.photos/seed/$orgId/200"
+}
+
+/**
+ * TODO implement support for image upload in the future
+ */
+fun placeholderImageUrls(projectOrOrgaId: Int): List<String> {
+    val random = Random(projectOrOrgaId)
+    val numImages = random.nextInt(9..15)
+    return (1..numImages)
+        .map { "$it$projectOrOrgaId".hashCode().absoluteValue }
+        .map {
+            // Generate a deterministic pseudorandom width based on the image index and orga/project id
+            val w = Random(it).nextInt(512..1536)
+            // Random Picsum image based on the image index and orga/project id with random width and height 512px
+            "https://picsum.photos/seed/$it/$w/512"
+        }.toList()
 }

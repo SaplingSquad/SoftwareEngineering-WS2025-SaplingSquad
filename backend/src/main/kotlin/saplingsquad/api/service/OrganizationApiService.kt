@@ -65,7 +65,7 @@ class OrganizationApiService(
             donatePageUrl = org.donationUrl,
             regionName = org.regionName,
             iconUrl = placeholderIconUrl(org.orgId),
-            imageUrls = emptyList(), //TODO maybe implement images sometime
+            imageUrls = placeholderImageUrls(org.orgId),
             coordinates = org.coordinates.toLonLatList(),
             tags = tags.toList()
         ).asHttpOkResponse()
@@ -145,7 +145,7 @@ class OrganizationApiService(
                         dateTo = proj.dateTo?.let(::dateToMonthAndYear),
                         regionName = proj.regionName,
                         iconUrl = placeholderIconUrl(proj.orgId),
-                        imageUrls = emptyList(),
+                        imageUrls = placeholderImageUrls(proj.projectId),
                         webPageUrl = proj.websiteUrl,
                         donatePageUrl = proj.donationUrl,
                         coordinates = proj.coordinates.toLonLatList(),
