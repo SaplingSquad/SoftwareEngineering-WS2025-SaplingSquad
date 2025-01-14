@@ -107,7 +107,7 @@ class MapApiService(
             )
         val (org, _, _) = organizationsRepository.readOrganizationAndTagsAndProjectsById(project.orgId)
             ?: throw ResponseStatusException(
-                HttpStatus.NOT_FOUND,
+                HttpStatus.INTERNAL_SERVER_ERROR,
                 "Organization ID does not exist"
             )
         return GetProjectById200Response(
