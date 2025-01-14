@@ -2,23 +2,11 @@ import {
   type Signal,
   $,
   component$,
-  Slot,
   useOnWindow,
   useSignal,
   useStore,
   useTask$,
 } from "@builder.io/qwik";
-import {
-  HiBookmarkOutline,
-  HiChevronDownOutline,
-  HiChevronUpOutline,
-  HiClockOutline,
-  HiFunnelOutline,
-  HiMagnifyingGlassOutline,
-  HiXMarkOutline,
-} from "@qwikest/icons/heroicons";
-import SproutIcon from "/src/images/Sprout_icon.svg?jsx";
-import AllIcon from "/src/images/All_Icon.svg?jsx";
 import { type FilterSettings, Filter } from "../filter";
 import { ProjectLargeInfo } from "./project-largeinfo";
 import {
@@ -30,6 +18,9 @@ import type { Ranking, SearchInput, SearchOutput } from "./types";
 import { getAnswersFromLocalStorage } from "~/utils";
 import { OrganizationLargeInfo } from "./organization-largeinfo";
 import { ShortInfo } from "./shortinfo";
+import { Navbar } from "./navbar";
+import { Tablist } from "./tablist";
+import { ExpandLatch } from "./expand-latch";
 
 enum ResultTab {
   ALL,
@@ -232,248 +223,6 @@ export const MapUI = component$(
           </div>
         )}
       </>
-    );
-  },
-);
-
-/**
- * The navbar shows the project logo and name, contains the search and allows to configure the filter.
- */
-const Navbar = component$(
-  (props: {
-    filterActive: Signal<boolean>;
-    filterWindowActive: Signal<boolean>;
-    listExpanded: Signal<boolean>;
-    searchText: Signal<string>;
-  }) => {
-    return (
-      <div class="navbar w-max space-x-2 bg-base-100">
-        <div class="navbar-start">
-          <a href="/" class="btn btn-ghost flex items-center text-2xl">
-            <SproutIcon class="size-8" />
-            Sprout
-          </a>
-        </div>
-        <div class="navbar-end space-x-1">
-          <Search
-            listExpanded={props.listExpanded}
-            searchText={props.searchText}
-          />
-          <FilterButton
-            filterActive={props.filterActive}
-            filterWindowActive={props.filterWindowActive}
-          />
-        </div>
-      </div>
-    );
-  },
-);
-
-/**
- * The search helps in finding specific projects and organizations.
- */
-const Search = component$(
-  (props: { listExpanded: Signal<boolean>; searchText: Signal<string> }) => {
-    const searchInputRef = useSignal<HTMLInputElement>();
-    const searchActive = useSignal<boolean>(false);
-
-    return (
-      <>
-        <div class="relative">
-          <input
-            ref={searchInputRef}
-            type="text"
-            placeholder="Suche nach Projekten, ..."
-            class="rounded-full border border-primary py-2 pl-4 pr-10 outline-secondary"
-            onKeyDown$={(event, elem) => {
-              const searchText = elem.value.trim();
-              if (searchText && event.key === "Enter") {
-                elem.blur();
-                props.listExpanded.value = true;
-                props.searchText.value = searchText;
-              }
-            }}
-            onFocusIn$={() => (searchActive.value = true)}
-            onFocusOut$={(_, elem) =>
-              (searchActive.value = !!elem.value.trim())
-            }
-          />
-          <button
-            class={[
-              "absolute right-3 top-2",
-              searchActive.value ? "" : "invisible",
-            ]}
-            onClick$={() => {
-              searchInputRef.value!.value = "";
-              searchActive.value = false;
-              props.searchText.value = "";
-            }}
-          >
-            <HiXMarkOutline class="size-7 hover:stroke-error" />
-          </button>
-        </div>
-        <button
-          class="btn btn-circle btn-ghost"
-          onClick$={() => {
-            const searchText = searchInputRef.value?.value.trim();
-            if (searchText) {
-              props.listExpanded.value = true;
-              props.searchText.value = searchText;
-            } else {
-              searchInputRef.value?.focus();
-            }
-          }}
-        >
-          <HiMagnifyingGlassOutline class="size-6" />
-        </button>
-      </>
-    );
-  },
-);
-
-/**
- * A button to open the filter pane, which also displays whether the filter is active.
- */
-const FilterButton = component$(
-  (props: {
-    filterActive: Signal<boolean>;
-    filterWindowActive: Signal<boolean>;
-  }) => {
-    return (
-      <button
-        class="btn btn-circle btn-ghost"
-        onClick$={() =>
-          (props.filterWindowActive.value = !props.filterWindowActive.value)
-        }
-      >
-        <div class="relative">
-          <HiFunnelOutline
-            class={[
-              "size-8",
-              props.filterWindowActive.value ? "fill-secondary" : "",
-            ]}
-          />
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="3"
-            class={[
-              "absolute left-0 top-0 size-8 stroke-error",
-              props.filterActive.value ? "invisible" : "",
-            ]}
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M5,2 L19,19"
-            />
-          </svg>
-        </div>
-      </button>
-    );
-  },
-);
-
-/**
- * The tablist allows to switch between showing all results, only the bookmarked results or only the recent results.
- */
-const Tablist = component$(
-  (props: { selection: Signal<number>; useBtnStyle: boolean }) => {
-    return (
-      <div role="tablist" class={["flex", props.useBtnStyle ? "join" : "pb-2"]}>
-        <Tab
-          useBtnStyle={props.useBtnStyle}
-          selection={props.selection}
-          idx={0}
-        >
-          <AllIcon class="h-6" />
-        </Tab>
-        <Tab
-          useBtnStyle={props.useBtnStyle}
-          selection={props.selection}
-          idx={1}
-        >
-          <HiBookmarkOutline class="stroke-inherit size-6" />
-        </Tab>
-        <Tab
-          useBtnStyle={props.useBtnStyle}
-          selection={props.selection}
-          idx={2}
-        >
-          <HiClockOutline class="stroke-inherit size-6" />
-        </Tab>
-      </div>
-    );
-  },
-);
-
-/**
- * Each tab can either be styled as a tab or as a button, depending on whether the list view is collapsed or not.
- */
-const Tab = component$(
-  (props: { useBtnStyle: boolean; selection: Signal<number>; idx: number }) => {
-    return (
-      <label
-        class={[
-          "grow cursor-pointer justify-items-center",
-          props.useBtnStyle ? "btn join-item" : "w-full",
-          props.useBtnStyle && props.selection.value === props.idx
-            ? "btn-primary"
-            : "",
-        ]}
-      >
-        <input
-          type="radio"
-          name="scope"
-          role="tab"
-          class="hidden"
-          onClick$={() => (props.selection.value = props.idx)}
-          checked
-        />
-        <div
-          class={
-            props.selection.value === props.idx
-              ? props.useBtnStyle
-                ? "stroke-primary-content"
-                : "stroke-primary"
-              : "stroke-[black]"
-          }
-        >
-          <Slot />
-        </div>
-        <div
-          class={[
-            "mt-2 w-full border",
-            props.useBtnStyle ? "hidden" : "",
-            props.selection.value === props.idx
-              ? "border-primary"
-              : "border-base-200",
-          ]}
-        ></div>
-      </label>
-    );
-  },
-);
-
-/**
- * This latch controls whether the list view is collapsed or expanded.
- */
-const ExpandLatch = component$(
-  (props: { expandedProperty: Signal<boolean> }) => {
-    return (
-      <div
-        class="btn pointer-events-auto w-32 rounded-t-none border-t-0 bg-base-100"
-        onClick$={() =>
-          (props.expandedProperty.value = !props.expandedProperty.value)
-        }
-      >
-        {props.expandedProperty.value ? (
-          <HiChevronUpOutline class="size-8" />
-        ) : (
-          <HiChevronDownOutline class="size-8" />
-        )}
-      </div>
     );
   },
 );
