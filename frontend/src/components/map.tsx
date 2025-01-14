@@ -265,7 +265,7 @@ export const PreviewMap = component$(
     /**
      * The zoom-level to display the map at. Defaults to `8`.
      */
-    zoom: number;
+    zoom?: number;
     /**
      * Color of the marker to display
      */
