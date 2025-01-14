@@ -213,10 +213,25 @@ export const Map = component$(
     );
 
     // Handle updates to
-    useTask$(({ track }) => {
+    useTask$(async ({ track }) => {
       const src = track(() => sources);
       const m = map.value;
-      if (!m?.loaded()) return;
+
+      if (!m) {
+        // Map was not yet created.
+        // Listen for when map was changed and re-execute this task then.
+        track(map);
+        return;
+      }
+
+      // Ensure that the map was loaded.
+      // If the map was not yet loaded, wait for the load event.
+      // Construct the promise before checking, as this event is not fired for loaded maps.
+      const waitForLoad = new Promise<void>((resolve) =>
+        m.on("load", () => resolve()),
+      );
+      if (!m.loaded()) await waitForLoad;
+
       // Remove sources that don't exist anymore
       loadedSources.value
         .filter((id) => !(id in src))
