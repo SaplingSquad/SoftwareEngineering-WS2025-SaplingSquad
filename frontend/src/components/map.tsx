@@ -185,6 +185,7 @@ export const Map = component$(
     // Currently loaded sources by id
     const loadedSources = useSignal<string[]>([]);
     const containerRef = useSignal<HTMLElement>();
+    const hideLoading = useSignal(false);
 
     useOn(
       "qvisible",
@@ -205,7 +206,7 @@ export const Map = component$(
             images,
             onClick,
             onInit$,
-          ),
+          ).on("load", () => (hideLoading.value = true)),
         );
         loadedSources.value = Object.keys(sources);
       }),
@@ -240,8 +241,16 @@ export const Map = component$(
     });
 
     return (
-      <div ref={containerRef} class={clz}>
-        Loading map...
+      <div
+        ref={containerRef}
+        class={["flex items-center justify-center bg-base-100", clz]}
+      >
+        <span
+          class={[
+            "loading loading-dots loading-lg text-primary",
+            hideLoading.value && "hidden",
+          ]}
+        />
       </div>
     );
   },
