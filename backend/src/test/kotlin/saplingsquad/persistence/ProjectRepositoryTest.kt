@@ -11,14 +11,12 @@ import saplingsquad.persistence.tables.CoordinatesEmbedded
 import saplingsquad.persistence.tables.OrganizationEntity
 import saplingsquad.persistence.tables.OrganizationId
 import saplingsquad.persistence.tables.ProjectEntity
+import saplingsquad.persistence.testconfig.ExampleOrgas
 import saplingsquad.persistence.testconfig.ExampleProjects
 import saplingsquad.persistence.testconfig.PersistenceTestConfiguration
 import saplingsquad.persistence.testconfig.toRegionName
 import java.time.LocalDate
-import kotlin.test.Test
-import kotlin.test.assertContains
-import kotlin.test.assertEquals
-import kotlin.test.assertIs
+import kotlin.test.*
 
 /**
  * Test correct behavior of [ProjectsRepository]
@@ -166,7 +164,7 @@ class ProjectRepositoryTest {
                     testProjects.toSet(),
                     projects.map {
                         Pair(
-                            // Replace projectid and orgid in result set
+                            // Replace projectId and orgId in result set
                             it.first.copy(projectId = placeholderProjectId, orgId = placeholderProjectOrgId)
                                 .toProjectEntity(),
                             it.second
@@ -236,6 +234,21 @@ class ProjectRepositoryTest {
 
             tx.setRollbackOnly() //Rollback this transaction (only used for this test)
         }
+    }
+
+    /**
+     * Ensure the correct project and its tags are returned for the given id
+     */
+    @Test
+    fun testReadProjectById() = runTest {
+        val result = repository.readProjectWithRegionAndTagsById(10)
+        assertNotNull(result)
+        val (project, tags) = result
+        val orga = ExampleOrgas.orgas[0]
+        assertEquals(orga.orgId, project.orgId)
+        val orgTags = ExampleOrgas.tagsOfOrga(orga)
+        // In this test set a project has the same tags as its org
+        assertContentEquals(tags, orgTags)
     }
 }
 

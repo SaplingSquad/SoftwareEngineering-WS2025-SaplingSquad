@@ -100,7 +100,32 @@ class MapApiService(
     }
 
     override suspend fun getProjectById(id: Int): ResponseEntity<GetProjectById200Response> {
-        TODO("Not yet implemented")
+        val (project, tags) =
+            projectsRepository.readProjectWithRegionAndTagsById(id) ?: throw ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "ID does not exist"
+            )
+        val (org, _, _) = organizationsRepository.readOrganizationAndTagsAndProjectsById(project.orgId)
+            ?: throw ResponseStatusException(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "Organization ID does not exist"
+            )
+        return GetProjectById200Response(
+            id = project.projectId,
+            orgaId = org.orgId,
+            name = project.title,
+            description = project.description,
+            iconUrl = "https://picsum.photos/200?x=" + project.orgId, //TODO
+            coordinates = project.coordinates.toLonLatList(),
+            tags = tags.toList(),
+            orgaName = org.name,
+            regionName = project.regionName,
+            dateFrom = project.dateFrom?.let(::dateToMonthAndYear),
+            dateTo = project.dateTo?.let(::dateToMonthAndYear),
+            imageUrls = emptyList(), //TODO
+            webPageUrl = project.websiteUrl,
+            donatePageUrl = project.donationUrl
+        ).asHttpOkResponse()
     }
 
     private suspend fun convertProjectsToGeoJson(projects: Flow<ProjectEntity>): ResponseEntity<GeoJsonProjects> {
