@@ -92,6 +92,9 @@ fun dateToMonthAndYear(date: LocalDate): String {
     return YearMonth.from(date).toString()
 }
 
+/**
+ * TODO implement support for icon upload in the future
+ */
 fun placeholderIconUrl(orgId: OrganizationId): String {
     return "https://picsum.photos/200?x=$orgId"
 }

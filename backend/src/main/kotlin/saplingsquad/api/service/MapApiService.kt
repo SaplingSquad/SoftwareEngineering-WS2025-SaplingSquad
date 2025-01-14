@@ -80,7 +80,7 @@ class MapApiService(
             webPageUrl = org.websiteUrl,
             donatePageUrl = org.donationUrl,
             regionName = org.regionName,
-            iconUrl = placeholderIconUrl(org.orgId),//TODO
+            iconUrl = placeholderIconUrl(org.orgId),
             imageUrls = emptyList(), //TODO maybe implement images sometime
             coordinates = org.coordinates.toLonLatList(),
             tags = tags.toList(),
@@ -91,7 +91,7 @@ class MapApiService(
                     description = proj.description,
                     dateFrom = proj.dateFrom?.let(::dateToMonthAndYear),
                     dateTo = proj.dateTo?.let(::dateToMonthAndYear),
-                    iconUrl = placeholderIconUrl(org.orgId),//TODO
+                    iconUrl = placeholderIconUrl(org.orgId),
                     regionName = proj.regionName,
                     imageUrls = emptyList(),
                     webPageUrl = proj.websiteUrl,
@@ -171,7 +171,7 @@ private fun toRankingEntry(searchResultEntity: SearchResultEntity): RankingsEntr
                         id = org.orgId,
                         name = org.name,
                         description = org.description,
-                        iconUrl = placeholderIconUrl(org.orgId),//TODO
+                        iconUrl = placeholderIconUrl(org.orgId),
                         foundingYear = org.foundingYear,
                         memberCount = org.memberCount,
                         webPageUrl = org.websiteUrl,
@@ -197,7 +197,7 @@ private fun toRankingEntry(searchResultEntity: SearchResultEntity): RankingsEntr
                         orgaId = proj.orgId,
                         name = proj.title,
                         description = proj.description,
-                        iconUrl = placeholderIconUrl(proj.orgId),//TODO
+                        iconUrl = placeholderIconUrl(proj.orgId),
                         dateFrom = proj.dateFrom?.let { dateToMonthAndYear(it) },
                         dateTo = proj.dateTo?.let { dateToMonthAndYear(it) },
                         webPageUrl = proj.websiteUrl,
