@@ -31,22 +31,9 @@ export default component$(() => {
                             <div class="flex-1">
                                 <a class="btn btn-ghost text-xl" href="/">Sprout</a>
                             </div>
-                            <div class="dropdown dropdown-end">
-                                <div tabIndex={0} role="button" class="btn btn-ghost btn-circle avatar">
-                                    <ProfileImage profiledata={session} imgSize="size-12" />
-                                </div>
-                                <ul
-                                    tabIndex={0}
-                                    class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
-                                    <li>
-                                        <a href="/profile">
-                                            Profil
-                                        </a>
-                                    </li>
-                                    <li><a>Settings</a></li>
-                                    <li><a>Logout</a></li>
-                                </ul>
-                            </div>
+                            <a href="/profile" role="button" class="btn btn-ghost btn-circle avatar">
+                                <ProfileImage profiledata={session} imgSize="size-12" />
+                            </a>
                         </div>
                     </div>
                     <Slot />

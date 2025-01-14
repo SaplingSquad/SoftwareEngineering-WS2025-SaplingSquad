@@ -40,7 +40,7 @@ const Vereinsdaten = component$(() => {
                 <input type="text" class="grow" value={context.numbPers} onInput$={(_, e) => context.numbPers = e.value} />
             </label>
             <label class="input input-bordered flex items-center gap-2" >
-                Vereinslogo
+                Vereinslogo*
                 <input type="text w-full" class="grow link link-neutral" placeholder="www.mein-verein.de/logo.img" value={context.logoUrl} onInput$={(_, e) => context.logoUrl = e.value} required />
                 <div class="tooltip tooltip-warning tooltip-left" data-tip="Weblink zum Bild">
                     <div class="text-2xl hover:opacity-70 transition-all">
@@ -49,7 +49,7 @@ const Vereinsdaten = component$(() => {
                 </div>
             </label>
             <label class="input input-bordered flex items-center gap-2">
-                Vereinswebsite
+                Vereinswebsite*
                 <input type="text" class="grow link link-neutral" placeholder="www.mein-verein.de" value={context.webpageUrl} onInput$={(_, e) => context.webpageUrl = e.value} />
             </label>
             <label class="input input-bordered flex items-center gap-2">
@@ -58,7 +58,7 @@ const Vereinsdaten = component$(() => {
             </label>
             <label class="form-control">
                 <div class="label">
-                    <span class="label-text">Vereinsbeschreibung</span>
+                    <span class="label-text">Vereinsbeschreibung*</span>
                 </div>
                 <textarea class="textarea textarea-bordered h-24" placeholder="Beschreibung" value={context.description} onInput$={(_, e) => context.description = e.value}></textarea>
             </label>

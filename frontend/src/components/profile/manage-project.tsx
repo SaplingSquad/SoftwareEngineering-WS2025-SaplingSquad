@@ -114,7 +114,7 @@ const Projektdaten = component$(() => {
             </div>
             <label class="form-control">
                 <div class="label">
-                    <span class="label-text">Projektbeschreibung</span>
+                    <span class="label-text">Projektbeschreibung*</span>
                 </div>
                 <textarea class="textarea textarea-bordered h-24" placeholder="Beschreibung" value={context.description} onInput$={(_, e) => context.description = e.value}></textarea>
             </label>
