@@ -1,6 +1,11 @@
 spring.application.name: backend
 server.port: ${port:9000}
 
+server:
+  compression:
+    enabled: true
+    min-response-size: 2KB
+    mime-types: application/json
 
 spring:
   r2dbc:
