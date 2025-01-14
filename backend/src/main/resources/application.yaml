@@ -35,6 +35,9 @@ spring:
             issuer-uri: ${appconfig.oauth2.orgas-issuer.issuer-uri}
       # END only for dev purposes
 
+  jackson:
+    default-property-inclusion: non_null
+
 appconfig:
   openapi:
     spec: "static/api/spec.yaml" # local path to spec.yaml

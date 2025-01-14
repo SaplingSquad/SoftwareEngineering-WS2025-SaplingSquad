@@ -12,7 +12,6 @@ import org.springframework.http.codec.ServerCodecConfigurer
 import org.springframework.util.MimeType
 import org.springframework.util.MimeTypeUtils
 import org.springframework.web.reactive.config.CorsRegistry
-import org.springframework.web.reactive.config.EnableWebFlux
 import org.springframework.web.reactive.config.ResourceHandlerRegistry
 import org.springframework.web.reactive.config.WebFluxConfigurer
 import reactor.core.publisher.Flux
@@ -21,7 +20,6 @@ import reactor.core.publisher.Mono
 /**
  * Spring configuration for various settings of Spring webflux
  */
-@EnableWebFlux
 @Configuration
 class WebFluxConfig(
     /** This Configuration depends on some custom configuration properties*/
