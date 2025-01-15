@@ -1,10 +1,9 @@
-package saplingsquad.persistence.testconfig;
+package saplingsquad.persistence.testconfig
 
 import io.r2dbc.h2.H2ConnectionConfiguration
 import io.r2dbc.h2.H2ConnectionFactory
 import io.r2dbc.h2.H2ConnectionOption
 import io.r2dbc.spi.ConnectionFactory
-import org.h2.tools.Server
 import org.komapper.dialect.h2.r2dbc.H2R2dbcDialect
 import org.komapper.r2dbc.R2dbcDatabase
 import org.komapper.spring.boot.autoconfigure.r2dbc.KomapperR2dbcAutoConfiguration
@@ -13,8 +12,8 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.test.context.ContextConfiguration
 
 /**
- * Configuration to configure necessary Beans for a H2 R2dbc Database connection
- * Mostly uses the auto configuration of komapper ([KomapperR2dbcAutoConfiguration]) and fills in the rest by hand
+ * Configuration to configure necessary Beans for an H2 R2dbc Database connection
+ * Mostly uses the autoconfiguration of komapper ([KomapperR2dbcAutoConfiguration]) and fills in the rest by hand
  */
 @Configuration
 @ContextConfiguration(classes = [KomapperR2dbcAutoConfiguration::class])
@@ -44,5 +43,4 @@ class R2dbcH2Configuration {
         setupDb(db)
         return connectionFactory
     }
-
 }
