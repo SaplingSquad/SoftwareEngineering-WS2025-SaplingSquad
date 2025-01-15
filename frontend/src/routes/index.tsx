@@ -6,16 +6,15 @@ import { IconLinkButton } from "~/components/link_button";
 import { Map } from "~/views/map";
 import { MapUI } from "~/components/map-ui/map-ui";
 import { LoginAvatar } from "~/components/authenticate/authAvatarNav";
+import { createEmptyFeatureCollection } from "~/components/map-ui/types";
 
 export default component$(() => {
-  const organizationLocations: Signal<GeoJSON.GeoJSON> = useSignal({
-    type: "FeatureCollection",
-    features: [],
-  });
-  const projectLocations: Signal<GeoJSON.GeoJSON> = useSignal({
-    type: "FeatureCollection",
-    features: [],
-  });
+  const organizationLocations: Signal<GeoJSON.GeoJSON> = useSignal(
+    createEmptyFeatureCollection(),
+  );
+  const projectLocations: Signal<GeoJSON.GeoJSON> = useSignal(
+    createEmptyFeatureCollection(),
+  );
 
   // Check if user has visited (by key saved in local storage)
   // Every visit counts as visit

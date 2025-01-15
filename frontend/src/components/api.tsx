@@ -167,7 +167,7 @@ export const ApiRequest = component$(
  * This prevents accidental information leakage by exposing errors originating from the server
  * (and the user can't fix any connectivity-issues on the server anyway).
  */
-const ApiUnreachable = component$(({ error }: { error: Error }) => {
+export const ApiUnreachable = component$(({ error }: { error: Error }) => {
   console.error("Failed to reach API", error);
   return (
     <div class="flex h-full min-h-min w-full min-w-min flex-col items-center justify-center">

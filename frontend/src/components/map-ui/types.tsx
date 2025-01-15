@@ -1,5 +1,5 @@
 /**
- * Temporary collection of Types until the new API is merged.
+ * Collection of various types used to interact with the API.
  */
 
 export type Organization = {
@@ -79,3 +79,26 @@ export type SearchOutput = {
   organizationLocations?: FeatureCollection;
   projectLocations?: FeatureCollection;
 };
+
+/**
+ * Create an empty feature collection that does not contain any features but has all properties set to avoid access to undefined.
+ * @returns The empty feature collection object.
+ */
+export function createEmptyFeatureCollection(): FeatureCollection {
+  return {
+    type: "FeatureCollection",
+    features: [],
+  };
+}
+
+/**
+ * Create an SearchOutput object that does not contain any `rankings`, `organizationLocations` or `projectLocations` but has all properties set to avoid access to undefined.
+ * @returns The empty SearchOutput object.
+ */
+export function createEmptySearchOutput(): SearchOutput {
+  return {
+    rankings: [],
+    organizationLocations: createEmptyFeatureCollection(),
+    projectLocations: createEmptyFeatureCollection(),
+  };
+}

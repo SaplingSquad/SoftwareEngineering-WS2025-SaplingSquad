@@ -12,15 +12,22 @@ import { ProjectLargeInfo } from "./project-largeinfo";
 import {
   organizationBookmarksMockData,
   projectBookmarksMockData,
-  searchOutputMockdata,
 } from "./mockdata";
-import type { Ranking, SearchInput, SearchOutput } from "./types";
+import {
+  createEmptyFeatureCollection,
+  createEmptySearchOutput,
+  type Ranking,
+  type SearchInput,
+  type SearchOutput,
+} from "./types";
 import { getAnswersFromLocalStorage } from "~/utils";
 import { OrganizationLargeInfo } from "./organization-largeinfo";
 import { ShortInfo } from "./shortinfo";
 import { Navbar } from "./navbar";
 import { Tablist } from "./tablist";
 import { ExpandLatch } from "./expand-latch";
+import { getMatches } from "~/api/api_methods.gen";
+import { HiExclamationCircleOutline } from "@qwikest/icons/heroicons";
 
 enum ResultTab {
   ALL,
@@ -28,22 +35,50 @@ enum ResultTab {
   HISTORY,
 }
 
-/**
- * Create an SearchOutput object that does not contain any `rankings`, `organizationLocations` or `projectLocations` but has all properties set to avoid access to undefined.
- * @returns The empty SearchOutput object.
- */
-function createEmptySearchOutput(): SearchOutput {
-  return {
-    rankings: [],
-    organizationLocations: {
-      type: "FeatureCollection",
-      features: [],
-    },
-    projectLocations: {
-      type: "FeatureCollection",
-      features: [],
-    },
-  };
+enum State {
+  LOADING,
+  ERROR,
+  SUCCESS,
+}
+
+function renderState(
+  state: State,
+  result: SearchOutput,
+  selectedRanking: Signal<Ranking | undefined>,
+) {
+  switch (state) {
+    case State.ERROR:
+      return (
+        <div role="alert" class="alert alert-error">
+          <HiExclamationCircleOutline class="h-10 w-10" />
+          <span class="max-h-full min-h-min min-w-min max-w-full overflow-y-auto ">
+            <h5 class="text-lg font-semibold">
+              Daten konnten nicht geladen werden.
+            </h5>
+            <p class="mb-2">
+              Bitte stelle sicher, dass du mit dem Internet verbunden bist.
+            </p>
+          </span>
+        </div>
+      );
+    case State.LOADING:
+      return (
+        <div class="flex w-full justify-center p-4">
+          <span class="loading loading-spinner loading-lg"></span>
+        </div>
+      );
+    case State.SUCCESS:
+      return result.rankings.map((ranking, idx) => (
+        <ShortInfo
+          key={ranking.entry.type + "_" + ranking.entry.content.id}
+          entry={ranking.entry}
+          layoutDelay={idx * 1000}
+          onClick={$(() => {
+            selectedRanking.value = ranking;
+          })}
+        />
+      ));
+  }
 }
 
 /**
@@ -69,8 +104,17 @@ export const MapUI = component$(
     const rawResult = useSignal<SearchOutput>(createEmptySearchOutput());
     const history = useStore<SearchOutput>(createEmptySearchOutput());
     const result = useSignal<SearchOutput>({ rankings: [] });
+    const state = useSignal<State>(State.LOADING);
 
-    const update = $((performSearch: boolean) => {
+    useTask$(({ track }) => {
+      if (track(state) === State.ERROR) {
+        listExpanded.value = true;
+      }
+    });
+
+    const update = $(async (performSearch: boolean) => {
+      state.value = State.LOADING;
+
       if (performSearch) {
         const searchInput: SearchInput = {
           answers: getAnswersFromLocalStorage(),
@@ -78,14 +122,43 @@ export const MapUI = component$(
           ...filterSettings,
         };
 
-        // TODO replace with API call
-        searchInput;
-        rawResult.value = searchOutputMockdata;
+        await getMatches(searchInput).then(
+          (p) => {
+            if (p.status === 200) {
+              rawResult.value = p.body;
+            } else {
+              state.value = State.ERROR;
+            }
+          },
+          () => (state.value = State.ERROR),
+        );
+      }
+
+      if (state.value !== State.LOADING) {
+        props.organizationLocations.value = createEmptyFeatureCollection();
+        props.projectLocations.value = createEmptyFeatureCollection();
+        return;
       }
 
       switch (tabSelection.value) {
         case ResultTab.ALL:
-          result.value = rawResult.value;
+          result.value = {
+            rankings: rawResult.value.rankings.slice(0, 1000),
+            organizationLocations: {
+              type: "FeatureCollection",
+              features: rawResult.value.organizationLocations!.features.slice(
+                0,
+                1000,
+              ),
+            },
+            projectLocations: {
+              type: "FeatureCollection",
+              features: rawResult.value.projectLocations!.features.slice(
+                0,
+                1000,
+              ),
+            },
+          };
           break;
         case ResultTab.HISTORY:
           result.value = history;
@@ -118,6 +191,8 @@ export const MapUI = component$(
           };
           break;
       }
+
+      state.value = State.SUCCESS;
 
       props.organizationLocations.value = result.value.organizationLocations!;
       props.projectLocations.value = result.value.projectLocations!;
@@ -187,15 +262,7 @@ export const MapUI = component$(
                     listExpanded.value ? "h-full" : "h-0",
                   ]}
                 >
-                  {result.value.rankings.map((ranking) => (
-                    <ShortInfo
-                      key={ranking.entry.type + "_" + ranking.entry.content.id}
-                      entry={ranking.entry}
-                      onClick={$(() => {
-                        selectedRanking.value = ranking;
-                      })}
-                    />
-                  ))}
+                  {renderState(state.value, result.value, selectedRanking)}
                 </div>
               </div>
             </div>

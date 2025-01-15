@@ -84,7 +84,7 @@ export const Filter = component$(
           >
             <div class="w-full border border-base-200" />
             <a href="/questions" class="btn btn-primary w-full">
-              Gewählte Schwerpunkte bearbeiten
+              Schwerpunkte bearbeiten
             </a>
             <TypeSelection showOnly={showOnly} />
             <SizeFilter
