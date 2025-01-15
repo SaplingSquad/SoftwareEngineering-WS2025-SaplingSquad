@@ -1,9 +1,9 @@
 {
   "$schema": "https://json.schemastore.org/web-manifest-combined.json",
-  "name": "qwik-project-name",
-  "short_name": "Welcome to Qwik",
+  "name": "Sprout!",
+  "short_name": "sprout",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#fff",
-  "description": "A Qwik project app."
+  "description": "Sprout is an application designed to connect people with charitable organizations. It aims to help potential donors find organizations that align with their values while providing these organizations with an accessible platform to showcase themselves."
 }
