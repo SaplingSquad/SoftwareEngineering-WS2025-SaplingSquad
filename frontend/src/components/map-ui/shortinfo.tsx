@@ -17,6 +17,7 @@ import {
   HiTagOutline,
   HiUserGroupOutline,
 } from "@qwikest/icons/heroicons";
+import { getTagNames } from "~/utils";
 
 type Detail = { icon: JSXOutput; text: string };
 
@@ -71,12 +72,9 @@ export const ShortInfo = component$(
 
     // Use visible task because the tags need to be layouted every time the component is re-rendered.
     // eslint-disable-next-line qwik/no-use-visible-task
-    useVisibleTask$(() => {
+    useVisibleTask$(async () => {
       tagContainerRef.value.replaceChildren();
-      layoutTags(
-        tagContainerRef,
-        props.entry.content.tags.map(() => "Umweltschutz"), // TODO replace with value from API
-      );
+      layoutTags(tagContainerRef, await getTagNames(props.entry.content.tags));
     });
 
     return (
@@ -112,7 +110,7 @@ export const ShortInfo = component$(
               <HiTagOutline />
               <div
                 ref={tagContainerRef}
-                class="flex h-7 w-64 space-x-1 overflow-hidden"
+                class="flex h-7 w-64 space-x-1 overflow-hidden text-nowrap"
               >
                 <div class="skeleton h-7 w-20" />
                 <div class="skeleton h-7 w-28" />

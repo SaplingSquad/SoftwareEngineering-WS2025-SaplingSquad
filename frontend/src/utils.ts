@@ -1,5 +1,8 @@
 // Various utilities
 
+import { isBrowser } from "@builder.io/qwik/build";
+import { getTags } from "./api/api_methods.gen";
+
 /**
  * Something which can either be `T` or an array or `T`
  */
@@ -54,9 +57,9 @@ export type DistributiveOmit<T, K extends keyof any> = T extends any
  * @param numbers The question answers to store.
  */
 export const saveAnswersToLocalStorage = (numbers: number[]) => {
-    const json = JSON.stringify(numbers);
-    localStorage.setItem("question-answers", json);
-}
+  const json = JSON.stringify(numbers);
+  localStorage.setItem("question-answers", json);
+};
 
 /**
  * Retrieves question answers from the local storage if present.
@@ -70,11 +73,53 @@ export const getAnswersFromLocalStorage = (): number[] | undefined => {
     }
 
     const parsed = JSON.parse(json);
-    return Array.isArray(parsed) && parsed.every(item => typeof item === "number") ? parsed : undefined;
+    return Array.isArray(parsed) &&
+      parsed.every((item) => typeof item === "number")
+      ? parsed
+      : undefined;
   } catch (error) {
     return undefined;
   }
-}
+};
+
+/**
+ * Gets the tag names corresponding to a list of tag numbers. Uses local storage as cache to avoid repeated requests.
+ * @param tagNumbers The tag numbers to retrieve the names of.
+ * @returns The tag names matching the tag numbers.
+ */
+export const getTagNames = async (tagNumbers: number[]): Promise<string[]> => {
+  let allTags: {
+    id: number;
+    name: string;
+  }[] = [];
+
+  if (isBrowser) {
+    try {
+      const json = localStorage.getItem("tag-names");
+      if (json !== null) {
+        allTags = JSON.parse(json);
+      }
+    } catch (ignore) {
+      /* ignore */
+    }
+  }
+
+  if (allTags.length === 0) {
+    await getTags().then((r) => {
+      if (r.status === 200) {
+        allTags = r.body;
+      }
+    });
+
+    if (isBrowser) {
+      localStorage.setItem("tag-names", JSON.stringify(allTags));
+    }
+  }
+
+  return tagNumbers.map(
+    (tagNr) => allTags.find((tag) => tag.id === tagNr)!.name,
+  );
+};
 
 /**
  * Checks if something is a `number[]`

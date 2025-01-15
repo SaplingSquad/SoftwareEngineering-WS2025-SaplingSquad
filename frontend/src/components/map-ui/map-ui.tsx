@@ -87,13 +87,13 @@ export const MapUI = component$(
       continentId: undefined,
       regionId: undefined,
     });
+    const rawResult = { res: createEmptySearchOutput() };
     const tabSelection = useSignal<ResultTab>(ResultTab.ALL);
     const filterActive = useSignal<boolean>(true);
     const filterWindowActive = useSignal<boolean>(false);
     const listExpanded = useSignal<boolean>(false);
     const searchText = useSignal<string>("");
     const selectedRanking = useSignal<Ranking | undefined>(undefined);
-    const rawResult = useSignal<SearchOutput>(createEmptySearchOutput());
     const history = useStore<SearchOutput>(createEmptySearchOutput());
     const rankings = useSignal<Ranking[]>([]);
     const state = useSignal<State>(State.LOADING);
@@ -117,7 +117,7 @@ export const MapUI = component$(
         await getMatches(searchInput).then(
           (p) => {
             if (p.status === 200) {
-              rawResult.value = p.body;
+              rawResult.res = p.body;
             } else {
               state.value = State.ERROR;
             }
@@ -136,14 +136,14 @@ export const MapUI = component$(
       let shownOutput: SearchOutput;
       switch (tabSelection.value) {
         case ResultTab.ALL:
-          shownOutput = rawResult.value;
+          shownOutput = rawResult.res;
           break;
         case ResultTab.HISTORY:
           shownOutput = history;
           break;
         case ResultTab.BOOKMARKS:
           shownOutput = {
-            rankings: rawResult.value.rankings.filter((ranking) =>
+            rankings: rawResult.res.rankings.filter((ranking) =>
               (ranking.entry.type === "Organization"
                 ? organizationBookmarksMockData
                 : projectBookmarksMockData
@@ -152,7 +152,7 @@ export const MapUI = component$(
             organizationLocations: {
               type: "FeatureCollection",
               features:
-                rawResult.value.organizationLocations?.features.filter(
+                rawResult.res.organizationLocations?.features.filter(
                   (feature) =>
                     organizationBookmarksMockData.includes(
                       feature.properties.id,
@@ -162,7 +162,7 @@ export const MapUI = component$(
             projectLocations: {
               type: "FeatureCollection",
               features:
-                rawResult.value.projectLocations?.features.filter((feature) =>
+                rawResult.res.projectLocations?.features.filter((feature) =>
                   projectBookmarksMockData.includes(feature.properties.id),
                 ) || [],
             },
