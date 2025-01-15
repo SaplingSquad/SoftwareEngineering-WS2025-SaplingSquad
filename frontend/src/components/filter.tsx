@@ -24,10 +24,10 @@ const orgSizes = [20, 100, 500, 1000];
 type ShowOnly = "Organization" | "Project" | undefined;
 
 export type FilterSettings = {
-  type?: "Organization" | "Project";
-  maxMembers?: number;
-  continentId?: string;
-  regionId?: string;
+  type: "Organization" | "Project" | undefined;
+  maxMembers: number | undefined;
+  continentId: string | undefined;
+  regionId: string | undefined;
 };
 
 /**

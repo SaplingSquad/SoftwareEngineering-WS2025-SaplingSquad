@@ -54,7 +54,12 @@ export const MapUI = component$(
     organizationLocations: Signal<GeoJSON.GeoJSON>;
     projectLocations: Signal<GeoJSON.GeoJSON>;
   }) => {
-    const filterSettings: FilterSettings = useStore({});
+    const filterSettings: FilterSettings = useStore({
+      type: undefined,
+      maxMembers: undefined,
+      continentId: undefined,
+      regionId: undefined,
+    });
     const tabSelection = useSignal<ResultTab>(ResultTab.ALL);
     const filterActive = useSignal<boolean>(true);
     const filterWindowActive = useSignal<boolean>(false);
@@ -88,10 +93,10 @@ export const MapUI = component$(
         case ResultTab.BOOKMARKS:
           result.value = {
             rankings: rawResult.value.rankings.filter((ranking) =>
-              (ranking.type === "Organization"
+              (ranking.entry.type === "Organization"
                 ? organizationBookmarksMockData
                 : projectBookmarksMockData
-              ).includes(ranking.content.id),
+              ).includes(ranking.entry.content.id),
             ),
             organizationLocations: {
               type: "FeatureCollection",
@@ -137,19 +142,20 @@ export const MapUI = component$(
 
       const idx = history.rankings.findIndex(
         (r) =>
-          r.type === selection.type && r.content.id === selection.content.id,
+          r.entry.type === selection.entry.type &&
+          r.entry.content.id === selection.entry.content.id,
       );
 
       if (idx === -1) {
         history.rankings.unshift(selection);
-        (selection.type === "Organization"
+        (selection.entry.type === "Organization"
           ? history.organizationLocations
           : history.projectLocations
         )?.features.push(
-          (selection.type === "Organization"
+          (selection.entry.type === "Organization"
             ? result.value.organizationLocations
             : result.value.projectLocations)!.features.find(
-            (f) => f.properties.id === selection.content.id,
+            (f) => f.properties.id === selection.entry.content.id,
           )!,
         );
       } else {
@@ -183,8 +189,8 @@ export const MapUI = component$(
                 >
                   {result.value.rankings.map((ranking) => (
                     <ShortInfo
-                      key={ranking.type + "_" + ranking.content.id}
-                      ranking={ranking}
+                      key={ranking.entry.type + "_" + ranking.entry.content.id}
+                      entry={ranking.entry}
                       onClick={$(() => {
                         selectedRanking.value = ranking;
                       })}
@@ -209,14 +215,14 @@ export const MapUI = component$(
         </div>
         {selectedRanking.value && (
           <div class="fixed right-0 top-0 h-screen p-4">
-            {selectedRanking.value.type === "Organization" ? (
+            {selectedRanking.value.entry.type === "Organization" ? (
               <OrganizationLargeInfo
-                org={selectedRanking.value.content}
+                org={selectedRanking.value.entry.content}
                 onClose={$(() => (selectedRanking.value = undefined))}
               />
             ) : (
               <ProjectLargeInfo
-                project={selectedRanking.value.content}
+                project={selectedRanking.value.entry.content}
                 onClose={$(() => (selectedRanking.value = undefined))}
               />
             )}

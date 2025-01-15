@@ -6,16 +6,16 @@ export type Organization = {
   id: number;
   name: string;
   description: string;
-  foundingYear: number;
-  memberCount: number;
+  foundingYear?: number;
+  memberCount?: number;
   iconUrl: string;
-  imageUrls: string[];
+  imageUrls?: string[];
   webPageUrl: string;
-  donatePageUrl: string;
-  coordinates: [number, number];
+  donatePageUrl?: string;
+  coordinates: number[];
   tags: number[];
   regionName: string;
-  numProjects: number;
+  projectCount: number;
 };
 
 export type Project = {
@@ -23,25 +23,25 @@ export type Project = {
   orgaId: number;
   name: string;
   description: string;
-  dateFrom: string;
-  dateTo: string;
+  dateFrom?: string;
+  dateTo?: string;
   iconUrl: string;
-  imageUrls: string[];
-  webPageUrl: string;
-  donatePageUrl: string;
-  coordinates: [number, number];
+  imageUrls?: string[];
+  webPageUrl?: string;
+  donatePageUrl?: string;
+  coordinates: number[];
   tags: number[];
   regionName: string;
   orgaName: string;
 };
 
 export type SearchInput = {
-  answers?: number[];
-  maxMembers?: number;
-  searchText?: string;
-  continent?: string;
-  regionId?: string;
-  type?: "Project" | "Organization";
+  answers: number[] | undefined;
+  maxMembers: number | undefined;
+  searchText: string | undefined;
+  continentId: string | undefined;
+  regionId: string | undefined;
+  type: "Project" | "Organization" | undefined;
 };
 
 export type Feature = {
@@ -51,7 +51,7 @@ export type Feature = {
   };
   geometry: {
     type: "Point";
-    coordinates: [number, number];
+    coordinates: number[];
   };
 };
 
@@ -60,7 +60,7 @@ export type FeatureCollection = {
   features: Feature[];
 };
 
-export type Ranking = (
+export type RankingEntry =
   | {
       type: "Organization";
       content: Organization;
@@ -68,8 +68,11 @@ export type Ranking = (
   | {
       type: "Project";
       content: Project;
-    }
-) & { percentageMatch: number };
+    };
+
+export type Ranking = {
+  entry: RankingEntry;
+} & { percentageMatch: number };
 
 export type SearchOutput = {
   rankings: Ranking[];
