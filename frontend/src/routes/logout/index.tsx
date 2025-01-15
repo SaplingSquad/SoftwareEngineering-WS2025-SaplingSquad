@@ -1,5 +1,5 @@
-import {component$} from "@builder.io/qwik";
-import {LogoutParamsForm} from "~/components/auth/logout";
+import { component$ } from "@builder.io/qwik";
+import { LogoutParamsForm } from "~/components/auth/logout";
 
 /**
  * Custom sign out page

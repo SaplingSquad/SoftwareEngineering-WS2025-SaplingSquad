@@ -23,10 +23,9 @@ export default component$(() => {
         organizationLocations={organizationLocations}
         projectLocations={projectLocations}
       />
-      <div class="fixed top-6 right-6 rounded-full">
+      <div class="fixed right-6 top-6 rounded-full">
         <LoginAvatar />
       </div>
     </>
   );
 });
-
