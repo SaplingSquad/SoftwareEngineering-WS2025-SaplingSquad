@@ -104,7 +104,10 @@ const ProjectCard = component$(
             Für Projekt spenden
           </ActionButton>
         )}
-        <ActionButton url={`/org/${orgaId}`} icon={HiBuildingLibraryOutline}>
+        <ActionButton
+          url={`/organization/${orgaId}`}
+          icon={HiBuildingLibraryOutline}
+        >
           Infos zu {orgaName}
         </ActionButton>
       </InfoCard>
