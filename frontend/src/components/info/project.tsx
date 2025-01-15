@@ -12,6 +12,7 @@ import { useGetProjectById } from "~/api/api_hooks.gen";
 import { formatDateRange, limitText } from "~/utils";
 import { ApiRequest } from "../api";
 import { Avatar } from "../avatar";
+import type { BookmarkProps } from "../bookmark";
 import type { LinkTarget } from "../link_button";
 import type { ApiCoordinates, Coordinates } from "../map";
 import { ActionButton, IconProperty, InfoCard } from "./info_card";
@@ -77,7 +78,7 @@ type ProjectCardProps = {
    * Optionally show a back-button. See {@link LinkTarget}.
    */
   onBack?: LinkTarget;
-};
+} & Partial<BookmarkProps>;
 
 /**
  * Show information about a {@link Project}.
@@ -101,6 +102,8 @@ const ProjectCard = component$(
     onShowOrganization$,
     onClose,
     onBack,
+    bookmarked,
+    onSetBookmarked$,
   }: Project & ProjectCardProps) => {
     return (
       <InfoCard
@@ -112,6 +115,8 @@ const ProjectCard = component$(
         icon={iconUrl}
         onClose={onClose}
         onBack={onBack}
+        bookmarked={bookmarked}
+        onSetBookmarked$={onSetBookmarked$}
       >
         {/* Properties */}
         <IconProperty

@@ -6,6 +6,8 @@ import { HiArrowLeftOutline, HiXMarkOutline } from "@qwikest/icons/heroicons";
 import { useGetTags } from "~/api/api_hooks.gen";
 import { toMapping } from "~/api/tags";
 import { isNumberArray } from "~/utils";
+import type { BookmarkProps } from "../bookmark";
+import { BookmarkButton } from "../bookmark";
 import type { LinkTarget } from "../link_button";
 import { IconLinkButton, LinkButton } from "../link_button";
 import { Div } from "../div";
@@ -32,6 +34,8 @@ export const InfoCard = component$(
     aside = false,
     onClose,
     onBack,
+    bookmarked,
+    onSetBookmarked$,
   }: {
     /**
      * Name of the entity
@@ -70,7 +74,7 @@ export const InfoCard = component$(
      * Optionally show a back-button. See {@link LinkTarget}.
      */
     onBack?: LinkTarget;
-  }) => {
+  } & Partial<BookmarkProps>) => {
     return (
       <article class="card relative w-full bg-base-100 shadow-xl">
         {/* Location Preview */}
@@ -101,7 +105,16 @@ export const InfoCard = component$(
             </div>
             <div class="flex min-w-64 shrink grow basis-64 flex-col justify-around">
               {/* Name */}
-              <h2 class="card-title text-3xl">{name}</h2>
+              <h2 class="card-title flex flex-row items-center gap-x-2 text-3xl">
+                {name}
+                {/* Bookmark-Button */}
+                {bookmarked !== undefined && (
+                  <BookmarkButton
+                    bookmarked={bookmarked}
+                    onSetBookmarked$={onSetBookmarked$ ?? $(() => {})}
+                  />
+                )}
+              </h2>
               <div class="flex w-full flex-row flex-wrap items-center gap-4">
                 {/* Properties */}
                 <Slot name="properties" />
