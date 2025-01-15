@@ -17,7 +17,7 @@ import {
   HiTagOutline,
   HiUserGroupOutline,
 } from "@qwikest/icons/heroicons";
-import { getTagNames } from "~/utils";
+import { formatDateRange, getTagNames } from "~/utils";
 
 type Detail = { icon: JSXOutput; text: string };
 
@@ -32,7 +32,7 @@ function getProjectDetails(project: Project): Detail[] {
     { icon: <HiMapPinOutline />, text: project.regionName },
     {
       icon: <HiCalendarOutline />,
-      text: project.dateFrom + " - " + project.dateTo,
+      text: formatDateRange(project.dateFrom, project.dateTo) || "",
     },
   ];
 }
@@ -45,20 +45,28 @@ function getProjectDetails(project: Project): Detail[] {
 function getOrganizationDetails(organization: Organization): Detail[] {
   return [
     { icon: <HiHomeOutline />, text: organization.regionName },
-    { icon: <HiCakeOutline />, text: organization.foundingYear + " gegründet" },
+    {
+      icon: <HiCakeOutline />,
+      text:
+        organization.foundingYear === undefined
+          ? "/"
+          : organization.foundingYear + " gegründet",
+    },
     {
       icon: <HiUserGroupOutline />,
       text:
-        organization.memberCount +
-        " " +
-        (organization.memberCount == 1 ? "Mitglied" : "Mitglieder"),
+        organization.memberCount === undefined
+          ? "/"
+          : organization.memberCount +
+            " " +
+            (organization.memberCount === 1 ? "Mitglied" : "Mitglieder"),
     },
     {
       icon: <HiBoltOutline />,
       text:
         organization.projectCount +
         " " +
-        (organization.projectCount == 1 ? "Projekt" : "Projekte"),
+        (organization.projectCount === 1 ? "Projekt" : "Projekte"),
     },
   ];
 }

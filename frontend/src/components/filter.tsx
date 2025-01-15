@@ -131,7 +131,7 @@ const TypeSelection = component$((props: { showOnly: Signal<ShowOnly> }) => {
           checked={props.showOnly.value != "Project"}
           onClick$={(_, currentTarget) =>
             (props.showOnly.value =
-              currentTarget.checked || props.showOnly.value == "Project"
+              currentTarget.checked || props.showOnly.value === "Project"
                 ? undefined
                 : "Project")
           }
@@ -145,7 +145,7 @@ const TypeSelection = component$((props: { showOnly: Signal<ShowOnly> }) => {
           checked={props.showOnly.value != "Organization"}
           onClick$={(_, currentTarget) =>
             (props.showOnly.value =
-              currentTarget.checked || props.showOnly.value == "Organization"
+              currentTarget.checked || props.showOnly.value === "Organization"
                 ? undefined
                 : "Organization")
           }
