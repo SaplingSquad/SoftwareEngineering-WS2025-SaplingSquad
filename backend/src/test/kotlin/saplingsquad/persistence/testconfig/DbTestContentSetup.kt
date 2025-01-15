@@ -289,6 +289,9 @@ fun setupDb(db: R2dbcDatabase) = runBlocking {
     db.runQuery {
         QueryDsl.create(Meta.organizationAccountEntity)
     }
+    db.runQuery {
+        QueryDsl.create(Meta.answerEntity)
+    }
 
 }
 
