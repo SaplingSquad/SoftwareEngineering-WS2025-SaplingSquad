@@ -1,5 +1,5 @@
 import { Session } from "@auth/qwik";
-import { component$, createContextId, Signal, useContext, useContextProvider, useSignal, useStore } from "@builder.io/qwik";
+import { component$, createContextId, Signal, useContext, useContextProvider, useSignal, useStore, useTask$ } from "@builder.io/qwik";
 import { HiPlusCircleSolid, HiCog6ToothOutline, HiPlusCircleOutline, HiLinkOutline, HiBanknotesOutline, HiTrashSolid, HiEllipsisVerticalOutline, HiMapPinOutline, HiCalendarOutline } from "@qwikest/icons/heroicons";
 import { LogoutParamsForm } from "../auth/logout";
 import { ProfileImage } from "./utils";
@@ -61,6 +61,10 @@ const ProjectDeleteButtonOption = component$(() => {
 
 const ProjectDelete = component$((inputData: { p: ProjectInformationProps }) => {
     useDeleteProject({ id: inputData.p.id });
+    const contextDelA = useContext(OrgaProjektDelA)
+    useTask$(() => {
+        contextDelA.push(inputData.p.id)
+    })
     return (
         <></>
     )
@@ -69,10 +73,6 @@ const ProjectDelete = component$((inputData: { p: ProjectInformationProps }) => 
 const ProjectContent = component$((inputData: { del: boolean, p: ProjectInformationProps }) => {
     const refURL = './manage-project?selproj=' + inputData.p.id.toString()
     const acceptedDel = useSignal(false)
-    const contextDelA = useContext(OrgaProjektDelA)
-    if (acceptedDel.value) {
-        contextDelA.push(inputData.p.id)
-    }
     return (
         <>
             {acceptedDel.value && <ProjectDelete p={inputData.p} />}
