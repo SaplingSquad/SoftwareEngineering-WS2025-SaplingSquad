@@ -142,7 +142,7 @@ export const InfoCard = component$(
             )}
           </div>
           {/* Actions */}
-          <div class="align-center card-actions justify-stretch">
+          <div class="align-center card-actions items-stretch justify-stretch">
             <Slot name="actions" />
           </div>
         </div>
@@ -225,7 +225,7 @@ export const ActionButton: Component<{
       href={url}
       preventdefault:click
       onClick$={(pe, ae) => onClick$(pe, ae)}
-      class="btn btn-primary min-w-min grow basis-0"
+      class="btn btn-primary max-w-full grow flex-nowrap"
     >
       {insides}
     </a>
@@ -233,7 +233,7 @@ export const ActionButton: Component<{
     <Link
       q:slot="actions"
       href={url}
-      class="btn btn-primary min-w-min grow basis-0"
+      class="btn btn-primary max-w-full grow flex-nowrap"
     >
       {insides}
     </Link>
