@@ -1,13 +1,13 @@
 import type { ClassList, Component, JSXOutput, QRL } from "@builder.io/qwik";
 import { $, component$, Slot } from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
 import { PreviewMap } from "../map";
 import { ApiRequest } from "../api";
 import { HiArrowLeftOutline, HiXMarkOutline } from "@qwikest/icons/heroicons";
 import { useGetTags } from "~/api/api_hooks.gen";
 import { toMapping } from "~/api/tags";
 import { isNumberArray } from "~/utils";
-import { IconLinkButton, LinkTarget } from "../link_button";
+import type { LinkTarget } from "../link_button";
+import { IconLinkButton, LinkButton } from "../link_button";
 
 /**
  * A generic info-card for any entity.
@@ -215,10 +215,16 @@ const DisplayTags = component$(({ tags }: { tags: string[] }) => (
 /**
  * A button with an icon.
  * Text can be contained as a child.
+ * Will be rendered in actions in {@link InfoCard}.
  *
  * Use as a JSX-component.
  */
-export const ActionButton: Component<{
+export const ActionButton = ({
+  icon: Icon,
+  url,
+  onClick$,
+  children,
+}: {
   /**
    * Icon to display. Must accept classes.
    */
@@ -232,41 +238,21 @@ export const ActionButton: Component<{
    * When this is set, clicking this button will not navigate to the set `QRL`,
    * but only call the click-handler instead.
    */
-  onClick$?: QRL<
-    (pointerEvent: PointerEvent, anchorEvent: HTMLAnchorElement) => unknown
-  >;
+  onClick$?: QRL<() => unknown>;
   /**
    * Other content of this button
    */
   children?: JSXOutput;
-}> = ({ icon: Icon, url, onClick$, children }) => {
-  const insides = (
-    <>
-      {Icon && <Icon class="mr-2 h-8 w-8" />}
-      {children}
-    </>
-  );
-
-  return onClick$ ? (
-    <a
-      q:slot="actions"
-      href={url}
-      preventdefault:click
-      onClick$={(pe, ae) => onClick$(pe, ae)}
-      class="btn btn-primary max-w-full grow flex-nowrap"
-    >
-      {insides}
-    </a>
-  ) : (
-    <Link
-      q:slot="actions"
-      href={url}
-      class="btn btn-primary max-w-full grow flex-nowrap"
-    >
-      {insides}
-    </Link>
-  );
-};
+}) => (
+  <LinkButton
+    q:slot="actions"
+    target={onClick$ ? [url, onClick$] : url}
+    class="btn btn-primary max-w-full grow flex-nowrap"
+  >
+    {Icon && <Icon class="mr-2 h-8 w-8" />}
+    {children}
+  </LinkButton>
+);
 
 /**
  * A component for displaying a property (`value`) with an `Icon` in {@link InfoCard}.
