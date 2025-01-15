@@ -2,9 +2,24 @@
 
 Here, you can find a Docker compose file for a basic keycloak configuration.
 
+The container can be started and stopped by executing the following *from this directory ([auth](.))*:
+
+Start:
+```shell
+docker compose up
+```
+
+Stop (and remove) the container (this does not remove the associated volume):
+```shell
+docker compose down
+```
+
 Depending on which frontend/backend configuration you want to run, some lines in the environment section of
 [compose.yml](./compose.yml) need to be commented/uncommented manually.
 These sections Start with comments `# Use the following to ...`
+
+When making changes to the `compose.yml` file, make sure to stop (and remove) the containers first using 
+`docker compose down` and start them afterwards.
 
 ## 1. Full application (Backend + Frontend)
 
