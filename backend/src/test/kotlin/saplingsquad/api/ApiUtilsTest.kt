@@ -1,8 +1,8 @@
-package api
+package saplingsquad.api
 
-import saplingsquad.api.DateContext
-import saplingsquad.api.dateToMonthAndYear
-import saplingsquad.api.monthAndYearToDate
+import org.junit.jupiter.api.assertThrows
+import org.springframework.web.server.ResponseStatusException
+import saplingsquad.persistence.tables.CoordinatesEmbedded
 import java.time.LocalDate
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -27,10 +27,44 @@ class ApiUtilsTest {
 
         assertFormatAndParseYearMonthDate(novemberStart, "2025-11", DateContext.START_DATE)
         assertFormatAndParseYearMonthDate(novemberEnd, "2025-11", DateContext.END_DATE)
+
+        assertThrows<ResponseStatusException> { monthAndYearToDate("202-11", DateContext.START_DATE) }
+        assertThrows<ResponseStatusException> { monthAndYearToDate("2025-13", DateContext.START_DATE) }
+        assertThrows<ResponseStatusException> { monthAndYearToDate("2025-11-11", DateContext.START_DATE) }
     }
 
     private fun assertFormatAndParseYearMonthDate(date: LocalDate, asString: String, context: DateContext) {
         assertEquals(date, monthAndYearToDate(asString, context))
         assertEquals(asString, dateToMonthAndYear(date))
+    }
+
+    @Test
+    fun testCoordinatesToList() {
+        val longitude = 100.5
+        val latitude = -20.0
+        val coordinates = CoordinatesEmbedded(coordinatesLon = longitude, coordinatesLat = latitude)
+        val list = coordinates.toLonLatList()
+        assertEquals(longitude, list[0].toDouble())
+        assertEquals(latitude, list[1].toDouble())
+    }
+
+    @Test
+    fun testListToCoordinates() {
+        val longitude = 100.5.toBigDecimal()
+        val latitude = (-20.0).toBigDecimal()
+        val list = listOf(longitude, latitude)
+        val coordinates = listToCoordinates(list)
+        assertEquals(longitude, coordinates.coordinatesLon.toBigDecimal())
+        assertEquals(latitude, coordinates.coordinatesLat.toBigDecimal())
+
+        assertThrows<ResponseStatusException> {
+            listToCoordinates(listOf(200.toBigDecimal(), 10.toBigDecimal()))
+        }
+        assertThrows<ResponseStatusException> {
+            listToCoordinates(listOf(100.toBigDecimal(), (-100).toBigDecimal()))
+        }
+        assertThrows<ResponseStatusException> {
+            listToCoordinates(listOf(20.toBigDecimal(), 20.toBigDecimal(), 20.toBigDecimal()))
+        }
     }
 }
