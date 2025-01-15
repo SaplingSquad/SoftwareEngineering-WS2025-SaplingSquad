@@ -4,8 +4,8 @@ import Keycloak from "@auth/qwik/providers/keycloak";
 import { isServer } from "@builder.io/qwik/build";
 import { Agent, fetch as undiciFetch } from "undici";
 
-export const USERS_PROVIDER_ID = "keycloak-users";
-export const ORGS_PROVIDER_ID = "keycloak-orgs";
+export const USERS_PROVIDER_ID = "keycloak-users"
+export const ORGS_PROVIDER_ID = "keycloak-orgs"
 
 //https://authjs.dev/getting-started/typescript#module-augmentation
 declare module "@auth/qwik" {

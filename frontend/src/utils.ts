@@ -54,9 +54,9 @@ export type DistributiveOmit<T, K extends keyof any> = T extends any
  * @param numbers The question answers to store.
  */
 export const saveAnswersToLocalStorage = (numbers: number[]) => {
-  const json = JSON.stringify(numbers);
-  localStorage.setItem("question-answers", json);
-};
+    const json = JSON.stringify(numbers);
+    localStorage.setItem("question-answers", json);
+}
 
 /**
  * Retrieves question answers from the local storage if present.
@@ -70,11 +70,8 @@ export const getAnswersFromLocalStorage = (): number[] | undefined => {
     }
 
     const parsed = JSON.parse(json);
-    return Array.isArray(parsed) &&
-      parsed.every((item) => typeof item === "number")
-      ? parsed
-      : undefined;
+    return Array.isArray(parsed) && parsed.every(item => typeof item === "number") ? parsed : undefined;
   } catch (error) {
     return undefined;
   }
-};
+}
