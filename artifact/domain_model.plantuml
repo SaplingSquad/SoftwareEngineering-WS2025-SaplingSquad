@@ -35,7 +35,7 @@
 
 	class Region
 	Region : name
-	Pin "1" --> "1" Region : hat eine
+	Pin "1" --> "1" Region : ist in 
 
 	class Frage
 	Frage "*" --> "1" Filter : setzt
