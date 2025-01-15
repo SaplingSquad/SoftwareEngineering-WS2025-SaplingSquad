@@ -30,7 +30,9 @@ import type {
 } from "./types";
 import { Link } from "@builder.io/qwik-city";
 
-//UI Component for Organisation registration and Organisation info editing
+/**
+ * UI Components for Organisation registration and Organisation info editing
+ */
 
 const FormDataContext = createContextId<OrgaInformationsProps>(
   "verein-signup-context",
@@ -41,6 +43,9 @@ const answerStyles = new Map<boolean, string>([
   [true, "btn-primary"],
 ]);
 
+/**
+ * Form to enter Organization Infos
+ */
 const Vereinsdaten = component$(() => {
   const context = useContext(FormDataContext);
   return (
@@ -157,6 +162,9 @@ const Vereinsdaten = component$(() => {
   );
 });
 
+/**
+ * Tab to select Tags for Organization
+ */
 const Vereinstags = component$(
   (inputData: { tags: { id: number; name: string }[] }) => {
     return (
@@ -195,6 +203,9 @@ const SingleVereinstag = component$(
   },
 );
 
+/**
+ * Tab for adding and displaying images
+ */
 export const ImageStack = component$(() => {
   const context = useContext(FormDataContext);
   const inputRef = useSignal<HTMLInputElement>();
@@ -279,6 +290,9 @@ export const ImagePreview = component$(
   },
 );
 
+/**
+ * Final Tab to give an overview of the given informations.
+ */
 const Overview = component$(() => {
   const context = useContext(FormDataContext);
   return (
@@ -371,6 +385,9 @@ function convertInternalTypeToAPIType(
   };
 }
 
+/**
+ * Sends all entered information to backend as a new organization
+ */
 const SendFormAsNew = component$(() => {
   const context = useContext(FormDataContext);
   const updateOrgApiCall = usePostOrganization(
@@ -420,6 +437,9 @@ const SendFormAsNew = component$(() => {
   );
 });
 
+/**
+ * Sends all entered information to backend as a modified organization
+ */
 const SendFormAsEdit = component$(() => {
   const context = useContext(FormDataContext);
   const updateOrgApiCall = usePutOrganization(
@@ -469,6 +489,9 @@ const SendFormAsEdit = component$(() => {
   );
 });
 
+/**
+ * Warns users, if Data is missing.
+ */
 function checkFormInputs(currState: OrgaInformationsProps) {
   return !(
     currState.name === "" ||
@@ -499,6 +522,9 @@ export const FormInputMissing = component$(() => {
   );
 });
 
+/**
+ * Main Component, which holds all the controls and contents.
+ */
 export const Vereinsignup = component$(
   (inputData: {
     orgaData: ApiRelevantOrganisationInformations;

@@ -32,6 +32,10 @@ import {
 import { isAccTypeOrg, useAccountType } from "~/auth/utils";
 import { Link } from "@builder.io/qwik-city";
 
+/**
+ * UI Components for displaying the profile page with routes for adding/editing organizating and projects
+ */
+
 const OrgaProfileDataContext = createContextId<OrgaInformationsProps>(
   "verein-profile-context",
 );
@@ -42,6 +46,9 @@ const OrgaProjectDataContext = createContextId<ProjectInformationProps[]>(
 
 const OrgaProjektDelA = createContextId<number[]>("verein-project-del");
 
+/**
+ * Gives overview of a single project for the logged in organization
+ */
 const ProjectCard = component$((props: { p: ProjectInformationProps }) => {
   const projDel = useSignal(true);
   return (
@@ -161,6 +168,9 @@ const ProjectDummy = component$(() => {
   );
 });
 
+/**
+ * Holds profile infomration for Logged in Users and Organizations
+ */
 const ProfileInformation = component$(
   (inputData: {
     profiledata: Readonly<Signal<null>> | Readonly<Signal<Session>>;
@@ -210,6 +220,9 @@ const ProjectManagement = component$(
   },
 );
 
+/**
+ * Display of organization informations
+ */
 const Vereinsinfo = component$(() => {
   const context = useContext(OrgaProfileDataContext);
   return (
@@ -286,6 +299,9 @@ const VereinDummy = component$(() => {
   );
 });
 
+/**
+ * Holds organization informations and organization projects. Changes to Dummy if there is no associated organization to logged in account.
+ */
 const VereinInfoProjects = component$(
   (inputData: { projectData: ProjectInformationProps[] }) => {
     const context = useContext(OrgaProfileDataContext);
@@ -321,18 +337,6 @@ const VereinInfoProjects = component$(
           </div>
           <ProjectManagement data={inputData.projectData} />
         </div>
-      </div>
-    );
-  },
-);
-
-export const UserProfile = component$(
-  (inputData: {
-    profiledata: Readonly<Signal<null>> | Readonly<Signal<Session>>;
-  }) => {
-    return (
-      <div class="max-w-md p-4">
-        <ProfileInformation profiledata={inputData.profiledata} />
       </div>
     );
   },
@@ -378,6 +382,21 @@ export function convertAPITypeToInternalProjectType(
     regionName: apiOut.regionName,
   };
 }
+
+/**
+ * User and Organiziation Profile Page component
+ */
+export const UserProfile = component$(
+  (inputData: {
+    profiledata: Readonly<Signal<null>> | Readonly<Signal<Session>>;
+  }) => {
+    return (
+      <div class="max-w-md p-4">
+        <ProfileInformation profiledata={inputData.profiledata} />
+      </div>
+    );
+  },
+);
 
 export const VereinProfile = component$(
   (inputData: {

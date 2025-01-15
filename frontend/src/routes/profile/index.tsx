@@ -12,6 +12,10 @@ import { ApiRelevantOrganisationInformations } from "~/components/profile/types"
 import { isAccTypeOrg, isAccTypeUser, useAccountType } from "~/auth/utils";
 import { LoginAgainCard } from "~/components/profile/utils";
 
+/**
+ * Main Profile component: if the user is logged in, it will return the corresponding profile page type: normal user or organization.
+ * If this page is called, while not beeing logged in, it will prompt you to do so.
+ */
 const VereinProfilePage = component$(
   (inputData: {
     profiledata: Readonly<Signal<null>> | Readonly<Signal<Session>>;

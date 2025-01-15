@@ -30,6 +30,10 @@ import type {
 import { FormInputMissing } from "./manage-organisation";
 import { Link } from "@builder.io/qwik-city";
 
+/**
+ * UI Components for Organisations Project registration and Project info editing
+ */
+
 const FormDataContext =
   createContextId<ProjectInformationProps>("project-context");
 
@@ -42,6 +46,9 @@ const ChooseOption = component$((inputData: { index: number }) => {
   return <option>{inputData.index.toString()}</option>;
 });
 
+/**
+ * Form to enter Project Infos
+ */
 const Projektdaten = component$(() => {
   const context = useContext(FormDataContext);
   return (
@@ -231,6 +238,9 @@ const Projektdaten = component$(() => {
   );
 });
 
+/**
+ * Tab to select Tags for Project
+ */
 const Projekttags = component$(
   (inputData: { tags: { id: number; name: string }[] }) => {
     return (
@@ -269,6 +279,9 @@ const SingleProjekttag = component$(
   },
 );
 
+/**
+ * Tab for adding and displaying Project images
+ */
 const ImageStack = component$(() => {
   const context = useContext(FormDataContext);
   const inputRef = useSignal<HTMLInputElement>();
@@ -353,6 +366,9 @@ const ImagePreview = component$(
   },
 );
 
+/**
+ * Final Tab to give an overview of the given project informations.
+ */
 const Overview = component$(() => {
   const context = useContext(FormDataContext);
   return (
@@ -421,7 +437,7 @@ const Overview = component$(() => {
   );
 });
 
-const SendFormAsNew = component$(() => {
+const SendFormAsNewOrganization = component$(() => {
   const context = useContext(FormDataContext);
   const noId = (({ ...o }) => o)(convertInternalTypeToAPIProjectType(context));
   const updateProjectApiCall = usePostProject(noId);
@@ -469,7 +485,7 @@ const SendFormAsNew = component$(() => {
   );
 });
 
-const SendFormAsEdit = component$(() => {
+const SendFormAsEditOrganization = component$(() => {
   const context = useContext(FormDataContext);
   const updateProjectApiCall = usePutProject(
     convertInternalTypeToAPIProjectType(context),
@@ -559,6 +575,9 @@ function checkFormInputs(currState: ProjectInformationProps) {
   );
 }
 
+/**
+ * Main Component, which holds all the controls and contents.
+ */
 export const ProjectCreation = component$(
   (inputData: {
     selProject: number;
@@ -605,8 +624,8 @@ export const ProjectCreation = component$(
             {position.value === 1 && <Projekttags tags={tagsNameMapping} />}
             {position.value === 2 && <ImageStack />}
             {position.value === 3 && <Overview />}
-            {position.value === 4 && isNew && <SendFormAsNew />}
-            {position.value === 4 && !isNew && <SendFormAsEdit />}
+            {position.value === 4 && isNew && <SendFormAsNewOrganization />}
+            {position.value === 4 && !isNew && <SendFormAsEditOrganization />}
             {position.value === 0 && !checkFormInputs(context) && (
               <FormInputMissing />
             )}

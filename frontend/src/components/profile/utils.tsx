@@ -13,6 +13,9 @@ import { isServer } from "@builder.io/qwik/build";
 import { InputMarkerLocation } from "./types";
 import { LoginOverviewParamsForm } from "../auth/login";
 
+/**
+ * Loads an Dummy image or the account image to the corresponding profile
+ */
 export const ProfileImage = component$(
   (inputData: {
     profiledata: Readonly<Signal<null>> | Readonly<Signal<Session>>;
@@ -29,6 +32,9 @@ export const ProfileImage = component$(
   },
 );
 
+/**
+ * Card for prompting the user to log in again because of validation issues
+ */
 export const LoginAgainCard = component$(() => {
   return (
     <div class="flex justify-center p-32">
@@ -46,6 +52,11 @@ export const LoginAgainCard = component$(() => {
   );
 });
 
+/**
+ * Creates the map for the signup and registration phase of a project and organization.
+ * It only shows one pin for the current project or organization,
+ * which can be dragged or clicked to position on the map.
+ */
 const createMap = (options: maplibregl.MapOptions) => {
   const map = new maplibregl.Map(options);
   return map;
