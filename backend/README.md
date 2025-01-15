@@ -2,16 +2,17 @@
 
 ## To run the backend together with the frontend
 
-1. Start the Database
-2. Start the Keycloak server
+1. Start the Keycloak server
+2. Start the Database
 3. Start the Frontend dev server
 4. Start the Backend Server with correct arguments
 
-### 1.Start the Database
-See [../database](./../database) on how to start the development database using Docker.
 
-### 2. Start Keycloak
+### 1. Start Keycloak
 See [../auth](./../auth) for a local development Keycloak Docker container.
+
+### 2. Start the Database
+See [../database](./../database) on how to start the development database using Docker.
 
 ### 3. Start the frontend dev server
 The frontend server (in [../frontend](./../frontend)) can be started with
