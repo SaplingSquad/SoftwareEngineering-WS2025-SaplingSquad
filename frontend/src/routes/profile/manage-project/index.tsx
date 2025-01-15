@@ -4,7 +4,6 @@ import { requestHandler } from "@builder.io/qwik-city/middleware/request-handler
 import { useGetOrganizationSelf, useGetProjectsForOrganizationSelf, useGetTags } from "~/api/api_hooks.gen";
 import { ApiResponse } from "~/components/api";
 import { ProjectCreation } from "~/components/profile/manage-project";
-import type { ProfileProjectsProps } from "~/components/profile/profile";
 
 export const getUrlParams = routeLoader$((requestEvent) => {
     return requestEvent.url.toString()

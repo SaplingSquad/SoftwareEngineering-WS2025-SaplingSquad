@@ -1,6 +1,5 @@
 import { component$, createContextId, Resource, Signal, useComputed$, useContext, useContextProvider, useSignal, useStore, } from "@builder.io/qwik";
 import { UserProfile, VereinProfile } from "~/components/profile/profile";
-import type { ApiRelevantOrganisationInformations, OrgaInformationsProps, ProfileProjectsProps } from "~/components/profile/profile";
 import { useSession } from "../plugin@auth";
 import { getAccountType, isAccTypeOrg, isAccTypeUser, useAccountType, useAuthHeader } from "~/auth/useauthheader";
 import { LoginOverviewParamsForm } from "~/components/auth/login";
@@ -12,15 +11,7 @@ import { objectOutputType } from "zod";
 import { useGetOrganizationSelf, useGetProjectsForOrganizationSelf } from "~/api/api_hooks.gen";
 import { Session } from "@auth/qwik";
 import { getProjectsForOrganizationSelf } from "~/api/api_methods.gen";
-
-const DEMO_IMAGE = "https://picsum.photos/300";
-
-const projectdata: ProfileProjectsProps[] = [
-    { img: DEMO_IMAGE, title: "Bildung für Kinder", text: "benachteiligte Kinder unterstützen und ihnen Zugang zu Bildung ermöglichen?" },
-    { img: DEMO_IMAGE, title: "Artenschutz und Biodiversität", text: "dich für den Schutz gefährdeter Tierarten und den Erhalt der Biodiversität einsetzen?" },
-    { img: DEMO_IMAGE, title: "Hungerbekämpfung", text: "dazu beitragen, den Welthunger zu bekämpfen und Menschen in Not mit Lebensmitteln zu versorgen?" },
-    { img: DEMO_IMAGE, title: "Katastrophenhilfe", text: "Gemeinden in Katastrophengebieten mit Nothilfe und langfristiger Unterstützung beistehen?" },
-]
+import { ProfileProjectsProps, ApiRelevantOrganisationInformations } from "~/components/profile/types";
 
 const VereinProfilePage = component$((inputData: { profiledata: Readonly<Signal<null>> | Readonly<Signal<Session>> }) => {
     const orgaRequest = useGetOrganizationSelf();
@@ -89,31 +80,9 @@ const VereinProfilePage = component$((inputData: { profiledata: Readonly<Signal<
             />
         </div>
     )
-
-    return (
-        <Resource
-            value={orgaProjectsRequest}
-            onResolved={(projResponse) => (
-                <ApiResponse
-                    response={projResponse}
-                    on200$={(projR) => <div><p>Success {JSON.stringify(projR)}</p><VereinProfile orgaData={emptyOrga} projectsData={projR} profiledata={session} /></div>}
-                    on401$={() => <>Bitte neu anmelden <LoginOverviewParamsForm redirectTo={"/profile"}>
-                        <button class="btn btn-primary">Hier einloggen!</button>
-                    </LoginOverviewParamsForm></>}
-                    defaultError$={(r) => r}
-                />
-            )}
-            onPending={() =>
-                <>
-                    Pending
-                </>
-            }
-        />
-    )
 })
 
 export default component$(() => {
-    const store = useStore(projectdata);
 
     const session = useSession();
     const useaccType = useAccountType(session);

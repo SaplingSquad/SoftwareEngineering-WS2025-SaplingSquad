@@ -1,17 +1,13 @@
 import { ClassList, component$, createContextId, Resource, Signal, useComputed$, useContext, useContextProvider, useSignal, useStore } from "@builder.io/qwik";
 import { HiStarOutline, HiNoSymbolOutline, HiChevronRightOutline, HiChevronLeftOutline, HiInformationCircleOutline, HiPlusOutline, HiCalendarDaysOutline, HiUserGroupOutline, HiCog6ToothOutline, HiLinkOutline, HiBanknotesOutline, HiTrashOutline, HiTrashSolid } from "@qwikest/icons/heroicons";
 import { MapLocationInput } from "./utils";
-import { ApiRelevantOrganisationInformations, convertAPITypeToInternalType, OrgaInformationsProps } from "./profile";
 import { Form } from "@builder.io/qwik-city";
 import { useGetTags, usePostOrganization, usePutOrganization } from "~/api/api_hooks.gen";
 import { ApiResponse } from "../api";
+import { convertAPITypeToInternalType } from "./profile";
+import { OrgaInformationsProps, ApiRelevantOrganisationInformations } from "./types";
 
 const FormDataContext = createContextId<OrgaInformationsProps>("verein-signup-context")
-
-export type Badge = {
-    title: string
-    answer: boolean;
-};
 
 const answerStyles = new Map<boolean, string>([
     [false, ""],
