@@ -4,10 +4,10 @@ import { component$, useSignal } from "@builder.io/qwik";
  * This type specifies the format in which the question is passed to the component.
  */
 export type QuestionCardProps = {
-  img: string;
-  title: string;
-  text: string;
-  isSelected: boolean;
+  imageUrl: string | undefined;
+  title: string | undefined;
+  text: string | undefined;
+  isSelected: boolean | undefined;
 };
 
 /**
@@ -28,7 +28,7 @@ export const QuestionCard = component$((props: { data: QuestionCardProps }) => {
         onMouseLeave$={() => (cardHovered.value = false)}
       >
         <figure>
-          <img src={props.data.img} width="500" height="500" alt="" />
+          <img src={props.data.imageUrl} width="500" height="500" alt="" />
         </figure>
 
         <div class="absolute left-0 top-0 h-full w-full overflow-hidden">

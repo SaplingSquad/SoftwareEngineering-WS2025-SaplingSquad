@@ -1,10 +1,4 @@
-import {
-  $,
-  type Signal,
-  component$,
-  useSignal,
-  useTask$,
-} from "@builder.io/qwik";
+import { type Signal, component$, useSignal, useTask$ } from "@builder.io/qwik";
 import { HiInformationCircleOutline } from "@qwikest/icons/heroicons";
 import { getRegions } from "~/api/api_methods.gen";
 
