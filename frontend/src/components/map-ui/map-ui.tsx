@@ -8,7 +8,8 @@ import {
   useTask$,
 } from "@builder.io/qwik";
 import { type FilterSettings, Filter } from "../filter";
-import { ProjectLargeInfo } from "./project-largeinfo";
+import { OrganizationInfo } from "../info/organization";
+import { Project, ProjectInfo } from "../info/project";
 import {
   organizationBookmarksMockData,
   projectBookmarksMockData,
@@ -22,7 +23,6 @@ import {
   type SearchOutput,
 } from "./types";
 import { getAnswersFromLocalStorage } from "~/utils";
-import { OrganizationLargeInfo } from "./organization-largeinfo";
 import { Navbar } from "./navbar";
 import { Tablist } from "./tablist";
 import { ExpandLatch } from "./expand-latch";
@@ -80,6 +80,9 @@ export const MapUI = component$(
   (props: {
     organizationLocations: Signal<FeatureCollection>;
     projectLocations: Signal<FeatureCollection>;
+    externalClick: Signal<
+      { type: "Organization" | "Project"; id: number } | undefined
+    >;
   }) => {
     const filterSettings: FilterSettings = useStore({
       type: undefined,
@@ -102,6 +105,15 @@ export const MapUI = component$(
       if (track(state) === State.ERROR) {
         listExpanded.value = true;
       }
+    });
+
+    useTask$(({ track }) => {
+      const clicked = track(props.externalClick);
+      if (!clicked) return;
+      selectedRanking.value = rankings.value.find(
+        (x) =>
+          x.entry.content.id === clicked.id && x.entry.type === clicked.type,
+      );
     });
 
     const update = $(async (performSearch: boolean) => {
@@ -265,15 +277,16 @@ export const MapUI = component$(
           </div>
         </div>
         {selectedRanking.value && (
-          <div class="fixed right-0 top-0 h-screen p-4">
+          <div class="fixed right-0 top-0 flex h-screen items-center justify-center overflow-y-auto bg-red-500 p-4">
             {selectedRanking.value.entry.type === "Organization" ? (
-              <OrganizationLargeInfo
-                org={selectedRanking.value.entry.content}
+              <OrganizationInfo
+                // Hack: To get the full list of projects, we load the organization again
+                load={selectedRanking.value.entry.content.id}
                 onClose={$(() => (selectedRanking.value = undefined))}
               />
             ) : (
-              <ProjectLargeInfo
-                project={selectedRanking.value.entry.content}
+              <ProjectInfo
+                {...(selectedRanking.value.entry.content as Project)} // Hack: conversion of Coordinate types
                 onClose={$(() => (selectedRanking.value = undefined))}
               />
             )}
