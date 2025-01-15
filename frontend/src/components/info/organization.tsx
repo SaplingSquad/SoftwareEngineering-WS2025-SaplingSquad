@@ -10,6 +10,7 @@ import type { MaybeSignal } from "~/api/api";
 import { useGetOrganizationById } from "~/api/api_hooks.gen";
 import { ApiRequest } from "../api";
 import type { ApiCoordinates, Coordinates } from "../map";
+import type { CloseHandler } from "./info_card";
 import { ActionButton, InfoCard } from "./info_card";
 import type { ApiShortProject, ShortProject } from "./project";
 
@@ -44,6 +45,16 @@ export type ApiOrganization = Omit<Organization, "coordinates" | "projects"> & {
 };
 
 /**
+ * Additional props for {@link ProjectCard}
+ */
+type OrganizationCardProps = {
+  /**
+   * See {@link CloseHandler}
+   */
+  onClose?: CloseHandler;
+};
+
+/**
  * Show information about an organization.
  * Will render in a card.
  */
@@ -62,7 +73,8 @@ const OrganizationCard = component$(
     imageUrls,
     regionName,
     projects,
-  }: Organization) => {
+    onClose,
+  }: Organization & OrganizationCardProps) => {
     return (
       <InfoCard
         name={name}
@@ -72,6 +84,7 @@ const OrganizationCard = component$(
         location={coordinates}
         icon={iconUrl}
         aside={projects.length > 0}
+        onClose={onClose}
       >
         {/* Properties */}
         {foundingYear && (
@@ -128,7 +141,10 @@ const OrganizationCard = component$(
  * or pass an id to `load` to automatically load that organization.
  */
 export const OrganizationInfo = component$(
-  (props: Organization | { load: MaybeSignal<number> }) => {
+  (
+    props: (Organization | { load: MaybeSignal<number> }) &
+      OrganizationCardProps,
+  ) => {
     // Already loaded
     if (!("load" in props)) return <OrganizationCard {...props} />;
 
@@ -141,7 +157,7 @@ export const OrganizationInfo = component$(
           // API always returns a valid organization (validated at runtime),
           // but the type of `coordinates` is not set to a tuple (but an array of arbitrary length).
           // We know, however, that the type is correct, so this cast is ok.
-          <OrganizationCard {...(org as Organization)} />
+          <OrganizationCard {...props} {...(org as Organization)} />
         )}
         defaultError$={(s) => <>Failed to display organization (Error {s})</>}
       />

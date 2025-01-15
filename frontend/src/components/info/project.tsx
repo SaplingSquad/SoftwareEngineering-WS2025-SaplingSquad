@@ -11,6 +11,7 @@ import type { MaybeSignal } from "~/api/api";
 import { useGetProjectById } from "~/api/api_hooks.gen";
 import { ApiRequest } from "../api";
 import type { ApiCoordinates, Coordinates } from "../map";
+import type { CloseHandler } from "./info_card";
 import { ActionButton, InfoCard } from "./info_card";
 
 /**
@@ -66,6 +67,10 @@ type ProjectCardProps = {
    * If passed, will prevent navigation on clicking that button and only call this handler.
    */
   onShowOrganization$?: QRL<(id: number) => unknown>;
+  /**
+   * See {@link CloseHandler}
+   */
+  onClose?: CloseHandler;
 };
 
 /**
@@ -88,6 +93,7 @@ const ProjectCard = component$(
     orgaName,
     regionName,
     onShowOrganization$,
+    onClose,
   }: Project & ProjectCardProps) => {
     return (
       <InfoCard
@@ -97,6 +103,7 @@ const ProjectCard = component$(
         description={description}
         location={coordinates}
         icon={iconUrl}
+        onClose={onClose}
       >
         {/* Properties */}
         {(dateFrom || dateTo) && (
