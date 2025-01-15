@@ -8,6 +8,7 @@ import {
   useSignal,
   useTask$,
 } from "@builder.io/qwik";
+import { isServer } from "@builder.io/qwik/build";
 import type {
   AddLayerObject,
   GeoJSONSource,
@@ -188,34 +189,47 @@ export const Map = component$(
     const mapLoaded = useSignal(false);
     const mapStyleLoaded = useSignal(false);
 
-    useOn(
-      "qvisible",
-      $(async () => {
-        if (!containerRef.value) {
-          console.warn("Map-container does not exist");
-          return;
-        }
-        map.value = noSerialize(
-          createMap(
-            {
-              ...additionalConfig,
-              container: containerRef.value,
-              style: style,
-            },
-            sources,
-            layers,
-            images,
-            onClick,
-            $((map) => {
-              loadedSources.value = Object.keys(sources);
-              // Load
-              mapLoaded.value = true;
-              onInit$?.(map);
-            }),
-          ),
-        )?.on("styledata", () => (mapStyleLoaded.value = true));
-      }),
-    );
+    /**
+     * Create the map of this component
+     */
+    const createThisMap = $(() => {
+      if (!containerRef.value) {
+        console.warn("Map-container does not exist");
+        return;
+      }
+
+      map.value = noSerialize(
+        createMap(
+          {
+            ...additionalConfig,
+            container: containerRef.value,
+            style: style,
+          },
+          sources,
+          layers,
+          images,
+          onClick,
+          $((map) => {
+            loadedSources.value = Object.keys(sources);
+            // Load
+            mapLoaded.value = true;
+            onInit$?.(map);
+          }),
+        ),
+      )?.on("styledata", () => (mapStyleLoaded.value = true));
+    });
+
+    // Create the map when first loaded
+    // This is needed to show the map when loading the page
+    useOn("qvisible", createThisMap);
+
+    // Create the map when ref changed
+    // This is needed to show the map when single-page navigating
+    useTask$(({ track }) => {
+      track(containerRef);
+      if (isServer) return;
+      createThisMap();
+    });
 
     // Handle updates to
     useTask$(async ({ track }) => {
