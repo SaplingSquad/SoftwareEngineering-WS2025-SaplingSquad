@@ -21,7 +21,7 @@ const answerStyles = new Map<boolean, string>([
 const ChooseOption = component$((inputData: { index: number }) => {
     return (
         <>
-            <option>{inputData.index}</option>
+            <option>{inputData.index.toString()}</option>
         </>
     )
 })
