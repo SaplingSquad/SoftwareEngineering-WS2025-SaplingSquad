@@ -54,7 +54,7 @@ export default component$(() => {
           </p>
         </div>
       )}
-      <div class="fixed right-6 top-6 rounded-full">
+      <div class="fixed right-4 top-4 rounded-full">
         <LoginAvatar />
       </div>
     </>
