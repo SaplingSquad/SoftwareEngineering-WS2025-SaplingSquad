@@ -1,10 +1,11 @@
-import { ClassList, component$, createContextId, Resource, useContext, useContextProvider, useSignal, useStore } from "@builder.io/qwik";
+import { component$, createContextId, Resource, useContext, useContextProvider, useSignal, useStore } from "@builder.io/qwik";
+import type { ClassList } from "@builder.io/qwik";
 import { HiChevronRightOutline, HiChevronLeftOutline, HiInformationCircleOutline, HiPlusOutline, HiCalendarDaysOutline, HiUserGroupOutline, HiCog6ToothOutline, HiLinkOutline, HiBanknotesOutline, HiTrashSolid } from "@qwikest/icons/heroicons";
 import { MapLocationInput } from "./utils";
 import { usePostOrganization, usePutOrganization } from "~/api/api_hooks.gen";
 import { ApiResponse } from "../api";
 import { convertAPITypeToInternalType } from "./profile";
-import { OrgaInformationsProps, ApiRelevantOrganisationInformations } from "./types";
+import type { OrgaInformationsProps, ApiRelevantOrganisationInformations } from "./types";
 
 //UI Component for Organisation registration and Organisation info editing
 
@@ -79,7 +80,6 @@ const Vereinsdaten = component$(() => {
 })
 
 const Vereinstags = component$((inputData: { tags: { id: number, name: string }[] }) => {
-    const context = useContext(FormDataContext)
     return (
         <>
             <p>Vereinstags</p>
@@ -98,7 +98,7 @@ const SingleVereinstag = component$((prop: { tag: { id: number, name: string } }
     return (
         <>
             <div class={"btn btn-sm " + answerStyles.get(isCurrSel)} onClick$={() => {
-                { isCurrSel && (context.tags = context.tags.filter((e, i) => e !== prop.tag.id)) };
+                { isCurrSel && (context.tags = context.tags.filter((e) => e !== prop.tag.id)) }
                 { !isCurrSel && (context.tags.push(prop.tag.id)) }
             }
             }>{prop.tag.name}</div>
@@ -122,7 +122,7 @@ export const ImageStack = component$(() => {
                         </div>
                     </div>
                 </label>
-                <button class="btn btn-primary" onClick$={() => { if (inputRef.value?.value) { context.imageUrls.push(inputRef.value?.value); inputValue.value = "" } }}>
+                <button class="btn btn-primary" onClick$={() => { if (inputRef.value?.value) { context.imageUrls.push(inputRef.value.value); inputValue.value = "" } }}>
                     <div class="text-2xl hover:opacity-70 transition-all">
                         <HiPlusOutline />
                     </div>
@@ -148,7 +148,7 @@ export const ImagePreview = component$((inputData: { imgUrl: string, key: number
         <>
             <div key={inputData.key + "imageStackOrgaAcc"} class={inputData.clz}>
                 {inputData.delButton &&
-                    <div class="btn btn-square scale-[0.75] btn-error absolute -top-3 -left-3 text-error-content text-2xl shadow-xl" onClick$={() => context.imageUrls = context.imageUrls.filter((e, i) => inputData.imgUrl !== e)}>
+                    <div class="btn btn-square scale-[0.75] btn-error absolute -top-3 -left-3 text-error-content text-2xl shadow-xl" onClick$={() => context.imageUrls = context.imageUrls.filter((e) => inputData.imgUrl !== e)}>
                         <HiTrashSolid />
                     </div>
                 }
@@ -261,7 +261,7 @@ const SendFormAsNew = component$(() => {
             <Resource value={updateOrgApiCall}
                 onResolved={(response) => <ApiResponse
                     response={response}
-                    on201$={(r) =>
+                    on201$={() =>
                         <div class="flex justify-center p-32">
                             <div class="card bg-base-100 w-96 shadow-xl">
                                 <div class="card-body items-center text-center">
@@ -300,7 +300,7 @@ const SendFormAsEdit = component$(() => {
             <Resource value={updateOrgApiCall}
                 onResolved={(response) => <ApiResponse
                     response={response}
-                    on204$={(r) =>
+                    on204$={() =>
                         <div class="flex justify-center p-32">
                             <div class="card bg-base-100 w-96 shadow-xl">
                                 <div class="card-body items-center text-center">

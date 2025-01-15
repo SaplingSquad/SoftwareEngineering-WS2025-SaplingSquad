@@ -1,7 +1,7 @@
 import { Session } from "@auth/qwik";
 import { ClassList, component$, Signal, useVisibleTask$ } from "@builder.io/qwik";
 import { HiUserCircleOutline } from "@qwikest/icons/heroicons";
-import { $, noSerialize, NoSerialize, QRL, useSignal } from "@builder.io/qwik";
+import { noSerialize, NoSerialize, QRL, useSignal } from "@builder.io/qwik";
 import maplibregl from "maplibre-gl";
 import { ClickHandlers, Images, Layers, Sources } from "../map";
 import { isServer } from "@builder.io/qwik/build";
@@ -29,10 +29,6 @@ export const ProfileImage = component$((inputData: { profiledata: Readonly<Signa
 
 const createMap = (
     options: maplibregl.MapOptions,
-    sources: Sources,
-    layers: Layers,
-    images: Images,
-    clickHandlers: ClickHandlers,
 ) => {
     const map = new maplibregl.Map(options);
     return map;
@@ -42,10 +38,6 @@ export const MapLocationInput = component$(
     ({
         class: clz,
         style = "https://tiles.versatiles.org/assets/styles/colorful.json",
-        sources = {},
-        layers$ = $([]),
-        images = {},
-        onClick = [],
         location,
         drgbl = false
     }: {
@@ -94,10 +86,6 @@ export const MapLocationInput = component$(
                         container: containerRef.value,
                         style: style,
                     },
-                    sources,
-                    await layers$.resolve(),
-                    images,
-                    onClick,
                 )
                 markSign.value = noSerialize(
                     new maplibregl.Marker({ draggable: drgbl })

@@ -15,8 +15,6 @@ const OrgaProjektDelA = createContextId<number[]>("verein-project-del")
 
 
 const ProjectCard = component$((props: { p: ProjectInformationProps }) => {
-    const refURL = './manage-project?selproj=' + props.p.id.toString()
-    const remProjId = useSignal<number>(props.p.id)
     const projDel = useSignal(true)
     //const removeProjectCall = useDeleteProject({ id: remProjId })
     return (
@@ -61,16 +59,23 @@ const ProjectLoeschen = component$(() => {
     )
 })
 
+const ProjectDelete = component$((inputData: { p: ProjectInformationProps }) => {
+    useDeleteProject({ id: inputData.p.id });
+    return (
+        <></>
+    )
+})
+
 const ProjectContent = component$((inputData: { del: boolean, p: ProjectInformationProps }) => {
     const refURL = './manage-project?selproj=' + inputData.p.id.toString()
     const acceptedDel = useSignal(false)
     const contextDelA = useContext(OrgaProjektDelA)
     if (acceptedDel.value) {
-        useDeleteProject({ id: inputData.p.id });
         contextDelA.push(inputData.p.id)
     }
     return (
         <>
+            {acceptedDel.value && <ProjectDelete p={inputData.p} />}
             {inputData.del &&
                 <>
                     <div class="flex text-lg">
@@ -131,10 +136,11 @@ const ProjectDummy = component$(() => {
 })
 
 const ProfileInformation = component$((inputData: { profiledata: Readonly<Signal<null>> | Readonly<Signal<Session>> }) => {
+    const accType = isAccTypeOrg(useAccountType(inputData.profiledata))
     return (
         <>
             <div class="card bg-base-100 rounded-box place-items-stretch p-4 space-y-4 h-fit flex-initial w-full min-w-fit card-bordered border-base-300 border-4">
-                <h2 class="card-title">{isAccTypeOrg(useAccountType(inputData.profiledata)) ? "Vereinsaccount" : "Account"}</h2>
+                <h2 class="card-title">{accType ? "Vereinsaccount" : "Account"}</h2>
                 <div class="w-full flex justify-center">
                     <div class="avatar placeholder w-5/6 justify-center min-w-10 max-w-28">
                         <div class="ring-primary ring-offset-base-100 rounded-full ring ring-offset-2 w-28">
@@ -160,7 +166,7 @@ const ProjectManagement = component$((inputData: { data: ProjectInformationProps
                 <div class="card-title text-xl font-medium pb-4">Projekte</div>
                 <div class="flex flex-wrap gap-6">
                     {
-                        inputData.data.slice().reverse().filter((e, i) => !contextDelA.includes(e.id)).map((item, idx: number) => (
+                        inputData.data.slice().reverse().filter((e) => !contextDelA.includes(e.id)).map((item, idx: number) => (
                             <ProjectCard key={idx} p={item} />
                         ))
                     }
@@ -245,7 +251,6 @@ const VereinDummy = component$(() => {
 
 const VereinInfoProjects = component$((inputData: { projectData: ProjectInformationProps[] }) => {
     const context = useContext(OrgaProfileDataContext)
-    const contextProject = useContext(OrgaProjectDataContext)
     return (
         context.name === ""
             ?
@@ -347,7 +352,7 @@ export const VereinProfile = component$((inputData: {
 
     const orgaDataTransfer: OrgaInformationsProps = convertAPITypeToInternalType(inputData.orgaData);
 
-    const orgaProjectDataTransfer: ProjectInformationProps[] = inputData.projectsData.map((e, i) => convertAPITypeToInternalProjectType(e))
+    const orgaProjectDataTransfer: ProjectInformationProps[] = inputData.projectsData.map((e) => convertAPITypeToInternalProjectType(e))
 
     const orgaStore = useStore<OrgaInformationsProps>(orgaDataTransfer)
     useContextProvider(OrgaProfileDataContext, orgaStore)

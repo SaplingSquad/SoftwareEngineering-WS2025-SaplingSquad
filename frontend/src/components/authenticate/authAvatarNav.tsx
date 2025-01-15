@@ -1,7 +1,6 @@
 import { component$, useComputed$ } from "@builder.io/qwik";
 import { useSession } from "~/routes/plugin@auth";
 import { LoginOverviewParamsForm } from "../auth/login";
-import { LogoutParamsForm } from "../auth/logout";
 import { ProfileImage } from "../profile/utils";
 
 export const LoginAvatar = component$(() => {

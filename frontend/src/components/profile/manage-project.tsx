@@ -1,10 +1,11 @@
-import { ClassList, component$, createContextId, Resource, Signal, useContext, useContextProvider, useSignal, useStore } from "@builder.io/qwik";
+import { component$, createContextId, Resource, useContext, useContextProvider, useSignal, useStore } from "@builder.io/qwik";
+import type { ClassList } from "@builder.io/qwik";
 import { HiChevronRightOutline, HiChevronLeftOutline, HiInformationCircleOutline, HiPlusOutline, HiCalendarDaysOutline, HiCog6ToothOutline, HiLinkOutline, HiBanknotesOutline, HiTrashSolid } from "@qwikest/icons/heroicons";
 import { MapLocationInput } from "./utils";
 import { ApiResponse } from "../api";
 import { usePostProject, usePutProject } from "~/api/api_hooks.gen";
 import { convertAPITypeToInternalProjectType } from "./profile";
-import { ProjectInformationProps, ApiRelevantProjectInformations } from "./types";
+import type { ProjectInformationProps, ApiRelevantProjectInformations } from "./types";
 import { FormInputMissing } from "./manage-organisation";
 
 const FormDataContext = createContextId<ProjectInformationProps>("project-context")
@@ -60,7 +61,7 @@ const Projektdaten = component$(() => {
                                     <option disabled selected>{context.dateFrom.mnth}</option>
                                 }
                                 <option>--</option>
-                                {Array.from(Array(12).keys()).map((e, i) =>
+                                {Array.from(Array(12).keys()).map((e) =>
                                     <ChooseOption index={e + 1} />)
                                 }
                             </select>
@@ -72,7 +73,7 @@ const Projektdaten = component$(() => {
                                     <option disabled selected>{context.dateFrom.year}</option>
                                 }
                                 <option>--</option>
-                                {Array.from(Array(101).keys()).map((e, i) =>
+                                {Array.from(Array(101).keys()).map((e) =>
                                     <ChooseOption index={e + 1975} />)
                                 }
                             </select>
@@ -92,7 +93,7 @@ const Projektdaten = component$(() => {
                                     <option disabled selected>{context.dateTo.mnth}</option>
                                 }
                                 <option>--</option>
-                                {Array.from(Array(12).keys()).map((e, i) =>
+                                {Array.from(Array(12).keys()).map((e) =>
                                     <ChooseOption index={e + 1} />)
                                 }
                             </select>
@@ -104,7 +105,7 @@ const Projektdaten = component$(() => {
                                     <option disabled selected>{context.dateTo.year}</option>
                                 }
                                 <option>--</option>
-                                {Array.from(Array(101).keys()).map((e, i) =>
+                                {Array.from(Array(101).keys()).map((e) =>
                                     <ChooseOption index={e + 1975} />)
                                 }
                             </select>
@@ -138,7 +139,6 @@ const Projektdaten = component$(() => {
 })
 
 const Projekttags = component$((inputData: { tags: { id: number, name: string }[] }) => {
-    const context = useContext(FormDataContext)
     return (
         <>
             <p>Projekttags</p>
@@ -157,7 +157,7 @@ const SingleProjekttag = component$((prop: { tag: { id: number, name: string } }
     return (
         <>
             <div class={"btn btn-sm " + answerStyles.get(isCurrSel)} onClick$={() => {
-                { isCurrSel && (context.tags = context.tags.filter((e, i) => e !== prop.tag.id)) };
+                { isCurrSel && (context.tags = context.tags.filter((e) => e !== prop.tag.id)) }
                 { !isCurrSel && (context.tags.push(prop.tag.id)) }
             }
             }>{prop.tag.name}</div>
@@ -207,7 +207,7 @@ const ImagePreview = component$((inputData: { imgUrl: string, key: number, clz: 
         <>
             <div key={inputData.key + "imageStackOrgaAcc"} class={inputData.clz}>
                 {inputData.delButton &&
-                    <div class="btn btn-square scale-[0.75] btn-error absolute -top-3 -left-3 text-error-content text-2xl shadow-xl" onClick$={() => context.imageUrls = context.imageUrls.filter((e, i) => inputData.imgUrl !== e)}>
+                    <div class="btn btn-square scale-[0.75] btn-error absolute -top-3 -left-3 text-error-content text-2xl shadow-xl" onClick$={() => context.imageUrls = context.imageUrls.filter((e) => inputData.imgUrl !== e)}>
                         <HiTrashSolid />
                     </div>
                 }
@@ -292,14 +292,14 @@ const Overview = component$(() => {
 
 const SendFormAsNew = component$(() => {
     const context = useContext(FormDataContext)
-    const noId = (({ id, ...o }) => o)(convertInternalTypeToAPIProjectType(context))
+    const noId = (({ ...o }) => o)(convertInternalTypeToAPIProjectType(context))
     const updateProjectApiCall = usePostProject(noId)
     return (
         <>
             <Resource value={updateProjectApiCall}
                 onResolved={(response) => <ApiResponse
                     response={response}
-                    on201$={(r) =>
+                    on201$={() =>
                         <div class="flex justify-center p-32">
                             <div class="card bg-base-100 w-96 shadow-xl">
                                 <div class="card-body items-center text-center">
@@ -338,7 +338,7 @@ const SendFormAsEdit = component$(() => {
             <Resource value={updateProjectApiCall}
                 onResolved={(response) => <ApiResponse
                     response={response}
-                    on204$={(r) =>
+                    on204$={() =>
                         <div class="flex justify-center p-32">
                             <div class="card bg-base-100 w-96 shadow-xl">
                                 <div class="card-body items-center text-center">
@@ -412,7 +412,7 @@ export const ProjectCreation = component$((inputData: { selProject: number, proj
 
     const isNew = inputData.selProject === -1
     //Api call returns all Projects. We are only interested in the selected one
-    const projectData = isNew ? emptyProject : convertAPITypeToInternalProjectType(inputData.projects.filter((e, i) => e.id === inputData.selProject)[0])
+    const projectData = isNew ? emptyProject : convertAPITypeToInternalProjectType(inputData.projects.filter((e) => e.id === inputData.selProject)[0])
 
     const position = useSignal(0);
     const store = useStore<ProjectInformationProps>(projectData);
