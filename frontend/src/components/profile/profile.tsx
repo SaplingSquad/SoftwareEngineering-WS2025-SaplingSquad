@@ -358,7 +358,7 @@ export const VereinProfile = component$((inputData: {
     return (
         <>
             <div class="flex flex-wrap gap-4 lg:p-4">
-                <div class="order-2 lg:order-1">
+                <div class="lg:w-9/12 order-2 lg:order-1">
                     <VereinInfoProjects projectData={projectsStore} />
                 </div>
                 <div class="flex-auto order-1 lg:order-2">
