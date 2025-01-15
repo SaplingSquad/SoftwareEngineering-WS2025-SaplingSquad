@@ -34,5 +34,6 @@
     <include file="classpath:db/changelog/0019-create-region-views.sql"/>
     <include file="classpath:db/changelog/0020-org-proj-add-regionname.sql"/>
     <include file="classpath:db/changelog/0021-fix-orga-nullability.sql"/>
+    <include file="classpath:db/changelog/0022-create-user-answers-table.sql"/>
 
 </databaseChangeLog>

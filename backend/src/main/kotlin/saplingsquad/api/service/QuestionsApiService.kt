@@ -2,10 +2,13 @@ package saplingsquad.api.service
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toSet
+import kotlinx.coroutines.reactive.asFlow
 import org.springframework.http.ResponseEntity
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.stereotype.Service
 import org.springframework.web.context.request.NativeWebRequest
+import reactor.core.publisher.Flux
 import saplingsquad.api.AnswersApiDelegate
 import saplingsquad.api.QuestionsApiDelegate
 import saplingsquad.api.models.Question
@@ -50,11 +53,12 @@ class QuestionsApiService(
     }
 
     override fun getAnswers(userToken: JwtAuthenticationToken): ResponseEntity<Flow<Int>> {
-        TODO("Not yet implemented")
+        return repository.readUserAnswers(userToken.token.subject).asHttpOkResponse()
     }
 
-    override suspend fun postAnswers(userToken: JwtAuthenticationToken, requestBody: Flow<Int>): ResponseEntity<Unit> {
-        TODO("Not yet implemented")
+    override suspend fun postAnswers(userToken: JwtAuthenticationToken, requestBody: Flux<Int>): ResponseEntity<Unit> {
+        repository.writeUserAnswers(userToken.token.subject, requestBody.asFlow().toSet())
+        return ResponseEntity.noContent().build()
     }
 
     override fun getRequest(): Optional<NativeWebRequest> {
