@@ -78,7 +78,7 @@ const ProjectCard = component$(
     return (
       <InfoCard
         name={name}
-        tags={tags.map((x) => `Tag ${x}`)}
+        tags={tags}
         images={imageUrls}
         description={description}
         location={coordinates}

@@ -75,3 +75,12 @@ export const getAnswersFromLocalStorage = (): number[] | undefined => {
     return undefined;
   }
 }
+
+/**
+ * Checks if something is a `number[]`
+ *
+ * @param value The thing to check
+ * @returns `true` if it is a `number[]`, `false` otherwise.
+ */
+export const isNumberArray = (value: unknown): value is number[] =>
+  Array.isArray(value) && value.every((entry) => typeof entry === "number");

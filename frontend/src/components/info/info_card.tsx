@@ -1,7 +1,11 @@
 import type { ClassList, Component, JSXOutput, QRL } from "@builder.io/qwik";
-import { component$, Slot } from "@builder.io/qwik";
+import { $, component$, Slot } from "@builder.io/qwik";
 import { Link } from "@builder.io/qwik-city";
 import { PreviewMap } from "../map";
+import { ApiRequest } from "../api";
+import { useGetTags } from "~/api/api_hooks.gen";
+import { toMapping } from "~/api/tags";
+import { isNumberArray } from "~/utils";
 
 /**
  * A generic info-card for any entity.
@@ -48,7 +52,7 @@ export const InfoCard = component$(
     /**
      * Tags of the entity
      */
-    tags?: string[];
+    tags?: string[] | number[];
     /**
      * Whether the `aside`-section should be shown
      */
@@ -89,18 +93,12 @@ export const InfoCard = component$(
                 {/* Properties */}
                 <Slot name="properties" />
                 {/* Tags */}
-                {tags && (
-                  <div class="flex flex-row flex-wrap gap-2">
-                    {tags.map((tag) => (
-                      <div
-                        key={tag}
-                        class="badge badge-secondary badge-md grow-[0.1] text-secondary-content"
-                      >
-                        {tag}
-                      </div>
-                    ))}
-                  </div>
-                )}
+                {tags &&
+                  (isNumberArray(tags) ? (
+                    <LoadTags tags={tags} />
+                  ) : (
+                    <DisplayTags tags={tags} />
+                  ))}
               </div>
             </div>
           </div>
@@ -108,7 +106,7 @@ export const InfoCard = component$(
           <div class="items-top flex min-h-96 flex-wrap justify-around gap-4 xl:gap-8">
             {/* Description */}
             {description && (
-              <div class="prose w-full shrink grow basis-80 rounded-box bg-base-200 p-4 text-justify xl:prose-lg xl:px-8">
+              <div class="xl:prose-lg prose w-full shrink grow basis-80 rounded-box bg-base-200 p-4 text-justify xl:px-8">
                 {description.split("\n").map((line) => (
                   <p key={line} class="min-h-1">
                     {line}
@@ -152,6 +150,39 @@ export const InfoCard = component$(
     );
   },
 );
+
+/**
+ * Load tag-mapping and display the tags by ID.
+ */
+export const LoadTags = component$(({ tags }: { tags: number[] }) => (
+  <ApiRequest
+    hook$={$(useGetTags)}
+    args={[]}
+    on200$={(response) => {
+      const mapping = toMapping(response);
+      return (
+        <DisplayTags tags={tags.map((t) => mapping[t] ?? "Unbekannter Tag")} />
+      );
+    }}
+    defaultError$={() => "Tags konnten nicht geladen werden"}
+  />
+));
+
+/**
+ * Display the passed tags
+ */
+const DisplayTags = component$(({ tags }: { tags: string[] }) => (
+  <div class="flex flex-row flex-wrap gap-2">
+    {tags.map((tag) => (
+      <div
+        key={tag}
+        class="badge badge-secondary badge-md grow-[0.1] text-secondary-content"
+      >
+        {tag}
+      </div>
+    ))}
+  </div>
+));
 
 /**
  * A button with an icon.
