@@ -53,7 +53,7 @@ class OrganizationRepositoryTest {
      * - orga id was auto-generated
      */
     @Test
-    fun registerReadAndUpdateOrganization() = runTest {
+    fun testRegisterReadAndUpdateOrganization() = runTest {
         val placeholderOrgId = 100
         val testOrg = OrganizationEntity(
             orgId = placeholderOrgId, // must be ignored
