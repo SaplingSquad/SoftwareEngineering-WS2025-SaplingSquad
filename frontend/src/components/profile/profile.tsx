@@ -32,7 +32,7 @@ const ProjectCard = component$((props: { p: ProjectInformationProps }) => {
                             tabIndex={0}
                             class="menu menu-sm menu-neutral dropdown-content bg-base-100 rounded-box w-24 p-2 shadow">
                             <li>
-                                <a onClick$={() => { projDel.value = !projDel.value; console.log(projDel.value) }}>{projDel.value && <ProjectLoeschen />}{!projDel.value && <ProjectZurueck />}</a>
+                                <a onClick$={() => { projDel.value = !projDel.value }}>{projDel.value && <ProjectDeleteButtonOption />}{!projDel.value && <ProjectBackButtonOption />}</a>
                             </li>
                         </ul>
                     </div>
@@ -43,7 +43,7 @@ const ProjectCard = component$((props: { p: ProjectInformationProps }) => {
     )
 })
 
-const ProjectZurueck = component$(() => {
+const ProjectBackButtonOption = component$(() => {
     return (
         <p>
             Zurück
@@ -51,7 +51,7 @@ const ProjectZurueck = component$(() => {
     )
 })
 
-const ProjectLoeschen = component$(() => {
+const ProjectDeleteButtonOption = component$(() => {
     return (
         <p>
             Löschen
