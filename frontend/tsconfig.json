@@ -21,10 +21,5 @@
     }
   },
   "files": ["./.eslintrc.cjs"],
-  "include": [
-    "src",
-    "./*.d.ts",
-    "./*.config.ts",
-    "gen"
-  ]
+  "include": ["src", "./*.d.ts", "./*.config.ts", "gen"]
 }

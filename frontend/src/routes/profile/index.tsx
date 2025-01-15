@@ -1,4 +1,4 @@
-import { component$, Resource, Signal, useComputed$ } from "@builder.io/qwik";
+import { component$, Resource, Signal } from "@builder.io/qwik";
 import { UserProfile, VereinProfile } from "~/components/profile/profile";
 import { useSession } from "../plugin@auth";
 import { LoginOverviewParamsForm } from "~/components/auth/login";

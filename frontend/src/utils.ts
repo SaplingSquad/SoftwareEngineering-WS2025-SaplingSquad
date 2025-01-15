@@ -54,9 +54,9 @@ export type DistributiveOmit<T, K extends keyof any> = T extends any
  * @param numbers The question answers to store.
  */
 export const saveAnswersToLocalStorage = (numbers: number[]) => {
-    const json = JSON.stringify(numbers);
-    localStorage.setItem("question-answers", json);
-}
+  const json = JSON.stringify(numbers);
+  localStorage.setItem("question-answers", json);
+};
 
 /**
  * Retrieves question answers from the local storage if present.
@@ -70,75 +70,11 @@ export const getAnswersFromLocalStorage = (): number[] | undefined => {
     }
 
     const parsed = JSON.parse(json);
-    return Array.isArray(parsed) && parsed.every(item => typeof item === "number") ? parsed : undefined;
+    return Array.isArray(parsed) &&
+      parsed.every((item) => typeof item === "number")
+      ? parsed
+      : undefined;
   } catch (error) {
     return undefined;
   }
-}
-
-/**
- * Checks if something is a `number[]`
- *
- * @param value The thing to check
- * @returns `true` if it is a `number[]`, `false` otherwise.
- */
-export const isNumberArray = (value: unknown): value is number[] =>
-  Array.isArray(value) && value.every((entry) => typeof entry === "number");
-
-/**
- * Limits the `text` to a maximum of `limit` characters.
- * Will add `cont` to the end if the text was truncated.
- *
- * @param text input to limit
- * @param limit number of characters to limit to
- * @param cont continuation symbols to add if limited. Note that these do not count towards the limit.
- * @returns a limited string.
- */
-export const limitText = (
-  text: string,
-  limit: number,
-  cont: string = "...",
-): string =>
-  text.length <= limit ? text : text.substring(0, limit).trimEnd() + cont;
-
-/**
- * Formats a number to a string.
- * Will return `undefined` iff the input is `undefined`.
- *
- * @param num number to format
- * @returns the string
- */
-export const formatNumber = (num: number | undefined) =>
-  num !== undefined ? num.toString() : num;
-
-/**
- * Formats a `YYYY-MM`-date to `MM/YYYY`.
- * Allows arbitrary-length years.
- * Months must be two digits.
- * Unrecognized formats will not be changed.
- *
- * @param date `YYYY-MM`-input
- * @returns `MM/YYYY`-output
- */
-export const formatDate = (date: string) =>
-  date.replace(/^(\d+).(\d{2})$/, "$2/$1");
-
-/**
- * Formats a date-range based on optional `from` and `tp`-dates as a nice german string.
- *
- * @param from optional start of the range
- * @param to optional end of the range
- * @returns a nicely formatted string of the range (in german)
- */
-export const formatDateRange = (
-  from: string | undefined,
-  to: string | undefined,
-): string | undefined => {
-  const fromSet = from !== undefined;
-  const toSet = to !== undefined;
-  if (fromSet && toSet) return `${formatDate(from)} - ${formatDate(to)}`;
-  if (!fromSet && toSet) return `bis ${formatDate(to)}`;
-  if (fromSet && !toSet)
-    return `${new Date(from) <= new Date() ? "seit" : "ab"} ${formatDate(from)}`;
-  return undefined;
 };

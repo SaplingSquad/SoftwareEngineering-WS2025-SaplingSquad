@@ -1,5 +1,5 @@
-import type {Session} from "@auth/qwik";
-import {clientId} from "~/routes/plugin@auth";
+import type { Session } from "@auth/qwik";
+import { clientId } from "~/routes/plugin@auth";
 
 /**
  * Hardcoded logout url for keycloak providers (may not work for other providers)
