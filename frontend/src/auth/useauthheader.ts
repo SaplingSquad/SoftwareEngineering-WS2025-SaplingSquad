@@ -29,13 +29,13 @@ export function getSession(event: RequestEventCommon): Session | null {
 }
 
 export function getAccountType(session: Session | null): AccountType | null {
-  if (session == null) {
+  if (session === null) {
     return null;
   }
-  if (session.providerId == USERS_PROVIDER_ID) {
+  if (session.providerId === USERS_PROVIDER_ID) {
     return "user";
   }
-  if (session.providerId == ORGS_PROVIDER_ID) {
+  if (session.providerId === ORGS_PROVIDER_ID) {
     return "orga";
   }
   throw Error(`Unknown providerId: ${session.providerId}`);
