@@ -20,11 +20,7 @@ export const LoginAvatar = component$(() => {
     </Link>
   ) : (
     <LoginOverviewParamsForm redirectTo={"/map"}>
-      <button class="btn btn-primary -right-1 -top-1 ">
-        Anmelden
-        <br />
-        Registrieren
-      </button>
+      <button class="btn btn-primary">Anmelden</button>
     </LoginOverviewParamsForm>
   );
 });
