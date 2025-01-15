@@ -115,6 +115,66 @@ export const searchOutputMockdata: SearchOutput = {
           coordinates: [11.570039231261898, 48.14056965960426],
         },
       },
+      {
+        type: "Feature",
+        properties: {
+          id: 3,
+        },
+        geometry: {
+          type: "Point",
+          coordinates: [15.570039231261898, 48.14056965960426],
+        },
+      },
+      {
+        type: "Feature",
+        properties: {
+          id: 4,
+        },
+        geometry: {
+          type: "Point",
+          coordinates: [11.570039231261898, 52.14056965960426],
+        },
+      },
+      {
+        type: "Feature",
+        properties: {
+          id: 5,
+        },
+        geometry: {
+          type: "Point",
+          coordinates: [20.570039231261898, 59.14056965960426],
+        },
+      },
+      {
+        type: "Feature",
+        properties: {
+          id: 6,
+        },
+        geometry: {
+          type: "Point",
+          coordinates: [25.570039231261898, 64.140565960426],
+        },
+      },
+      {
+        type: "Feature",
+        properties: {
+          id: 7,
+        },
+        geometry: {
+          type: "Point",
+          coordinates: [8.570039231261898, 49.14056965960426],
+        },
+      },
+      {
+        type: "Feature",
+        properties: {
+          id: 8,
+        },
+        geometry: {
+          type: "Point",
+          coordinates: [10.570039231261898, 49.14056965960426],
+        },
+      },
     ],
   },
   projectLocations: {
@@ -138,6 +198,66 @@ export const searchOutputMockdata: SearchOutput = {
         geometry: {
           type: "Point",
           coordinates: [40.02489139415981, -3.3422123425374335],
+        },
+      },
+      {
+        type: "Feature",
+        properties: {
+          id: 3,
+        },
+        geometry: {
+          type: "Point",
+          coordinates: [45.02489139415981, 0.3422123425374335],
+        },
+      },
+      {
+        type: "Feature",
+        properties: {
+          id: 4,
+        },
+        geometry: {
+          type: "Point",
+          coordinates: [50.02489139415981, -3.3422123425374335],
+        },
+      },
+      {
+        type: "Feature",
+        properties: {
+          id: 5,
+        },
+        geometry: {
+          type: "Point",
+          coordinates: [50.02489139415981, -7.3422123425374],
+        },
+      },
+      {
+        type: "Feature",
+        properties: {
+          id: 6,
+        },
+        geometry: {
+          type: "Point",
+          coordinates: [48.02489139415981, 5.3123425374335],
+        },
+      },
+      {
+        type: "Feature",
+        properties: {
+          id: 7,
+        },
+        geometry: {
+          type: "Point",
+          coordinates: [39.02489139415981, -2.3422123425374335],
+        },
+      },
+      {
+        type: "Feature",
+        properties: {
+          id: 8,
+        },
+        geometry: {
+          type: "Point",
+          coordinates: [52.02489139415981, -13.22123425374335],
         },
       },
     ],

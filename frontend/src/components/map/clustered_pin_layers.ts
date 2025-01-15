@@ -1,4 +1,4 @@
-import { maybeArray, type MaybeArray } from "~/utils";
+import { type MaybeArray } from "~/utils";
 import type { Layers } from "../map";
 
 /**
@@ -30,7 +30,7 @@ export type ClusteredPinLayerOptions = {
  */
 export const clusteredPinLayer = (
   source: string,
-  { clusterFont, markerIcon, clusterIcon }: ClusteredPinLayerOptions,
+  { markerIcon, clusterIcon }: ClusteredPinLayerOptions,
 ): Layers => [
   {
     // The clusters
@@ -40,11 +40,23 @@ export const clusteredPinLayer = (
     type: "symbol",
     layout: {
       "icon-image": clusterIcon,
-      "icon-text-fit": "both",
 
-      "text-field": "{point_count_abbreviated}",
-      "text-font": maybeArray(clusterFont),
-      "text-size": 20,
+      // grow cluster-icons based on cluster-size:
+      // interpolate using cubic bezier: https://easings.net/#easeInOutSine
+      // @ 1 point (would correspond to not clustered): initial size
+      // @ 10 points: double size
+      // @ 1k points: triple size
+      "icon-size": [
+        "interpolate",
+        ["cubic-bezier", 0.37, 0, 0.63, 1],
+        ["get", "point_count"],
+        1,
+        1,
+        10,
+        2,
+        1000,
+        3,
+      ],
 
       "icon-allow-overlap": true,
       "text-allow-overlap": true,
@@ -64,11 +76,6 @@ export const clusteredPinLayer = (
     layout: {
       "icon-image": markerIcon,
       "icon-anchor": "bottom",
-      "icon-text-fit": "both",
-
-      "text-field": "m", // Automatic size based on text-size: Set size to invisible 'm'
-      "text-font": maybeArray(clusterFont),
-      "text-size": 20,
 
       "icon-allow-overlap": true,
       "text-allow-overlap": true,

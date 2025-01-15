@@ -15,7 +15,7 @@ export const Tablist = component$(
           selection={props.selection}
           idx={0}
         >
-          <AllIcon class="h-6" />
+          <AllIcon class="stroke-inherit size-6" />
         </Tab>
         <Tab
           useBtnStyle={props.useBtnStyle}
