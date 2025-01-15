@@ -1,3 +1,4 @@
+import type { QRL } from "@builder.io/qwik";
 import { $, component$ } from "@builder.io/qwik";
 import {
   HiBanknotesOutline,
@@ -57,7 +58,19 @@ export type Project = ShortProject & {
 export type ApiProject = ApiShortProject & Omit<Project, keyof ShortProject>;
 
 /**
- * Show information about a {@link Project}
+ * Additional props for {@link ProjectCard}
+ */
+type ProjectCardProps = {
+  /**
+   * Optional handler to call when organization link is clicked.
+   * If passed, will prevent navigation on clicking that button and only call this handler.
+   */
+  onShowOrganization$?: QRL<(id: number) => unknown>;
+};
+
+/**
+ * Show information about a {@link Project}.
+ * For additional props, see {@link ProjectCardProps}.
  */
 const ProjectCard = component$(
   ({
@@ -74,7 +87,8 @@ const ProjectCard = component$(
     webPageUrl,
     orgaName,
     regionName,
-  }: Project) => {
+    onShowOrganization$,
+  }: Project & ProjectCardProps) => {
     return (
       <InfoCard
         name={name}
@@ -109,6 +123,7 @@ const ProjectCard = component$(
         <ActionButton
           url={`/organization/${orgaId}`}
           icon={HiBuildingLibraryOutline}
+          onClick$={onShowOrganization$ && $(() => onShowOrganization$(orgaId))}
         >
           Infos zu {orgaName}
         </ActionButton>
@@ -154,7 +169,7 @@ const formatDateRange = (
  * or pass an id to `load` to automatically load that project.
  */
 export const ProjectInfo = component$(
-  (props: Project | { load: MaybeSignal<number> }) => {
+  (props: (Project | { load: MaybeSignal<number> }) & ProjectCardProps) => {
     // Already loaded
     if (!("load" in props)) return <ProjectCard {...props} />;
 
@@ -167,7 +182,7 @@ export const ProjectInfo = component$(
           // API always returns a valid project (validated at runtime),
           // but the type of `coordinates` is not set to a tuple (but an array of arbitrary length).
           // We know, however, that the type is correct, so this cast is ok.
-          <ProjectCard {...(proj as Project)} />
+          <ProjectCard {...props} {...(proj as Project)} />
         )}
         defaultError$={(s) => <>Failed to display project (Error {s})</>}
       />
