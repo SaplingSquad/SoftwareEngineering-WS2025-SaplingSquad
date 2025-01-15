@@ -35,5 +35,8 @@
     <include file="classpath:db/changelog/0020-org-proj-add-regionname.sql"/>
     <include file="classpath:db/changelog/0021-fix-orga-nullability.sql"/>
     <include file="classpath:db/changelog/0022-create-user-answers-table.sql"/>
+    <include file="classpath:db/changelog/0023-delete-generated-orgproj.sql"/>
+    <include file="classpath:db/changelog/0024-generate-org-proj.xml"/>
+    <include file="classpath:db/changelog/0025-delete-ocean-orgs-projs.sql"/>
 
 </databaseChangeLog>
