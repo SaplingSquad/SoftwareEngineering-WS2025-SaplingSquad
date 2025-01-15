@@ -1,6 +1,7 @@
 import { type Signal, component$, useSignal } from "@builder.io/qwik";
 import { Map } from "~/views/map";
 import { MapUI } from "~/components/map-ui/map-ui";
+import { LoginAvatar } from "~/components/authenticate/authAvatarNav";
 
 export default component$(() => {
   const organizationLocations: Signal<GeoJSON.GeoJSON> = useSignal({
@@ -22,6 +23,9 @@ export default component$(() => {
         organizationLocations={organizationLocations}
         projectLocations={projectLocations}
       />
+      <div class="fixed right-6 top-6 rounded-full">
+        <LoginAvatar />
+      </div>
     </>
   );
 });

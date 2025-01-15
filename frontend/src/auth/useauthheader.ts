@@ -1,7 +1,13 @@
 import { useComputed$ } from "@builder.io/qwik";
-import type { RequestEventCommon } from "@builder.io/qwik-city";
 import type { Session } from "@auth/qwik";
 import { useSession } from "~/routes/plugin@auth";
+import { RequestEventCommon } from "@builder.io/qwik-city";
+
+export type AccountType = "user" | "orga";
+
+export function getSession(event: RequestEventCommon): Session | null {
+  return event.sharedMap.get("session") as Session | null;
+}
 
 export function buildAuthHeader(session: Session | null) {
   if (session?.accessToken) {
@@ -19,8 +25,4 @@ export function buildAuthHeader(session: Session | null) {
 export function useAuthHeader() {
   const session = useSession();
   return useComputed$(() => buildAuthHeader(session.value));
-}
-
-export function getSession(event: RequestEventCommon): Session | null {
-  return event.sharedMap.get("session") as Session | null;
 }

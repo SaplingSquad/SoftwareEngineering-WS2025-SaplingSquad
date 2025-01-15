@@ -1,5 +1,5 @@
-import {component$} from "@builder.io/qwik";
-import {LoginParamsForm} from "~/components/auth/login";
+import { component$ } from "@builder.io/qwik";
+import { LoginParamsForm } from "~/components/auth/login";
 
 /**
  * Custom sign in page
@@ -13,12 +13,14 @@ export default component$(() => {
     >
       <div class={"card w-full max-w-lg bg-base-100 shadow-xl"}>
         <div class={"card-body"}>
-          <h1 class={"mb-4 text-center text-2xl"}>Bei Sprout Anmelden</h1>
+          <h1 class={"mb-4 text-center text-2xl"}>
+            Bei Sprout anmelden/registrieren
+          </h1>
           <LoginParamsForm providerId={"keycloak-users"}>
-            <button class={"btn btn-block"}>Nutzer Login</button>
+            <button class={"btn btn-block text-xl"}>Nutzer</button>
           </LoginParamsForm>
           <LoginParamsForm providerId={"keycloak-orgs"}>
-            <button class={"btn btn-block"}>Organisation Login</button>
+            <button class={"btn btn-block text-xl"}>Organisation</button>
           </LoginParamsForm>
         </div>
       </div>
