@@ -24,7 +24,7 @@ export const clickHandlers = ({
 }: {
   clusterZoom?: string[];
   info?: {
-    [source: string]: QRL<(props: { [id: string]: any }) => JSXOutput>;
+    [source: string]: QRL<(props: { [id: string]: any }) => JSXOutput | void>;
   };
 } = {}): ClickHandlers =>
   mergeHandlers([
@@ -129,7 +129,7 @@ export const clusterZoom: (source: string) => ClickHandler = (source) =>
  * @returns The {@link ClickHandler}
  */
 const info = (
-  component: QRL<(props: { [id: string]: any }) => JSXOutput>,
+  component: QRL<(props: { [id: string]: any }) => JSXOutput | void>,
 ): ClickHandler =>
   $(async (e) => {
     const map = e.target;
@@ -153,9 +153,11 @@ const info = (
       e.lngLat,
     );
 
-    jsxPopup(await jsxOutput)
-      .setLngLat(coordinates)
-      .addTo(map);
+    jsxOutput.then(
+      (output) =>
+        output !== undefined &&
+        jsxPopup(output).setLngLat(coordinates).addTo(map),
+    );
   });
 
 /**
