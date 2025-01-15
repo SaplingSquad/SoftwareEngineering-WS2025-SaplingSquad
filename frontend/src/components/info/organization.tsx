@@ -1,3 +1,4 @@
+import type { QRL } from "@builder.io/qwik";
 import { $, component$ } from "@builder.io/qwik";
 import {
   HiBanknotesOutline,
@@ -9,7 +10,7 @@ import {
 import type { MaybeSignal } from "~/api/api";
 import { useGetOrganizationById } from "~/api/api_hooks.gen";
 import { ApiRequest } from "../api";
-import type { LinkTarget } from "../link_button";
+import { LinkButton, type LinkTarget } from "../link_button";
 import type { ApiCoordinates, Coordinates } from "../map";
 import { ActionButton, InfoCard } from "./info_card";
 import type { ApiShortProject, ShortProject } from "./project";
@@ -56,6 +57,10 @@ type OrganizationCardProps = {
    * Optionally show a back-button. See {@link LinkTarget}.
    */
   onBack?: LinkTarget;
+  /**
+   * Optionally show a back-button. See {@link LinkTarget}.
+   */
+  onProject$?: QRL<(id: number) => unknown>;
 };
 
 /**
@@ -79,6 +84,7 @@ const OrganizationCard = component$(
     projects,
     onClose,
     onBack,
+    onProject$,
   }: Organization & OrganizationCardProps) => {
     return (
       <InfoCard
@@ -123,10 +129,15 @@ const OrganizationCard = component$(
         {/* Aside */}
         {projects.map((p) => (
           // TODO: this is a temporary component. Replace with some nicer overview
-          <div
+          <LinkButton
             q:slot="aside"
             key={p.id}
-            class="min-h-32 overflow-hidden rounded-lg bg-base-300 p-4"
+            class="min-h-32 cursor-pointer overflow-hidden rounded-lg bg-base-300 p-4"
+            target={
+              onProject$
+                ? [`/project/${p.id}`, $(() => onProject$(p.id))]
+                : `/project/${p.id}`
+            }
           >
             <h5 class="text-lg font-medium">{p.name}</h5>
             <p>
@@ -134,7 +145,7 @@ const OrganizationCard = component$(
                 ? description.substring(0, 100) + "..."
                 : description}
             </p>
-          </div>
+          </LinkButton>
         ))}
       </InfoCard>
     );

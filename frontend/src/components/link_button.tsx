@@ -1,4 +1,5 @@
 import type { ClassList, Component, QRL } from "@builder.io/qwik";
+import { component$, Slot } from "@builder.io/qwik";
 import { Link } from "@builder.io/qwik-city";
 
 /**
@@ -37,33 +38,57 @@ export const IconLinkButton = ({
   class?: ClassList;
   Icon: Component<{ class: ClassList }>;
 }) => {
-  const insides = <Icon class="h-7 w-7" />;
-  const btnClass = "btn btn-circle btn-ghost";
-  if (typeof target === "string") {
-    // URL
-    return (
-      <Link href={target} class={[btnClass, clz]}>
-        {insides}
-      </Link>
-    );
-  } else if (Array.isArray(target)) {
-    // URL and handler
-    return (
-      <a
-        href={target[0]}
-        class={[btnClass, clz]}
-        preventdefault:click
-        onClick$={target[1]}
-      >
-        {insides}
-      </a>
-    );
-  } else {
-    // Handler
-    return (
-      <button class={[btnClass, clz]} onClick$={target}>
-        {insides}
-      </button>
-    );
-  }
+  return (
+    <LinkButton target={target} class={["btn btn-circle btn-ghost", clz]}>
+      <Icon class="h-7 w-7" />
+    </LinkButton>
+  );
 };
+
+/**
+ * Shows a button to a {@link LinkTarget}.
+ * Does not apply any classes; set from outside in `class`.
+ */
+export const LinkButton = component$(
+  ({
+    /**
+     * {@link LinkTarget}
+     */
+    target,
+    /**
+     * Additional classes to set
+     */
+    class: clz,
+  }: {
+    target: LinkTarget;
+    class?: ClassList;
+  }) => {
+    if (typeof target === "string") {
+      // URL
+      return (
+        <Link href={target} class={clz}>
+          <Slot />
+        </Link>
+      );
+    } else if (Array.isArray(target)) {
+      // URL and handler
+      return (
+        <a
+          href={target[0]}
+          class={clz}
+          preventdefault:click
+          onClick$={target[1]}
+        >
+          <Slot />
+        </a>
+      );
+    } else {
+      // Handler
+      return (
+        <button class={clz} onClick$={target}>
+          <Slot />
+        </button>
+      );
+    }
+  },
+);
