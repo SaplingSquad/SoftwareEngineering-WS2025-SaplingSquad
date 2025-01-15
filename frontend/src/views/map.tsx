@@ -1,7 +1,6 @@
-import { type Signal, $, component$ } from "@builder.io/qwik";
+import type { QRL, Signal } from "@builder.io/qwik";
+import { $, component$ } from "@builder.io/qwik";
 import type { StyleImageMetadata } from "maplibre-gl";
-import { OrganizationInfo } from "~/components/info/organization";
-import { ProjectInfo } from "~/components/info/project";
 import { Map as MapComponent } from "~/components/map";
 import { clickHandlers } from "~/components/map/click_handlers";
 import { clusteredPinLayer } from "~/components/map/clustered_pin_layers";
@@ -38,18 +37,21 @@ const clusteredLayer = (source: string) =>
  * Will take the full width and height of the parent.
  */
 export const Map = component$(
-  (props: {
+  ({
+    onProjectClick$,
+    onOrganizationClick$,
+    ...props
+  }: {
     organizationLocations: Signal<GeoJSON.GeoJSON>;
     projectLocations: Signal<GeoJSON.GeoJSON>;
+    onProjectClick$?: QRL<(id: number) => void>;
+    onOrganizationClick$?: QRL<(id: number) => void>;
   }) => {
     const sources = {
       organizations: {
-        info: $(
-          (props: any) =>
-            typeof props.id === "number" && (
-              <OrganizationInfo load={props.id} />
-            ),
-        ),
+        info: $((props: any) => {
+          if (typeof props.id === "number") onOrganizationClick$?.(props.id);
+        }),
         data: props.organizationLocations.value,
         iconOptions: {
           marker: markerIconOptions,
@@ -57,10 +59,9 @@ export const Map = component$(
         },
       },
       projects: {
-        info: $(
-          (props: any) =>
-            typeof props.id === "number" && <ProjectInfo load={props.id} />,
-        ),
+        info: $((props: any) => {
+          if (typeof props.id === "number") onProjectClick$?.(props.id);
+        }),
         data: props.projectLocations.value,
         iconOptions: {
           marker: markerIconOptions,
