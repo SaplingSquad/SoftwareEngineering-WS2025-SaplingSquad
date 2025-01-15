@@ -10,8 +10,8 @@ import {
 import type { MaybeSignal } from "~/api/api";
 import { useGetProjectById } from "~/api/api_hooks.gen";
 import { ApiRequest } from "../api";
+import type { LinkTarget } from "../link_button";
 import type { ApiCoordinates, Coordinates } from "../map";
-import type { CloseHandler } from "./info_card";
 import { ActionButton, InfoCard } from "./info_card";
 
 /**
@@ -68,9 +68,13 @@ type ProjectCardProps = {
    */
   onShowOrganization$?: QRL<(id: number) => unknown>;
   /**
-   * See {@link CloseHandler}
+   * Optionally show a close-button. See {@link LinkTarget}.
    */
-  onClose?: CloseHandler;
+  onClose?: LinkTarget;
+  /**
+   * Optionally show a back-button. See {@link LinkTarget}.
+   */
+  onBack?: LinkTarget;
 };
 
 /**
@@ -94,6 +98,7 @@ const ProjectCard = component$(
     regionName,
     onShowOrganization$,
     onClose,
+    onBack,
   }: Project & ProjectCardProps) => {
     return (
       <InfoCard
@@ -104,6 +109,7 @@ const ProjectCard = component$(
         location={coordinates}
         icon={iconUrl}
         onClose={onClose}
+        onBack={onBack}
       >
         {/* Properties */}
         {(dateFrom || dateTo) && (
@@ -176,7 +182,16 @@ const formatDateRange = (
  * or pass an id to `load` to automatically load that project.
  */
 export const ProjectInfo = component$(
-  (props: (Project | { load: MaybeSignal<number> }) & ProjectCardProps) => {
+  (
+    props: (
+      | Project
+      | {
+          load: MaybeSignal<number>;
+          onLoaded$?: QRL<(proj: Project) => unknown>;
+        }
+    ) &
+      ProjectCardProps,
+  ) => {
     // Already loaded
     if (!("load" in props)) return <ProjectCard {...props} />;
 
@@ -185,12 +200,14 @@ export const ProjectInfo = component$(
       <ApiRequest
         hook$={$(useGetProjectById)}
         args={[{ id: props.load }]}
-        on200$={(proj: ApiProject) => (
+        on200$={(proj: ApiProject) => {
           // API always returns a valid project (validated at runtime),
           // but the type of `coordinates` is not set to a tuple (but an array of arbitrary length).
           // We know, however, that the type is correct, so this cast is ok.
-          <ProjectCard {...props} {...(proj as Project)} />
-        )}
+          const project = proj as Project;
+          props.onLoaded$?.(project);
+          return <ProjectCard {...props} {...project} />;
+        }}
         defaultError$={(s) => <>Failed to display project (Error {s})</>}
       />
     );

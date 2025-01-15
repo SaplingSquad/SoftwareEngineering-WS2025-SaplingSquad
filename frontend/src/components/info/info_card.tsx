@@ -3,25 +3,11 @@ import { $, component$, Slot } from "@builder.io/qwik";
 import { Link } from "@builder.io/qwik-city";
 import { PreviewMap } from "../map";
 import { ApiRequest } from "../api";
-import { HiXMarkOutline } from "@qwikest/icons/heroicons";
+import { HiArrowLeftOutline, HiXMarkOutline } from "@qwikest/icons/heroicons";
 import { useGetTags } from "~/api/api_hooks.gen";
 import { toMapping } from "~/api/tags";
 import { isNumberArray } from "~/utils";
-
-/**
- * Something to handle a close.
- * Either a url to the target-page,
- * a handler,
- * or a url and a handler (will prevent navigation on click and only call the QRL;
- * still allows interacting like a normal link on e.g., right-click).
- *
- * If there is a URL that would open the same page as what is displayed when the click-handler is called,
- * always pass the URL as well.
- */
-export type CloseHandler =
-  | string
-  | QRL<() => unknown>
-  | [string, QRL<() => unknown>];
+import { IconLinkButton, LinkTarget } from "../link_button";
 
 /**
  * A generic info-card for any entity.
@@ -44,6 +30,7 @@ export const InfoCard = component$(
     tags,
     aside = false,
     onClose,
+    onBack,
   }: {
     /**
      * Name of the entity
@@ -75,9 +62,13 @@ export const InfoCard = component$(
      */
     aside?: boolean;
     /**
-     * Optionally display a close-button
+     * Optionally display a close-button. See {@link LinkTarget}.
      */
-    onClose?: CloseHandler;
+    onClose?: LinkTarget;
+    /**
+     * Optionally show a back-button. See {@link LinkTarget}.
+     */
+    onBack?: LinkTarget;
   }) => {
     return (
       <article class="card relative w-full bg-base-100 shadow-xl">
@@ -169,7 +160,19 @@ export const InfoCard = component$(
         </div>
         {/* Close Button */}
         {onClose && (
-          <CloseButton onClose={onClose} class="absolute right-2 top-2" />
+          <IconLinkButton
+            target={onClose}
+            class="absolute right-2 top-2"
+            Icon={HiXMarkOutline}
+          />
+        )}
+        {/* Back Button */}
+        {onBack && (
+          <IconLinkButton
+            target={onBack}
+            class="absolute left-2 top-2"
+            Icon={HiArrowLeftOutline}
+          />
         )}
       </article>
     );
@@ -208,43 +211,6 @@ const DisplayTags = component$(({ tags }: { tags: string[] }) => (
     ))}
   </div>
 ));
-
-/**
- * Shows a close-button of a {@link CloseHandler}.
- */
-const CloseButton = component$(
-  ({ onClose, class: clz }: { onClose: CloseHandler; class?: ClassList }) => {
-    const insides = <HiXMarkOutline class="h-7 w-7" />;
-    const btnClass = "btn btn-circle btn-ghost";
-    if (typeof onClose === "string") {
-      // URL
-      return (
-        <Link href={onClose} class={[btnClass, clz]}>
-          {insides}
-        </Link>
-      );
-    } else if (Array.isArray(onClose)) {
-      // URL and handler
-      return (
-        <a
-          href={onClose[0]}
-          class={[btnClass, clz]}
-          preventdefault:click
-          onClick$={onClose[1]}
-        >
-          {insides}
-        </a>
-      );
-    } else {
-      // Handler
-      return (
-        <button class={[btnClass, clz]} onClick$={onClose}>
-          {insides}
-        </button>
-      );
-    }
-  },
-);
 
 /**
  * A button with an icon.

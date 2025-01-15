@@ -9,8 +9,8 @@ import {
 import type { MaybeSignal } from "~/api/api";
 import { useGetOrganizationById } from "~/api/api_hooks.gen";
 import { ApiRequest } from "../api";
+import type { LinkTarget } from "../link_button";
 import type { ApiCoordinates, Coordinates } from "../map";
-import type { CloseHandler } from "./info_card";
 import { ActionButton, InfoCard } from "./info_card";
 import type { ApiShortProject, ShortProject } from "./project";
 
@@ -49,9 +49,13 @@ export type ApiOrganization = Omit<Organization, "coordinates" | "projects"> & {
  */
 type OrganizationCardProps = {
   /**
-   * See {@link CloseHandler}
+   * Optionally show a close-button. See {@link LinkTarget}.
    */
-  onClose?: CloseHandler;
+  onClose?: LinkTarget;
+  /**
+   * Optionally show a back-button. See {@link LinkTarget}.
+   */
+  onBack?: LinkTarget;
 };
 
 /**
@@ -74,6 +78,7 @@ const OrganizationCard = component$(
     regionName,
     projects,
     onClose,
+    onBack,
   }: Organization & OrganizationCardProps) => {
     return (
       <InfoCard
@@ -85,6 +90,7 @@ const OrganizationCard = component$(
         icon={iconUrl}
         aside={projects.length > 0}
         onClose={onClose}
+        onBack={onBack}
       >
         {/* Properties */}
         {foundingYear && (
