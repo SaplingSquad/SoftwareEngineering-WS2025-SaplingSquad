@@ -24,13 +24,14 @@ export const Tab = component$(
           checked
         />
         <div
-          class={
+          class={[
+            "mx-auto w-max",
             props.selection.value === props.idx
               ? props.useBtnStyle
                 ? "stroke-primary-content"
                 : "stroke-primary"
-              : "stroke-[black]"
-          }
+              : "stroke-[black]",
+          ]}
         >
           <Slot />
         </div>
