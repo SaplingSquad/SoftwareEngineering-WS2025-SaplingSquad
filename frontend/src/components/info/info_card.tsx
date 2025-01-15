@@ -267,3 +267,21 @@ export const ActionButton: Component<{
     </Link>
   );
 };
+
+/**
+ * A component for displaying a property (`value`) with an `Icon` in {@link InfoCard}.
+ * Will only display when `value` is not `undefined`.
+ */
+export const IconProperty = ({
+  value,
+  Icon,
+}: {
+  value: string | undefined;
+  Icon: Component<{ class?: ClassList }>;
+}) =>
+  value && (
+    <div q:slot="properties" class="flex flex-row items-center gap-2">
+      <Icon />
+      {value}
+    </div>
+  );

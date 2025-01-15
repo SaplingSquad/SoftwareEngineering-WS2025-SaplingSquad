@@ -9,10 +9,12 @@ import {
 } from "@qwikest/icons/heroicons";
 import type { MaybeSignal } from "~/api/api";
 import { useGetProjectById } from "~/api/api_hooks.gen";
+import { limitText } from "~/utils";
 import { ApiRequest } from "../api";
+import { Avatar } from "../avatar";
 import type { LinkTarget } from "../link_button";
 import type { ApiCoordinates, Coordinates } from "../map";
-import { ActionButton, InfoCard } from "./info_card";
+import { ActionButton, IconProperty, InfoCard } from "./info_card";
 
 /**
  * Short project type (as included in organization).
@@ -112,16 +114,11 @@ const ProjectCard = component$(
         onBack={onBack}
       >
         {/* Properties */}
-        {(dateFrom || dateTo) && (
-          <div q:slot="properties" class="flex flex-row items-center gap-2">
-            <HiCalendarOutline />
-            {formatDateRange(dateFrom, dateTo)}
-          </div>
-        )}
-        <div q:slot="properties" class="flex flex-row items-center gap-2">
-          <HiMapPinSolid />
-          {regionName}
-        </div>
+        <IconProperty
+          value={formatDateRange(dateFrom, dateTo)}
+          Icon={HiCalendarOutline}
+        />
+        <IconProperty value={regionName} Icon={HiMapPinSolid} />
         {/* Actions */}
         {webPageUrl && (
           <ActionButton url={webPageUrl} icon={HiGlobeAltOutline}>
@@ -166,14 +163,14 @@ const formatDate = (date: string) => date.replace(/^(\d+).(\d{2})$/, "$2/$1");
 const formatDateRange = (
   from: string | undefined,
   to: string | undefined,
-): string => {
+): string | undefined => {
   const fromSet = from !== undefined;
   const toSet = to !== undefined;
   if (fromSet && toSet) return `${formatDate(from)} - ${formatDate(to)}`;
   if (!fromSet && toSet) return `bis ${formatDate(to)}`;
   if (fromSet && !toSet)
     return `${new Date(from) <= new Date() ? "seit" : "ab"} ${formatDate(from)}`;
-  return `unbekannt`;
+  return undefined;
 };
 
 /**
@@ -212,4 +209,33 @@ export const ProjectInfo = component$(
       />
     );
   },
+);
+
+/**
+ * Shows a short overview of a project.
+ */
+export const ProjectShortOverview = component$(
+  ({
+    iconUrl,
+    name,
+    regionName,
+    description,
+    dateFrom,
+    dateTo,
+  }: ShortProject) => (
+    <section>
+      <div class="float-left mr-2">
+        <Avatar icon={iconUrl} alt={`Icon von ${name}`} />
+      </div>
+      <h5 class="mb-1 text-lg font-medium">{name}</h5>
+      <div class="mb-2 flex flex-row flex-wrap gap-x-4 gap-y-1">
+        <IconProperty value={regionName} Icon={HiMapPinSolid} />
+        <IconProperty
+          value={formatDateRange(dateFrom, dateTo)}
+          Icon={HiCalendarOutline}
+        />
+      </div>
+      <p>{limitText(description, 100)}</p>
+    </section>
+  ),
 );

@@ -84,3 +84,29 @@ export const getAnswersFromLocalStorage = (): number[] | undefined => {
  */
 export const isNumberArray = (value: unknown): value is number[] =>
   Array.isArray(value) && value.every((entry) => typeof entry === "number");
+
+/**
+ * Limits the `text` to a maximum of `limit` characters.
+ * Will add `cont` to the end if the text was truncated.
+ *
+ * @param text input to limit
+ * @param limit number of characters to limit to
+ * @param cont continuation symbols to add if limited. Note that these do not count towards the limit.
+ * @returns a limited string.
+ */
+export const limitText = (
+  text: string,
+  limit: number,
+  cont: string = "...",
+): string =>
+  text.length <= limit ? text : text.substring(0, limit).trimEnd() + cont;
+
+/**
+ * Formats a number to a string.
+ * Will return `undefined` iff the input is `undefined`.
+ *
+ * @param num number to format
+ * @returns the string
+ */
+export const formatNumber = (num: number | undefined) =>
+  num !== undefined ? num.toString() : num;

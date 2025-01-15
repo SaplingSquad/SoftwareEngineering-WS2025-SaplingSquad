@@ -9,11 +9,16 @@ import {
 } from "@qwikest/icons/heroicons";
 import type { MaybeSignal } from "~/api/api";
 import { useGetOrganizationById } from "~/api/api_hooks.gen";
+import { formatNumber } from "~/utils";
 import { ApiRequest } from "../api";
 import { LinkButton, type LinkTarget } from "../link_button";
 import type { ApiCoordinates, Coordinates } from "../map";
-import { ActionButton, InfoCard } from "./info_card";
-import type { ApiShortProject, ShortProject } from "./project";
+import { ActionButton, IconProperty, InfoCard } from "./info_card";
+import {
+  ProjectShortOverview,
+  type ApiShortProject,
+  type ShortProject,
+} from "./project";
 
 /**
  * An organization as returned by `getOrganizationById` among others.
@@ -99,24 +104,12 @@ const OrganizationCard = component$(
         onBack={onBack}
       >
         {/* Properties */}
-        {foundingYear && (
-          <div q:slot="properties" class="flex flex-row items-center gap-2">
-            <HiSparklesSolid />
-            {foundingYear}
-          </div>
-        )}
-        {memberCount && (
-          <div q:slot="properties" class="flex flex-row items-center gap-2">
-            <HiUserSolid />
-            {memberCount}
-          </div>
-        )}
-        {regionName && (
-          <div q:slot="properties" class="flex flex-row items-center gap-2">
-            <HiMapPinSolid />
-            {regionName}
-          </div>
-        )}
+        <IconProperty
+          value={formatNumber(foundingYear)}
+          Icon={HiSparklesSolid}
+        />
+        <IconProperty value={formatNumber(memberCount)} Icon={HiUserSolid} />
+        <IconProperty value={regionName} Icon={HiMapPinSolid} />
         {/* Actions */}
         <ActionButton url={webPageUrl} icon={HiGlobeAltOutline}>
           Webseite besuchen
@@ -128,23 +121,17 @@ const OrganizationCard = component$(
         )}
         {/* Aside */}
         {projects.map((p) => (
-          // TODO: this is a temporary component. Replace with some nicer overview
           <LinkButton
             q:slot="aside"
             key={p.id}
-            class="min-h-32 cursor-pointer overflow-hidden rounded-lg bg-base-300 p-4"
+            class="min-h-32 shrink-0 grow cursor-pointer rounded-lg bg-base-300 p-4"
             target={
               onProject$
                 ? [`/project/${p.id}`, $(() => onProject$(p.id))]
                 : `/project/${p.id}`
             }
           >
-            <h5 class="text-lg font-medium">{p.name}</h5>
-            <p>
-              {description.length >= 100
-                ? description.substring(0, 100) + "..."
-                : description}
-            </p>
+            <ProjectShortOverview {...p} />
           </LinkButton>
         ))}
       </InfoCard>
