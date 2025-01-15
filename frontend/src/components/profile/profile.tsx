@@ -300,7 +300,9 @@ const VereinInfoProjects = component$((inputData: { projectData: ProjectInformat
 export const UserProfile = component$((inputData: { profiledata: Readonly<Signal<null>> | Readonly<Signal<Session>> }) => {
     return (
         <>
-            <ProfileInformation profiledata={inputData.profiledata} />
+            <div class="max-w-md p-4">
+                <ProfileInformation profiledata={inputData.profiledata} />
+            </div>
         </>
     )
 })
