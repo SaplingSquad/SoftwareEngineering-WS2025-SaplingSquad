@@ -28,6 +28,7 @@ import type {
   OrgaInformationsProps,
   ApiRelevantOrganisationInformations,
 } from "./types";
+import { Link } from "@builder.io/qwik-city";
 
 //UI Component for Organisation registration and Organisation info editing
 
@@ -387,9 +388,9 @@ const SendFormAsNew = component$(() => {
                 <div class="card-body items-center text-center">
                   <h2 class="card-title">Erfolgreich abgesendet!</h2>
                   <div class="card-actions">
-                    <a href="/profile" class="btn btn-primary">
+                    <Link href="/profile" class="btn btn-primary">
                       Zurück zum Profil
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -405,9 +406,9 @@ const SendFormAsNew = component$(() => {
                   <p>Bitte später erneut versuchen.</p>
                   <p>Fehlercode: {r}</p>
                   <div class="card-actions">
-                    <a href="/profile" class="btn btn-primary">
+                    <Link href="/profile" class="btn btn-primary">
                       Zurück zum Profil
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -436,9 +437,9 @@ const SendFormAsEdit = component$(() => {
                 <div class="card-body items-center text-center">
                   <h2 class="card-title">Erfolgreich editiert!</h2>
                   <div class="card-actions">
-                    <a href="/profile" class="btn btn-primary">
+                    <Link href="/profile" class="btn btn-primary">
                       Zurück zum Profil
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -454,9 +455,9 @@ const SendFormAsEdit = component$(() => {
                   <p>Bitte versuchen Sie es später erneut.</p>
                   <p>Fehlercode: {r}</p>
                   <div class="card-actions">
-                    <a href="/profile" class="btn btn-primary">
+                    <Link href="/profile" class="btn btn-primary">
                       Zurück zum Profil
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </div>

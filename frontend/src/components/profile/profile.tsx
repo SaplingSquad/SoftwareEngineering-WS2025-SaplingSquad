@@ -30,6 +30,7 @@ import {
   ApiRelevantProjectInformations,
 } from "./types";
 import { isAccTypeOrg, useAccountType } from "~/auth/utils";
+import { Link } from "@builder.io/qwik-city";
 
 const OrgaProfileDataContext = createContextId<OrgaInformationsProps>(
   "verein-profile-context",
@@ -58,14 +59,14 @@ const ProjectCard = component$((props: { p: ProjectInformationProps }) => {
             class="menu-neutral menu dropdown-content menu-sm w-24 rounded-box bg-base-100 p-2 shadow"
           >
             <li>
-              <a
+              <Link
                 onClick$={() => {
                   projDel.value = !projDel.value;
                 }}
               >
                 {projDel.value && <p>Löschen</p>}
                 {!projDel.value && <p>Zurück</p>}
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
@@ -111,12 +112,12 @@ const ProjectContent = component$(
               {inputData.p.dateTo ? inputData.p.dateTo.year : "--"}
             </div>
             <div class="card-actions justify-end">
-              <a href={refURL} class="btn btn-primary join-item">
+              <Link href={refURL} class="btn btn-primary join-item">
                 Bearbeiten
                 <div class="text-2xl">
                   <HiCog6ToothOutline />
                 </div>
-              </a>
+              </Link>
             </div>
           </>
         )}
@@ -151,9 +152,9 @@ const ProjectDummy = component$(() => {
       <div class="card-body">
         <h2 class="card-title text-primary">Neues Projekt hinzufügen</h2>
         <div class="flex items-center justify-center">
-          <a href="/profile/manage-project" class="hover:text-secondary">
+          <Link href="/profile/manage-project" class="hover:text-secondary">
             <HiPlusCircleSolid class="text-6xl text-primary text-opacity-80 transition-all hover:text-secondary" />
-          </a>
+          </Link>
         </div>
       </div>
     </div>
@@ -228,12 +229,12 @@ const Vereinsinfo = component$(() => {
         </div>
       </div>
       <div class="card-actions mx-4 justify-end py-4">
-        <a href="./manage-organisation" class="btn btn-primary">
+        <Link href="./manage-organisation" class="btn btn-primary">
           Bearbeiten
           <div class="text-2xl">
             <HiCog6ToothOutline />
           </div>
-        </a>
+        </Link>
       </div>
     </>
   );
@@ -273,12 +274,12 @@ const VereinDummy = component$(() => {
           </div>
         </div>
         <div class="card-actions justify-end">
-          <a href="./manage-organisation" class="btn btn-primary">
+          <Link href="./manage-organisation" class="btn btn-primary">
             Verein verknüpfen
             <div class="text-2xl">
               <HiPlusCircleOutline />
             </div>
-          </a>
+          </Link>
         </div>
       </div>
     </>

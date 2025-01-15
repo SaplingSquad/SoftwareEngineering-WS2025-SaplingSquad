@@ -2,6 +2,7 @@ import { component$, Slot } from "@builder.io/qwik";
 import { ProfileImage } from "~/components/profile/utils";
 import { useSession } from "../plugin@auth";
 import SproutIcon from "/src/images/Sprout_icon.svg?jsx";
+import { Link } from "@builder.io/qwik-city";
 
 export default component$(() => {
   const session = useSession();
@@ -30,19 +31,19 @@ export default component$(() => {
                   ></path>
                 </svg>
               </label>
-              <a href="/" class="btn btn-ghost flex items-center text-2xl">
+              <Link href="/" class="btn btn-ghost flex items-center text-2xl">
                 <SproutIcon class="size-8" />
                 Sprout
-              </a>
+              </Link>
             </div>
             <div class="navbar-end space-x-1">
-              <a
+              <Link
                 href="/profile"
                 role="button"
                 class="avatar btn btn-circle btn-ghost"
               >
                 <ProfileImage profiledata={session} imgSize="size-12" />
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -58,10 +59,10 @@ export default component$(() => {
           <li class="menu-title text-xl">Sprout</li>
 
           <li>
-            <a href="/map">Karte</a>
+            <Link href="/map">Karte</Link>
           </li>
           <li>
-            <a href="/questions">Fragen</a>
+            <Link href="/questions">Fragen</Link>
           </li>
         </ul>
       </div>
