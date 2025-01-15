@@ -11,6 +11,7 @@ import type { MaybeSignal } from "~/api/api";
 import { useGetOrganizationById } from "~/api/api_hooks.gen";
 import { formatNumber } from "~/utils";
 import { ApiRequest } from "../api";
+import type { BookmarkProps } from "../bookmark";
 import { LinkButton, type LinkTarget } from "../link_button";
 import type { ApiCoordinates, Coordinates } from "../map";
 import { ActionButton, IconProperty, InfoCard } from "./info_card";
@@ -66,7 +67,7 @@ type OrganizationCardProps = {
    * Optionally show a back-button. See {@link LinkTarget}.
    */
   onProject$?: QRL<(id: number) => unknown>;
-};
+} & Partial<BookmarkProps>;
 
 /**
  * Show information about an organization.
@@ -90,6 +91,8 @@ const OrganizationCard = component$(
     onClose,
     onBack,
     onProject$,
+    bookmarked,
+    onSetBookmarked$,
   }: Organization & OrganizationCardProps) => {
     return (
       <InfoCard
@@ -102,6 +105,8 @@ const OrganizationCard = component$(
         aside={projects.length > 0}
         onClose={onClose}
         onBack={onBack}
+        bookmarked={bookmarked}
+        onSetBookmarked$={onSetBookmarked$}
       >
         {/* Properties */}
         <IconProperty
