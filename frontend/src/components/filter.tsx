@@ -1,33 +1,41 @@
 import { type Signal, component$, useSignal, useTask$ } from "@builder.io/qwik";
 import { HiInformationCircleOutline } from "@qwikest/icons/heroicons";
+import { getRegions } from "~/api/api_methods.gen";
 
-// prettier-ignore
-const continents: {
+type Region = {
   id: string;
   name: string;
-  regions: {
-    id: string;
-    name: string;
-  }[];
-}[] = [
-  { id: "afrika", name: "Afrika", regions: [{ id: "Südafrika", name: "Südafrika" }, { id: "Mosambik", name: "Mosambik" }, { id: "Elfenbeinküste", name: "Elfenbeinküste" }] },
-  { id: "antarktis", name: "Antarktis", regions: [{ id: "Region1", name: "Region1" }, { id: "Region2", name: "Region2" }, { id: "Region3", name: "Region3" }] },
-  { id: "asien", name: "Asien", regions: [{ id: "China", name: "China" }, { id: "Nepal", name: "Nepal" }, { id: "Japan", name: "Japan" }] },
-  { id: "australien", name: "Australien", regions: [{ id: "WesternAustralia", name: "WesternAustralia" }, { id: "SouthernAustralia", name: "SouthernAustralia" }, { id: "NorthernTerritory", name: "NorthernTerritory" }] },
-  { id: "europa", name: "Europa", regions: [{ id: "Italien", name: "Italien" }, { id: "Deutschland", name: "Deutschland" }, { id: "Österreich", name: "Österreich" }] },
-  { id: "nordamerika", name: "Nordamerika", regions: [{ id: "USA", name: "USA" }, { id: "Kanada", name: "Kanada" }, { id: "Mexiko", name: "Mexiko" }] },
-  { id: "suedamerika", name: "Südamerika", regions: [{ id: "Chile", name: "Chile" }, { id: "Venezuela", name: "Venezuela" }, { id: "Argentinien", name: "Argentinien" }] },
-];
+};
+
+type Continent = {
+  id: string;
+  name: string;
+  regions: Region[];
+};
 
 const orgSizes = [20, 100, 500, 1000];
 
 type ShowOnly = "Organization" | "Project" | undefined;
 
 export type FilterSettings = {
-  type?: "Organization" | "Project";
-  maxMembers?: number;
-  continentId?: string;
-  regionId?: string;
+  type: "Organization" | "Project" | undefined;
+  maxMembers: number | undefined;
+  continentId: string | undefined;
+  regionId: string | undefined;
+};
+
+/**
+ * Get all map continents and the respective regions.
+ * @returns The continents and regions.
+ */
+const getContinents = async (): Promise<Continent[]> => {
+  return (
+    (await getRegions().then((r) => {
+      if (r.status === 200) {
+        return r.body;
+      }
+    })) || []
+  );
 };
 
 /**
@@ -43,6 +51,13 @@ export const Filter = component$(
     const selectedContinent = useSignal<string>("-1");
     const selectedRegion = useSignal<string>("-1");
     const showOnly = useSignal<ShowOnly>(undefined);
+    const continents = useSignal<Continent[]>([]);
+
+    useTask$(async () => {
+      await getContinents().then((c) => {
+        continents.value = c;
+      });
+    });
 
     useTask$(({ track }) => {
       props.filterSettings.type = track(props.filterActive)
@@ -53,10 +68,10 @@ export const Filter = component$(
           ? orgSizes[parseInt(track(maxOrgSizeIdx))]
           : undefined;
       props.filterSettings.continentId = track(props.filterActive)
-        ? continents[parseInt(track(selectedContinent))]?.id
+        ? continents.value[parseInt(track(selectedContinent))]?.id
         : undefined;
       props.filterSettings.regionId = track(props.filterActive)
-        ? continents[parseInt(track(selectedContinent))]?.regions[
+        ? continents.value[parseInt(track(selectedContinent))]?.regions[
             parseInt(track(selectedRegion))
           ]?.id
         : undefined;
@@ -84,7 +99,7 @@ export const Filter = component$(
           >
             <div class="w-full border border-base-200" />
             <a href="/questions" class="btn btn-primary w-full">
-              Gewählte Schwerpunkte bearbeiten
+              Schwerpunkte bearbeiten
             </a>
             <TypeSelection showOnly={showOnly} />
             <SizeFilter
@@ -92,6 +107,7 @@ export const Filter = component$(
               maxOrgSizeIdx={maxOrgSizeIdx}
             />
             <GeographicFilter
+              continents={continents}
               selectedContinent={selectedContinent}
               selectedRegion={selectedRegion}
             />
@@ -115,7 +131,7 @@ const TypeSelection = component$((props: { showOnly: Signal<ShowOnly> }) => {
           checked={props.showOnly.value != "Project"}
           onClick$={(_, currentTarget) =>
             (props.showOnly.value =
-              currentTarget.checked || props.showOnly.value == "Project"
+              currentTarget.checked || props.showOnly.value === "Project"
                 ? undefined
                 : "Project")
           }
@@ -129,7 +145,7 @@ const TypeSelection = component$((props: { showOnly: Signal<ShowOnly> }) => {
           checked={props.showOnly.value != "Organization"}
           onClick$={(_, currentTarget) =>
             (props.showOnly.value =
-              currentTarget.checked || props.showOnly.value == "Organization"
+              currentTarget.checked || props.showOnly.value === "Organization"
                 ? undefined
                 : "Organization")
           }
@@ -192,6 +208,7 @@ const SizeFilter = component$(
  */
 const GeographicFilter = component$(
   (props: {
+    continents: Signal<Continent[]>;
     selectedContinent: Signal<string>;
     selectedRegion: Signal<string>;
   }) => {
@@ -207,7 +224,7 @@ const GeographicFilter = component$(
             onChange$={() => (props.selectedRegion.value = "-1")}
           >
             <option value="-1">Keine Beschränkung</option>
-            {continents.map(
+            {props.continents.value.map(
               (continent: { id: string; name: string }, idx: number) => (
                 <option
                   key={idx}
@@ -229,7 +246,9 @@ const GeographicFilter = component$(
           >
             <option value="-1">Keine Beschränkung</option>
             {props.selectedContinent.value != "-1" &&
-              continents[parseInt(props.selectedContinent.value)].regions.map(
+              props.continents.value[
+                parseInt(props.selectedContinent.value)
+              ].regions.map(
                 (region: { id: string; name: string }, idx: number) => (
                   <option
                     key={idx}

@@ -12,15 +12,23 @@ import { ProjectLargeInfo } from "./project-largeinfo";
 import {
   organizationBookmarksMockData,
   projectBookmarksMockData,
-  searchOutputMockdata,
 } from "./mockdata";
-import type { Ranking, SearchInput, SearchOutput } from "./types";
+import {
+  createEmptyFeatureCollection,
+  createEmptySearchOutput,
+  type FeatureCollection,
+  type Ranking,
+  type SearchInput,
+  type SearchOutput,
+} from "./types";
 import { getAnswersFromLocalStorage } from "~/utils";
 import { OrganizationLargeInfo } from "./organization-largeinfo";
-import { ShortInfo } from "./shortinfo";
 import { Navbar } from "./navbar";
 import { Tablist } from "./tablist";
 import { ExpandLatch } from "./expand-latch";
+import { getMatches } from "~/api/api_methods.gen";
+import { HiExclamationCircleOutline } from "@qwikest/icons/heroicons";
+import { LazyLoader } from "./lazy-loader";
 
 enum ResultTab {
   ALL,
@@ -28,22 +36,41 @@ enum ResultTab {
   HISTORY,
 }
 
-/**
- * Create an SearchOutput object that does not contain any `rankings`, `organizationLocations` or `projectLocations` but has all properties set to avoid access to undefined.
- * @returns The empty SearchOutput object.
- */
-function createEmptySearchOutput(): SearchOutput {
-  return {
-    rankings: [],
-    organizationLocations: {
-      type: "FeatureCollection",
-      features: [],
-    },
-    projectLocations: {
-      type: "FeatureCollection",
-      features: [],
-    },
-  };
+enum State {
+  LOADING,
+  ERROR,
+  SUCCESS,
+}
+
+function renderState(
+  state: State,
+  ranking: Signal<Ranking[]>,
+  selectedRanking: Signal<Ranking | undefined>,
+) {
+  switch (state) {
+    case State.ERROR:
+      return (
+        <div role="alert" class="alert alert-error">
+          <HiExclamationCircleOutline class="h-10 w-10" />
+          <span class="max-h-full min-h-min min-w-min max-w-full overflow-y-auto ">
+            <h5 class="text-lg font-semibold">
+              Daten konnten nicht geladen werden.
+            </h5>
+            <p class="mb-2">
+              Bitte stelle sicher, dass du mit dem Internet verbunden bist.
+            </p>
+          </span>
+        </div>
+      );
+    case State.LOADING:
+      return (
+        <div class="flex w-full justify-center p-4">
+          <span class="loading loading-spinner loading-lg"></span>
+        </div>
+      );
+    case State.SUCCESS:
+      return <LazyLoader ranking={ranking} selectedRanking={selectedRanking} />;
+  }
 }
 
 /**
@@ -51,21 +78,35 @@ function createEmptySearchOutput(): SearchOutput {
  */
 export const MapUI = component$(
   (props: {
-    organizationLocations: Signal<GeoJSON.GeoJSON>;
-    projectLocations: Signal<GeoJSON.GeoJSON>;
+    organizationLocations: Signal<FeatureCollection>;
+    projectLocations: Signal<FeatureCollection>;
   }) => {
-    const filterSettings: FilterSettings = useStore({});
+    const filterSettings: FilterSettings = useStore({
+      type: undefined,
+      maxMembers: undefined,
+      continentId: undefined,
+      regionId: undefined,
+    });
+    const rawResult = { res: createEmptySearchOutput() };
     const tabSelection = useSignal<ResultTab>(ResultTab.ALL);
     const filterActive = useSignal<boolean>(true);
     const filterWindowActive = useSignal<boolean>(false);
     const listExpanded = useSignal<boolean>(false);
     const searchText = useSignal<string>("");
     const selectedRanking = useSignal<Ranking | undefined>(undefined);
-    const rawResult = useSignal<SearchOutput>(createEmptySearchOutput());
     const history = useStore<SearchOutput>(createEmptySearchOutput());
-    const result = useSignal<SearchOutput>({ rankings: [] });
+    const rankings = useSignal<Ranking[]>([]);
+    const state = useSignal<State>(State.LOADING);
 
-    const update = $((performSearch: boolean) => {
+    useTask$(({ track }) => {
+      if (track(state) === State.ERROR) {
+        listExpanded.value = true;
+      }
+    });
+
+    const update = $(async (performSearch: boolean) => {
+      state.value = State.LOADING;
+
       if (performSearch) {
         const searchInput: SearchInput = {
           answers: getAnswersFromLocalStorage(),
@@ -73,30 +114,49 @@ export const MapUI = component$(
           ...filterSettings,
         };
 
-        // TODO replace with API call
-        searchInput;
-        rawResult.value = searchOutputMockdata;
+        await getMatches(searchInput).then(
+          (p) => {
+            if (p.status === 200) {
+              rawResult.res = {
+                organizationLocations: createEmptyFeatureCollection(),
+                projectLocations: createEmptyFeatureCollection(),
+                ...p.body,
+              };
+            } else {
+              state.value = State.ERROR;
+            }
+          },
+          () => (state.value = State.ERROR),
+        );
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if (state.value !== State.LOADING) {
+        props.organizationLocations.value = createEmptyFeatureCollection();
+        props.projectLocations.value = createEmptyFeatureCollection();
+        return;
+      }
+
+      let shownOutput: SearchOutput;
       switch (tabSelection.value) {
         case ResultTab.ALL:
-          result.value = rawResult.value;
+          shownOutput = rawResult.res;
           break;
         case ResultTab.HISTORY:
-          result.value = history;
+          shownOutput = history;
           break;
         case ResultTab.BOOKMARKS:
-          result.value = {
-            rankings: rawResult.value.rankings.filter((ranking) =>
-              (ranking.type === "Organization"
+          shownOutput = {
+            rankings: rawResult.res.rankings.filter((ranking) =>
+              (ranking.entry.type === "Organization"
                 ? organizationBookmarksMockData
                 : projectBookmarksMockData
-              ).includes(ranking.content.id),
+              ).includes(ranking.entry.content.id),
             ),
             organizationLocations: {
               type: "FeatureCollection",
               features:
-                rawResult.value.organizationLocations?.features.filter(
+                rawResult.res.organizationLocations?.features.filter(
                   (feature) =>
                     organizationBookmarksMockData.includes(
                       feature.properties.id,
@@ -106,7 +166,7 @@ export const MapUI = component$(
             projectLocations: {
               type: "FeatureCollection",
               features:
-                rawResult.value.projectLocations?.features.filter((feature) =>
+                rawResult.res.projectLocations?.features.filter((feature) =>
                   projectBookmarksMockData.includes(feature.properties.id),
                 ) || [],
             },
@@ -114,8 +174,11 @@ export const MapUI = component$(
           break;
       }
 
-      props.organizationLocations.value = result.value.organizationLocations!;
-      props.projectLocations.value = result.value.projectLocations!;
+      state.value = State.SUCCESS;
+
+      rankings.value = shownOutput.rankings;
+      props.organizationLocations.value = shownOutput.organizationLocations!;
+      props.projectLocations.value = shownOutput.projectLocations!;
     });
     useOnWindow(
       "load",
@@ -137,19 +200,21 @@ export const MapUI = component$(
 
       const idx = history.rankings.findIndex(
         (r) =>
-          r.type === selection.type && r.content.id === selection.content.id,
+          r.entry.type === selection.entry.type &&
+          r.entry.content.id === selection.entry.content.id,
       );
 
       if (idx === -1) {
         history.rankings.unshift(selection);
-        (selection.type === "Organization"
+        (selection.entry.type === "Organization"
           ? history.organizationLocations
           : history.projectLocations
         )?.features.push(
-          (selection.type === "Organization"
-            ? result.value.organizationLocations
-            : result.value.projectLocations)!.features.find(
-            (f) => f.properties.id === selection.content.id,
+          (selection.entry.type === "Organization"
+            ? props.organizationLocations.value
+            : props.projectLocations.value
+          ).features.find(
+            (f) => f.properties.id === selection.entry.content.id,
           )!,
         );
       } else {
@@ -177,19 +242,11 @@ export const MapUI = component$(
                 />
                 <div
                   class={[
-                    "space-y-2 overflow-y-auto pr-2 transition-all",
+                    "overflow-hidden transition-all",
                     listExpanded.value ? "h-full" : "h-0",
                   ]}
                 >
-                  {result.value.rankings.map((ranking) => (
-                    <ShortInfo
-                      key={ranking.type + "_" + ranking.content.id}
-                      ranking={ranking}
-                      onClick={$(() => {
-                        selectedRanking.value = ranking;
-                      })}
-                    />
-                  ))}
+                  {renderState(state.value, rankings, selectedRanking)}
                 </div>
               </div>
             </div>
@@ -209,14 +266,14 @@ export const MapUI = component$(
         </div>
         {selectedRanking.value && (
           <div class="fixed right-0 top-0 h-screen p-4">
-            {selectedRanking.value.type === "Organization" ? (
+            {selectedRanking.value.entry.type === "Organization" ? (
               <OrganizationLargeInfo
-                org={selectedRanking.value.content}
+                org={selectedRanking.value.entry.content}
                 onClose={$(() => (selectedRanking.value = undefined))}
               />
             ) : (
               <ProjectLargeInfo
-                project={selectedRanking.value.content}
+                project={selectedRanking.value.entry.content}
                 onClose={$(() => (selectedRanking.value = undefined))}
               />
             )}

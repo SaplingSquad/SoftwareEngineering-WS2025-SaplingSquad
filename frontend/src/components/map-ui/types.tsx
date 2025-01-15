@@ -1,21 +1,21 @@
 /**
- * Temporary collection of Types until the new API is merged.
+ * Collection of various types used to interact with the API.
  */
 
 export type Organization = {
   id: number;
   name: string;
   description: string;
-  foundingYear: number;
-  memberCount: number;
+  foundingYear?: number;
+  memberCount?: number;
   iconUrl: string;
-  imageUrls: string[];
+  imageUrls?: string[];
   webPageUrl: string;
-  donatePageUrl: string;
-  coordinates: [number, number];
+  donatePageUrl?: string;
+  coordinates: number[];
   tags: number[];
   regionName: string;
-  numProjects: number;
+  projectCount: number;
 };
 
 export type Project = {
@@ -23,25 +23,25 @@ export type Project = {
   orgaId: number;
   name: string;
   description: string;
-  dateFrom: string;
-  dateTo: string;
+  dateFrom?: string;
+  dateTo?: string;
   iconUrl: string;
-  imageUrls: string[];
-  webPageUrl: string;
-  donatePageUrl: string;
-  coordinates: [number, number];
+  imageUrls?: string[];
+  webPageUrl?: string;
+  donatePageUrl?: string;
+  coordinates: number[];
   tags: number[];
   regionName: string;
   orgaName: string;
 };
 
 export type SearchInput = {
-  answers?: number[];
-  maxMembers?: number;
-  searchText?: string;
-  continent?: string;
-  regionId?: string;
-  type?: "Project" | "Organization";
+  answers: number[] | undefined;
+  maxMembers: number | undefined;
+  searchText: string | undefined;
+  continentId: string | undefined;
+  regionId: string | undefined;
+  type: "Project" | "Organization" | undefined;
 };
 
 export type Feature = {
@@ -51,7 +51,7 @@ export type Feature = {
   };
   geometry: {
     type: "Point";
-    coordinates: [number, number];
+    coordinates: number[];
   };
 };
 
@@ -60,7 +60,7 @@ export type FeatureCollection = {
   features: Feature[];
 };
 
-export type Ranking = (
+export type RankingEntry =
   | {
       type: "Organization";
       content: Organization;
@@ -68,11 +68,37 @@ export type Ranking = (
   | {
       type: "Project";
       content: Project;
-    }
-) & { percentageMatch: number };
+    };
+
+export type Ranking = {
+  entry: RankingEntry;
+} & { percentageMatch: number };
 
 export type SearchOutput = {
   rankings: Ranking[];
   organizationLocations?: FeatureCollection;
   projectLocations?: FeatureCollection;
 };
+
+/**
+ * Create an empty feature collection that does not contain any features but has all properties set to avoid access to undefined.
+ * @returns The empty feature collection object.
+ */
+export function createEmptyFeatureCollection(): FeatureCollection {
+  return {
+    type: "FeatureCollection",
+    features: [],
+  };
+}
+
+/**
+ * Create an SearchOutput object that does not contain any `rankings`, `organizationLocations` or `projectLocations` but has all properties set to avoid access to undefined.
+ * @returns The empty SearchOutput object.
+ */
+export function createEmptySearchOutput(): SearchOutput {
+  return {
+    rankings: [],
+    organizationLocations: createEmptyFeatureCollection(),
+    projectLocations: createEmptyFeatureCollection(),
+  };
+}

@@ -6,7 +6,7 @@ import {
   useVisibleTask$,
 } from "@builder.io/qwik";
 import { layoutTags } from "./tag-layout";
-import type { Organization, Project, Ranking } from "./types";
+import type { Organization, Project, RankingEntry } from "./types";
 import {
   HiBoltOutline,
   HiBuildingOfficeOutline,
@@ -17,6 +17,7 @@ import {
   HiTagOutline,
   HiUserGroupOutline,
 } from "@qwikest/icons/heroicons";
+import { formatDateRange, getTagNames } from "~/utils";
 
 type Detail = { icon: JSXOutput; text: string };
 
@@ -31,7 +32,7 @@ function getProjectDetails(project: Project): Detail[] {
     { icon: <HiMapPinOutline />, text: project.regionName },
     {
       icon: <HiCalendarOutline />,
-      text: project.dateFrom + " - " + project.dateTo,
+      text: formatDateRange(project.dateFrom, project.dateTo) || "",
     },
   ];
 }
@@ -44,20 +45,28 @@ function getProjectDetails(project: Project): Detail[] {
 function getOrganizationDetails(organization: Organization): Detail[] {
   return [
     { icon: <HiHomeOutline />, text: organization.regionName },
-    { icon: <HiCakeOutline />, text: organization.foundingYear + " gegründet" },
+    {
+      icon: <HiCakeOutline />,
+      text:
+        organization.foundingYear === undefined
+          ? "/"
+          : organization.foundingYear + " gegründet",
+    },
     {
       icon: <HiUserGroupOutline />,
       text:
-        organization.memberCount +
-        " " +
-        (organization.memberCount == 1 ? "Mitglied" : "Mitglieder"),
+        organization.memberCount === undefined
+          ? "/"
+          : organization.memberCount +
+            " " +
+            (organization.memberCount === 1 ? "Mitglied" : "Mitglieder"),
     },
     {
       icon: <HiBoltOutline />,
       text:
-        organization.numProjects +
+        organization.projectCount +
         " " +
-        (organization.numProjects == 1 ? "Projekt" : "Projekte"),
+        (organization.projectCount === 1 ? "Projekt" : "Projekte"),
     },
   ];
 }
@@ -66,17 +75,15 @@ function getOrganizationDetails(organization: Organization): Detail[] {
  * A small card for the list view showing the most important information about a ranking entry.
  */
 export const ShortInfo = component$(
-  (props: { ranking: Ranking; onClick: QRL<() => void> }) => {
+  (props: { entry: RankingEntry; onClick: QRL<() => void> }) => {
     const tagContainerRef = useSignal<HTMLDivElement>({} as HTMLDivElement);
 
     // Use visible task because the tags need to be layouted every time the component is re-rendered.
     // eslint-disable-next-line qwik/no-use-visible-task
-    useVisibleTask$(() =>
-      layoutTags(
-        tagContainerRef,
-        props.ranking.content.tags.map(() => "Umweltschutz"), // TODO replace with value from API
-      ),
-    );
+    useVisibleTask$(async () => {
+      tagContainerRef.value.replaceChildren();
+      layoutTags(tagContainerRef, await getTagNames(props.entry.content.tags));
+    });
 
     return (
       <div
@@ -86,26 +93,20 @@ export const ShortInfo = component$(
         <h1
           class={[
             "text-xl font-bold",
-            props.ranking.type === "Organization"
-              ? "text-info"
-              : "text-primary",
+            props.entry.type === "Organization" ? "text-info" : "text-primary",
           ]}
         >
-          {props.ranking.content.name}
+          {props.entry.content.name}
         </h1>
         <div class="flex h-min max-w-full items-center justify-between">
           <div class="space-y-0.5">
-            {(props.ranking.type === "Organization"
-              ? getOrganizationDetails(props.ranking.content)
-              : getProjectDetails(props.ranking.content)
+            {(props.entry.type === "Organization"
+              ? getOrganizationDetails(props.entry.content)
+              : getProjectDetails(props.entry.content)
             ).map((detail, idx) => (
               <div
                 key={
-                  props.ranking.type +
-                  "_" +
-                  props.ranking.content.id +
-                  "_" +
-                  idx
+                  props.entry.type + "_" + props.entry.content.id + "_" + idx
                 }
                 class="flex items-center space-x-1"
               >
@@ -117,15 +118,19 @@ export const ShortInfo = component$(
               <HiTagOutline />
               <div
                 ref={tagContainerRef}
-                class="flex w-64 space-x-1 overflow-hidden"
-              ></div>
+                class="flex h-7 w-64 space-x-1 overflow-hidden text-nowrap"
+              >
+                <div class="skeleton h-7 w-20" />
+                <div class="skeleton h-7 w-28" />
+                <div class="skeleton h-7 w-10" />
+              </div>
             </div>
           </div>
           <div class="flex h-[104px] w-[104px] items-center justify-center overflow-hidden rounded-md bg-[white] shadow-sm">
             <img
-              src={props.ranking.content.iconUrl}
+              src={props.entry.content.iconUrl}
               alt={
-                props.ranking.type === "Organization"
+                props.entry.type === "Organization"
                   ? "Logo des Vereins"
                   : "Logo des Projektes bzw. des Vereines, falls das Projekt kein eigenes Logo hat"
               }
