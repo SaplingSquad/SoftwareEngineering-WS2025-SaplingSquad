@@ -1,6 +1,5 @@
 package saplingsquad.persistence
 
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.extension.ExtendWith
 import org.komapper.core.dsl.Meta
@@ -96,6 +95,11 @@ class OrganizationRepositoryTest {
                 assertEquals(testOrg, inDb.copy(orgId = placeholderOrgId))//reset orgId for comparison
                 id
             }
+
+            // Test duplicates
+            val dup = repository.tryRegisterOrganization(accountId, testOrg, testTags)
+            assertIs<OrganizationRegisterResult.AlreadyRegistered>(dup)
+
             // Test retrieval
             run {
                 val result = repository.readOrganizationAndTagsOfAccount(accountId)
