@@ -9,6 +9,8 @@ platform to showcase themselves.
 
 The current state of `main` can be seen [here](https://oxygen.floeze.tv/).
 
+A manual on how to deploy on your own can be found in [`build`](./build//README.md).
+
 ## Setup
 
 There are multiple steps required to start the application locally. The commands
