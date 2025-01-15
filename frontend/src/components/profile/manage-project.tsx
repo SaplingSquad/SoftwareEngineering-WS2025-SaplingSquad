@@ -5,13 +5,9 @@ import { ApiResponse } from "../api";
 import { usePostProject, usePutProject } from "~/api/api_hooks.gen";
 import { convertAPITypeToInternalProjectType } from "./profile";
 import { ProjectInformationProps, ApiRelevantProjectInformations } from "./types";
+import { FormInputMissing } from "./manage-organisation";
 
 const FormDataContext = createContextId<ProjectInformationProps>("project-context")
-
-export type Badge = {
-    title: string
-    answer: boolean;
-};
 
 const answerStyles = new Map<boolean, string>([
     [false, "btn-outline"],
@@ -37,6 +33,10 @@ const Projektdaten = component$(() => {
             <label class="input input-bordered flex items-center gap-2" >
                 Projektname*
                 <input type="text w-full" class="grow" placeholder="Mein Projekt" required value={context.name} onInput$={(_, e) => context.name = e.value} />
+            </label>
+            <label class="input input-bordered flex items-center gap-2" >
+                Projekticon*
+                <input type="text w-full" class="grow link link-neutral" placeholder="www.mein-verein.de/mein-projekt/icon.jpg" required value={context.logoUrl} onInput$={(_, e) => context.logoUrl = e.value} />
             </label>
             <label class="input input-bordered flex items-center gap-2">
                 Projektwebseite
@@ -387,11 +387,11 @@ function convertInternalTypeToAPIProjectType(interalOut: ProjectInformationProps
     }
 }
 
+function checkFormInputs(currState: ProjectInformationProps) {
+    return !(currState.name === '' || currState.description === '' || currState.logoUrl === '')
+}
+
 export const ProjectCreation = component$((inputData: { selProject: number, projects: ApiRelevantProjectInformations[], tags: { id: number, name: string }[] }) => {
-
-
-
-
 
     const emptyProject: ProjectInformationProps = {
         name: "",
@@ -411,25 +411,26 @@ export const ProjectCreation = component$((inputData: { selProject: number, proj
     const tagsNameMapping = inputData.tags
 
     const isNew = inputData.selProject === -1
-    //Api call gives all Projects. We are only interested in the selected one
+    //Api call returns all Projects. We are only interested in the selected one
     const projectData = isNew ? emptyProject : convertAPITypeToInternalProjectType(inputData.projects.filter((e, i) => e.id === inputData.selProject)[0])
 
     const position = useSignal(0);
     const store = useStore<ProjectInformationProps>(projectData);
     useContextProvider(FormDataContext, store)
+    const context = useContext(FormDataContext)
     return (
         <>
             <div class="relative flex justify-center">
                 <div class="card bg-base-200 rounded-box place-items-stretch m-4 px-4 py-8 space-y-4 h-fit w-full max-w-screen-md shadow-2xl">
                     <h2 class="card-title px-4">{isNew ? "Projekt erstellen" : "Projekt bearbeiten"}</h2>
                     <div class="space-y-4 px-4">
-
                         {position.value === 0 && <Projektdaten />}
                         {position.value === 1 && <Projekttags tags={tagsNameMapping} />}
                         {position.value === 2 && <ImageStack />}
                         {position.value === 3 && <Overview />}
                         {position.value === 4 && isNew && <SendFormAsNew />}
                         {position.value === 4 && !isNew && <SendFormAsEdit />}
+                        {position.value === 0 && !checkFormInputs(context) && <FormInputMissing />}
                     </div>
                     <div class="bottom-0 flex flex-col justify-center items-center gap-4">
                         {

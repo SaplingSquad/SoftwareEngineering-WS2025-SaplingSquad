@@ -6,6 +6,8 @@ import { ApiResponse } from "../api";
 import { convertAPITypeToInternalType } from "./profile";
 import { OrgaInformationsProps, ApiRelevantOrganisationInformations } from "./types";
 
+//UI Component for Organisation registration and Organisation info editing
+
 const FormDataContext = createContextId<OrgaInformationsProps>("verein-signup-context")
 
 const answerStyles = new Map<boolean, string>([
@@ -329,6 +331,29 @@ const SendFormAsEdit = component$(() => {
     )
 })
 
+function checkFormInputs(currState: OrgaInformationsProps) {
+    return !(currState.name === '' || currState.description === '' || currState.logoUrl === '' || currState.webpageUrl === '')
+}
+
+export const FormInputMissing = component$(() => {
+    return (
+        <div role="alert" class="alert alert-error">
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-6 w-6 shrink-0 stroke-current"
+                fill="none"
+                viewBox="0 0 24 24">
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Bitte alle als notwendig (*) markierte Felder angeben.</span>
+        </div>
+    )
+})
+
 export const Vereinsignup = component$((inputData: { orgaData: ApiRelevantOrganisationInformations, tags: { id: number, name: string }[] }) => {
 
     const isNew = inputData.orgaData.name === ""
@@ -341,7 +366,7 @@ export const Vereinsignup = component$((inputData: { orgaData: ApiRelevantOrgani
     const tagsNameMapping = inputData.tags
 
     useContextProvider(FormDataContext, store)
-
+    const context = useContext(FormDataContext)
     return (
         <>
             <div class="relative flex justify-center">
@@ -354,6 +379,7 @@ export const Vereinsignup = component$((inputData: { orgaData: ApiRelevantOrgani
                         {position.value === 3 && <Overview />}
                         {position.value === 4 && isNew && <SendFormAsNew />}
                         {position.value === 4 && !isNew && <SendFormAsEdit />}
+                        {position.value === 0 && !checkFormInputs(context) && <FormInputMissing />}
                     </div>
                     <div class="bottom-0 flex flex-col justify-center items-center gap-4">
                         {
@@ -384,6 +410,7 @@ export const Vereinsignup = component$((inputData: { orgaData: ApiRelevantOrgani
                                     </button>
                                     <button class="btn btn-primary join-item" onClick$={() => (
                                         position.value = Math.min(3, position.value + 1)
+
                                     )}>
                                         <div class="text-2xl">
                                             <HiChevronRightOutline />
