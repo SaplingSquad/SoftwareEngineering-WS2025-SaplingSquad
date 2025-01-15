@@ -381,9 +381,9 @@ function convertInternalTypeToAPIProjectType(interalOut: ProjectInformationProps
         description: interalOut.description,
         coordinates: [interalOut.location.lng, interalOut.location.lat],
         iconUrl: interalOut.logoUrl,
-        imageUrls: interalOut.imageUrls,
-        webPageUrl: interalOut.webpageUrl,
-        donatePageUrl: interalOut.donatePageUrl,
+        imageUrls: interalOut.imageUrls.length === 0 ? undefined : interalOut.imageUrls,
+        webPageUrl: interalOut.webpageUrl === '' ? undefined : interalOut.webpageUrl,
+        donatePageUrl: interalOut.donatePageUrl === '' ? undefined : interalOut.donatePageUrl,
         tags: interalOut.tags,
         dateFrom: (interalOut.dateFrom.year !== '--' && interalOut.dateFrom.mnth !== '--') ? interalOut.dateFrom.year + "-" + String(interalOut.dateFrom.mnth).padStart(2, '0') : undefined,
         dateTo: (interalOut.dateTo.year !== '--' && interalOut.dateTo.mnth !== '--') ? interalOut.dateTo.year + "-" + String(interalOut.dateTo.mnth).padStart(2, '0') : undefined,
@@ -442,7 +442,7 @@ export const ProjectCreation = component$((inputData: { selProject: number, proj
     return (
         <>
             <div class="relative flex justify-center">
-                <div class="card bg-base-300 rounded-box place-items-stretch m-4 px-4 py-8 space-y-4 [max-height:90dvh] w-full lg:w-1/3">
+                <div class="card bg-base-300 rounded-box place-items-stretch m-4 px-4 py-8 space-y-4 h-fit w-full max-w-screen-md">
                     <h2 class="card-title px-4">{isNew ? "Projekt erstellen" : "Projekt bearbeiten"}</h2>
                     <div class="overflow-y-auto space-y-4 px-4">
 

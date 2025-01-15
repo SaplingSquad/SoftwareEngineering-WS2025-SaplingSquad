@@ -156,7 +156,7 @@ export const ImagePreview = component$((inputData: { imgUrl: string, key: number
                     </div>
                 }
                 <img
-                    class="rounded-xl max-w-60 max-h-60 shadow-xl"
+                    class="rounded-xl max-w-56 max-h-60 shadow-xl"
                     src={inputData.imgUrl}
                 />
             </div>
@@ -248,10 +248,9 @@ function convertInternalTypeToAPIType(interalOut: OrgaInformationsProps): ApiRel
         memberCount: interalOut.numbPers === '' ? undefined : parseInt(interalOut.numbPers),
         foundingYear: interalOut.founding === '' ? undefined : parseInt(interalOut.founding),
         iconUrl: interalOut.logoUrl,
-        imageUrls: interalOut.imageUrls,
+        imageUrls: interalOut.imageUrls.length === 0 ? undefined : interalOut.imageUrls,
         webPageUrl: interalOut.webpageUrl,
-        //donatePageUrl: interalOut.donatePageUrl === '' ? undefined : interalOut.donatePageUrl,
-        donatePageUrl: interalOut.donatePageUrl,
+        donatePageUrl: interalOut.donatePageUrl === '' ? undefined : interalOut.donatePageUrl,
         tags: interalOut.tags,
         regionName: ''
     }
@@ -351,9 +350,9 @@ export const Vereinsignup = component$((inputData: { orgaData: ApiRelevantOrgani
     return (
         <>
             <div class="relative flex justify-center">
-                <div class="card bg-base-300 rounded-box place-items-stretch m-4 px-4 py-8 space-y-4 [max-height:90dvh] w-full lg:w-1/3">
+                <div class="card bg-base-300 rounded-box place-items-stretch m-4 px-4 py-8 space-y-4 h-fit w-full max-w-screen-md">
                     <h2 class="card-title px-4">{isNew ? "Verein erstellen" : "Verein verwalten"}</h2>
-                    <div class="overflow-y-auto space-y-4 px-4">
+                    <div class="space-y-4 px-4">
                         {position.value === 0 && <Vereinsdaten />}
                         {position.value === 1 && <Vereinstags tags={tagsNameMapping} />}
                         {position.value === 2 && <ImageStack />}

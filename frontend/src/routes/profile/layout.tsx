@@ -12,7 +12,7 @@ export default component$(() => {
                 <input id="my-drawer" type="checkbox" class="drawer-toggle" />
                 <div class="drawer-content h-screen">
                     <div class="flex justify-center">
-                        <div class="navbar bg-secondary navbar-rounded">
+                        <div class="navbar bg-base-100 navbar-rounded shadow-xl">
                             <div class="flex-none">
                                 <label for="my-drawer" class="btn btn-primary btn-square btn-ghost drawer-button">
                                     <svg
