@@ -85,10 +85,12 @@ const ProjectCard = component$(
         icon={iconUrl}
       >
         {/* Properties */}
-        <div q:slot="properties" class="flex flex-row items-center gap-2">
-          <HiCalendarOutline />
-          {dateFrom} - {dateTo}
-        </div>
+        {(dateFrom || dateTo) && (
+          <div q:slot="properties" class="flex flex-row items-center gap-2">
+            <HiCalendarOutline />
+            {formatDateRange(dateFrom, dateTo)}
+          </div>
+        )}
         <div q:slot="properties" class="flex flex-row items-center gap-2">
           <HiMapPinSolid />
           {regionName}
@@ -114,6 +116,37 @@ const ProjectCard = component$(
     );
   },
 );
+
+/**
+ * Formats a `YYYY-MM`-date to `MM/YYYY`.
+ * Allows arbitrary-length years.
+ * Months must be two digits.
+ * Unrecognized formats will not be changed.
+ *
+ * @param date `YYYY-MM`-input
+ * @returns `MM/YYYY`-output
+ */
+const formatDate = (date: string) => date.replace(/^(\d+).(\d{2})$/, "$2/$1");
+
+/**
+ * Formats a date-range based on optional `from` and `tp`-dates as a nice german string.
+ *
+ * @param from optional start of the range
+ * @param to optional end of the range
+ * @returns a nicely formatted string of the range (in german)
+ */
+const formatDateRange = (
+  from: string | undefined,
+  to: string | undefined,
+): string => {
+  const fromSet = from !== undefined;
+  const toSet = to !== undefined;
+  if (fromSet && toSet) return `${formatDate(from)} - ${formatDate(to)}`;
+  if (!fromSet && toSet) return `bis ${formatDate(to)}`;
+  if (fromSet && !toSet)
+    return `${new Date(from) <= new Date() ? "seit" : "ab"} ${formatDate(from)}`;
+  return `unbekannt`;
+};
 
 /**
  * Display an info-component for a project.
