@@ -48,3 +48,30 @@ export const distance = (a: number[], b: number[]): number =>
 export type DistributiveOmit<T, K extends keyof any> = T extends any
   ? Omit<T, K>
   : never;
+
+/**
+ * Stores the question answers in the local storage.
+ * @param numbers The question answers to store.
+ */
+export const saveAnswersToLocalStorage = (numbers: number[]) => {
+    const json = JSON.stringify(numbers);
+    localStorage.setItem("question-answers", json);
+}
+
+/**
+ * Retrieves question answers from the local storage if present.
+ * @returns The question answers if any were stored, `undefined` otherwise.
+ */
+export const getAnswersFromLocalStorage = (): number[] | undefined => {
+  try {
+    const json = localStorage.getItem("question-answers");
+    if (json === null) {
+      return undefined;
+    }
+
+    const parsed = JSON.parse(json);
+    return Array.isArray(parsed) && parsed.every(item => typeof item === "number") ? parsed : undefined;
+  } catch (error) {
+    return undefined;
+  }
+}

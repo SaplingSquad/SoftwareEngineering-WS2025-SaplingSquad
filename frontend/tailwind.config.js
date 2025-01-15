@@ -5,6 +5,10 @@ export default {
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
   theme: {
     extend: {},
+    colors: {
+      "base-400": "#445361",
+      "base-400-content": "#f1f1f1",
+    }
   },
   plugins: [daisyui],
   daisyui: {

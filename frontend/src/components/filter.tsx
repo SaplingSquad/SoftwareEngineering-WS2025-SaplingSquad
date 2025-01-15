@@ -1,135 +1,150 @@
 import { type Signal, component$, useSignal, useTask$ } from "@builder.io/qwik";
 import { HiInformationCircleOutline } from "@qwikest/icons/heroicons";
 
-const continents: {
-  id: number;
-  name: string;
-}[] = [
-  { id: 0, name: "Afrika" },
-  { id: 1, name: "Antarktis" },
-  { id: 2, name: "Asien" },
-  { id: 3, name: "Australien" },
-  { id: 4, name: "Europa" },
-  { id: 5, name: "Nordamerika" },
-  { id: 6, name: "Südamerika" },
-];
-
 // prettier-ignore
-const regions: {
-  id: number;
+const continents: {
+  id: string;
   name: string;
-}[][] = [
-  [ /* Afrika */ { id: 1, name: "Südafrika" }, { id: 2, name: "Mosambik" }, { id: 3, name: "Elfenbeinküste" } ],
-  [ /* Antarktis */ { id: 4, name: "Region 1" }, { id: 5, name: "Region 2" }, { id: 6, name: "Region 3" } ],
-  [ /* Asien */ { id: 7, name: "China" }, { id: 8, name: "Nepal" }, { id: 9, name: "Japan" } ],
-  [ /* Australien */ { id: 7, name: "Western Australia" }, { id: 8, name: "Southern Australia" }, { id: 9, name: "Northern Territory" } ],
-  [ /* Europa */ { id: 10, name: "Italien" }, { id: 11, name: "Deutschland" }, { id: 12, name: "Österreich" } ],
-  [ /* Nordamerika */ { id: 13, name: "USA" }, { id: 14, name: "Kanada" }, { id: 15, name: "Mexiko" } ],
-  [ /* Südamerika */ { id: 16, name: "Chile" }, { id: 17, name: "Venezuela" }, { id: 18, name: "Argentinien" } ],
+  regions: {
+    id: string;
+    name: string;
+  }[];
+}[] = [
+  { id: "afrika", name: "Afrika", regions: [{ id: "Südafrika", name: "Südafrika" }, { id: "Mosambik", name: "Mosambik" }, { id: "Elfenbeinküste", name: "Elfenbeinküste" }] },
+  { id: "antarktis", name: "Antarktis", regions: [{ id: "Region1", name: "Region1" }, { id: "Region2", name: "Region2" }, { id: "Region3", name: "Region3" }] },
+  { id: "asien", name: "Asien", regions: [{ id: "China", name: "China" }, { id: "Nepal", name: "Nepal" }, { id: "Japan", name: "Japan" }] },
+  { id: "australien", name: "Australien", regions: [{ id: "WesternAustralia", name: "WesternAustralia" }, { id: "SouthernAustralia", name: "SouthernAustralia" }, { id: "NorthernTerritory", name: "NorthernTerritory" }] },
+  { id: "europa", name: "Europa", regions: [{ id: "Italien", name: "Italien" }, { id: "Deutschland", name: "Deutschland" }, { id: "Österreich", name: "Österreich" }] },
+  { id: "nordamerika", name: "Nordamerika", regions: [{ id: "USA", name: "USA" }, { id: "Kanada", name: "Kanada" }, { id: "Mexiko", name: "Mexiko" }] },
+  { id: "suedamerika", name: "Südamerika", regions: [{ id: "Chile", name: "Chile" }, { id: "Venezuela", name: "Venezuela" }, { id: "Argentinien", name: "Argentinien" }] },
 ];
 
 const orgSizes = [20, 100, 500, 1000];
 
-export type FilterSettings = {
-  orgPins: boolean;
-  projectPins: boolean;
-  regionPins: boolean;
-  limitOrgSize: boolean;
-  maxOrgSize: number;
-  selectedContinent: number;
-  selectedRegion: number;
-};
+type ShowOnly = "Organization" | "Project" | undefined;
 
-export function defaultFilterSettings(): FilterSettings {
-  return {
-    orgPins: true,
-    projectPins: true,
-    regionPins: true,
-    limitOrgSize: false,
-    maxOrgSize: 100,
-    selectedContinent: -1,
-    selectedRegion: -1,
-  };
-}
+export type FilterSettings = {
+  type?: "Organization" | "Project";
+  maxMembers?: number;
+  continentId?: string;
+  regionId?: string;
+};
 
 /**
  * A filter component styled like a card which can be used to return to the questions page and allows to configure various filters.
  */
-// Getters & Setters or nested object and attribute name strings
 export const Filter = component$(
-  (props: { filterSettings: FilterSettings }) => {
-    const orgPins = useSignal<boolean>(props.filterSettings.orgPins);
-    const projectPins = useSignal<boolean>(props.filterSettings.projectPins);
-    const regionPins = useSignal<boolean>(props.filterSettings.regionPins);
-    const limitOrgSize = useSignal<boolean>(props.filterSettings.limitOrgSize);
-    const maxOrgSizeIdx = orgSizes.indexOf(props.filterSettings.maxOrgSize);
-    const maxOrgSize = useSignal<string>(
-      (maxOrgSizeIdx == -1 ? 1 : maxOrgSizeIdx).toString(),
-    );
-    const selectedContinent = useSignal<string>(
-      props.filterSettings.selectedContinent.toString(),
-    );
-    const selectedRegion = useSignal<string>(
-      props.filterSettings.selectedRegion.toString(),
-    );
+  (props: {
+    filterSettings: FilterSettings;
+    filterActive: Signal<boolean>;
+  }) => {
+    const limitOrgSize = useSignal<boolean>(false);
+    const maxOrgSizeIdx = useSignal<string>("1");
+    const selectedContinent = useSignal<string>("-1");
+    const selectedRegion = useSignal<string>("-1");
+    const showOnly = useSignal<ShowOnly>(undefined);
 
-    // prettier-ignore
     useTask$(({ track }) => {
-      props.filterSettings.orgPins = track(() => orgPins.value);
-      props.filterSettings.projectPins = track(() => projectPins.value);
-      props.filterSettings.regionPins = track(() => regionPins.value);
-      props.filterSettings.limitOrgSize = track(() => limitOrgSize.value);
-      props.filterSettings.maxOrgSize = orgSizes[parseInt((track(() => maxOrgSize.value)))];
-      props.filterSettings.selectedContinent = parseInt(track(() => selectedContinent.value));
-      props.filterSettings.selectedRegion = parseInt(track(() => selectedRegion.value));
+      props.filterSettings.type = track(props.filterActive)
+        ? track(showOnly)
+        : undefined;
+      props.filterSettings.maxMembers =
+        track(props.filterActive) && track(limitOrgSize)
+          ? orgSizes[parseInt(track(maxOrgSizeIdx))]
+          : undefined;
+      props.filterSettings.continentId = track(props.filterActive)
+        ? continents[parseInt(track(selectedContinent))]?.id
+        : undefined;
+      props.filterSettings.regionId = track(props.filterActive)
+        ? continents[parseInt(track(selectedContinent))]?.regions[
+            parseInt(track(selectedRegion))
+          ]?.id
+        : undefined;
     });
 
     return (
-      <div class="w-104 inline-block space-y-4 rounded-xl bg-base-100 p-4 shadow-2xl">
-        <a href="/questions" class="btn btn-primary w-full">
-          Gewählte Schwerpunkte bearbeiten
-        </a>
-        <div>
-          <PinToggle labelText="Verein-Pins anzeigen" property={orgPins} />
-          <PinToggle labelText="Projekt-Pins anzeigen" property={projectPins} />
-          <PinToggle labelText="Regionen-Pins anzeigen" property={regionPins} />
+      <div class="w-104 inline-block space-y-2 rounded-xl bg-base-100 p-4 shadow-2xl">
+        <label class="label cursor-pointer justify-start space-x-4">
+          <input
+            type="checkbox"
+            class="toggle toggle-primary"
+            bind:checked={props.filterActive}
+            checked={props.filterActive.value}
+          />
+          <span class="label-text">Ergebnisse filtern</span>
+        </label>
+        <div class={props.filterActive.value ? "" : "cursor-not-allowed"}>
+          <div
+            class={[
+              "space-y-4",
+              props.filterActive.value
+                ? ""
+                : "bg-gray pointer-events-none opacity-60",
+            ]}
+          >
+            <div class="w-full border border-base-200" />
+            <a href="/questions" class="btn btn-primary w-full">
+              Gewählte Schwerpunkte bearbeiten
+            </a>
+            <TypeSelection showOnly={showOnly} />
+            <SizeFilter
+              limitOrgSize={limitOrgSize}
+              maxOrgSizeIdx={maxOrgSizeIdx}
+            />
+            <GeographicFilter
+              selectedContinent={selectedContinent}
+              selectedRegion={selectedRegion}
+            />
+          </div>
         </div>
-        <SizeFilter limitOrgSize={limitOrgSize} maxOrgSize={maxOrgSize} />
-        <GeographicFilter
-          selectedContinent={selectedContinent}
-          selectedRegion={selectedRegion}
-        />
       </div>
     );
   },
 );
 
 /**
- * A simple toggle that controls whether pins of a certain type are shown.
+ * Synchronized toggles that allow to filter out organizations or projects, but not both.
  */
-const PinToggle = component$(
-  (props: { labelText: string; property: Signal<boolean> }) => {
-    return (
+const TypeSelection = component$((props: { showOnly: Signal<ShowOnly> }) => {
+  return (
+    <div>
       <label class="label cursor-pointer justify-start space-x-4">
         <input
           type="checkbox"
           class="toggle toggle-primary"
-          checked={props.property.value}
+          checked={props.showOnly.value != "Project"}
           onClick$={(_, currentTarget) =>
-            (props.property.value = currentTarget.checked)
+            (props.showOnly.value =
+              currentTarget.checked || props.showOnly.value == "Project"
+                ? undefined
+                : "Project")
           }
         />
-        <span class="label-text">{props.labelText}</span>
+        <span class="label-text">Vereine anzeigen</span>
       </label>
-    );
-  },
-);
+      <label class="label cursor-pointer justify-start space-x-4">
+        <input
+          type="checkbox"
+          class="toggle toggle-primary"
+          checked={props.showOnly.value != "Organization"}
+          onClick$={(_, currentTarget) =>
+            (props.showOnly.value =
+              currentTarget.checked || props.showOnly.value == "Organization"
+                ? undefined
+                : "Organization")
+          }
+        />
+        <span class="label-text">Projekte anzeigen</span>
+      </label>
+    </div>
+  );
+});
 
 /**
  * A slider that can be enabled or disabled and allows to choose between different size limits for organizations.
  */
 const SizeFilter = component$(
-  (props: { limitOrgSize: Signal<boolean>; maxOrgSize: Signal<string> }) => {
+  (props: { limitOrgSize: Signal<boolean>; maxOrgSizeIdx: Signal<string> }) => {
     return (
       <div class="space-y-0">
         <label class="label cursor-pointer space-x-4 pt-0">
@@ -146,7 +161,7 @@ const SizeFilter = component$(
           type="range"
           min="0"
           max={orgSizes.length - 1}
-          bind:value={props.maxOrgSize}
+          bind:value={props.maxOrgSizeIdx}
           class={[
             "range",
             props.limitOrgSize.value
@@ -183,27 +198,30 @@ const GeographicFilter = component$(
     return (
       <div class="space-y-2">
         <div class="form-control space-y-1">
-          <div class="label-text">Pins auf einen Kontinent beschränken?</div>
+          <div class="label-text">
+            Ergebnisse auf einen Kontinent beschränken?
+          </div>
           <select
             class="select select-primary"
             bind:value={props.selectedContinent}
+            onChange$={() => (props.selectedRegion.value = "-1")}
           >
             <option value="-1">Keine Beschränkung</option>
-            {continents.map((continent: { id: number; name: string }) => (
-              <option
-                key={continent.id}
-                value={continent.id}
-                selected={
-                  parseInt(props.selectedContinent.value) === continent.id
-                }
-              >
-                {continent.name}
-              </option>
-            ))}
+            {continents.map(
+              (continent: { id: string; name: string }, idx: number) => (
+                <option
+                  key={idx}
+                  value={idx}
+                  selected={parseInt(props.selectedContinent.value) === idx}
+                >
+                  {continent.name}
+                </option>
+              ),
+            )}
           </select>
         </div>
         <div class="form-control space-y-1">
-          <div class="label-text">Pins auf eine Region beschränken?</div>
+          <div class="label-text">Ergebnisse auf eine Region beschränken?</div>
           <select
             class="select select-primary"
             bind:value={props.selectedRegion}
@@ -211,14 +229,12 @@ const GeographicFilter = component$(
           >
             <option value="-1">Keine Beschränkung</option>
             {props.selectedContinent.value != "-1" &&
-              regions[parseInt(props.selectedContinent.value)].map(
-                (region: { id: number; name: string }) => (
+              continents[parseInt(props.selectedContinent.value)].regions.map(
+                (region: { id: string; name: string }, idx: number) => (
                   <option
-                    key={region.id}
-                    value={region.id}
-                    selected={
-                      parseInt(props.selectedRegion.value) === region.id
-                    }
+                    key={idx}
+                    value={idx}
+                    selected={parseInt(props.selectedRegion.value) === idx}
                   >
                     {region.name}
                   </option>
