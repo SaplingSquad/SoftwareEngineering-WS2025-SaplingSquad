@@ -11,14 +11,14 @@ import { clusteredGeoJSONDatasource } from "~/components/map/datasources";
  * Options for the cluster icons
  */
 const clusterIconOptions: Partial<StyleImageMetadata> = {
-  pixelRatio: 6,
+  pixelRatio: 8,
 };
 
 /**
  * Options for the marker icons
  */
 const markerIconOptions: Partial<StyleImageMetadata> = {
-  pixelRatio: 1,
+  pixelRatio: 8,
 };
 
 /**
