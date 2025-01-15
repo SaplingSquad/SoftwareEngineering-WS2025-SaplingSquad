@@ -40,11 +40,11 @@ export const clusteredPinLayer = (
     type: "symbol",
     layout: {
       "icon-image": clusterIcon,
-      "icon-text-fit": "both",
+      //"icon-text-fit": "both",
 
-      "text-field": "{point_count_abbreviated}",
-      "text-font": maybeArray(clusterFont),
-      "text-size": 20,
+      //"text-field": "{point_count_abbreviated}",
+      //"text-font": maybeArray(clusterFont),
+      //"text-size": 20,
 
       "icon-allow-overlap": true,
       "text-allow-overlap": true,
@@ -66,7 +66,7 @@ export const clusteredPinLayer = (
       "icon-anchor": "bottom",
       "icon-text-fit": "both",
 
-      "text-field": "m", // Automatic size based on text-size: Set size to invisible 'm'
+      "text-field": ".....", // Automatic size based on text-size: Set size to invisible 'm'
       "text-font": maybeArray(clusterFont),
       "text-size": 20,
 
