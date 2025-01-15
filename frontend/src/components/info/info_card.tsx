@@ -8,6 +8,7 @@ import { toMapping } from "~/api/tags";
 import { isNumberArray } from "~/utils";
 import type { LinkTarget } from "../link_button";
 import { IconLinkButton, LinkButton } from "../link_button";
+import { Div } from "../div";
 
 /**
  * A generic info-card for any entity.
@@ -174,6 +175,7 @@ export const InfoCard = component$(
             Icon={HiArrowLeftOutline}
           />
         )}
+        <Slot />
       </article>
     );
   },
@@ -266,8 +268,9 @@ export const IconProperty = ({
   Icon: Component<{ class?: ClassList }>;
 }) =>
   value && (
-    <div q:slot="properties" class="flex flex-row items-center gap-2">
+    // Need `Div` here so that qwik correctly uses the `q:slot`.
+    <Div q:slot="properties" class="flex flex-row items-center gap-2">
       <Icon />
       {value}
-    </div>
+    </Div>
   );
