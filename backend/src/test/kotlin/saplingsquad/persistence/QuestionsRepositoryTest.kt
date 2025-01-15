@@ -18,11 +18,9 @@ import kotlin.test.assertEquals
 @PersistenceTestConfiguration
 class QuestionsRepositoryTest {
 
-
     /** SUT */
     @Autowired
     lateinit var repository: QuestionsRepository
-
 
     /**
      * Ensure that all the test data is returned
@@ -45,6 +43,9 @@ class QuestionsRepositoryTest {
         }
     }
 
+    /**
+     * Ensure that the correct tags are returned
+     */
     @Test
     fun testReadAllTags() = runTest {
         val result = repository.readAllTags().toList()

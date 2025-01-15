@@ -33,6 +33,9 @@ class OrganizationRepositoryTest {
     @Autowired
     lateinit var db: R2dbcDatabase
 
+    /**
+     * Ensure that the correct organization is retrieved
+     */
     @Test
     fun testGetById() = runTest {
         for (org in ExampleOrgas.orgas) {
@@ -45,7 +48,6 @@ class OrganizationRepositoryTest {
         val notExistent = repository.readOrganizationAndTagsAndProjectsById(-1)
         assertNull(notExistent)
     }
-
 
     /**
      * Ensure that the organization entity is correctly inserted

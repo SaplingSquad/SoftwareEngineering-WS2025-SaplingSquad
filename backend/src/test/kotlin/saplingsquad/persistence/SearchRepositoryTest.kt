@@ -2,7 +2,6 @@ package saplingsquad.persistence
 
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.extension.ExtendWith
-import org.komapper.r2dbc.R2dbcDatabase
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import saplingsquad.persistence.commands.SearchResultEntity
@@ -23,9 +22,9 @@ class SearchRepositoryTest {
     @Autowired
     lateinit var repository: SearchRepository
 
-    @Autowired
-    lateinit var db: R2dbcDatabase
-
+    /**
+     * Test the conversion to Project and Organization from [SearchTypeFilter.All]
+     */
     @Test
     fun testConversion() = runTest {
         val results = repository.search(emptyList(), null, null, null, null, SearchTypeFilter.All)
@@ -59,14 +58,14 @@ class SearchRepositoryTest {
     }
 
     /**
-     * Ensure that also second best matches are included if the best matches would be less than 3
+     * Ensure that also second-best matches are included if the best matches would be less than 3
      * And also, the best matches are at the top of the list
      */
     @Test
     fun testFilterAtLeast3() = runTest {
         // Very specific filter, only 2 organizations (ids 5,6) in test setup have all those tags
         val result = repository.search(listOf(2, 3), 10, null, null, null, SearchTypeFilter.Organizations)
-            .map { it.also{println(it)}.toOrganizationEntity()!!.org }
+            .map { it.also { println(it) }.toOrganizationEntity()!!.org }
         assertEquals(7, result.size)
         assertContains(5..6, result[0].orgId)
         assertContains(5..6, result[1].orgId)
