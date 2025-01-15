@@ -11,8 +11,9 @@ import { useGetOrganizationSelf, useGetTags } from "~/api/api_hooks.gen";
 import { useAccountType, isAccTypeUser, isAccTypeOrg } from "~/auth/useauthheader";
 import { ApiResponse } from "~/components/api";
 import { LoginOverviewParamsForm } from "~/components/auth/login";
-import { Vereinsignup, Badge } from "~/components/profile/manage-organisation";
-import { ApiRelevantOrganisationInformations, UserProfile, VereinProfile } from "~/components/profile/profile";
+import { Vereinsignup } from "~/components/profile/manage-organisation";
+import { ApiRelevantOrganisationInformations } from "~/components/profile/types";
+
 import { useSession } from "~/routes/plugin@auth";
 
 
@@ -55,10 +56,10 @@ export default component$(() => {
                                         onResolved={(response) => (
                                             <ApiResponse
                                                 response={response}
-                                                on200$={(r) => <div class="h-3/6"><p>200</p><Vereinsignup orgaData={r} tags={tagsResponse} /></div>}
-                                                on401$={() => <div class="h-3/6"><p>401</p><Vereinsignup orgaData={emptyOrga} tags={tagsResponse} /></div>}
-                                                on404$={() => <div class="h-3/6"><p>404</p><Vereinsignup orgaData={emptyOrga} tags={tagsResponse} /></div>}
-                                                on500$={() => <div class="h-3/6"><p>500</p><Vereinsignup orgaData={emptyOrga} tags={tagsResponse} /></div>}
+                                                on200$={(r) => <Vereinsignup orgaData={r} tags={tagsResponse} />}
+                                                on401$={() => <Vereinsignup orgaData={emptyOrga} tags={tagsResponse} />}
+                                                on404$={() => <Vereinsignup orgaData={emptyOrga} tags={tagsResponse} />}
+                                                on500$={() => <Vereinsignup orgaData={emptyOrga} tags={tagsResponse} />}
                                                 defaultError$={(r) => r}
                                             />
                                         )}

@@ -18,9 +18,6 @@ export default component$(() => {
     return (
         <>
             <div>
-                {selectedProject}
-            </div>
-            <div>
                 <Resource
                     value={getTag}
                     onResolved={(tags) => (

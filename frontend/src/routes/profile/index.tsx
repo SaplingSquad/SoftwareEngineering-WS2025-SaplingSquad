@@ -45,19 +45,27 @@ const VereinProfilePage = component$((inputData: { profiledata: Readonly<Signal<
                         response={response}
                         on200$={(r) =>
                             <div>
-                                <p>
-                                    Success {JSON.stringify(r)}
-                                </p>
                                 <Resource
                                     value={orgaProjectsRequest}
                                     onResolved={(projResponse) => (
                                         <ApiResponse
                                             response={projResponse}
-                                            on200$={(projR) => <div><p>Success {JSON.stringify(projR)}</p><VereinProfile orgaData={r} projectsData={projR} profiledata={session} /></div>}
-                                            on401$={() => <>Bitte neu anmelden <LoginOverviewParamsForm redirectTo={"/profile"}>
-                                                <button class="btn btn-primary">Hier einloggen!</button>
-                                            </LoginOverviewParamsForm></>}
-                                            on404$={() => <div><p>404</p><VereinProfile orgaData={r} projectsData={[]} profiledata={session} /></div>}
+                                            on200$={(projR) => <div><VereinProfile orgaData={r} projectsData={projR} profiledata={session} /></div>}
+                                            on401$={() =>
+                                                <div class="flex justify-center p-32">
+                                                    <div class="card bg-base-100 w-96 shadow-xl">
+                                                        <div class="card-body items-center text-center">
+                                                            <h2 class="card-title">Bitte neu anmelden.</h2>
+                                                            <div class="card-actions">
+                                                                <LoginOverviewParamsForm redirectTo={"/profile"}>
+                                                                    <button class="btn btn-primary">Hier einloggen!</button>
+                                                                </LoginOverviewParamsForm>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                            on404$={() => <div><VereinProfile orgaData={r} projectsData={[]} profiledata={session} /></div>}
                                             defaultError$={(r) => r}
                                         />
                                     )}
@@ -69,10 +77,19 @@ const VereinProfilePage = component$((inputData: { profiledata: Readonly<Signal<
                                 />
                             </div>
                         }
-                        on401$={() => <>Bitte neu anmelden <LoginOverviewParamsForm redirectTo={"/profile"}>
-                            <button class="btn btn-primary">Hier einloggen!</button>
-                        </LoginOverviewParamsForm></>}
-                        on404$={() => <div><p>404</p><VereinProfile orgaData={emptyOrga} projectsData={[]} profiledata={session} /></div>}
+                        on401$={() => <div class="flex justify-center p-32">
+                            <div class="card bg-base-100 w-96 shadow-xl">
+                                <div class="card-body items-center text-center">
+                                    <h2 class="card-title">Bitte neu anmelden.</h2>
+                                    <div class="card-actions">
+                                        <LoginOverviewParamsForm redirectTo={"/profile"}>
+                                            <button class="btn btn-primary">Hier einloggen!</button>
+                                        </LoginOverviewParamsForm>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>}
+                        on404$={() => <div><VereinProfile orgaData={emptyOrga} projectsData={[]} profiledata={session} /></div>}
                         on500$={() => <div>Ein unerwarteter Fehler ist aufgetreten.</div>}
                         defaultError$={(r) => r}
                     />

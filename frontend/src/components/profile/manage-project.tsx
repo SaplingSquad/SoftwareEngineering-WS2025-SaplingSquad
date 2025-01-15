@@ -37,15 +37,15 @@ const Projektdaten = component$(() => {
             </div>
             <label class="input input-bordered flex items-center gap-2" >
                 Projektname*
-                <input type="text w-full" class="grow" placeholder="Mein Verein" required value={context.name} onInput$={(_, e) => context.name = e.value} />
+                <input type="text w-full" class="grow" placeholder="Mein Projekt" required value={context.name} onInput$={(_, e) => context.name = e.value} />
             </label>
             <label class="input input-bordered flex items-center gap-2">
                 Projektwebseite
-                <input type="text" class="grow link link-neutral" placeholder="www.mein-verein.de" value={context.webpageUrl} onInput$={(_, e) => context.webpageUrl = e.value} />
+                <input type="text" class="grow link link-neutral" placeholder="www.mein-verein.de/mein-projekt" value={context.webpageUrl} onInput$={(_, e) => context.webpageUrl = e.value} />
             </label>
             <label class="input input-bordered flex items-center gap-2">
                 Projektspendenseite
-                <input type="text" class="grow  link link-neutral" placeholder="www.mein-verein.de/donate" value={context.donatePageUrl} onInput$={(_, e) => context.donatePageUrl = e.value} />
+                <input type="text" class="grow  link link-neutral" placeholder="www.mein-verein.de/mein-projekt/donate" value={context.donatePageUrl} onInput$={(_, e) => context.donatePageUrl = e.value} />
             </label>
             <div class="flex justify-start gap-8">
                 <div>
@@ -284,10 +284,6 @@ const Overview = component$(() => {
                         <MapLocationInput class="h-[30rem] w-[40rem]" location={context.location} />
                     </figure>
                 </div>
-                <div>
-                    {JSON.stringify(context)}
-                    {JSON.stringify(convertInternalTypeToAPIProjectType(context))}
-                </div>
             </div>
         </>
     )
@@ -393,27 +389,9 @@ function convertInternalTypeToAPIProjectType(interalOut: ProjectInformationProps
 }
 
 export const ProjectCreation = component$((inputData: { selProject: number, projects: ApiRelevantProjectInformations[], tags: { id: number, name: string }[] }) => {
-    /*const projectData = {
-        name: "Great Green Wall",
-        description: "The Great Green Wall is",
-        location: { lng: 0, lat: 0 },
-        dateFrom: { mnth: 0, year: 0 },
-        dateTo: { mnth: 0, year: 0 },
-        imageUrls: [
-            "https://lirp.cdn-website.com/58002456/dms3rep/multi/opt/PHOTO-2024-10-26-15-29-15-600h.jpg",
-            "https://img.daisyui.com/images/stock/photo-1565098772267-60af42b81ef2.webp",
-            "https://img.daisyui.com/images/stock/photo-1572635148818-ef6fd45eb394.webp",
-            "https://img.daisyui.com/images/stock/photo-1494253109108-2e30c049369b.webp",
-            "https://img.daisyui.com/images/stock/photo-1550258987-190a2d41a8ba.webp"
-        ],
-        webpageUrl: "https://www.new-roots.de/#Listen",
-        donatePageUrl: "path/to/new/roots/donation/link.de",
-        tags: [1, 2, 3, 4],
-        id: 2,
-        logoUrl: ""
-    }*/
 
-    //Api call gives all Projects. We are only interested in the selected one
+
+
 
 
     const emptyProject: ProjectInformationProps = {
@@ -434,7 +412,7 @@ export const ProjectCreation = component$((inputData: { selProject: number, proj
     const tagsNameMapping = inputData.tags
 
     const isNew = inputData.selProject === -1
-
+    //Api call gives all Projects. We are only interested in the selected one
     const projectData = isNew ? emptyProject : convertAPITypeToInternalProjectType(inputData.projects.filter((e, i) => e.id === inputData.selProject)[0])
 
     const position = useSignal(0);
