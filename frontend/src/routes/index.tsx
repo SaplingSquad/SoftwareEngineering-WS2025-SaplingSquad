@@ -19,6 +19,11 @@ export default component$(() => {
     createEmptyFeatureCollection(),
   );
 
+  const clickedPins = useSignal<{
+    type: "Organization" | "Project";
+    id: number;
+  }>();
+
   // Check if user has visited (by key saved in local storage)
   // Every visit counts as visit
   // Don't show by default to prevent short flicker when user has already visited.
@@ -36,10 +41,17 @@ export default component$(() => {
       <Map
         organizationLocations={organizationLocations}
         projectLocations={projectLocations}
+        onOrganizationClick$={(id) =>
+          (clickedPins.value = { type: "Organization", id: id })
+        }
+        onProjectClick$={(id) =>
+          (clickedPins.value = { type: "Project", id: id })
+        }
       />
       <MapUI
         organizationLocations={organizationLocations}
         projectLocations={projectLocations}
+        externalClick={clickedPins}
       />
       {showWelcomeMessage.value && (
         <div class="fixed bottom-0 left-0 m-8 rounded bg-base-100 p-8 text-justify">

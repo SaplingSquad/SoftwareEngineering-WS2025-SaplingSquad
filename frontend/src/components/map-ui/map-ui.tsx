@@ -80,6 +80,9 @@ export const MapUI = component$(
   (props: {
     organizationLocations: Signal<FeatureCollection>;
     projectLocations: Signal<FeatureCollection>;
+    externalClick: Signal<
+      { type: "Organization" | "Project"; id: number } | undefined
+    >;
   }) => {
     const filterSettings: FilterSettings = useStore({
       type: undefined,
@@ -102,6 +105,15 @@ export const MapUI = component$(
       if (track(state) === State.ERROR) {
         listExpanded.value = true;
       }
+    });
+
+    useTask$(({ track }) => {
+      const clicked = track(props.externalClick);
+      if (!clicked) return;
+      selectedRanking.value = rankings.value.find(
+        (x) =>
+          x.entry.content.id === clicked.id && x.entry.type === clicked.type,
+      );
     });
 
     const update = $(async (performSearch: boolean) => {
