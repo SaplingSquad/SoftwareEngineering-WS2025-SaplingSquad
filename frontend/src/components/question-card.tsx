@@ -35,13 +35,13 @@ export const QuestionCard = component$((props: { data: QuestionCardProps }) => {
           <div
             class={[
               "absolute left-0 top-0 h-full w-full bg-gradient-to-t from-primary via-transparent",
-              cardHovered.value ? "from-40% via-80%" : "from-10% via-40%",
+              cardHovered.value ? "from-45% via-80%" : "from-10% via-40%",
             ]}
           />
           <h1
             class={[
               "absolute left-4 text-3xl font-semibold text-primary-content transition-all",
-              cardHovered.value ? "bottom-32" : "bottom-4",
+              cardHovered.value ? "bottom-36" : "bottom-4",
             ]}
           >
             {props.data.title}
@@ -49,10 +49,9 @@ export const QuestionCard = component$((props: { data: QuestionCardProps }) => {
           <div
             class={[
               "absolute left-4 w-11/12 text-primary-content transition-all",
-              cardHovered.value ? "top-72" : "top-96",
+              cardHovered.value ? "top-64" : "top-96",
             ]}
           >
-            <p>Möchtest du ...</p>
             <p>{props.data.text}</p>
           </div>
         </div>
