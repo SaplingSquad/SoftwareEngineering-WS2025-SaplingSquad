@@ -16,18 +16,19 @@ import {
 import {
   createEmptyFeatureCollection,
   createEmptySearchOutput,
+  type FeatureCollection,
   type Ranking,
   type SearchInput,
   type SearchOutput,
 } from "./types";
 import { getAnswersFromLocalStorage } from "~/utils";
 import { OrganizationLargeInfo } from "./organization-largeinfo";
-import { ShortInfo } from "./shortinfo";
 import { Navbar } from "./navbar";
 import { Tablist } from "./tablist";
 import { ExpandLatch } from "./expand-latch";
 import { getMatches } from "~/api/api_methods.gen";
 import { HiExclamationCircleOutline } from "@qwikest/icons/heroicons";
+import { LazyLoader } from "./lazy-loader";
 
 enum ResultTab {
   ALL,
@@ -43,7 +44,7 @@ enum State {
 
 function renderState(
   state: State,
-  result: SearchOutput,
+  ranking: Signal<Ranking[]>,
   selectedRanking: Signal<Ranking | undefined>,
 ) {
   switch (state) {
@@ -68,16 +69,7 @@ function renderState(
         </div>
       );
     case State.SUCCESS:
-      return result.rankings.map((ranking, idx) => (
-        <ShortInfo
-          key={ranking.entry.type + "_" + ranking.entry.content.id}
-          entry={ranking.entry}
-          layoutDelay={idx * 1000}
-          onClick={$(() => {
-            selectedRanking.value = ranking;
-          })}
-        />
-      ));
+      return <LazyLoader ranking={ranking} selectedRanking={selectedRanking} />;
   }
 }
 
@@ -86,8 +78,8 @@ function renderState(
  */
 export const MapUI = component$(
   (props: {
-    organizationLocations: Signal<GeoJSON.GeoJSON>;
-    projectLocations: Signal<GeoJSON.GeoJSON>;
+    organizationLocations: Signal<FeatureCollection>;
+    projectLocations: Signal<FeatureCollection>;
   }) => {
     const filterSettings: FilterSettings = useStore({
       type: undefined,
@@ -103,7 +95,7 @@ export const MapUI = component$(
     const selectedRanking = useSignal<Ranking | undefined>(undefined);
     const rawResult = useSignal<SearchOutput>(createEmptySearchOutput());
     const history = useStore<SearchOutput>(createEmptySearchOutput());
-    const result = useSignal<SearchOutput>({ rankings: [] });
+    const rankings = useSignal<Ranking[]>([]);
     const state = useSignal<State>(State.LOADING);
 
     useTask$(({ track }) => {
@@ -134,37 +126,23 @@ export const MapUI = component$(
         );
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (state.value !== State.LOADING) {
         props.organizationLocations.value = createEmptyFeatureCollection();
         props.projectLocations.value = createEmptyFeatureCollection();
         return;
       }
 
+      let shownOutput: SearchOutput;
       switch (tabSelection.value) {
         case ResultTab.ALL:
-          result.value = {
-            rankings: rawResult.value.rankings.slice(0, 1000),
-            organizationLocations: {
-              type: "FeatureCollection",
-              features: rawResult.value.organizationLocations!.features.slice(
-                0,
-                1000,
-              ),
-            },
-            projectLocations: {
-              type: "FeatureCollection",
-              features: rawResult.value.projectLocations!.features.slice(
-                0,
-                1000,
-              ),
-            },
-          };
+          shownOutput = rawResult.value;
           break;
         case ResultTab.HISTORY:
-          result.value = history;
+          shownOutput = history;
           break;
         case ResultTab.BOOKMARKS:
-          result.value = {
+          shownOutput = {
             rankings: rawResult.value.rankings.filter((ranking) =>
               (ranking.entry.type === "Organization"
                 ? organizationBookmarksMockData
@@ -194,8 +172,9 @@ export const MapUI = component$(
 
       state.value = State.SUCCESS;
 
-      props.organizationLocations.value = result.value.organizationLocations!;
-      props.projectLocations.value = result.value.projectLocations!;
+      rankings.value = shownOutput.rankings;
+      props.organizationLocations.value = shownOutput.organizationLocations!;
+      props.projectLocations.value = shownOutput.projectLocations!;
     });
     useOnWindow(
       "load",
@@ -228,8 +207,9 @@ export const MapUI = component$(
           : history.projectLocations
         )?.features.push(
           (selection.entry.type === "Organization"
-            ? result.value.organizationLocations
-            : result.value.projectLocations)!.features.find(
+            ? props.organizationLocations.value
+            : props.projectLocations.value
+          ).features.find(
             (f) => f.properties.id === selection.entry.content.id,
           )!,
         );
@@ -258,11 +238,11 @@ export const MapUI = component$(
                 />
                 <div
                   class={[
-                    "space-y-2 overflow-y-auto pr-2 transition-all",
+                    "overflow-hidden transition-all",
                     listExpanded.value ? "h-full" : "h-0",
                   ]}
                 >
-                  {renderState(state.value, result.value, selectedRanking)}
+                  {renderState(state.value, rankings, selectedRanking)}
                 </div>
               </div>
             </div>

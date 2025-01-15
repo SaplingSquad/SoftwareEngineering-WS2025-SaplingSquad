@@ -4,8 +4,8 @@ import type { SearchOutput } from "./types";
  * Temporary mockdata until the backend is integrated.
  */
 
-export const projectBookmarksMockData = [1];
-export const organizationBookmarksMockData = [2];
+export const projectBookmarksMockData = [1, 6, 10];
+export const organizationBookmarksMockData = [8, 36, 72];
 
 export const searchOutputMockdata: SearchOutput = {
   rankings: [

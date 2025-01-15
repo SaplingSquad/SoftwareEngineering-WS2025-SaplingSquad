@@ -6,13 +6,16 @@ import { IconLinkButton } from "~/components/link_button";
 import { Map } from "~/views/map";
 import { MapUI } from "~/components/map-ui/map-ui";
 import { LoginAvatar } from "~/components/authenticate/authAvatarNav";
-import { createEmptyFeatureCollection } from "~/components/map-ui/types";
+import {
+  createEmptyFeatureCollection,
+  type FeatureCollection,
+} from "~/components/map-ui/types";
 
 export default component$(() => {
-  const organizationLocations: Signal<GeoJSON.GeoJSON> = useSignal(
+  const organizationLocations: Signal<FeatureCollection> = useSignal(
     createEmptyFeatureCollection(),
   );
-  const projectLocations: Signal<GeoJSON.GeoJSON> = useSignal(
+  const projectLocations: Signal<FeatureCollection> = useSignal(
     createEmptyFeatureCollection(),
   );
 

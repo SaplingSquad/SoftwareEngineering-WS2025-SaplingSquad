@@ -66,23 +66,16 @@ function getOrganizationDetails(organization: Organization): Detail[] {
  * A small card for the list view showing the most important information about a ranking entry.
  */
 export const ShortInfo = component$(
-  (props: {
-    entry: RankingEntry;
-    layoutDelay: number;
-    onClick: QRL<() => void>;
-  }) => {
+  (props: { entry: RankingEntry; onClick: QRL<() => void> }) => {
     const tagContainerRef = useSignal<HTMLDivElement>({} as HTMLDivElement);
 
     // Use visible task because the tags need to be layouted every time the component is re-rendered.
     // eslint-disable-next-line qwik/no-use-visible-task
     useVisibleTask$(() => {
-      setTimeout(
-        () =>
-          layoutTags(
-            tagContainerRef,
-            props.entry.content.tags.map(() => "Umweltschutz"), // TODO replace with value from API
-          ),
-        props.layoutDelay,
+      tagContainerRef.value.replaceChildren();
+      layoutTags(
+        tagContainerRef,
+        props.entry.content.tags.map(() => "Umweltschutz"), // TODO replace with value from API
       );
     });
 
@@ -119,8 +112,12 @@ export const ShortInfo = component$(
               <HiTagOutline />
               <div
                 ref={tagContainerRef}
-                class="flex w-64 space-x-1 overflow-hidden"
-              ></div>
+                class="flex h-7 w-64 space-x-1 overflow-hidden"
+              >
+                <div class="skeleton h-7 w-20" />
+                <div class="skeleton h-7 w-28" />
+                <div class="skeleton h-7 w-10" />
+              </div>
             </div>
           </div>
           <div class="flex h-[104px] w-[104px] items-center justify-center overflow-hidden rounded-md bg-[white] shadow-sm">
