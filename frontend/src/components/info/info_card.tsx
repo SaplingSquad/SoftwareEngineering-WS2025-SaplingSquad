@@ -212,16 +212,30 @@ export const ActionButton: Component<{
    */
   children?: JSXOutput;
 }> = ({ icon: Icon, url, onClick$, children }) => {
-  return (
+  const insides = (
+    <>
+      {Icon && <Icon class="mr-2 h-8 w-8" />}
+      {children}
+    </>
+  );
+
+  return onClick$ ? (
+    <a
+      q:slot="actions"
+      href={url}
+      preventdefault:click
+      onClick$={(pe, ae) => onClick$(pe, ae)}
+      class="btn btn-primary min-w-min grow basis-0"
+    >
+      {insides}
+    </a>
+  ) : (
     <Link
       q:slot="actions"
       href={url}
-      preventdefault:click={onClick$ !== undefined}
-      onClick$={onClick$ && ((pe, ae) => onClick$(pe, ae))}
       class="btn btn-primary min-w-min grow basis-0"
     >
-      {Icon && <Icon class="mr-2 h-8 w-8" />}
-      {children}
+      {insides}
     </Link>
   );
 };
