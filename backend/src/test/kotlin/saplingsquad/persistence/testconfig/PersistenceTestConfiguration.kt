@@ -5,9 +5,8 @@ import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
 
-
 /**
- * Annotation to use on Tests which want to use a H2 temporary Database.
+ * Annotation to use on Tests which want to use an H2 temporary Database.
  * - Enables Autoconfiguration, and starts a Component Scan in [saplingsquad.persistence.*][saplingsquad.persistence]
  * - Imports [R2dbcH2Configuration] for the H2 Database
  *

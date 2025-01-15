@@ -1,4 +1,4 @@
-package api.service
+package saplingsquad.api.service
 
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest

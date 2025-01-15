@@ -159,7 +159,7 @@ class MapApiService(
             type = GeoJsonProjects.Type.FeatureCollection,
             features = projects
                 .map { it.entry }
-                .filterIsInstance<RankingsEntry.RankingResultOrganizationWithTypeWrapper>()
+                .filterIsInstance<RankingsEntry.RankingResultProjectWithTypeWrapper>()
                 .map {
                     GeoFeatureProject(
                         type = GeoFeatureProject.Type.Feature,

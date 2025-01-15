@@ -64,6 +64,51 @@ object ExampleQuestionsAndTags {
     }
 }
 
+object ExampleRegions {
+    private fun regionEntity(id: RegionId, continentId: ContinentId): RegionEntity {
+        return RegionEntity(
+            "RegionId$id",
+            "region$id",
+            "ContinentId$continentId",
+            "Continent$continentId"
+        )
+    }
+
+    private fun continentEntity(id: ContinentId): ContinentEntity {
+        return ContinentEntity("ContinentId$id", "Continent$id")
+    }
+
+    val continents = List(3) { continentEntity(it.toString()) }
+
+    val regions = List(10) {
+        when (it) {
+            in 0..3 -> regionEntity(it.toString(), "0")
+            in 4..7 -> regionEntity(it.toString(), "2")
+            else -> regionEntity(it.toString(), "2")
+        }
+    }
+
+    internal suspend fun setupRegions(db: R2dbcDatabase) {
+        db.runQuery {
+            QueryDsl.create(Meta.continentEntity)
+                .andThen(
+                    QueryDsl.insert(Meta.continentEntity).multiple(
+                        continents
+                    )
+                )
+        }
+        db.runQuery {
+            QueryDsl.create(Meta.regionEntity)
+                .andThen(
+                    QueryDsl.insert(Meta.regionEntity).multiple(
+                        regions
+                    )
+                )
+        }
+    }
+}
+
+
 /** Mock region names for coordinates
  * ```kotlin
  * "lat $lat lon $lon"
@@ -286,6 +331,7 @@ fun setupDb(db: R2dbcDatabase) = runBlocking {
     ExampleQuestionsAndTags.setupQuestions(db)
     ExampleOrgas.setupOrgas(db)
     ExampleProjects.setupProjects(db)
+    ExampleRegions.setupRegions(db)
     db.runQuery {
         QueryDsl.create(Meta.organizationAccountEntity)
     }

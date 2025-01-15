@@ -1,6 +1,5 @@
 package saplingsquad.persistence
 
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.extension.ExtendWith
 import org.komapper.core.dsl.Meta
@@ -12,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import saplingsquad.persistence.tables.CoordinatesEmbedded
 import saplingsquad.persistence.tables.OrganizationEntity
+import saplingsquad.persistence.tables.OrganizationId
 import saplingsquad.persistence.tables.organizationEntity
 import saplingsquad.persistence.testconfig.ExampleOrgas
 import saplingsquad.persistence.testconfig.ExampleProjects
@@ -33,6 +33,9 @@ class OrganizationRepositoryTest {
     @Autowired
     lateinit var db: R2dbcDatabase
 
+    /**
+     * Ensure that the correct organization is retrieved
+     */
     @Test
     fun testGetById() = runTest {
         for (org in ExampleOrgas.orgas) {
@@ -46,14 +49,13 @@ class OrganizationRepositoryTest {
         assertNull(notExistent)
     }
 
-
     /**
      * Ensure that the organization entity is correctly inserted
      * - all attributes are in DB
      * - orga id was auto-generated
      */
     @Test
-    fun registerReadAndUpdateOrganization() = runTest {
+    fun testRegisterReadAndUpdateOrganization() = runTest {
         val placeholderOrgId = 100
         val testOrg = OrganizationEntity(
             orgId = placeholderOrgId, // must be ignored
@@ -66,64 +68,93 @@ class OrganizationRepositoryTest {
             coordinates = CoordinatesEmbedded(50.0, 10.0)
         )
         val testTags = setOf(1, 2, 4)
-        val updateData = OrganizationEntity(
-            orgId = placeholderOrgId + 1, // must be ignored
-            name = "test-orga-updated",
-            description = "test-description-updated",
-            foundingYear = 1999,
-            memberCount = 99,
-            websiteUrl = "test-website-url-updated",
-            donationUrl = "test-donation-url-updated",
-            coordinates = CoordinatesEmbedded(60.0, 80.0)
-        )
-        val updateTags = setOf(4, 5, 6)
-        val accountId = "testaccount-1"
+
+        val accountId = "test account-1"
         db.withTransaction(transactionProperty = TransactionProperty.IsolationLevel.SERIALIZABLE) { tx ->
             run {
                 val result = repository.readOrganizationAndTagsOfAccount(accountId)
                 assertNull(result)
             }
             // Test registration
-            val newId = run {
-                val result = repository.tryRegisterOrganization(accountId, testOrg, testTags)
-                val id = assertIs<OrganizationRegisterResult.Success>(result).id
-                val inDb = db.runQuery {
-                    QueryDsl.from(Meta.organizationEntity).where {
-                        Meta.organizationEntity.orgId eq id
-                    }.single()
-                }
-                assert(inDb.orgId >= 1000) // Used auto generated id
-                assertEquals(testOrg, inDb.copy(orgId = placeholderOrgId))//reset orgId for comparison
-                id
-            }
+            val newId = registerOrga(accountId, testOrg, testTags, placeholderOrgId)
+
+            // Test duplicates
+            val dup = repository.tryRegisterOrganization(accountId, testOrg, testTags)
+            assertIs<OrganizationRegisterResult.AlreadyRegistered>(dup)
+
             // Test retrieval
-            run {
-                val result = repository.readOrganizationAndTagsOfAccount(accountId)
-                assertEquals(testOrg.copy(orgId = newId), result?.first?.toOrganizationEntity())
-                assertEquals(testOrg.coordinates.toRegionName(), result?.first?.regionName)
-                assertEquals(testTags, result?.second)
+            retrieveOrga(accountId, testOrg, newId, testTags)
 
-                val nonExistentResult = repository.readOrganizationAndTagsOfAccount("testaccount-2 (non-existent)")
-                assertNull(nonExistentResult)
+            val updateData = OrganizationEntity(
+                orgId = placeholderOrgId + 1, // must be ignored
+                name = "test-orga-updated",
+                description = "test-description-updated",
+                foundingYear = 1999,
+                memberCount = 99,
+                websiteUrl = "test-website-url-updated",
+                donationUrl = "test-donation-url-updated",
+                coordinates = CoordinatesEmbedded(60.0, 80.0)
+            )
+            val updateTags = setOf(4, 5, 6)
 
-            }
             // Test update
-            run {
-                val nonExistentResult =
-                    repository.updateOrganizationOfAccount("testaccount-2 (non-existent)", updateData, updateTags)
-                assertEquals(OrganizationUpdateResult.NoOrganizationRegistered, nonExistentResult)
+            updateOrga(updateData, updateTags, accountId, newId)
 
-                val result =
-                    repository.updateOrganizationOfAccount(accountId, updateData.copy(orgId = newId), updateTags)
-                assertEquals(OrganizationUpdateResult.Success, result)
-
-                val updatedResult = repository.readOrganizationAndTagsOfAccount(accountId)
-                assertEquals(updateData.copy(orgId = newId), updatedResult?.first?.toOrganizationEntity())
-                assertEquals(updateData.coordinates.toRegionName(), updatedResult?.first?.regionName)
-                assertEquals(updateTags, updatedResult?.second)
-            }
-
-            tx.setRollbackOnly() //Rollback this transaction (only used for this test)
+            // Rollback this transaction (it is only used for this test)
+            tx.setRollbackOnly()
         }
+    }
+
+    private suspend fun registerOrga(
+        accountId: String,
+        testOrg: OrganizationEntity,
+        testTags: Set<Int>,
+        placeholderOrgId: Int
+    ): OrganizationId {
+        val result = repository.tryRegisterOrganization(accountId, testOrg, testTags)
+        val id = assertIs<OrganizationRegisterResult.Success>(result).id
+        val inDb = db.runQuery {
+            QueryDsl.from(Meta.organizationEntity).where {
+                Meta.organizationEntity.orgId eq id
+            }.single()
+        }
+        assert(inDb.orgId >= 1000) // Used auto generated id
+        assertEquals(testOrg, inDb.copy(orgId = placeholderOrgId))//reset orgId for comparison
+        return id
+    }
+
+    private suspend fun retrieveOrga(
+        accountId: String,
+        testOrg: OrganizationEntity,
+        newId: OrganizationId,
+        testTags: Set<Int>
+    ) {
+        val result = repository.readOrganizationAndTagsOfAccount(accountId)
+        assertEquals(testOrg.copy(orgId = newId), result?.first?.toOrganizationEntity())
+        assertEquals(testOrg.coordinates.toRegionName(), result?.first?.regionName)
+        assertEquals(testTags, result?.second)
+
+        val nonExistentResult = repository.readOrganizationAndTagsOfAccount("test account-2 (non-existent)")
+        assertNull(nonExistentResult)
+    }
+
+    private suspend fun updateOrga(
+        updateData: OrganizationEntity,
+        updateTags: Set<Int>,
+        accountId: String,
+        newId: OrganizationId
+    ) {
+        val nonExistentResult =
+            repository.updateOrganizationOfAccount("test account-2 (non-existent)", updateData, updateTags)
+        assertEquals(OrganizationUpdateResult.NoOrganizationRegistered, nonExistentResult)
+
+        val result =
+            repository.updateOrganizationOfAccount(accountId, updateData.copy(orgId = newId), updateTags)
+        assertEquals(OrganizationUpdateResult.Success, result)
+
+        val updatedResult = repository.readOrganizationAndTagsOfAccount(accountId)
+        assertEquals(updateData.copy(orgId = newId), updatedResult?.first?.toOrganizationEntity())
+        assertEquals(updateData.coordinates.toRegionName(), updatedResult?.first?.regionName)
+        assertEquals(updateTags, updatedResult?.second)
     }
 }
