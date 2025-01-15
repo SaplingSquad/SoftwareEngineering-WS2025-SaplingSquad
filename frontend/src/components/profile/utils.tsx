@@ -119,11 +119,13 @@ export const MapLocationInput = component$(
             .addTo(createdMap),
         );
 
-        createdMap.on("click", (e) => {
-          location.lat = e.lngLat.lat;
-          location.lng = e.lngLat.lng;
-          markSign.value?.setLngLat(e.lngLat);
-        });
+        if (drgbl) {
+          createdMap.on("click", (e) => {
+            location.lat = e.lngLat.lat;
+            location.lng = e.lngLat.lng;
+            markSign.value?.setLngLat(e.lngLat);
+          });
+        }
 
         markSign.value?.on("dragend", () => {
           const lngLat = markSign.value?.getLngLat();

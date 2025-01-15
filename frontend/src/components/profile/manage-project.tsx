@@ -411,10 +411,10 @@ const Overview = component$(() => {
           </div>
         </div>
       </div>
-      <div class="card w-full bg-neutral p-4 text-neutral-content">
+      <div class="card-secondary card w-full bg-primary p-4 text-primary-content">
         {context.description}
       </div>
-      <div class="carousel carousel-center w-full space-x-4 rounded-box bg-neutral p-4">
+      <div class="carousel carousel-center w-full space-x-4 rounded-box bg-primary p-4">
         {context.imageUrls.map((e, i) => (
           <ImagePreview
             imgUrl={e}
@@ -428,7 +428,7 @@ const Overview = component$(() => {
         <figure class="rounded-2xl">
           <div id="map"></div>
           <MapLocationInput
-            class="h-[30rem] w-[40rem]"
+            class="h-[30rem] w-full"
             location={context.location}
           />
         </figure>
