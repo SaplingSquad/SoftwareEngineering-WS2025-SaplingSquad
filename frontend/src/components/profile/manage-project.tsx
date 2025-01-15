@@ -15,7 +15,7 @@ export type Badge = {
 };
 
 const answerStyles = new Map<boolean, string>([
-    [false, ""],
+    [false, "btn-outline"],
     [true, "btn-primary"],
 ])
 
@@ -250,7 +250,7 @@ const Overview = component$(() => {
                     </div>
                 </div>
 
-                <div class="stats bg-neutral text-primary shadow">
+                <div class="stats shadow-xl">
                     <div class="stat">
                         <div class="stat-figure text-secondary text-3xl">
                             <HiCalendarDaysOutline />
@@ -260,7 +260,7 @@ const Overview = component$(() => {
                     </div>
                     <div class="stat">
                         <div class="stat-figure text-secondary text-3xl">
-                            <HiUserGroupOutline />
+                            <HiCalendarDaysOutline />
                         </div>
                         <div class="stat-title">Geplant bis</div>
                         <div class="stat-value">{context.dateTo.mnth}/{context.dateTo.year}</div>
@@ -421,9 +421,9 @@ export const ProjectCreation = component$((inputData: { selProject: number, proj
     return (
         <>
             <div class="relative flex justify-center">
-                <div class="card bg-base-300 rounded-box place-items-stretch m-4 px-4 py-8 space-y-4 h-fit w-full max-w-screen-md">
+                <div class="card bg-base-200 rounded-box place-items-stretch m-4 px-4 py-8 space-y-4 h-fit w-full max-w-screen-md shadow-2xl">
                     <h2 class="card-title px-4">{isNew ? "Projekt erstellen" : "Projekt bearbeiten"}</h2>
-                    <div class="overflow-y-auto space-y-4 px-4">
+                    <div class="space-y-4 px-4">
 
                         {position.value === 0 && <Projektdaten />}
                         {position.value === 1 && <Projekttags tags={tagsNameMapping} />}
@@ -452,7 +452,7 @@ export const ProjectCreation = component$((inputData: { selProject: number, proj
                                 </>
                                 :
                                 <div class="join">
-                                    <button class="btn join-item" onClick$={() => (
+                                    <button class="btn btn-outline btn-neutral join-item" onClick$={() => (
                                         position.value = Math.max(0, position.value - 1)
                                     )}>
                                         <div class="text-2xl">

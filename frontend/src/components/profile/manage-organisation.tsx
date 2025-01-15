@@ -10,7 +10,7 @@ import { OrgaInformationsProps, ApiRelevantOrganisationInformations } from "./ty
 const FormDataContext = createContextId<OrgaInformationsProps>("verein-signup-context")
 
 const answerStyles = new Map<boolean, string>([
-    [false, ""],
+    [false, "btn-outline"],
     [true, "btn-primary"],
 ])
 
@@ -194,7 +194,7 @@ const Overview = component$(() => {
                     </div>
                 </div>
 
-                <div class="stats bg-neutral text-primary shadow">
+                <div class="stats shadow-xl">
                     <div class="stat">
                         <div class="stat-figure text-secondary text-3xl">
                             <HiCalendarDaysOutline />
@@ -346,7 +346,7 @@ export const Vereinsignup = component$((inputData: { orgaData: ApiRelevantOrgani
     return (
         <>
             <div class="relative flex justify-center">
-                <div class="card bg-base-300 rounded-box place-items-stretch m-4 px-4 py-8 space-y-4 h-fit w-full max-w-screen-md">
+                <div class="card bg-base-200 shadow-2xl rounded-box place-items-stretch m-4 px-4 py-8 space-y-4 h-fit w-full max-w-screen-md">
                     <h2 class="card-title px-4">{isNew ? "Verein erstellen" : "Verein verwalten"}</h2>
                     <div class="space-y-4 px-4">
                         {position.value === 0 && <Vereinsdaten />}
@@ -376,7 +376,7 @@ export const Vereinsignup = component$((inputData: { orgaData: ApiRelevantOrgani
                                 </>
                                 :
                                 <div class="join">
-                                    <button class="btn join-item" onClick$={() => (
+                                    <button class="btn btn-outline btn-neutral join-item" onClick$={() => (
                                         position.value = Math.max(0, position.value - 1)
                                     )}>
                                         <div class="text-2xl">

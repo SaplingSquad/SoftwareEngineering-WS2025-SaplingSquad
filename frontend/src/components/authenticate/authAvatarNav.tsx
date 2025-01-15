@@ -7,13 +7,17 @@ import { ProfileImage } from "../profile/utils";
 export const LoginAvatar = component$(() => {
     const session = useSession();
 
+    session.value?.user?.id
+
     const LoginProfile = useComputed$(() => {
         const email = session.value?.user?.email;
         return (
             email ?
                 <>
-                    <a href="../profile" class="btn btn-ghost btn-circle avatar bg-base-100">
-                        <ProfileImage profiledata={session} imgSize="size-12 rounded-full"/>
+                    <a href="../profile" class="btn btn-circle bg-base-100">
+                        <div class="avatar">
+                            <ProfileImage profiledata={session} imgSize="size-12 rounded-full shadow-2xl" />
+                        </div>
                     </a>
                 </>
                 :

@@ -176,7 +176,7 @@ const Vereinsinfo = component$(() => {
     const context = useContext(OrgaProfileDataContext);
     return (
         <>
-            <div class="stats shadow m-4 p-4">
+            <div class="stats stats-vertical lg:stats-horizontal shadow m-4 p-4">
                 <div class="stat place-items-center">
                     <div class="stat-title">Gründungsjahr</div>
                     <div class="stat-value text-primary">{context.founding}</div>
@@ -356,11 +356,11 @@ export const VereinProfile = component$((inputData: {
     useContextProvider(OrgaProjektDelA, projectDel)
     return (
         <>
-            <div class="grid grid-rows-4 grid-cols-10 gap-4 p-5">
-                <div class="row-span-3 col-span-8">
+            <div class="flex flex-wrap gap-4 lg:p-4">
+                <div class="order-2 lg:order-1">
                     <VereinInfoProjects projectData={projectsStore} />
                 </div>
-                <div class="row-span-auto col-span-2">
+                <div class="flex-auto order-1 lg:order-2">
                     <ProfileInformation profiledata={inputData.profiledata} />
                 </div>
             </div>
