@@ -1,6 +1,11 @@
 import { Session } from "@auth/qwik";
-import { ClassList, component$, Signal, useTask$, useVisibleTask$ } from "@builder.io/qwik";
+import { ClassList, component$, Signal, useVisibleTask$ } from "@builder.io/qwik";
 import { HiUserCircleOutline } from "@qwikest/icons/heroicons";
+import { $, noSerialize, NoSerialize, QRL, useSignal } from "@builder.io/qwik";
+import maplibregl from "maplibre-gl";
+import { ClickHandlers, Images, Layers, Sources } from "../map";
+import { isServer } from "@builder.io/qwik/build";
+import { InputMarkerLocation } from "./types";
 
 export const ProfileImage = component$((inputData: { profiledata: Readonly<Signal<null>> | Readonly<Signal<Session>>, imgSize: ClassList }) => {
     return (
@@ -20,13 +25,7 @@ export const ProfileImage = component$((inputData: { profiledata: Readonly<Signa
     )
 })
 
-import { $, noSerialize, NoSerialize, QRL, useOn, useSignal } from "@builder.io/qwik";
-import maplibregl from "maplibre-gl";
-import { ClickHandlers, Images, Layers, Sources } from "../map";
-import { isServer } from "@builder.io/qwik/build";
-import { InputMarkerLocation } from "./profile";
-/*import { Map } from "~/views/map";*/
-/*import { Map } from "~/components/map";*/
+
 
 const createMap = (
     options: maplibregl.MapOptions,
@@ -77,11 +76,8 @@ export const MapLocationInput = component$(
         location: InputMarkerLocation;
         drgbl?: boolean;
     }) => {
-        const map = useSignal<NoSerialize<maplibregl.Map>>();
         const markSign = useSignal<NoSerialize<maplibregl.Marker>>();
         const containerRef = useSignal<HTMLElement>();
-        const coordsLat = useSignal<number>();
-        const coordsLng = useSignal<number>();
 
         useVisibleTask$(
             async () => {

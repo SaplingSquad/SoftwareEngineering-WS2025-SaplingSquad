@@ -1,7 +1,6 @@
-import { component$, Resource, useStore, } from "@builder.io/qwik";
+import { component$, Resource, } from "@builder.io/qwik";
 import { routeLoader$ } from "@builder.io/qwik-city";
-import { requestHandler } from "@builder.io/qwik-city/middleware/request-handler";
-import { useGetOrganizationSelf, useGetProjectsForOrganizationSelf, useGetTags } from "~/api/api_hooks.gen";
+import { useGetProjectsForOrganizationSelf, useGetTags } from "~/api/api_hooks.gen";
 import { ApiResponse } from "~/components/api";
 import { ProjectCreation } from "~/components/profile/manage-project";
 

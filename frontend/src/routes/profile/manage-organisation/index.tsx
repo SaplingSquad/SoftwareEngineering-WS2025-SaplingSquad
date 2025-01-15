@@ -1,16 +1,10 @@
 import {
-    $,
     component$,
     Resource,
-    useComputed$,
-    useOnWindow,
-    useSignal,
-    useStore,
 } from "@builder.io/qwik";
 import { useGetOrganizationSelf, useGetTags } from "~/api/api_hooks.gen";
-import { useAccountType, isAccTypeUser, isAccTypeOrg } from "~/auth/useauthheader";
+import { useAccountType, isAccTypeOrg } from "~/auth/useauthheader";
 import { ApiResponse } from "~/components/api";
-import { LoginOverviewParamsForm } from "~/components/auth/login";
 import { Vereinsignup } from "~/components/profile/manage-organisation";
 import { ApiRelevantOrganisationInformations } from "~/components/profile/types";
 

@@ -1,11 +1,6 @@
 import { type Signal, component$, useSignal } from "@builder.io/qwik";
 import { Map } from "~/views/map";
 import { MapUI } from "~/components/map-ui/map-ui";
-import { HiFunnelOutline } from "@qwikest/icons/heroicons";
-import {
-  type FilterSettings,
-  Filter,
-} from "~/components/filter";
 import { LoginAvatar } from "~/components/authenticate/authAvatarNav";
 
 export default component$(() => {

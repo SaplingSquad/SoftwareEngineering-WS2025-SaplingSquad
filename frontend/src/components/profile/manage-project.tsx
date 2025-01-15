@@ -1,9 +1,8 @@
-import { ClassList, component$, createContextId, JSXOutput, Resource, Signal, useComputed$, useContext, useContextProvider, useSignal, useStore } from "@builder.io/qwik";
-import { HiStarOutline, HiNoSymbolOutline, HiChevronRightOutline, HiChevronLeftOutline, HiInformationCircleOutline, HiPlusOutline, HiCalendarDaysOutline, HiUserGroupOutline, HiCog6ToothOutline, HiLinkOutline, HiBanknotesOutline, HiTrashOutline, HiTrashSolid } from "@qwikest/icons/heroicons";
+import { ClassList, component$, createContextId, Resource, Signal, useContext, useContextProvider, useSignal, useStore } from "@builder.io/qwik";
+import { HiChevronRightOutline, HiChevronLeftOutline, HiInformationCircleOutline, HiPlusOutline, HiCalendarDaysOutline, HiCog6ToothOutline, HiLinkOutline, HiBanknotesOutline, HiTrashSolid } from "@qwikest/icons/heroicons";
 import { MapLocationInput } from "./utils";
-import { Form } from "@builder.io/qwik-city";
 import { ApiResponse } from "../api";
-import { usePostOrganization, usePostProject, usePutProject } from "~/api/api_hooks.gen";
+import { usePostProject, usePutProject } from "~/api/api_hooks.gen";
 import { convertAPITypeToInternalProjectType } from "./profile";
 import { ProjectInformationProps, ApiRelevantProjectInformations } from "./types";
 

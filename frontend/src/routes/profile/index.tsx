@@ -1,17 +1,12 @@
-import { component$, createContextId, Resource, Signal, useComputed$, useContext, useContextProvider, useSignal, useStore, } from "@builder.io/qwik";
+import { component$, Resource, Signal, useComputed$, } from "@builder.io/qwik";
 import { UserProfile, VereinProfile } from "~/components/profile/profile";
 import { useSession } from "../plugin@auth";
-import { getAccountType, isAccTypeOrg, isAccTypeUser, useAccountType, useAuthHeader } from "~/auth/useauthheader";
+import { isAccTypeOrg, isAccTypeUser, useAccountType } from "~/auth/useauthheader";
 import { LoginOverviewParamsForm } from "~/components/auth/login";
-import { routeLoader$ } from "@builder.io/qwik-city";
-import { api } from "~/api/api_url";
 import { ApiResponse } from "~/components/api";
-import { TestContext } from "node:test";
-import { objectOutputType } from "zod";
 import { useGetOrganizationSelf, useGetProjectsForOrganizationSelf } from "~/api/api_hooks.gen";
 import { Session } from "@auth/qwik";
-import { getProjectsForOrganizationSelf } from "~/api/api_methods.gen";
-import { ProfileProjectsProps, ApiRelevantOrganisationInformations } from "~/components/profile/types";
+import { ApiRelevantOrganisationInformations } from "~/components/profile/types";
 
 const VereinProfilePage = component$((inputData: { profiledata: Readonly<Signal<null>> | Readonly<Signal<Session>> }) => {
     const orgaRequest = useGetOrganizationSelf();

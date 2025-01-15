@@ -1,10 +1,9 @@
 import { Session } from "@auth/qwik";
-import { component$, createContextId, Resource, Signal, useContext, useContextProvider, useSignal, useStore } from "@builder.io/qwik";
-import { HiUserCircleOutline, HiPlusCircleSolid, HiCog6ToothOutline, HiTrashOutline, HiPlusCircleOutline, HiLinkOutline, HiBanknotesOutline, HiTrashSolid, HiEllipsisVerticalOutline, HiMapPinOutline, HiMapOutline, HiCalendarOutline } from "@qwikest/icons/heroicons";
+import { component$, createContextId, Signal, useContext, useContextProvider, useSignal, useStore } from "@builder.io/qwik";
+import { HiPlusCircleSolid, HiCog6ToothOutline, HiPlusCircleOutline, HiLinkOutline, HiBanknotesOutline, HiTrashSolid, HiEllipsisVerticalOutline, HiMapPinOutline, HiCalendarOutline } from "@qwikest/icons/heroicons";
 import { LogoutParamsForm } from "../auth/logout";
 import { ProfileImage } from "./utils";
 import { isAccTypeOrg, useAccountType } from "~/auth/useauthheader";
-import { getProjectsForOrganizationSelf } from "~/api/api_methods.gen";
 import { useDeleteProject } from "~/api/api_hooks.gen";
 import { OrgaInformationsProps, ProjectInformationProps, ApiRelevantOrganisationInformations, ApiRelevantProjectInformations } from "./types";
 
