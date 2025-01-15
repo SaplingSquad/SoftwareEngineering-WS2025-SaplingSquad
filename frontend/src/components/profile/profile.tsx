@@ -3,9 +3,9 @@ import { component$, createContextId, Signal, useContext, useContextProvider, us
 import { HiPlusCircleSolid, HiCog6ToothOutline, HiPlusCircleOutline, HiLinkOutline, HiBanknotesOutline, HiTrashSolid, HiEllipsisVerticalOutline, HiMapPinOutline, HiCalendarOutline } from "@qwikest/icons/heroicons";
 import { LogoutParamsForm } from "../auth/logout";
 import { ProfileImage } from "./utils";
-import { isAccTypeOrg, useAccountType } from "~/auth/useauthheader";
 import { useDeleteProject } from "~/api/api_hooks.gen";
 import { OrgaInformationsProps, ProjectInformationProps, ApiRelevantOrganisationInformations, ApiRelevantProjectInformations } from "./types";
+import { isAccTypeOrg, useAccountType } from "~/auth/utils";
 
 const OrgaProfileDataContext = createContextId<OrgaInformationsProps>("verein-profile-context")
 
@@ -16,46 +16,27 @@ const OrgaProjektDelA = createContextId<number[]>("verein-project-del")
 
 const ProjectCard = component$((props: { p: ProjectInformationProps }) => {
     const projDel = useSignal(true)
-    //const removeProjectCall = useDeleteProject({ id: remProjId })
     return (
-        <>
-            <div class="card bg-base-100 w-96 shadow-xl">
-                <div class="card-body">
-                    <h2 class="card-title">{props.p.name}</h2>
-                    <div class="absolute top-0 right-0 dropdown dropdown-left dropdown-end">
-                        <div tabIndex={0} role="button" class="btn btn-ghost btn-circle">
-                            <div class="text-2xl">
-                                <HiEllipsisVerticalOutline />
-                            </div>
+        <div class="card bg-base-100 w-96 shadow-xl">
+            <div class="card-body">
+                <h2 class="card-title">{props.p.name}</h2>
+                <div class="absolute top-0 right-0 dropdown dropdown-left dropdown-end">
+                    <div tabIndex={0} role="button" class="btn btn-ghost btn-circle">
+                        <div class="text-2xl">
+                            <HiEllipsisVerticalOutline />
                         </div>
-                        <ul
-                            tabIndex={0}
-                            class="menu menu-sm menu-neutral dropdown-content bg-base-100 rounded-box w-24 p-2 shadow">
-                            <li>
-                                <a onClick$={() => { projDel.value = !projDel.value }}>{projDel.value && <ProjectDeleteButtonOption />}{!projDel.value && <ProjectBackButtonOption />}</a>
-                            </li>
-                        </ul>
                     </div>
-                    <ProjectContent del={projDel.value} p={props.p} />
+                    <ul
+                        tabIndex={0}
+                        class="menu menu-sm menu-neutral dropdown-content bg-base-100 rounded-box w-24 p-2 shadow">
+                        <li>
+                            <a onClick$={() => { projDel.value = !projDel.value }}>{projDel.value && <p>Löschen</p>}{!projDel.value && <p>Zurück</p>}</a>
+                        </li>
+                    </ul>
                 </div>
+                <ProjectContent del={projDel.value} p={props.p} />
             </div>
-        </>
-    )
-})
-
-const ProjectBackButtonOption = component$(() => {
-    return (
-        <p>
-            Zurück
-        </p>
-    )
-})
-
-const ProjectDeleteButtonOption = component$(() => {
-    return (
-        <p>
-            Löschen
-        </p>
+        </div>
     )
 })
 
@@ -120,60 +101,54 @@ const ProjectContent = component$((inputData: { del: boolean, p: ProjectInformat
 
 const ProjectDummy = component$(() => {
     return (
-        <>
-            <div class="card bg-primary-content card-bordered border-primary border-dashed border-4 w-96 shadow-xl">
-                <div class="card-body">
-                    <h2 class="card-title text-primary">Neues Projekt hinzufügen</h2>
-                    <div class="flex items-center justify-center">
-                        <a href="/profile/manage-project" class="hover:text-secondary" >
-                            <HiPlusCircleSolid class="text-primary text-6xl text-opacity-80 hover:text-secondary transition-all" />
-                        </a>
-                    </div>
+        <div class="card bg-primary-content card-bordered border-primary border-dashed border-4 w-96 shadow-xl">
+            <div class="card-body">
+                <h2 class="card-title text-primary">Neues Projekt hinzufügen</h2>
+                <div class="flex items-center justify-center">
+                    <a href="/profile/manage-project" class="hover:text-secondary" >
+                        <HiPlusCircleSolid class="text-primary text-6xl text-opacity-80 hover:text-secondary transition-all" />
+                    </a>
                 </div>
             </div>
-        </>
+        </div>
     )
 })
 
 const ProfileInformation = component$((inputData: { profiledata: Readonly<Signal<null>> | Readonly<Signal<Session>> }) => {
     const accType = isAccTypeOrg(useAccountType(inputData.profiledata))
     return (
-        <>
-            <div class="card bg-base-100 rounded-box place-items-stretch p-4 space-y-4 h-fit flex-initial w-full min-w-fit card-bordered border-base-300 border-4">
-                <h2 class="card-title">{accType ? "Vereinsaccount" : "Account"}</h2>
-                <div class="w-full flex justify-center">
-                    <div class="avatar placeholder w-5/6 justify-center min-w-10 max-w-28">
-                        <div class="ring-primary ring-offset-base-100 rounded-full ring ring-offset-2 w-28">
-                            <ProfileImage profiledata={inputData.profiledata} imgSize="size-32" />
-                        </div>
+        <div class="card bg-base-100 rounded-box place-items-stretch p-4 space-y-4 h-fit flex-initial w-full min-w-fit card-bordered border-base-300 border-4">
+            <h2 class="card-title">{accType ? "Vereinsaccount" : "Account"}</h2>
+            <div class="w-full flex justify-center">
+                <div class="avatar placeholder w-5/6 justify-center min-w-10 max-w-28">
+                    <div class="ring-primary ring-offset-base-100 rounded-full ring ring-offset-2 w-28">
+                        <ProfileImage profiledata={inputData.profiledata} imgSize="size-32" />
                     </div>
                 </div>
-                <p>Name: {inputData.profiledata.value?.user?.name}</p>
-                <p>E-Mail: {inputData.profiledata.value?.user?.email}</p>
-                <LogoutParamsForm redirectTo={"/map"}>
-                    <button class="btn btn-block btn-error x-full">Abmelden</button>
-                </LogoutParamsForm>
             </div>
-        </>
+            <p>Name: {inputData.profiledata.value?.user?.name}</p>
+            <p>E-Mail: {inputData.profiledata.value?.user?.email}</p>
+            <LogoutParamsForm redirectTo={"/map"}>
+                <button class="btn btn-block btn-error x-full">Abmelden</button>
+            </LogoutParamsForm>
+        </div>
     )
 })
 
 const ProjectManagement = component$((inputData: { data: ProjectInformationProps[] }) => {
     const contextDelA = useContext(OrgaProjektDelA)
     return (
-        <>
-            <div class="card bg-base-200 p-4">
-                <div class="card-title text-xl font-medium pb-4">Projekte</div>
-                <div class="flex flex-wrap gap-6">
-                    {
-                        inputData.data.slice().reverse().filter((e) => !contextDelA.includes(e.id)).map((item, idx: number) => (
-                            <ProjectCard key={idx} p={item} />
-                        ))
-                    }
-                    <ProjectDummy />
-                </div>
+        <div class="card bg-base-200 p-4">
+            <div class="card-title text-xl font-medium pb-4">Projekte</div>
+            <div class="flex flex-wrap gap-6">
+                {
+                    inputData.data.slice().reverse().filter((e) => !contextDelA.includes(e.id)).map((item, idx: number) => (
+                        <ProjectCard key={idx} p={item} />
+                    ))
+                }
+                <ProjectDummy />
             </div>
-        </>
+        </div>
     )
 })
 
@@ -254,48 +229,44 @@ const VereinInfoProjects = component$((inputData: { projectData: ProjectInformat
     return (
         context.name === ""
             ?
-            <>
-                <VereinDummy />
-            </>
+            <VereinDummy />
             :
-            <>
-                <div class="card bg-base-100 rounded-box place-items-stretch  p-4 space-y-4 min-h-fit w-full min-w-fit card-bordered border-base-300 border-4 ">
-                    <div class="flex items-center gap-4 border border-primary rounded-3xl border-2 p-4">
-                        <div class="avatar bg-primary rounded-full">
-                            <div class="w-24 rounded-full">
-                                <img src={context.logoUrl} />
-                            </div>
-                        </div>
-                        <div>
-                            <div class="text-2xl">
-                                {context.name}
-                            </div>
-                            <div class="flex gap-2">
-                                <div class="text-xl flex">
-                                    <HiLinkOutline />
-                                </div>
-                                <div class="link">
-                                    {context.webpageUrl}
-                                </div>
-                            </div>
-                            <div class="flex gap-2">
-                                <div class="text-xl flex">
-                                    <HiBanknotesOutline />
-                                </div>
-                                <div class="link">
-                                    {context.donatePageUrl}
-                                </div>
-                            </div>
+            <div class="card bg-base-100 rounded-box place-items-stretch  p-4 space-y-4 min-h-fit w-full min-w-fit card-bordered border-base-300 border-4 ">
+                <div class="flex items-center gap-4 border border-primary rounded-3xl border-2 p-4">
+                    <div class="avatar bg-primary rounded-full">
+                        <div class="w-24 rounded-full">
+                            <img src={context.logoUrl} />
                         </div>
                     </div>
-                    <div class="flex flex-wrap gap-6">
-                        <div class="card bg-base-200 rounded-box place-items-stretch w-full">
-                            <Vereinsinfo />
+                    <div>
+                        <div class="text-2xl">
+                            {context.name}
                         </div>
-                        <ProjectManagement data={inputData.projectData} />
+                        <div class="flex gap-2">
+                            <div class="text-xl flex">
+                                <HiLinkOutline />
+                            </div>
+                            <div class="link">
+                                {context.webpageUrl}
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <div class="text-xl flex">
+                                <HiBanknotesOutline />
+                            </div>
+                            <div class="link">
+                                {context.donatePageUrl}
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </>
+                <div class="flex flex-wrap gap-6">
+                    <div class="card bg-base-200 rounded-box place-items-stretch w-full">
+                        <Vereinsinfo />
+                    </div>
+                    <ProjectManagement data={inputData.projectData} />
+                </div>
+            </div>
 
 
     )
@@ -303,11 +274,9 @@ const VereinInfoProjects = component$((inputData: { projectData: ProjectInformat
 
 export const UserProfile = component$((inputData: { profiledata: Readonly<Signal<null>> | Readonly<Signal<Session>> }) => {
     return (
-        <>
-            <div class="max-w-md p-4">
-                <ProfileInformation profiledata={inputData.profiledata} />
-            </div>
-        </>
+        <div class="max-w-md p-4">
+            <ProfileInformation profiledata={inputData.profiledata} />
+        </div>
     )
 })
 
@@ -361,15 +330,13 @@ export const VereinProfile = component$((inputData: {
     const projectDel = useStore<number[]>([])
     useContextProvider(OrgaProjektDelA, projectDel)
     return (
-        <>
-            <div class="flex flex-wrap gap-4 lg:p-4">
-                <div class="lg:w-9/12 order-2 lg:order-1">
-                    <VereinInfoProjects projectData={projectsStore} />
-                </div>
-                <div class="flex-auto order-1 lg:order-2">
-                    <ProfileInformation profiledata={inputData.profiledata} />
-                </div>
+        <div class="flex flex-wrap gap-4 lg:p-4">
+            <div class="lg:w-9/12 order-2 lg:order-1">
+                <VereinInfoProjects projectData={projectsStore} />
             </div>
-        </>
+            <div class="flex-auto order-1 lg:order-2">
+                <ProfileInformation profiledata={inputData.profiledata} />
+            </div>
+        </div>
     )
 })

@@ -6,25 +6,34 @@ import maplibregl from "maplibre-gl";
 import { ClickHandlers, Images, Layers, Sources } from "../map";
 import { isServer } from "@builder.io/qwik/build";
 import { InputMarkerLocation } from "./types";
+import { LoginOverviewParamsForm } from "../auth/login";
 
 export const ProfileImage = component$((inputData: { profiledata: Readonly<Signal<null>> | Readonly<Signal<Session>>, imgSize: ClassList }) => {
     return (
-        <>
-
-            {
-                inputData.profiledata.value?.user?.image ?
-                    <>
-                        <img class={inputData.imgSize} src={inputData.profiledata.value?.user?.image} />
-                    </>
-                    :
-                    <>
-                        <HiUserCircleOutline class={inputData.imgSize} />
-                    </>
-            }
-        </>
+        inputData.profiledata.value?.user?.image ?
+            <img class={inputData.imgSize} src={inputData.profiledata.value?.user?.image} />
+            :
+            <HiUserCircleOutline class={inputData.imgSize} />
     )
 })
 
+
+export const LoginAgainCard = component$(() => {
+    return (
+        <div class="flex justify-center p-32">
+            <div class="card bg-base-100 w-96 shadow-xl">
+                <div class="card-body items-center text-center">
+                    <h2 class="card-title">Bitte neu anmelden.</h2>
+                    <div class="card-actions">
+                        <LoginOverviewParamsForm redirectTo={"/profile"}>
+                            <button class="btn btn-primary">Hier einloggen!</button>
+                        </LoginOverviewParamsForm>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+})
 
 
 const createMap = (

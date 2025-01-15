@@ -3,10 +3,11 @@ import {
     Resource,
 } from "@builder.io/qwik";
 import { useGetOrganizationSelf, useGetTags } from "~/api/api_hooks.gen";
-import { useAccountType, isAccTypeOrg } from "~/auth/useauthheader";
+import { isAccTypeOrg, useAccountType } from "~/auth/utils";
 import { ApiResponse } from "~/components/api";
 import { Vereinsignup } from "~/components/profile/manage-organisation";
 import { ApiRelevantOrganisationInformations } from "~/components/profile/types";
+import { LoginAgainCard } from "~/components/profile/utils";
 
 import { useSession } from "~/routes/plugin@auth";
 
@@ -37,46 +38,39 @@ export default component$(() => {
 
     return (
         isAccTypeOrg(useaccType) ?
-            <>
-                <div>
-                    <Resource
-                        value={getTag}
-                        onResolved={(response) => (
-                            <ApiResponse
-                                response={response}
-                                on200$={(tagsResponse) =>
-                                    <Resource
-                                        value={orgaRequest}
-                                        onResolved={(response) => (
-                                            <ApiResponse
-                                                response={response}
-                                                on200$={(r) => <Vereinsignup orgaData={r} tags={tagsResponse} />}
-                                                on401$={() => <Vereinsignup orgaData={emptyOrga} tags={tagsResponse} />}
-                                                on404$={() => <Vereinsignup orgaData={emptyOrga} tags={tagsResponse} />}
-                                                on500$={() => <Vereinsignup orgaData={emptyOrga} tags={tagsResponse} />}
-                                                defaultError$={(r) => r}
-                                            />
-                                        )}
+            <Resource
+                value={getTag}
+                onResolved={(response) => (
+                    <ApiResponse
+                        response={response}
+                        on200$={(tagsResponse) =>
+                            <Resource
+                                value={orgaRequest}
+                                onResolved={(response) => (
+                                    <ApiResponse
+                                        response={response}
+                                        on200$={(r) => <Vereinsignup orgaData={r} tags={tagsResponse} />}
+                                        on401$={() => <LoginAgainCard />}
+                                        on404$={() => <Vereinsignup orgaData={emptyOrga} tags={tagsResponse} />}
+                                        defaultError$={(r) => r}
                                     />
-                                }
-                                defaultError$={(r) => r}
+                                )}
                             />
-                        )}
+                        }
+                        defaultError$={(r) => r}
                     />
-                </div>
-            </>
+                )}
+            />
             :
-            <>
-                <div class="flex justify-center p-32">
-                    <div class="card bg-base-100 w-96 shadow-xl">
-                        <div class="card-body items-center text-center">
-                            <h2 class="card-title">Kein Vereinsaccount</h2>
-                            <div class="card-actions">
-                                <button class="btn btn-primary">Zurück zum Profil</button>
-                            </div>
+            <div class="flex justify-center p-32">
+                <div class="card bg-base-100 w-96 shadow-xl">
+                    <div class="card-body items-center text-center">
+                        <h2 class="card-title">Kein Vereinsaccount</h2>
+                        <div class="card-actions">
+                            <button class="btn btn-primary">Zurück zum Profil</button>
                         </div>
                     </div>
                 </div>
-            </>
+            </div>
     )
 })

@@ -1,21 +1,18 @@
 import { component$, Resource, Signal, useComputed$, } from "@builder.io/qwik";
 import { UserProfile, VereinProfile } from "~/components/profile/profile";
 import { useSession } from "../plugin@auth";
-import { isAccTypeOrg, isAccTypeUser, useAccountType } from "~/auth/useauthheader";
 import { LoginOverviewParamsForm } from "~/components/auth/login";
 import { ApiResponse } from "~/components/api";
 import { useGetOrganizationSelf, useGetProjectsForOrganizationSelf } from "~/api/api_hooks.gen";
 import { Session } from "@auth/qwik";
 import { ApiRelevantOrganisationInformations } from "~/components/profile/types";
+import { isAccTypeOrg, isAccTypeUser, useAccountType } from "~/auth/utils";
+import { LoginAgainCard } from "~/components/profile/utils";
 
 const VereinProfilePage = component$((inputData: { profiledata: Readonly<Signal<null>> | Readonly<Signal<Session>> }) => {
     const orgaRequest = useGetOrganizationSelf();
-
     const session = inputData.profiledata
-
     const orgaProjectsRequest = useGetProjectsForOrganizationSelf();
-
-
     const emptyOrga: ApiRelevantOrganisationInformations =
     {
         name: "",
@@ -32,65 +29,34 @@ const VereinProfilePage = component$((inputData: { profiledata: Readonly<Signal<
     }
 
     return (
-        <div>
-            <Resource
-                value={orgaRequest}
-                onResolved={(response) => (
-                    <ApiResponse
-                        response={response}
-                        on200$={(r) =>
-                            <div>
-                                <Resource
-                                    value={orgaProjectsRequest}
-                                    onResolved={(projResponse) => (
-                                        <ApiResponse
-                                            response={projResponse}
-                                            on200$={(projR) => <div><VereinProfile orgaData={r} projectsData={projR} profiledata={session} /></div>}
-                                            on401$={() =>
-                                                <div class="flex justify-center p-32">
-                                                    <div class="card bg-base-100 w-96 shadow-xl">
-                                                        <div class="card-body items-center text-center">
-                                                            <h2 class="card-title">Bitte neu anmelden.</h2>
-                                                            <div class="card-actions">
-                                                                <LoginOverviewParamsForm redirectTo={"/profile"}>
-                                                                    <button class="btn btn-primary">Hier einloggen!</button>
-                                                                </LoginOverviewParamsForm>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            }
-                                            on404$={() => <div><VereinProfile orgaData={r} projectsData={[]} profiledata={session} /></div>}
-                                            defaultError$={(r) => r}
-                                        />
-                                    )}
-                                    onPending={() =>
-                                        <>
-                                            Pending
-                                        </>
-                                    }
-                                />
-                            </div>
-                        }
-                        on401$={() => <div class="flex justify-center p-32">
-                            <div class="card bg-base-100 w-96 shadow-xl">
-                                <div class="card-body items-center text-center">
-                                    <h2 class="card-title">Bitte neu anmelden.</h2>
-                                    <div class="card-actions">
-                                        <LoginOverviewParamsForm redirectTo={"/profile"}>
-                                            <button class="btn btn-primary">Hier einloggen!</button>
-                                        </LoginOverviewParamsForm>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>}
-                        on404$={() => <div><VereinProfile orgaData={emptyOrga} projectsData={[]} profiledata={session} /></div>}
-                        on500$={() => <div>Ein unerwarteter Fehler ist aufgetreten.</div>}
-                        defaultError$={(r) => r}
-                    />
-                )}
-            />
-        </div>
+        <Resource
+            value={orgaRequest}
+            onResolved={(response) => (
+                <ApiResponse
+                    response={response}
+                    on200$={(r) =>
+                        <div>
+                            <Resource
+                                value={orgaProjectsRequest}
+                                onResolved={(projResponse) => (
+                                    <ApiResponse
+                                        response={projResponse}
+                                        on200$={(projR) => <VereinProfile orgaData={r} projectsData={projR} profiledata={session} />}
+                                        on401$={() => <LoginAgainCard />}
+                                        on404$={() => <VereinProfile orgaData={r} projectsData={[]} profiledata={session} />}
+                                        defaultError$={(r) => r}
+                                    />
+                                )}
+                            />
+                        </div>
+                    }
+                    on401$={() => <LoginAgainCard />}
+                    on404$={() => <VereinProfile orgaData={emptyOrga} projectsData={[]} profiledata={session} />}
+                    on500$={() => <div>Ein unerwarteter Fehler ist aufgetreten.</div>}
+                    defaultError$={(r) => r}
+                />
+            )}
+        />
     )
 })
 
@@ -99,11 +65,12 @@ export default component$(() => {
     const session = useSession();
     const useaccType = useAccountType(session);
 
-    //const questionRequest = useGetQuestionById({ questionId: numbiii }
-
-    const ProfileAccountController = useComputed$(() => {
-        return (
-            <>
+    return (
+        isAccTypeUser(useaccType) ?
+            <UserProfile profiledata={session} />
+            : isAccTypeOrg(useaccType) ?
+                <VereinProfilePage profiledata={session} />
+                :
                 <div class="flex justify-center p-32">
                     <div class="card bg-base-100 w-96 shadow-xl">
                         <div class="card-body items-center text-center">
@@ -116,22 +83,5 @@ export default component$(() => {
                         </div>
                     </div>
                 </div>
-            </>
-        )
-    })
-
-    return (
-        isAccTypeUser(useaccType) ?
-            <>
-                <UserProfile profiledata={session} />
-            </>
-            : isAccTypeOrg(useaccType) ?
-                <>
-                    <VereinProfilePage profiledata={session} />
-                </>
-                :
-                <>
-                    {ProfileAccountController}
-                </>
     )
 })
