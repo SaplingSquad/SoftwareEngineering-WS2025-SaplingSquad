@@ -26,7 +26,7 @@ export const InfoPage = component$(
             <span class="max-h-full min-h-min min-w-min max-w-full overflow-y-auto ">
               <h5 class="text-lg font-semibold">Unzulässiges ID-Format.</h5>
               <div class="mb-2 flex flex-row items-baseline">
-                "<pre>{location.params.id}</pre>" ist keine valider
+                "<pre>{location.params.id}</pre>" ist kein valider
                 Identifikator.
               </div>
             </span>
