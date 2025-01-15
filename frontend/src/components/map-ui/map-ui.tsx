@@ -117,7 +117,11 @@ export const MapUI = component$(
         await getMatches(searchInput).then(
           (p) => {
             if (p.status === 200) {
-              rawResult.res = p.body;
+              rawResult.res = {
+                organizationLocations: createEmptyFeatureCollection(),
+                projectLocations: createEmptyFeatureCollection(),
+                ...p.body,
+              };
             } else {
               state.value = State.ERROR;
             }
