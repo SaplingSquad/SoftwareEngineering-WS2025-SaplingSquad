@@ -36,10 +36,12 @@ database using Docker.
 ```shell
 cd frontend/ && npx auth secret && npm ci && npm run dev
 ```
-Note: This cmd locks the terminal. You will need a second one to start the
+`npx auth secret` is only required once to create a secret key for the frontend.
+
+Note: This cmd blocks the terminal. You will need a second one to start the
 backend.
 
-See ([frontend/](./frontend)) for further informations.
+See ([frontend/README](./frontend/README.md)) for further informations.
 
 If the backend server (in step 4) has issues starting, it might help to start with
 ```shell

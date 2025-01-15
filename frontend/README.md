@@ -38,6 +38,15 @@ Use the `npm run qwik add` command to add additional integrations. Some examples
 npm run qwik add # or `yarn qwik add`
 ```
 
+## Before Launching
+`auth.js` requires an `AUTH_SECRET` environment variable to be set. 
+This can be done by running
+```shell
+npx auth secret
+``` 
+in the frontend directory. This command will create a `.env` file with a 
+newly generated secret key for development purposes.
+
 ## Development
 
 Development mode uses [Vite's development server](https://vitejs.dev/). The `dev` command will server-side render (SSR) the output during development.
